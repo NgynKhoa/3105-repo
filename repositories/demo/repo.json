@@ -1,0 +1,56 @@
+{
+  "schemaVersion": 1,
+  "identifier": "com.yangjiii.3105.demo",
+  "name": "3105 Demo Repository",
+  "description": "Nguồn thử nghiệm chính thức cho hệ thống repository của 3105.",
+  "icon": "assets/repository-icon.png",
+  "packages": [
+    {
+      "identifier": "repository-demo",
+      "packageID": "31050000-0000-4000-8000-000000000001",
+      "name": "3105 Repository Demo",
+      "author": "YangJiii",
+      "version": "1.0.0",
+      "summary": "Gói mẫu để kiểm tra nguồn, nội dung mô tả và ảnh xem trước.",
+      "description": "Đây là gói thử nghiệm an toàn, không chứa quy tắc thay thế tệp. Bạn có thể dùng nó để kiểm tra toàn bộ luồng tải nguồn và nhập gói trong 3105.",
+      "category": "Testing",
+      "tags": [
+        "Testing",
+        "3105"
+      ],
+      "publishedAt": "2026-08-21T10:00:00Z",
+      "icon": "assets/package-icon.png",
+      "banner": "assets/banner.png",
+      "screenshots": [
+        "assets/preview-light.png",
+        "assets/preview-dark.png"
+      ],
+      "download": "packages/3105-repository-demo.3105",
+      "sha256": "55fe780c657959b1b3581461601c821348c23720c916975b1708ceec0eb500a0",
+      "size": 667,
+      "bundleIdentifiers": [
+        "com.example.3105.preview"
+      ],
+      "supportedOS": [
+        {
+          "minimum": "17.0",
+          "maximum": "18.7.1"
+        },
+        {
+          "minimum": "26.0",
+          "maximum": "26.6.1"
+        },
+        {
+          "minimum": "27.0",
+          "maximum": "27.0",
+          "builds": [
+            "24A5390f"
+          ]
+        }
+      ],
+      "changelog": "Nguồn thử nghiệm đầu tiên với mô tả và gallery ảnh preview.",
+      "featured": true,
+      "isPrivate": false
+    }
+  ]
+}
