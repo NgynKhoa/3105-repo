@@ -7,12 +7,11 @@
   "packages": [
     {
       "identifier": "capcut-pro",
-      "packageID": "31050000-0000-4000-8000-000000000001",
       "name": "Capcut Pro",
       "author": "YangJiii",
       "version": "1.0.0",
       "summary": "Share Freee.",
-      "description": "Nâng Capcut lên pro /n vui lòng không đăng nhập tài khoản Capcut.",
+      "description": "Nâng CapCut lên Pro.\nVui lòng không đăng nhập tài khoản CapCut.",
       "category": "Testing",
       "tags": [
         "Application"
@@ -27,9 +26,6 @@
       "download": "packages/3105-repository-demo.3105",
       "sha256": "55fe780c657959b1b3581461601c821348c23720c916975b1708ceec0eb500a0",
       "size": 667,
-      "bundleIdentifiers": [
-        "com.example.3105.preview"
-      ],
       "supportedOS": [
         {
           "minimum": "17.0",

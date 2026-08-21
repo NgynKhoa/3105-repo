@@ -36,7 +36,20 @@ URL tương đối được tính từ vị trí của `sources.json`. URL HTTP,
 2. Đặt icon và ảnh preview trong thư mục `assets`.
 3. Thêm metadata vào `repo.json`.
 4. Tính SHA-256 bằng `shasum -a 256 <package.3105>`.
-5. Khai báo đúng UUID của package, dung lượng, bundle đích và dải iOS.
+5. Khai báo dung lượng và dải iOS. Không cần nhập `packageID` hoặc
+   `bundleIdentifiers`; ứng dụng đọc các thông tin này từ gói `.3105`.
+
+## Xuống dòng trong nội dung
+
+Trong chuỗi JSON, dùng `\n` để xuống dòng. Không dùng `/n`.
+
+```json
+{
+  "description": "Dòng đầu tiên.\nDòng thứ hai."
+}
+```
+
+Ứng dụng sẽ hiển thị hai dòng sau khi tải `repo.json`.
 
 Mỗi `repo.json` phải được phục vụ qua HTTPS và tuân theo định dạng repository
 3105 schema version 1.
