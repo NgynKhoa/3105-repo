@@ -1,18 +1,18 @@
 {
   "schemaVersion": 1,
-  "identifier": "com.yangjiii.3105.demo",
-  "name": "3105 Demo Repository",
-  "description": "Nguồn thử nghiệm chính thức cho hệ thống repository của 3105.",
+  "identifier": "com.yangjiii.3105",
+  "name": "3105 Repository",
+  "description": "Nguồn chính thức cho hệ thống repository của 3105.",
   "icon": "assets/repository-icon.png",
   "packages": [
     {
-      "identifier": "repository-demo",
+      "identifier": "capcut-pro",
       "packageID": "31050000-0000-4000-8000-000000000001",
-      "name": "3105 Repository Demo",
+      "name": "Capcut Pro",
       "author": "YangJiii",
       "version": "1.0.0",
-      "summary": "Gói mẫu để kiểm tra nguồn, nội dung mô tả và ảnh xem trước.",
-      "description": "Đây là gói thử nghiệm an toàn, không chứa quy tắc thay thế tệp. Bạn có thể dùng nó để kiểm tra toàn bộ luồng tải nguồn và nhập gói trong 3105.",
+      "summary": "Share Freee.",
+      "description": "Freeeeeeee.",
       "category": "Testing",
       "tags": [
         "Testing",
