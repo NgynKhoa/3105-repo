@@ -24,8 +24,8 @@
         "assets/preview-dark.png"
       ],
       "download": "packages/CapcutPro.3105",
-      "sha256": "55fe780c657959b1b3581461601c821348c23720c916975b1708ceec0eb500a0",
-      "size": 667,
+      "sha256": "79d17fb95fbe667621793442e916e12cdfb48c4e136335e850144e4273fc8430",
+      "size": 34303,
       "supportedOS": [
         {
           "minimum": "17.0",
