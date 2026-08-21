@@ -46,6 +46,181 @@
       "changelog": "Nguồn thử nghiệm đầu tiên với mô tả và gallery ảnh preview.",
       "featured": true,
       "isPrivate": false
+    },
+    {
+      "identifier": "aurora-notes",
+      "name": "Aurora Notes",
+      "author": "3105 Demo Lab",
+      "version": "1.0.0",
+      "summary": "Giao diện ghi chú sáng và gọn hơn.",
+      "description": "Tweak demo dùng để thử danh sách, tìm kiếm và quy trình cài package không mật khẩu.",
+      "category": "Productivity",
+      "tags": [
+        "Application",
+        "Notes",
+        "Theme"
+      ],
+      "publishedAt": "2026-08-21T11:00:00Z",
+      "icon": "assets/package-icon.png",
+      "banner": "assets/banner.png",
+      "screenshots": [
+        "assets/preview-light.png",
+        "assets/preview-dark.png"
+      ],
+      "download": "packages/aurora-notes.3105",
+      "sha256": "50723933161ab98621d9f606ae826a1e4b080c395a7a3d7d528ca99159e450ab",
+      "size": 636,
+      "supportedOS": [
+        {
+          "minimum": "17.0",
+          "maximum": "18.7.1"
+        },
+        {
+          "minimum": "26.0",
+          "maximum": "26.6.1"
+        },
+        {
+          "minimum": "27.0",
+          "maximum": "27.0",
+          "builds": [
+            "24A5390f"
+          ]
+        }
+      ],
+      "changelog": "Bản demo đầu tiên.",
+      "featured": true,
+      "isPrivate": false
+    },
+    {
+      "identifier": "focus-photos",
+      "name": "Focus Photos",
+      "author": "3105 Demo Lab",
+      "version": "1.0.0",
+      "summary": "Bố cục thư viện ảnh tối giản.",
+      "description": "Package giả lập để kiểm tra category, tag và màn hình chi tiết tweak.",
+      "category": "Customization",
+      "tags": [
+        "Application",
+        "Photos",
+        "Minimal"
+      ],
+      "publishedAt": "2026-08-21T11:15:00Z",
+      "icon": "assets/repository-icon.png",
+      "banner": "assets/banner.png",
+      "screenshots": [
+        "assets/preview-light.png",
+        "assets/preview-dark.png"
+      ],
+      "download": "packages/focus-photos.3105",
+      "sha256": "33cfea2f645ecf5dc2c83690e1be628ae0e9a288b7c0dc17aad8aa0800c07170",
+      "size": 640,
+      "supportedOS": [
+        {
+          "minimum": "17.0",
+          "maximum": "18.7.1"
+        },
+        {
+          "minimum": "26.0",
+          "maximum": "26.6.1"
+        },
+        {
+          "minimum": "27.0",
+          "maximum": "27.0",
+          "builds": [
+            "24A5390f"
+          ]
+        }
+      ],
+      "changelog": "Bản demo đầu tiên.",
+      "featured": false,
+      "isPrivate": false
+    },
+    {
+      "identifier": "midnight-capcut",
+      "name": "Midnight CapCut",
+      "author": "3105 Demo Lab",
+      "version": "1.0.0",
+      "summary": "Theme CapCut tối dành cho thử nghiệm.",
+      "description": "Package demo có mật khẩu.\nMật khẩu dùng để mở khóa: 3105",
+      "category": "Testing",
+      "tags": [
+        "Application",
+        "CapCut",
+        "Password"
+      ],
+      "publishedAt": "2026-08-21T11:30:00Z",
+      "icon": "assets/capcut-pro.png",
+      "banner": "assets/banner.png",
+      "screenshots": [
+        "assets/preview-dark.png",
+        "assets/preview-light.png"
+      ],
+      "download": "packages/midnight-capcut.3105",
+      "sha256": "a64918af42b03370c897d2c59e099c4e33fa10aeb4500cb5fefbc4ee0b07496c",
+      "size": 745,
+      "supportedOS": [
+        {
+          "minimum": "17.0",
+          "maximum": "18.7.1"
+        },
+        {
+          "minimum": "26.0",
+          "maximum": "26.6.1"
+        },
+        {
+          "minimum": "27.0",
+          "maximum": "27.0",
+          "builds": [
+            "24A5390f"
+          ]
+        }
+      ],
+      "changelog": "Thêm luồng thử nghiệm mở khóa bằng mật khẩu.",
+      "featured": true,
+      "isPrivate": false
+    },
+    {
+      "identifier": "private-playground",
+      "name": "Private Playground",
+      "author": "3105 Demo Lab",
+      "version": "1.0.0",
+      "summary": "Patch riêng tư để thử nội dung được bảo vệ.",
+      "description": "Package demo riêng tư.\nMật khẩu dùng để mở khóa: 3105",
+      "category": "Testing",
+      "tags": [
+        "Application",
+        "Private",
+        "Password"
+      ],
+      "publishedAt": "2026-08-21T11:45:00Z",
+      "icon": "assets/package-icon.png",
+      "banner": "assets/banner.png",
+      "screenshots": [
+        "assets/preview-dark.png"
+      ],
+      "download": "packages/private-playground.3105",
+      "sha256": "06ac3a12fd4fff11669c2938a8812ad66e959228d3121dd7aa8f79fdc47cbcae",
+      "size": 775,
+      "supportedOS": [
+        {
+          "minimum": "17.0",
+          "maximum": "18.7.1"
+        },
+        {
+          "minimum": "26.0",
+          "maximum": "26.6.1"
+        },
+        {
+          "minimum": "27.0",
+          "maximum": "27.0",
+          "builds": [
+            "24A5390f"
+          ]
+        }
+      ],
+      "changelog": "Thêm package riêng tư dùng cho kiểm thử.",
+      "featured": false,
+      "isPrivate": true
     }
   ]
 }

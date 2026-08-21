@@ -27,7 +27,8 @@ URL tương đối được tính từ vị trí của `sources.json`. URL HTTP,
 
 - Metadata, tác giả, phiên bản và changelog.
 - Icon, banner và hai ảnh preview.
-- Một package `.3105` demo không chứa quy tắc thay thế tệp.
+- Năm package `.3105` demo không chứa quy tắc thay thế tệp.
+- Hai package có mật khẩu demo `3105`, trong đó một package là patch riêng tư.
 - SHA-256 và kích thước package đã khai báo để kiểm tra khi tải.
 
 ## Thêm package
