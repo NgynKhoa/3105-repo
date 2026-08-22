@@ -26,9 +26,8 @@ URL tương đối được tính từ vị trí của `sources.json`. URL HTTP,
 `repositories/demo/repo.json` là nguồn mẫu có:
 
 - Metadata, tác giả, phiên bản và changelog.
-- Icon, banner và hai ảnh preview.
-- Năm package `.3105` demo không chứa quy tắc thay thế tệp.
-- Hai package có mật khẩu demo `3105`, trong đó một package là patch riêng tư.
+- Icon và hai ảnh preview cho CapCut Pro.
+- Một package `.3105`: CapCut Pro.
 - SHA-256 và kích thước package đã khai báo để kiểm tra khi tải.
 
 ## Nguồn wallpaper
