@@ -31,6 +31,19 @@ URL tương đối được tính từ vị trí của `sources.json`. URL HTTP,
 - Hai package có mật khẩu demo `3105`, trong đó một package là patch riêng tư.
 - SHA-256 và kích thước package đã khai báo để kiểm tra khi tải.
 
+## Nguồn wallpaper
+
+130 wallpaper trong `repositories/demo/repo.json` được đồng bộ từ catalog
+[SerStars/Nugget-Wallpapers](https://github.com/SerStars/Nugget-Wallpapers).
+Mỗi gói được khai báo với `kind: "wallpaper"`, ảnh preview nằm trong phần mô
+tả package và file `.tendies` được ghim vào một commit upstream bất biến. Sau
+khi tải, 3105 xác thực và đưa gói vào mục **Đã cài** để người dùng mở và áp dụng.
+
+Chạy `python3 scripts/sync_nugget_wallpapers.py` để cập nhật các wallpaper trong
+repo chính lên commit upstream mới nhất. Script giữ nguyên các patch `.3105`,
+thay danh sách wallpaper hiện tại và chỉ nhận file nằm trong commit GitHub đã
+ghim; URL ngoài commit bị bỏ qua để không làm yếu kiểm tra nguồn.
+
 ## Thêm package
 
 1. Đặt gói `.3105` trong thư mục `packages` của repository tương ứng.
@@ -39,6 +52,10 @@ URL tương đối được tính từ vị trí của `sources.json`. URL HTTP,
 4. Tính SHA-256 bằng `shasum -a 256 <package.3105>`.
 5. Khai báo dung lượng và dải iOS. Không cần nhập `packageID` hoặc
    `bundleIdentifiers`; ứng dụng đọc các thông tin này từ gói `.3105`.
+
+Wallpaper `.tendies` dùng `kind: "wallpaper"`. SHA-256 vẫn được khuyến nghị;
+ngoại lệ duy nhất là URL `SerStars/Nugget-Wallpapers` được ghim vào commit
+GitHub bất biến và tiếp tục qua bộ kiểm tra archive/descriptor của 3105.
 
 ## Xuống dòng trong nội dung
 
