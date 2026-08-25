@@ -52,6 +52,11 @@ ghim; URL ngoài commit bị bỏ qua để không làm yếu kiểm tra nguồn
 5. Khai báo dung lượng và dải iOS. Không cần nhập `packageID` hoặc
    `bundleIdentifiers`; ứng dụng đọc các thông tin này từ gói `.3105`.
 
+Package `.3105` có mật khẩu có thể khai báo thêm `"password": "..."` nếu chủ
+repo muốn chia sẻ công khai để ứng dụng tự mở khoá. Nếu không khai báo, 3105 sẽ
+yêu cầu người dùng liên hệ chủ repo và tự nhập mật khẩu. Mật khẩu không áp dụng
+cho package `wallpaper`.
+
 Wallpaper `.tendies` dùng `kind: "wallpaper"`. SHA-256 vẫn được khuyến nghị;
 ngoại lệ duy nhất là URL `SerStars/Nugget-Wallpapers` được ghim vào commit
 GitHub bất biến và tiếp tục qua bộ kiểm tra archive/descriptor của 3105.
