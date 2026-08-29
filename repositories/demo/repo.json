@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
-  "identifier": "com.yangjiii.3105",
-  "name": "3105 Repository",
-  "description": "Nguồn chính thức cho hệ thống repository của 3105.",
-  "icon": "assets/repository-icon.png",
+  "identifier": "com.owen.mod",
+  "name": "Owen Mod Repository",
+  "description": "Kho lưu trữ các bản Mod PUBG và tiện ích của Owen.",
+  "icon": "assets/repo-icon.png",
   "packages": [
     {
       "identifier": "pubg-mod-vip",
@@ -17,14 +17,14 @@
         "Application"
       ],
       "publishedAt": "2026-08-28T10:00:00Z",
-      "icon": "https://raw.githubusercontent.com/NgynKhoa/3105-repo/main/repositories/demo/assets/pubg-icon.png",
+      "icon": "assets/pubg-icon.png",
       "screenshots": [
-        "https://raw.githubusercontent.com/NgynKhoa/3105-repo/main/repositories/demo/assets/preview-first.png",
-        "https://raw.githubusercontent.com/NgynKhoa/3105-repo/main/repositories/demo/assets/preview-second.png",
-        "https://raw.githubusercontent.com/NgynKhoa/3105-repo/main/repositories/demo/assets/preview-third.png",
-        "https://raw.githubusercontent.com/NgynKhoa/3105-repo/main/repositories/demo/assets/preview-four.png"
+        "assets/preview-first.png",
+        "assets/preview-second.png",
+        "assets/preview-third.png",
+        "assets/preview-four.png"
       ],
-      "download": "https://raw.githubusercontent.com/NgynKhoa/3105-repo/main/repositories/demo/packages/MOD-PUBG-VIP.3105",
+      "download": "packages/MOD-PUBG-VIP.3105",
       "sha256": "93BF31443CC8550081F84636C62294BA89AF91BBAB467436D90F768CABA97E20",
       "size": 17991,
       "supportedOS": [
