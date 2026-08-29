@@ -1,7 +1,10 @@
 {
+  "schemaVersion": 1,
+  "identifier": "com.owen.mod",
+  "name": "Owen Mod Repository",
+  "description": "Kho lưu trữ các bản Mod PUBG và tiện ích của Owen.",
   "packages": [
     {
-      "identifier": "nugget-custom-71231",
       "name": "Pubg Mod",
       "author": "Owen",
       "version": "1.0.0",
