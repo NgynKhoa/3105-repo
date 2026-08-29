@@ -3,8 +3,10 @@
   "identifier": "com.owen.mod",
   "name": "Owen Mod Repository",
   "description": "Kho lưu trữ các bản Mod PUBG và tiện ích của Owen.",
+  "icon": "assets/repo-icon.png",
   "packages": [
     {
+      "identifier": "pubg-mod-vip",
       "name": "Pubg Mod",
       "author": "Owen",
       "version": "1.0.0",
