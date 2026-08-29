@@ -1,12 +1,12 @@
 {
   "schemaVersion": 1,
-  "identifier": "com.owen.mod",
-  "name": "Owen Mod Repository",
-  "description": "Kho lưu trữ các bản Mod PUBG và tiện ích của Owen.",
-  "icon": "assets/repo-icon.png",
+  "identifier": "com.yangjiii.3105",
+  "name": "3105 Repository",
+  "description": "Nguồn chính thức cho hệ thống repository của 3105.",
+  "icon": "assets/repository-icon.png",
   "packages": [
     {
-      "identifier": "pubg-mod-vip",
+      "identifier": "pubg-mod",
       "name": "Pubg Mod",
       "author": "Owen",
       "version": "1.0.0",
