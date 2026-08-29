@@ -6,7 +6,7 @@
   "icon": "assets/repository-icon.png",
   "packages": [
     {
-      "identifier": "pubg-mod",
+      "identifier": "pubg-mod-vip",
       "name": "Pubg Mod",
       "author": "Owen",
       "version": "1.0.0",
@@ -17,14 +17,14 @@
         "Application"
       ],
       "publishedAt": "2026-08-28T10:00:00Z",
-      "icon": "assets/pubg-icon.png",
+      "icon": "https://raw.githubusercontent.com/NgynKhoa/3105-repo/main/repositories/demo/assets/pubg-icon.png",
       "screenshots": [
-        "assets/preview-first.png",
-        "assets/preview-second.png",
-        "assets/preview-third.png",
-        "assets/preview-four.png"
+        "https://raw.githubusercontent.com/NgynKhoa/3105-repo/main/repositories/demo/assets/preview-first.png",
+        "https://raw.githubusercontent.com/NgynKhoa/3105-repo/main/repositories/demo/assets/preview-second.png",
+        "https://raw.githubusercontent.com/NgynKhoa/3105-repo/main/repositories/demo/assets/preview-third.png",
+        "https://raw.githubusercontent.com/NgynKhoa/3105-repo/main/repositories/demo/assets/preview-four.png"
       ],
-      "download": "packages/MOD-PUBG-VIP.3105",
+      "download": "https://raw.githubusercontent.com/NgynKhoa/3105-repo/main/repositories/demo/packages/MOD-PUBG-VIP.3105",
       "sha256": "93BF31443CC8550081F84636C62294BA89AF91BBAB467436D90F768CABA97E20",
       "size": 17991,
       "supportedOS": [
