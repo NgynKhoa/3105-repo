@@ -5391,6 +5391,52 @@
       ],
       "featured": false,
       "isPrivate": false
+    },
+    {
+      "identifier": "nugget-custom-71231",
+      "name": "PUBG Mod",
+      "author": "Owen",
+      "version": "1.0.0",
+      "summary": "Share Everything about Mod Pubg <3",
+      "description": "Mod Pubg Vip V11 file.\nXóa Mod cũ trước khi apply patch nhé",
+      "category": "Mod",
+      "tags": [
+        "Application"
+      ],
+      "publishedAt": "2026-08-21T10:00:00Z",
+      "icon": "assets/pubg.png",
+      "screenshots": [
+        "assets/preview-first.png",
+        "assets/preview-second.png",
+        "assets/preview-third.png",
+        "assets/preview-four.png"
+      ],
+      "download": "packages/MOD-PUBG-VIP.3105",
+      "sha256": "93BF31443CC8550081F84636C62294BA89AF91BBAB467436D90F768CABA97E20",
+      "size": 17991,
+      "supportedOS": [
+        {
+          "minimum": "17.0",
+          "maximum": "18.7.1"
+        },
+        {
+          "minimum": "26.0",
+          "maximum": "26.6.1"
+        },
+        {
+          "minimum": "27.0",
+          "maximum": "27.0",
+          "builds": [
+            "24A5355q",
+            "24A5370h",
+            "24A5380h",
+            "24A5390f"
+          ]
+        }
+      ],
+      "changelog": "Bản thử nghiệm đầu tiên",
+      "featured": true,
+      "isPrivate": false
     }
   ]
 }
