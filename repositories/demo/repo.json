@@ -18,7 +18,7 @@
         "MOD"
       ],
       "publishedAt": "2026-08-28T10:00:00Z",
-      "icon": "assets/pubg-icon.png",
+      "icon": "assets/test.png",
       "banner": "assets/banner.png",
       "screenshots": [
         "assets/preview-first.png",
@@ -54,66 +54,18 @@
       "isPrivate": false
     },
     {
-      "identifier": "owen-000",
-      "name": "👑 Pubg Mod VIP By TD",
-      "author": "@owenindahouse",
-      "version": "1.0.0",
-      "summary": "👑 PUBG VIP MOD • Phiên bản Premium TD",
-      "description": "👑 PUBG VIP BY TD\n\n✨ PHIÊN BẢN PREMIUM\n• BYPASS ONLINE\n• Mod và Aim Tùy Chỉnh\n• IPad View & Xe Nhanh và Nhiều Chức Năng Khác\n• Thường Xuyên Cập Nhật\n\n🔐 QUYỀN TRUY CẬP VIP\nGói này dành cho thành viên TD VIP.\n\n⚠️ LƯU Ý QUAN TRỌNG\n• Hãy xóa bản mod cũ trước khi áp dụng patch này.\n\n💬 HỖ TRỢ\nĐể được hỗ trợ và nhận thông tin cập nhật, hãy liên hệ @owenindahouse.\n\n❤️ Cảm ơn bạn đã ủng hộ",
-      "category": "Mod",
-      "tags": [
-        "MOD"
-      ],
-      "publishedAt": "2026-08-28T10:00:00Z",
-      "icon": "assets/vip-cabybara.png",
-      "banner": "assets/banner.png",
-      "screenshots": [
-        "assets/preview-first.png",
-        "assets/preview-second.png",
-        "assets/preview-third.png",
-        "assets/preview-four.png"
-      ],
-      "download": "packages/MOD-PUBG-VIP.3105",
-      "sha256": "93BF31443CC8550081F84636C62294BA89AF91BBAB467436D90F768CABA97E20",
-      "size": 17991,
-      "password": "0604",
-      "supportedOS": [
-        {
-          "minimum": "17.0",
-          "maximum": "18.7.1"
-        },
-        {
-          "minimum": "26.0",
-          "maximum": "26.6.1"
-        },
-        {
-          "minimum": "27.0",
-          "maximum": "27.0",
-          "builds": [
-            "24A5355q",
-            "24A5370h",
-            "24A5380h",
-            "24A5390f"
-          ]
-        }
-      ],
-      "changelog": "👑 v1.0.0 — Phiên bản VIP\n\n✨ Phát hành phiên bản VIP đầu tiên\n🔥 PUBG MOD Premium\n🔐 Gói VIP dành cho thành viên TD\n📱 Hỗ trợ các phiên bản iOS tương thích\n\n⚠️ Phiên bản đầu tiên — nhiều tính năng và cập nhật mới sẽ được bổ sung trong thời gian tới.",
-      "featured": false,
-      "isPrivate": false
-    },
-    {
-  "identifier": "owen-001",
-  "name": "👑 Demo",
+  "identifier": "owen-000",
+  "name": "👑 Pubg Mod VIP",
   "author": "@owenindahouse",
   "version": "1.0.0",
   "summary": "🔥 PREMIUM MOD • VIP EDITION • TD",
-  "description": "👑 PUBG VIP BY TD\n\n╭──────────────────────╮\n ✨ TÍNH NĂNG          \n╰──────────────────────╯\n\n🔥 BYPASS ONLINE\n🎯 AIM TÙY CHỈNH\n👁️ IPAD VIEW\n🚗 XE NHANH\n⚡ NHIỀU TÍNH NĂNG KHÁC\n🔄 THƯỜNG XUYÊN CẬP NHẬT\n\n╭──────────────────────╮\n 🔐 QUYỀN TRUY CẬP VIP \n╰──────────────────────╯\n\n👑 Gói này dành cho thành viên TD VIP.\n\n╭──────────────────────╮\n ⚠️ LƯU Ý QUAN TRỌNG  \n╰──────────────────────╯\n\n• Hãy xóa bản mod cũ trước khi áp dụng patch này.\n• Nên sao lưu dữ liệu trước khi cài đặt.\n\n╭──────────────────────╮\n 💬 HỖ TRỢ             \n╰──────────────────────╯\n\n@owenindahouse\n\n❤️ Cảm ơn bạn đã ủng hộ TD!",
+  "description": "👑 PUBG VIP BY TD\n\n╭──────────────────╮\n ✨ TÍNH NĂNG          \n╰──────────────────╯\n\n🔥 BYPASS ONLINE\n🎯 AIM TÙY CHỈNH\n👁️ IPAD VIEW\n🚗 XE NHANH\n⚡ NHIỀU TÍNH NĂNG KHÁC\n🔄 THƯỜNG XUYÊN CẬP NHẬT\n\n╭──────────────────╮\n 🔐 QUYỀN TRUY CẬP VIP \n╰──────────────────╯\n\n👑 Gói này dành cho thành viên TD VIP.\n\n╭──────────────────╮\n ⚠️ LƯU Ý QUAN TRỌNG  \n╰──────────────────╯\n\n• Hãy xóa bản mod cũ trước khi áp dụng patch này.\n• Nên sao lưu dữ liệu trước khi cài đặt.\n\n╭──────────────────╮\n 💬 HỖ TRỢ             \n╰──────────────────╯\n\n@owenindahouse\n\n❤️ Cảm ơn bạn đã ủng hộ TD!",
   "category": "Mod",
   "tags": [
     "MOD"
   ],
   "publishedAt": "2026-08-28T10:00:00Z",
-  "icon": "assets/test.png",
+  "icon": "assets/vip-cabybara.png",
   "banner": "assets/banner.png",
   "screenshots": [
     "assets/preview-first.png",
@@ -145,7 +97,7 @@
       ]
     }
   ],
-  "changelog": "👑 v1.0.0 — PHIÊN BẢN VIP\n\n╭──────────────────────╮\n ✨ PHÁT HÀNH          \n╰──────────────────────╯\n\n🔥 PUBG MOD PREMIUM\n🎯 AIM TÙY CHỈNH\n👁️ IPAD VIEW\n🚗 XE NHANH\n🔐 GÓI DÀNH CHO TD VIP\n\n╭──────────────────────╮\n 🚀 SẮP TỚI            \n╰──────────────────────╯\n\n✨ Nhiều tính năng mới sẽ được bổ sung.\n🔄 Tiếp tục cập nhật và tối ưu trong các phiên bản tiếp theo.\n\n❤️ Cảm ơn bạn đã ủng hộ TD!",
+  "changelog": "👑 v1.0.0 — PHIÊN BẢN VIP\n\n╭──────────────────╮\n ✨ PHÁT HÀNH          \n╰──────────────────╯\n\n🔥 PUBG MOD PREMIUM\n🎯 AIM TÙY CHỈNH\n👁️ IPAD VIEW\n🚗 XE NHANH\n🔐 GÓI DÀNH CHO TD VIP\n\n╭──────────────────╮\n 🚀 SẮP TỚI            \n╰──────────────────╯\n\n✨ Nhiều tính năng mới sẽ được bổ sung.\n🔄 Tiếp tục cập nhật và tối ưu trong các phiên bản tiếp theo.\n\n❤️ Cảm ơn bạn đã ủng hộ TD!",
   "featured": false,
   "isPrivate": false
     }
