@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "identifier": "com.owen.mod",
   "name": "Owen Mod Repository",
-  "description": "🎮 Kho lưu trữ các bản Mod PUBG và tiện ích của Owen.❤️",
+  "description": "🎮 Kho lưu trữ Mod PUBG & tiện ích iOS của Owen. 🔥 Cập nhật thường xuyên • Easy Install ❤️",
   "icon": "assets/repo-icon.png",
   "packages": [
     {
@@ -10,14 +10,15 @@
       "name": "Pubg Mod Free By TD",
       "author": "@owenindahouse",
       "version": "1.0.0",
-      "summary": "Share Mod Pubg From TD <3",
-      "description": "Mod Pubg Vip V11 file.\nXóa Mod cũ trước khi apply patch nhé",
+      "summary": "🔥 PUBG VIP MOD • Free Trial • Premium Experience",
+      "description": "🔥 PUBG MOD FREE BY TD\n\n✨ FEATURES\n• Premium PUBG modification\n• Optimized for supported iOS versions\n• Easy installation\n• Regular updates\n\n📱 SUPPORTED iOS\n• iOS 17+\n• iOS 26+\n• iOS 27 Beta\n\n⚠️ IMPORTANT\n• Remove the previous mod before applying this patch.\n• Backup your data before installation.\n\n💬 SUPPORT\nIf you encounter any problems, contact @owenindahouse.\n\n❤️ Enjoy the mod and stay tuned for future updates!",
       "category": "Mod",
       "tags": [
-        "Application"
+        "MOD"
       ],
       "publishedAt": "2026-08-28T10:00:00Z",
       "icon": "assets/pubg-icon.png",
+      "banner": "assets/banner.png",
       "screenshots": [
         "assets/preview-first.png",
         "assets/preview-second.png",
@@ -47,7 +48,7 @@
           ]
         }
       ],
-      "changelog": "Bản thử nghiệm đầu tiên, nên có lỗi gì mọi người liên hệ qua mình nhé @owenindahouse, test testtt",
+      "changelog": "🎉 v1.0.0 — Initial Release\n\n✨ First public test release\n🔥 PUBG MOD package\n📱 Added support for supported iOS versions\n🛠️ Please report any issues to @owenindahouse\n\n⚠️ This is an early test version and may contain bugs.",
       "featured": true,
       "isPrivate": false
     },
@@ -56,14 +57,15 @@
       "name": "Pubg Mod VIP By TD",
       "author": "@owenindahouse",
       "version": "1.0.0",
-      "summary": "MOD PUBG cho các thành viên BOX VIP của TD",
-      "description": "Up thế thôi chứ chưa có Vip đâuuu",
+      "summary": "👑 PUBG VIP MOD • TD Premium Edition",
+      "description": "👑 PUBG VIP BY TD\n\n✨ PREMIUM EDITION\n• Exclusive VIP package\n• Premium PUBG modification\n• Optimized installation\n• Regular updates\n\n📱 SUPPORTED iOS\n• iOS 17+\n• iOS 26+\n• iOS 27 Beta\n\n🔐 VIP ACCESS\nThis package is intended for TD VIP members.\n\n⚠️ IMPORTANT\n• Remove the previous mod before applying this patch.\n• Backup your data before installation.\n\n💬 SUPPORT\nFor support and updates, contact @owenindahouse.\n\n❤️ Thank you for supporting TD!",
       "category": "Mod",
       "tags": [
-        "Application"
+        "MOD"
       ],
       "publishedAt": "2026-08-28T10:00:00Z",
       "icon": "assets/vip-cabybara.png",
+      "banner": "assets/banner.png",
       "screenshots": [
         "assets/preview-first.png",
         "assets/preview-second.png",
@@ -94,9 +96,10 @@
           ]
         }
       ],
-      "changelog": "UP thế thôi chứ không có Vip đâu",
+      "changelog": "👑 v1.0.0 — VIP Edition\n\n✨ Initial VIP release\n🔥 Premium PUBG MOD\n🔐 VIP package for TD members\n📱 Added support for supported iOS versions\n\n⚠️ Early release — more features and updates coming soon.",
       "featured": false,
       "isPrivate": false
     }
   ]
 }
+
