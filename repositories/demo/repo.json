@@ -2,7 +2,7 @@
 {
   "schemaVersion": 1,
   "identifier": "com.owen.mod",
-  "name": "Kho Mod Owen",
+  "name": "Owen Mod Repository",
   "description": "🎮 Kho lưu trữ Mod PUBG & tiện ích iOS của Owen. 🔥 Cập nhật thường xuyên • Mod Premium • Dễ cài đặt ❤️",
   "icon": "assets/repo-icon.png",
   "packages": [
@@ -19,7 +19,7 @@
       ],
       "publishedAt": "2026-08-28T10:00:00Z",
       "icon": "assets/pubg-icon.png",
-      "banner": "assets/pubg-banner.png",
+      "banner": "assets/banner.png",
       "screenshots": [
         "assets/preview-first.png",
         "assets/preview-second.png",
@@ -66,7 +66,7 @@
       ],
       "publishedAt": "2026-08-28T10:00:00Z",
       "icon": "assets/vip-cabybara.png",
-      "banner": "assets/pubg-banner.png",
+      "banner": "assets/banner.png",
       "screenshots": [
         "assets/preview-first.png",
         "assets/preview-second.png",
