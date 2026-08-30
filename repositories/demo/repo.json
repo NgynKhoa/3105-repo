@@ -57,7 +57,7 @@
       "author": "@owenindahouse",
       "version": "1.0.0",
       "summary": "MOD PUBG cho các thành viên BOX VIP của TD",
-      "description": "Mod Pubg Vip V11 file.\nXóa Mod cũ trước khi apply patch nhé",
+      "description": "Up thế thôi chứ chưa có Vip đâuuu",
       "category": "Mod",
       "tags": [
         "Application"
@@ -93,8 +93,8 @@
           ]
         }
       ],
-      "changelog": "Bản thử nghiệm đầu tiên",
-      "featured": true,
+      "changelog": "UP thế thôi chứ không có Vip đâu",
+      "featured": false,
       "isPrivate": true
     }
   ]
