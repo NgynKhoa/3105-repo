@@ -27,6 +27,7 @@
       "download": "packages/PATCH-MOD-FREE-BY-TD.3105",
       "sha256": "93BF31443CC8550081F84636C62294BA89AF91BBAB467436D90F768CABA97E20",
       "size": 17991,
+      "password": "2752",
       "supportedOS": [
         {
           "minimum": "17.0",
@@ -73,6 +74,7 @@
       "download": "packages/",
       "sha256": "93BF31443CC8550081F84636C62294BA89AF91BBAB467436D90F768CABA97E20",
       "size": 17991,
+      "password": "0604",
       "supportedOS": [
         {
           "minimum": "17.0",
