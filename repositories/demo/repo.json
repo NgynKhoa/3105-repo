@@ -2,15 +2,15 @@
   "schemaVersion": 1,
   "identifier": "com.owen.mod",
   "name": "Owen Mod Repository",
-  "description": "Kho lưu trữ các bản Mod PUBG và tiện ích của Owen.",
+  "description": "🎮 Kho lưu trữ các bản Mod PUBG và tiện ích của Owen.❤️",
   "icon": "assets/repo-icon.png",
   "packages": [
     {
-      "identifier": "pubg-mod-vip",
-      "name": "Pubg Mod",
-      "author": "Owen",
+      "identifier": "owen-trial",
+      "name": "Pubg Mod Free By TD",
+      "author": "@owenindahouse",
       "version": "1.0.0",
-      "summary": "Share Everything about Mod Pubg <3",
+      "summary": "Share Mod Pubg From TD <3",
       "description": "Mod Pubg Vip V11 file.\nXóa Mod cũ trước khi apply patch nhé",
       "category": "Mod",
       "tags": [
@@ -47,9 +47,55 @@
           ]
         }
       ],
-      "changelog": "Bản thử nghiệm đầu tiên",
+      "changelog": "Bản thử nghiệm đầu tiên, nên có lỗi gì mọi người liên hệ qua mình nhé @owenindahouse",
       "featured": true,
       "isPrivate": false
+    },
+    {
+      "identifier": "owen-000",
+      "name": "Pubg Mod VIP By TD",
+      "author": "@owenindahouse",
+      "version": "1.0.0",
+      "summary": "MOD PUBG cho các thành viên BOX VIP của TD",
+      "description": "Mod Pubg Vip V11 file.\nXóa Mod cũ trước khi apply patch nhé",
+      "category": "Mod",
+      "tags": [
+        "Application"
+      ],
+      "publishedAt": "2026-08-28T10:00:00Z",
+      "icon": "assets/vip-cabybara.png",
+      "screenshots": [
+        "assets/preview-first.png",
+        "assets/preview-second.png",
+        "assets/preview-third.png",
+        "assets/preview-four.png"
+      ],
+      "download": "packages/MOD-PUBG-VIP.3105",
+      "sha256": "93BF31443CC8550081F84636C62294BA89AF91BBAB467436D90F768CABA97E20",
+      "size": 17991,
+      "supportedOS": [
+        {
+          "minimum": "17.0",
+          "maximum": "18.7.1"
+        },
+        {
+          "minimum": "26.0",
+          "maximum": "26.6.1"
+        },
+        {
+          "minimum": "27.0",
+          "maximum": "27.0",
+          "builds": [
+            "24A5355q",
+            "24A5370h",
+            "24A5380h",
+            "24A5390f"
+          ]
+        }
+      ],
+      "changelog": "Bản thử nghiệm đầu tiên",
+      "featured": true,
+      "isPrivate": true
     }
   ]
 }
