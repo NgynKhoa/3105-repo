@@ -103,7 +103,7 @@
     },
     {
   "identifier": "owen-001",
-  "name": "👑 PUBG VIP By TD",
+  "name": "👑 Demo",
   "author": "@owenindahouse",
   "version": "1.0.0",
   "summary": "🔥 PREMIUM MOD • VIP EDITION • TD",
@@ -113,8 +113,8 @@
     "MOD"
   ],
   "publishedAt": "2026-08-28T10:00:00Z",
-  "icon": "https://res.cloudinary.com/demo/image/upload/fl_awebp,q_40/bored_animation.webp",
-  "banner": "https://res.cloudinary.com/demo/image/upload/fl_awebp,q_40/bored_animation.webp",
+  "icon": "assets/test.png",
+  "banner": "assets/banner.png",
   "screenshots": [
     "assets/preview-first.png",
     "assets/preview-second.png",
