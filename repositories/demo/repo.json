@@ -47,7 +47,7 @@
           ]
         }
       ],
-      "changelog": "Bản thử nghiệm đầu tiên, nên có lỗi gì mọi người liên hệ qua mình nhé @owenindahouse",
+      "changelog": "Bản thử nghiệm đầu tiên, nên có lỗi gì mọi người liên hệ qua mình nhé @owenindahouse, test testtt",
       "featured": true,
       "isPrivate": false
     },
@@ -96,7 +96,7 @@
       ],
       "changelog": "UP thế thôi chứ không có Vip đâu",
       "featured": false,
-      "isPrivate": true
+      "isPrivate": false
     }
   ]
 }
