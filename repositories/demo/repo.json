@@ -113,8 +113,8 @@
         "MOD"
       ],
       "publishedAt": "2026-08-28T10:00:00Z",
-      "icon": "assets/pubg-icon.png",
-      "banner": "assets/test.gif",
+      "icon": "https://res.cloudinary.com/demo/image/upload/fl_awebp,q_40/bored_animation.webp",
+      "banner": "https://res.cloudinary.com/demo/image/upload/fl_awebp,q_40/bored_animation.webp",
       "screenshots": [
         "assets/preview-first.png",
         "assets/preview-second.png",
