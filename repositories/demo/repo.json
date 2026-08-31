@@ -148,6 +148,7 @@
       "download": "packages/HDR_120FPS.3105",
       "sha256": "C6A6D2A32925B1BC8F844A3736DE7E3056EE06935E49836F1C89132A25851372",
       "size": 8200,
+      "password": "2752",
       "supportedOS": [
         {
           "minimum": "17.0",
