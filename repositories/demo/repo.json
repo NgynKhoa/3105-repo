@@ -1,9 +1,34 @@
-
 {
+  "shared_os": [
+    {
+      "minimum": "17.0",
+      "maximum": "18.7.1"
+    },
+    {
+      "minimum": "26.0",
+      "maximum": "26.6.1"
+    },
+    {
+      "minimum": "27.0",
+      "maximum": "27.0",
+      "builds": [
+        "24A5355q",
+        "24A5370h",
+        "24A5380h",
+        "24A5390f"
+      ]
+    }
+  ],
+  "shared_screens": [
+    "assets/preview-first.png",
+    "assets/preview-second.png",
+    "assets/preview-third.png",
+    "assets/preview-four.png"
+  ],
   "schemaVersion": 1,
   "identifier": "com.owen.mod",
   "name": "Owen Mod Repository",
-  "description": "🎮 Kho lưu trữ Mod PUBG & tiện ích iOS của Owen. 🔥 Cập nhật thường xuyên • Mod Premium • Dễ cài đặt ❤️",
+  "description": "🎮 Kho lưu trữ Mod & tiện ích iOS của Owen. 🔥 Cập nhật thường xuyên ❤️",
   "icon": "assets/repo-icon.png",
   "packages": [
     {
@@ -11,8 +36,7 @@
       "name": "🔥 Pubg Mod Free",
       "author": "@owenindahouse",
       "version": "1.0.0",
-      "summary": "✨ PUBG VIP MOD • Bản dùng thử miễn phí • Trải nghiệm Premium",
-      "description": "🔥 PUBG MOD FREE BY TD\n\n✨ TÍNH NĂNG\n• Mod Skin \n• Aim Bot & Tùy Chỉnh Súng\n• Dễ Dàng Cài Đặt\n• Thường Xuyên Cập Nhật\n\n⚠️ LƯU Ý QUAN TRỌNG\n• Hãy xóa bản mod cũ trước khi áp dụng patch này.\n\n💬 HỖ TRỢ\nNếu gặp bất kỳ vấn đề nào, hãy liên hệ @owenindahouse.\n\n❤️ Chúc bạn chơi game vui vẻ và hãy đón chờ những bản cập nhật tiếp theo!",
+      "summary": "✨ PUBG MOD • Bản dùng thử miễn phí • Trải nghiệm Premium",
       "category": "Mod",
       "tags": [
         "MOD"
@@ -49,61 +73,58 @@
           ]
         }
       ],
-      "changelog": "🎉 v1.0.0 — Phát hành lần đầu\n\n✨ Bản thử nghiệm công khai đầu tiên\n🔥 Gói PUBG MOD\n📱 Hỗ trợ các phiên bản iOS tương thích\n🛠️ Vui lòng báo lỗi cho @owenindahouse nếu gặp sự cố\n\n⚠️ Đây là phiên bản thử nghiệm ban đầu và có thể vẫn còn một số lỗi.",
       "featured": true,
-      "isPrivate": false
+      "isPrivate": false,
+      "description": "🔥 PUBG MOD FREE BY TD\n\n✨ TÍNH NĂNG\n• Mod Skin \n• Aim Bot & Tùy Chỉnh Súng\n• Dễ Dàng Cài Đặt\n• Thường Xuyên Cập Nhật\n\n⚠️ LƯU Ý QUAN TRỌNG\n• Hãy xóa bản mod cũ trước khi áp dụng patch này.\n\n💬 HỖ TRỢ\nNếu gặp bất kỳ vấn đề nào, hãy liên hệ @owenindahouse.\n\n❤️ Chúc bạn chơi game vui vẻ và hãy đón chờ những bản cập nhật tiếp theo!\n",
+      "changelog": "\n🎉 v1.0.0 — Phát hành lần đầu\n✨ Bản thử nghiệm công khai đầu tiên\n🛠️ Vui lòng báo lỗi cho @owenindahouse nếu gặp sự cố\n⚠️ Đây là phiên bản thử nghiệm ban đầu và có thể vẫn còn một số lỗi.\n"
     },
     {
-  "identifier": "owen-000",
-  "name": "👑 Pubg Mod VIP",
-  "author": "@owenindahouse",
-  "version": "1.0.0",
-  "summary": "✨ PREMIUM MOD • VIP EDITION • TD",
-  "description": "💎 DEMO, KO CÓ VIP\n\n╭──────────────────╮\n ✨ TÍNH NĂNG          \n╰──────────────────╯\n🔥 BYPASS ONLINE\n🎯 AIM TÙY CHỈNH\n👁️ IPAD VIEW\n🚗 XE NHANH\n⚡ NHIỀU TÍNH NĂNG KHÁC\n🔄 THƯỜNG XUYÊN CẬP NHẬT\n\n╭──────────────────╮\n 🔐 QUYỀN TRUY CẬP VIP \n╰──────────────────╯\n👑 Gói này dành cho thành viên TD VIP.\n\n╭──────────────────╮\n ⚠️ LƯU Ý QUAN TRỌNG  \n╰──────────────────╯\n• Hãy xóa bản mod cũ trước khi áp dụng patch này.\n• Nên sao lưu dữ liệu trước khi cài đặt.\n\n╭──────────────────╮\n 💬 HỖ TRỢ             \n╰──────────────────╯\n@owenindahouse\n\n❤️ Cảm ơn bạn đã ủng hộ!",
-  "category": "Mod",
-  "tags": [
-    "MOD"
-  ],
-  "publishedAt": "2026-08-28T10:00:00Z",
-  "icon": "assets/vip-cabybara.png",
-  "banner": "assets/banner.png",
-  "screenshots": [
-    "assets/preview-first.png",
-    "assets/preview-second.png",
-    "assets/preview-third.png",
-    "assets/preview-four.png"
-  ],
-  "download": "packages/MOD-PUBG-VIP.3105",
-  "sha256": "93BF31443CC8550081F84636C62294BA89AF91BBAB467436D90F768CABA97E20",
-  "size": 17991,
-  "password": "0604",
-  "supportedOS": [
-    {
-      "minimum": "17.0",
-      "maximum": "18.7.1"
-    },
-    {
-      "minimum": "26.0",
-      "maximum": "26.6.1"
-    },
-    {
-      "minimum": "27.0",
-      "maximum": "27.0",
-      "builds": [
-        "24A5355q",
-        "24A5370h",
-        "24A5380h",
-        "24A5390f"
-      ]
-    }
-  ],
-  "changelog": "\n╭──────────────────╮\n ✨ PHÁT HÀNH          \n╰──────────────────╯\n🔥 PUBG MOD PREMIUM\n🎯 AIM TÙY CHỈNH\n👁️ IPAD VIEW\n🚗 XE NHANH\n🔐 GÓI DÀNH CHO TD VIP\n\n╭──────────────────╮\n 🚀 SẮP TỚI            \n╰──────────────────╯\n✨ Nhiều tính năng mới sẽ được bổ sung.\n🔄 Tiếp tục cập nhật và tối ưu trong các phiên bản tiếp theo.\n\n❤️ Cảm ơn bạn đã ủng hộ!",
-  "featured": false,
-  "isPrivate": false
+      "identifier": "owen-000",
+      "name": "👑 Pubg Mod VIP",
+      "author": "@owenindahouse",
+      "version": "1.0.0",
+      "summary": "✨ PREMIUM MOD • VIP EDITION • TD",
+      "password": "0604",
+      "category": "Mod",
+      "tags": [
+        "MOD"
+      ],
+      "publishedAt": "2026-08-28T10:00:00Z",
+      "icon": "assets/vip-cabybara.png",
+      "banner": "assets/banner.png",
+      "screenshots": [
+        "assets/preview-first.png",
+        "assets/preview-second.png",
+        "assets/preview-third.png",
+        "assets/preview-four.png"
+      ],
+      "download": "packages/MOD-PUBG-VIP.3105",
+      "sha256": "93BF31443CC8550081F84636C62294BA89AF91BBAB467436D90F768CABA97E20",
+      "size": 17991,
+      "supportedOS": [
+        {
+          "minimum": "17.0",
+          "maximum": "18.7.1"
+        },
+        {
+          "minimum": "26.0",
+          "maximum": "26.6.1"
+        },
+        {
+          "minimum": "27.0",
+          "maximum": "27.0",
+          "builds": [
+            "24A5355q",
+            "24A5370h",
+            "24A5380h",
+            "24A5390f"
+          ]
+        }
+      ],
+      "featured": false,
+      "isPrivate": false,
+      "description": "💎 DEMO, KO CÓ VIP\n\n╭──────────────────╮\n ✨ TÍNH NĂNG          \n╰──────────────────╯\n🔥 BYPASS ONLINE\n🎯 AIM TÙY CHỈNH\n👁️ IPAD VIEW\n🚗 XE NHANH\n⚡ NHIỀU TÍNH NĂNG KHÁC\n\n╭──────────────────╮\n 🔐 QUYỀN TRUY CẬP VIP \n╰──────────────────╯\n👑 Gói này dành cho thành viên TD VIP.\n\n╭──────────────────╮\n ⚠️ LƯU Ý QUAN TRỌNG  \n╰──────────────────╯\n• Hãy xóa bản mod cũ trước khi áp dụng patch này.\n• Nên sao lưu dữ liệu trước khi cài đặt.\n\n╭──────────────────╮\n 💬 HỖ TRỢ             \n╰──────────────────╯\n@owenindahouse\n\n❤️ Cảm ơn bạn đã ủng hộ!\n",
+      "changelog": "╭──────────────────╮\n ✨ PHÁT HÀNH          \n╰──────────────────╯\n\n🔐 GÓI DÀNH CHO THÀNH VIÊN VIP\n\n╭──────────────────╮\n 🚀 SẮP TỚI            \n╰──────────────────╯\n✨ Nhiều tính năng mới sẽ được bổ sung.\n🔄 Tiếp tục cập nhật và tối ưu trong các phiên bản tiếp theo.\n\n❤️ Cảm ơn bạn đã ủng hộ!\n"
     }
   ]
 }
-
-
-
-
