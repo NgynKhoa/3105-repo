@@ -171,6 +171,102 @@
       "isPrivate": false,
       "description": "\n⚠️ LƯU Ý QUAN TRỌNG\n• Sau khi apply Patch vào game không được thay đổi phần ĐỒ HỌA.\n• Muốn về gốc chỉ cần thay đổi ĐỒ HỌA\n💬 HỖ TRỢ\nNếu gặp bất kỳ vấn đề nào, hãy liên hệ @owenindahouse.\n\n❤️ Chúc bạn chơi game vui vẻ và đón chờ những bản cập nhật tiếp theo!\n",
       "changelog": "\n🛠️ Vui lòng báo lỗi cho @owenindahouse nếu gặp sự cố\n"
+    },
+    {
+      "identifier": "owen-003",
+      "name": "👑 Pubg Mod For Global",
+      "author": "@owenindahouse",
+      "version": "1.0.0",
+      "summary": "✨ PREMIUM MOD • VIP EDITION • TD",
+      "password": "2752",
+      "category": "Mod",
+      "tags": [
+        "MOD"
+      ],
+      "publishedAt": "2026-08-28T10:00:00Z",
+      "icon": "assets/global/pubg_global.png",
+      "banner": "assets/banner.png",
+      "screenshots": [
+        "assets/preview-first.png",
+        "assets/preview-second.png",
+        "assets/preview-third.png",
+        "assets/preview-four.png"
+      ],
+      "download": "packages/MOD-PUBG-VIP.3105",
+      "sha256": "7D6FFE7FC3F9EB999B30199263B25AE23ECF3CA89A2845E40B392814915D0F9E",
+      "size": 18082,
+      "supportedOS": [
+        {
+          "minimum": "17.0",
+          "maximum": "18.7.1"
+        },
+        {
+          "minimum": "26.0",
+          "maximum": "26.6.1"
+        },
+        {
+          "minimum": "27.0",
+          "maximum": "27.0",
+          "builds": [
+            "24A5355q",
+            "24A5370h",
+            "24A5380h",
+            "24A5390f"
+          ]
+        }
+      ],
+      "featured": false,
+      "isPrivate": false,
+      "description": "💎 PREMIUM MOD\n\n╭──────────────────╮\n ✨ FEATURES         \n╰──────────────────╯\n🔥 BYPASS ONLINE\n🎯 AIM BOT\n👁️ IPAD VIEW\n🚗 INCREASE SPEED CAR\n⚡ ETC...\n\n╭──────────────────╮\n ⚠️ WARNING  \n╰──────────────────╯\n• Delete the old mod before applying this patch.\n• Backup your data before installing.\n\n╭──────────────────╮\n 💬 FOR SUPPORT            \n╰──────────────────╯\n@owenindahouse\n",
+      "changelog": "\n╭──────────────────╮\n 🚀 FUTURE UPDATE            \n╰──────────────────╯\n✨ Many new features will be added.\n🔄 Continuing updates and optimizations in future versions.\n\n❤️ Thank you for your support!\n"
+    },
+    {
+      "identifier": "owen-004",
+      "name": "👑 Pubg Mod For Kr",
+      "author": "@owenindahouse",
+      "version": "1.0.0",
+      "summary": "✨ PREMIUM MOD • VIP EDITION • TD",
+      "password": "2752",
+      "category": "Mod",
+      "tags": [
+        "MOD"
+      ],
+      "publishedAt": "2026-08-28T10:00:00Z",
+      "icon": "assets/kr/pubg_kr.png",
+      "banner": "assets/banner.png",
+      "screenshots": [
+        "assets/preview-first.png",
+        "assets/preview-second.png",
+        "assets/preview-third.png",
+        "assets/preview-four.png"
+      ],
+      "download": "packages/MOD-PUBG-VIP.3105",
+      "sha256": "A063B566541FEA3654A2E0EF1955792D8A01E8B8AFE046D298E3D24C58EBDF9A",
+      "size": 18084,
+      "supportedOS": [
+        {
+          "minimum": "17.0",
+          "maximum": "18.7.1"
+        },
+        {
+          "minimum": "26.0",
+          "maximum": "26.6.1"
+        },
+        {
+          "minimum": "27.0",
+          "maximum": "27.0",
+          "builds": [
+            "24A5355q",
+            "24A5370h",
+            "24A5380h",
+            "24A5390f"
+          ]
+        }
+      ],
+      "featured": false,
+      "isPrivate": false,
+      "description": "💎 PREMIUM MOD\n\n╭──────────────────╮\n ✨ FEATURES         \n╰──────────────────╯\n🔥 BYPASS ONLINE\n🎯 AIM BOT\n👁️ IPAD VIEW\n🚗 INCREASE SPEED CAR\n⚡ ETC...\n\n╭──────────────────╮\n ⚠️ WARNING  \n╰──────────────────╯\n• Delete the old mod before applying this patch.\n• Backup your data before installing.\n\n╭──────────────────╮\n 💬 FOR SUPPORT            \n╰──────────────────╯\n@owenindahouse\n",
+      "changelog": "\n╭──────────────────╮\n 🚀 FUTURE UPDATE            \n╰──────────────────╯\n✨ Many new features will be added.\n🔄 Continuing updates and optimizations in future versions.\n\n❤️ Thank you for your support!\n"
     }
   ]
 }
