@@ -1,0 +1,132 @@
+# ==========================================
+# KHU VỰC ĐỊNH NGHĨA DÙNG CHUNG (Tái sử dụng)
+# ==========================================
+shared_os: &os_rules
+  - minimum: "17.0"
+    maximum: "18.7.1"
+  - minimum: "26.0"
+    maximum: "26.6.1"
+  - minimum: "27.0"
+    maximum: "27.0"
+    builds: ["24A5355q", "24A5370h", "24A5380h", "24A5390f"]
+
+shared_screens: &screens
+  - assets/preview-first.png
+  - assets/preview-second.png
+  - assets/preview-third.png
+  - assets/preview-four.png
+
+# ==========================================
+# THÔNG TIN CHUNG CỦA REPO
+# ==========================================
+schemaVersion: 1
+identifier: com.owen.mod
+name: Owen Mod Repository
+description: "🎮 Kho lưu trữ Mod & tiện ích iOS của Owen. 🔥 Cập nhật thường xuyên ❤️"
+icon: assets/repo-icon.png
+
+# ==========================================
+# DANH SÁCH PACKAGES
+# ==========================================
+packages:
+  - identifier: owen-trial
+    name: "🔥 Pubg Mod Free"
+    author: "@owenindahouse"
+    version: "1.0.0"
+    summary: "✨ PUBG MOD • Bản dùng thử miễn phí • Trải nghiệm Premium"
+    category: Mod
+    tags: [MOD]
+    publishedAt: "2026-08-28T10:00:00Z"
+    icon: assets/test.png
+    banner: assets/banner.png
+    screenshots: *screens
+    download: packages/MOD-PUBG-VIP.3105
+    sha256: 93BF31443CC8550081F84636C62294BA89AF91BBAB467436D90F768CABA97E20
+    size: 17991
+    supportedOS: *os_rules
+    featured: true
+    isPrivate: false
+    description: |
+      🔥 PUBG MOD FREE BY TD
+
+      ✨ TÍNH NĂNG
+      • Mod Skin 
+      • Aim Bot & Tùy Chỉnh Súng
+      • Dễ Dàng Cài Đặt
+      • Thường Xuyên Cập Nhật
+
+      ⚠️ LƯU Ý QUAN TRỌNG
+      • Hãy xóa bản mod cũ trước khi áp dụng patch này.
+
+      💬 HỖ TRỢ
+      Nếu gặp bất kỳ vấn đề nào, hãy liên hệ @owenindahouse.
+
+      ❤️ Chúc bạn chơi game vui vẻ và hãy đón chờ những bản cập nhật tiếp theo!
+    changelog: |
+
+      🎉 v1.0.0 — Phát hành lần đầu
+      ✨ Bản thử nghiệm công khai đầu tiên
+      🛠️ Vui lòng báo lỗi cho @owenindahouse nếu gặp sự cố
+      ⚠️ Đây là phiên bản thử nghiệm ban đầu và có thể vẫn còn một số lỗi.
+
+  - identifier: owen-000
+    name: "👑 Pubg Mod VIP"
+    author: "@owenindahouse"
+    version: "1.0.0"
+    summary: "✨ PREMIUM MOD • VIP EDITION • TD"
+    password: "0604"
+    category: Mod
+    tags: [MOD]
+    publishedAt: "2026-08-28T10:00:00Z"
+    icon: assets/vip-cabybara.png
+    banner: assets/banner.png
+    screenshots: *screens
+    download: packages/MOD-PUBG-VIP.3105
+    sha256: 93BF31443CC8550081F84636C62294BA89AF91BBAB467436D90F768CABA97E20
+    size: 17991
+    supportedOS: *os_rules
+    featured: false
+    isPrivate: false
+    description: |
+      💎 DEMO, KO CÓ VIP
+
+      ╭──────────────────╮
+       ✨ TÍNH NĂNG          
+      ╰──────────────────╯
+      🔥 BYPASS ONLINE
+      🎯 AIM TÙY CHỈNH
+      👁️ IPAD VIEW
+      🚗 XE NHANH
+      ⚡ NHIỀU TÍNH NĂNG KHÁC
+
+      ╭──────────────────╮
+       🔐 QUYỀN TRUY CẬP VIP 
+      ╰──────────────────╯
+      👑 Gói này dành cho thành viên TD VIP.
+
+      ╭──────────────────╮
+       ⚠️ LƯU Ý QUAN TRỌNG  
+      ╰──────────────────╯
+      • Hãy xóa bản mod cũ trước khi áp dụng patch này.
+      • Nên sao lưu dữ liệu trước khi cài đặt.
+
+      ╭──────────────────╮
+       💬 HỖ TRỢ             
+      ╰──────────────────╯
+      @owenindahouse
+
+      ❤️ Cảm ơn bạn đã ủng hộ!
+    changelog: |
+      ╭──────────────────╮
+       ✨ PHÁT HÀNH          
+      ╰──────────────────╯
+
+      🔐 GÓI DÀNH CHO THÀNH VIÊN VIP
+
+      ╭──────────────────╮
+       🚀 SẮP TỚI            
+      ╰──────────────────╯
+      ✨ Nhiều tính năng mới sẽ được bổ sung.
+      🔄 Tiếp tục cập nhật và tối ưu trong các phiên bản tiếp theo.
+
+      ❤️ Cảm ơn bạn đã ủng hộ!

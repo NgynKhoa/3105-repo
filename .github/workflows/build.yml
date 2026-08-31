@@ -3,7 +3,7 @@ name: Auto Convert YAML to JSON
 on:
   push:
     paths:
-      - "repo.yml"
+      - "repositories/demo/repo.yml"
 
 jobs:
   convert-and-commit:
@@ -16,14 +16,14 @@ jobs:
         run: |
           python3 -m pip install pyyaml
 
-      - name: Dịch file repo.yml sang repo.json
+      - name: Dịch file repo.yml sang repo.json trong repositories/demo
         run: |
-          python3 -c "import yaml, json; json.dump(yaml.safe_load(open('repo.yml', encoding='utf-8')), open('repo.json', 'w', encoding='utf-8'), ensure_ascii=False, indent=2)"
+          python3 -c "import yaml, json; json.dump(yaml.safe_load(open('repositories/demo/repo.yml', encoding='utf-8')), open('repositories/demo/repo.json', 'w', encoding='utf-8'), ensure_ascii=False, indent=2)"
 
-      - name: Tự động commit và push repo.json lên Repo
+      - name: Tự động commit và push repo.json
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add repo.json
-          git commit -m "chore: auto-build repo.json from repo.yml [skip ci]" || exit 0
+          git add repositories/demo/repo.json
+          git commit -m "chore: auto-build demo repo.json from repo.yml [skip ci]" || exit 0
           git push
