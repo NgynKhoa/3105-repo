@@ -140,10 +140,8 @@
       "icon": "assets/hdr_120/ngong.png",
       "banner": "assets/banner.png",
       "screenshots": [
-        "assets/preview-first.png",
-        "assets/preview-second.png",
-        "assets/preview-third.png",
-        "assets/preview-four.png"
+        "assets/hdr_120/before.png",
+        "assets/hdr_120/after.png"
       ],
       "download": "packages/HDR_120FPS.3105",
       "sha256": "C6A6D2A32925B1BC8F844A3736DE7E3056EE06935E49836F1C89132A25851372",
@@ -171,7 +169,7 @@
       ],
       "featured": true,
       "isPrivate": false,
-      "description": "\n⚠️ LƯU Ý QUAN TRỌNG\n• Sau khi apply Patch vào game không được thay đổi phần ĐỒ HỌA.\n• Muốn về gốc chỉ cần thay đổi ĐỒ HỌA\n💬 HỖ TRỢ\nNếu gặp bất kỳ vấn đề nào, hãy liên hệ @owenindahouse.\n\n❤️ Chúc bạn chơi game vui vẻ!\n",
+      "description": "\n⚠️ LƯU Ý QUAN TRỌNG\n• Sau khi apply Patch vào game không được thay đổi phần ĐỒ HỌA.\n• Muốn về gốc chỉ cần thay đổi ĐỒ HỌA\n💬 HỖ TRỢ\nNếu gặp bất kỳ vấn đề nào, hãy liên hệ @owenindahouse.\n\n❤️ Chúc bạn chơi game vui vẻ và đón chờ những bản cập nhật tiếp theo!\n",
       "changelog": "\n🛠️ Vui lòng báo lỗi cho @owenindahouse nếu gặp sự cố\n"
     }
   ]
