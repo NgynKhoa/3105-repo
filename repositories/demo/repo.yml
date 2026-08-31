@@ -10,12 +10,6 @@ shared_os: &os_rules
     maximum: "27.0"
     builds: ["24A5355q", "24A5370h", "24A5380h", "24A5390f"]
 
-shared_screens: &screens
-  - assets/preview-first.png
-  - assets/preview-second.png
-  - assets/preview-third.png
-  - assets/preview-four.png
-
 # ==========================================
 # THÔNG TIN CHUNG CỦA REPO
 # ==========================================
@@ -39,7 +33,11 @@ packages:
     publishedAt: "2026-08-28T10:00:00Z"
     icon: assets/test.png
     banner: assets/banner.png
-    screenshots: *screens
+    screenshots:
+    - assets/preview-first.png
+    - assets/preview-second.png
+    - assets/preview-third.png
+    - assets/preview-four.png
     download: packages/MOD_PUBG_V11.3105
     sha256: 55AAD6176817352273A5927A5B2EB84819ACE122708606AB9A379DB8C36DAD5E
     size: 17981
@@ -80,7 +78,11 @@ packages:
     publishedAt: "2026-08-28T10:00:00Z"
     icon: assets/vip-cabybara.png
     banner: assets/banner.png
-    screenshots: *screens
+    screenshots:
+    - assets/preview-first.png
+    - assets/preview-second.png
+    - assets/preview-third.png
+    - assets/preview-four.png
     download: packages/MOD-PUBG-VIP.3105
     sha256: 93BF31443CC8550081F84636C62294BA89AF91BBAB467436D90F768CABA97E20
     size: 17991
