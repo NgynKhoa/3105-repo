@@ -163,3 +163,107 @@ packages:
     changelog: |
 
       🛠️ Vui lòng báo lỗi cho @owenindahouse nếu gặp sự cố
+
+  - identifier: owen-003
+    name: "👑 Pubg Mod For Global"
+    author: "@owenindahouse"
+    version: "1.0.0"
+    summary: "✨ PREMIUM MOD • VIP EDITION • TD"
+    password: "0604"
+    category: Mod
+    tags: [MOD]
+    publishedAt: "2026-08-28T10:00:00Z"
+    icon: assets/global/pubg_global.png
+    banner: assets/banner.png
+    screenshots: *screens
+    download: packages/MOD-PUBG-VIP.3105
+    sha256: 7D6FFE7FC3F9EB999B30199263B25AE23ECF3CA89A2845E40B392814915D0F9E
+    size: 18082
+    password: "2752"
+    supportedOS: *os_rules
+    featured: false
+    isPrivate: false
+    description: |
+      💎 PREMIUM MOD
+
+      ╭──────────────────╮
+       ✨ FEATURES         
+      ╰──────────────────╯
+      🔥 BYPASS ONLINE
+      🎯 AIM BOT
+      👁️ IPAD VIEW
+      🚗 INCREASE SPEED CAR
+      ⚡ ETC...
+
+      ╭──────────────────╮
+       ⚠️ WARNING  
+      ╰──────────────────╯
+      • Delete the old mod before applying this patch.
+      • Backup your data before installing.
+
+      ╭──────────────────╮
+       💬 FOR SUPPORT            
+      ╰──────────────────╯
+      @owenindahouse
+
+    changelog: |
+
+      ╭──────────────────╮
+       🚀 FUTURE UPDATE            
+      ╰──────────────────╯
+      ✨ Many new features will be added.
+      🔄 Continuing updates and optimizations in future versions.
+
+      ❤️ Thank you for your support!
+
+  - identifier: owen-004
+    name: "👑 Pubg Mod For Kr"
+    author: "@owenindahouse"
+    version: "1.0.0"
+    summary: "✨ PREMIUM MOD • VIP EDITION • TD"
+    password: "0604"
+    category: Mod
+    tags: [MOD]
+    publishedAt: "2026-08-28T10:00:00Z"
+    icon: assets/kr/pubg_kr.png
+    banner: assets/banner.png
+    screenshots: *screens
+    download: packages/MOD-PUBG-VIP.3105
+    sha256: A063B566541FEA3654A2E0EF1955792D8A01E8B8AFE046D298E3D24C58EBDF9A
+    size: 18084
+    password: "2752"
+    supportedOS: *os_rules
+    featured: false
+    isPrivate: false
+    description: |
+      💎 PREMIUM MOD
+
+      ╭──────────────────╮
+       ✨ FEATURES         
+      ╰──────────────────╯
+      🔥 BYPASS ONLINE
+      🎯 AIM BOT
+      👁️ IPAD VIEW
+      🚗 INCREASE SPEED CAR
+      ⚡ ETC...
+
+      ╭──────────────────╮
+       ⚠️ WARNING  
+      ╰──────────────────╯
+      • Delete the old mod before applying this patch.
+      • Backup your data before installing.
+
+      ╭──────────────────╮
+       💬 FOR SUPPORT            
+      ╰──────────────────╯
+      @owenindahouse
+
+    changelog: |
+
+      ╭──────────────────╮
+       🚀 FUTURE UPDATE            
+      ╰──────────────────╯
+      ✨ Many new features will be added.
+      🔄 Continuing updates and optimizations in future versions.
+
+      ❤️ Thank you for your support!
