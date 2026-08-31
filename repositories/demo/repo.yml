@@ -174,7 +174,7 @@ packages:
     icon: assets/global/pubg_global.png
     banner: assets/banner.png
     screenshots: *screens
-    download: packages/MOD-PUBG-VIP.3105
+    download: packages/MOD_GL.3105
     sha256: 7D6FFE7FC3F9EB999B30199263B25AE23ECF3CA89A2845E40B392814915D0F9E
     size: 18082
     password: "2752"
@@ -225,7 +225,7 @@ packages:
     icon: assets/kr/pubg_kr.png
     banner: assets/banner.png
     screenshots: *screens
-    download: packages/MOD-PUBG-VIP.3105
+    download: packages/MOD_KR.3105
     sha256: A063B566541FEA3654A2E0EF1955792D8A01E8B8AFE046D298E3D24C58EBDF9A
     size: 18084
     password: "2752"
