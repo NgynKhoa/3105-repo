@@ -50,9 +50,9 @@
         "assets/preview-third.png",
         "assets/preview-four.png"
       ],
-      "download": "packages/MOD-PUBG-VIP.3105",
-      "sha256": "93BF31443CC8550081F84636C62294BA89AF91BBAB467436D90F768CABA97E20",
-      "size": 17991,
+      "download": "packages/MOD_PUBG_V11.3105",
+      "sha256": "55AAD6176817352273A5927A5B2EB84819ACE122708606AB9A379DB8C36DAD5E",
+      "size": 17981,
       "supportedOS": [
         {
           "minimum": "17.0",
@@ -171,7 +171,7 @@
       ],
       "featured": true,
       "isPrivate": false,
-      "description": "\n⚠️ LƯU Ý QUAN TRỌNG\n• Sau khi apply Patch vào game không được thay đổi phần ĐỒ HỌA.\n\n💬 HỖ TRỢ\nNếu gặp bất kỳ vấn đề nào, hãy liên hệ @owenindahouse.\n\n❤️ Chúc bạn chơi game vui vẻ và hãy đón chờ những bản cập nhật tiếp theo!\n",
+      "description": "\n⚠️ LƯU Ý QUAN TRỌNG\n• Sau khi apply Patch vào game không được thay đổi phần ĐỒ HỌA.\n• Muốn về gốc chỉ cần thay đổi ĐỒ HỌA\n💬 HỖ TRỢ\nNếu gặp bất kỳ vấn đề nào, hãy liên hệ @owenindahouse.\n\n❤️ Chúc bạn chơi game vui vẻ và hãy đón chờ những bản cập nhật tiếp theo!\n",
       "changelog": "\n🛠️ Vui lòng báo lỗi cho @owenindahouse nếu gặp sự cố\n"
     }
   ]
