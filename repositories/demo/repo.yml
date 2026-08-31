@@ -130,3 +130,33 @@ packages:
       🔄 Tiếp tục cập nhật và tối ưu trong các phiên bản tiếp theo.
 
       ❤️ Cảm ơn bạn đã ủng hộ!
+
+  - identifier: owen-002
+    name: "KÍCH HDR & 120FPS"
+    author: "@owenindahouse"
+    version: "1.0.0"
+    summary: "✨ PATCH FOR PUBG"
+    category: Patch
+    tags: [PATCH]
+    publishedAt: "2026-08-28T10:00:00Z"
+    icon: assets/ngong.png
+    banner: assets/banner.png
+    screenshots: *screens
+    download: packages/HDR_120FPS.3105
+    sha256: C6A6D2A32925B1BC8F844A3736DE7E3056EE06935E49836F1C89132A25851372
+    size: 8200
+    supportedOS: *os_rules
+    featured: true
+    isPrivate: false
+    description: |
+
+      ⚠️ LƯU Ý QUAN TRỌNG
+      • Sau khi apply Patch vào game không được thay đổi phần ĐỒ HỌA.
+
+      💬 HỖ TRỢ
+      Nếu gặp bất kỳ vấn đề nào, hãy liên hệ @owenindahouse.
+
+      ❤️ Chúc bạn chơi game vui vẻ và hãy đón chờ những bản cập nhật tiếp theo!
+    changelog: |
+
+      🛠️ Vui lòng báo lỗi cho @owenindahouse nếu gặp sự cố
