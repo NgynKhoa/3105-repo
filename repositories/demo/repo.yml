@@ -77,7 +77,6 @@ packages:
     password: "0604"
     category: Mod
     tags: [MOD]
-    publishedAt: "2026-08-28T10:00:00Z"
     icon: assets/vip-cabybara.png
     banner: assets/banner.png
     screenshots: *screens
@@ -138,7 +137,6 @@ packages:
     summary: "✨ PATCH FOR PUBG"
     category: Patch
     tags: [PATCH]
-    publishedAt: "2026-08-28T10:00:00Z"
     icon: assets/hdr_120/ngong.png
     banner: assets/banner.png
     screenshots:
@@ -165,10 +163,10 @@ packages:
       🛠️ Vui lòng báo lỗi cho @owenindahouse nếu gặp sự cố
 
   - identifier: owen-003
-    name: "👑 Pubg Mod For Global"
+    name: "💥 Pubg Mod For Global"
     author: "@owenindahouse"
     version: "1.0.0"
-    summary: "✨ PREMIUM MOD • VIP EDITION • TD"
+    summary: "✨ FREE MOD"
     password: "0604"
     category: Mod
     tags: [MOD]
@@ -184,7 +182,7 @@ packages:
     featured: false
     isPrivate: false
     description: |
-      💎 PREMIUM MOD
+      💎 FREE MOD
 
       ╭──────────────────╮
        ✨ FEATURES         
@@ -217,14 +215,13 @@ packages:
       ❤️ Thank you for your support!
 
   - identifier: owen-004
-    name: "👑 Pubg Mod For Kr"
+    name: "💫 Pubg Mod For Kr"
     author: "@owenindahouse"
     version: "1.0.0"
-    summary: "✨ PREMIUM MOD • VIP EDITION • TD"
+    summary: "✨ FREE MOD"
     password: "0604"
     category: Mod
     tags: [MOD]
-    publishedAt: "2026-08-28T10:00:00Z"
     icon: assets/kr/pubg_kr.png
     banner: assets/banner.png
     screenshots: *screens
@@ -236,7 +233,7 @@ packages:
     featured: false
     isPrivate: false
     description: |
-      💎 PREMIUM MOD
+      💎 FREE MOD
 
       ╭──────────────────╮
        ✨ FEATURES         
