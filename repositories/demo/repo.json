@@ -53,6 +53,7 @@
       "download": "packages/PATCH_V7.3105",
       "sha256": "7DD4546001EE51A32D0AA392C1B7C9A151EAB9B9DAE992249050EFFE89BE91B0",
       "size": 295145,
+      "password": "2752",
       "supportedOS": [
         {
           "minimum": "17.0",
@@ -84,7 +85,6 @@
       "author": "@owenindahouse",
       "version": "1.0.0",
       "summary": "✨Mẫu CUSTOM • PHIÊN BẢN PREMIUM - UPDATED",
-      "password": "0604",
       "category": "Customization",
       "tags": [
         "CUSTOM"
@@ -100,6 +100,7 @@
       "download": "packages/PATCH_V7.3105",
       "sha256": "7DD4546001EE51A32D0AA392C1B7C9A151EAB9B9DAE992249050EFFE89BE91B0",
       "size": 295145,
+      "password": "0604",
       "supportedOS": [
         {
           "minimum": "17.0",
