@@ -100,7 +100,7 @@
       "download": "packages/PATCH_V7.3105",
       "sha256": "7DD4546001EE51A32D0AA392C1B7C9A151EAB9B9DAE992249050EFFE89BE91B0",
       "size": 295145,
-      "password": "0604",
+      "password": "2752",
       "supportedOS": [
         {
           "minimum": "17.0",
@@ -177,7 +177,6 @@
       "author": "@owenindahouse",
       "version": "1.0.0",
       "summary": "✨ ADVANCED CUSTOM BUILD - UPDATED",
-      "password": "2752",
       "category": "Customization",
       "tags": [
         "CUSTOM"
@@ -194,6 +193,7 @@
       "download": "packages/PATCH_V7_GL.3105",
       "sha256": "C89E2BEFC9EA6EE8990E1489EE9AAC73B1ADD54345F530FB90F6467B81346AAE",
       "size": 295149,
+      "password": "2752",
       "supportedOS": [
         {
           "minimum": "17.0",
@@ -225,7 +225,6 @@
       "author": "@owenindahouse",
       "version": "1.0.0",
       "summary": "✨ ADVANCED CUSTOM BUILD - UPDATED",
-      "password": "2752",
       "category": "Customization",
       "tags": [
         "CUSTOM"
@@ -241,6 +240,7 @@
       "download": "packages/PATCH_V7_KR.3105",
       "sha256": "0993AE6F9CA6A1A709D4FE076CB517A6722CD60E6AD8580CA407A725B22705F9",
       "size": 295154,
+      "password": "2752",
       "supportedOS": [
         {
           "minimum": "17.0",
