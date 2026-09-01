@@ -27,19 +27,19 @@
   ],
   "schemaVersion": 1,
   "identifier": "com.owen.mod",
-  "name": "Owen Mod Repository",
-  "description": "🎮 Kho lưu trữ Mod & tiện ích iOS của Owen. 🔥 Cập nhật thường xuyên ❤️",
+  "name": "Owen Custom Repository",
+  "description": "🎮 Kho lưu trữ các bản tùy chỉnh & tiện ích iOS của Owen. 🔥 Cập nhật thường xuyên ❤️",
   "icon": "assets/repo-icon.png",
   "packages": [
     {
       "identifier": "owen-trial",
-      "name": "🔥 Pubg Mod Free",
+      "name": "🔥 PUBG Custom Miễn Phí",
       "author": "@owenindahouse",
       "version": "1.0.0",
-      "summary": "✨ PUBG MOD • Bản dùng thử miễn phí • Trải nghiệm Premium",
-      "category": "Mod",
+      "summary": "✨ PUBG CUSTOM • Bản dùng thử miễn phí • Trải nghiệm tính năng nâng cao",
+      "category": "Customization",
       "tags": [
-        "MOD"
+        "CUSTOM"
       ],
       "publishedAt": "2026-08-28T10:00:00Z",
       "icon": "assets/test.png",
@@ -75,19 +75,19 @@
       ],
       "featured": true,
       "isPrivate": false,
-      "description": "🔥 PUBG MOD FREE BY TD\n\n✨ TÍNH NĂNG\n• Mod Skin \n• Aim Bot & Tùy Chỉnh Súng\n• Dễ Dàng Cài Đặt\n• Thường Xuyên Cập Nhật\n\n⚠️ LƯU Ý QUAN TRỌNG\n• Hãy xóa bản mod cũ trước khi áp dụng patch này.\n\n💬 HỖ TRỢ\nNếu gặp bất kỳ vấn đề nào, hãy liên hệ @owenindahouse.\n\n❤️ Chúc bạn chơi game vui vẻ và hãy đón chờ những bản cập nhật tiếp theo!\n",
-      "changelog": "\n🎉 v1.0.0 — Phát hành lần đầu\n✨ Bản thử nghiệm công khai đầu tiên\n🛠️ Vui lòng báo lỗi cho @owenindahouse nếu gặp sự cố\n⚠️ Đây là phiên bản thử nghiệm ban đầu và có thể vẫn còn một số lỗi.\n"
+      "description": "🔥 PUBG CUSTOM FREE\n\n✨ TÍNH NĂNG\n\n• Bộ Skin tùy chỉnh\n• Hỗ trợ ngắm & tùy chỉnh súng\n• Dễ Dàng Cài Đặt\n• Thường Xuyên Cập Nhật\n\n⚠️ LƯU Ý QUAN TRỌNG\n\n• Hãy xóa gói tùy chỉnh cũ trước khi áp dụng.\n• Nên sao lưu dữ liệu trước khi cài đặt.\n\n💬 HỖ TRỢ\n\nNếu gặp bất kỳ vấn đề nào, hãy liên hệ @owenindahouse.\n\n❤️ Chúc bạn chơi game vui vẻ và hãy đón chờ những bản cập nhật tiếp theo!\n",
+      "changelog": "🎉 v1.0.0 — Phát hành lần đầu\n\n✨ Bản thử nghiệm công khai đầu tiên\n\n🛠️ Vui lòng báo lỗi cho @owenindahouse nếu gặp sự cố\n\n⚠️ Đây là phiên bản thử nghiệm ban đầu và có thể vẫn còn một số lỗi.\n"
     },
     {
       "identifier": "owen-000",
-      "name": "👑 Pubg Mod VIP",
+      "name": "👑 PUBG Custom Pre",
       "author": "@owenindahouse",
       "version": "1.0.0",
-      "summary": "✨ PREMIUM MOD • VIP EDITION • TD",
+      "summary": "✨ CUSTOM • PHIÊN BẢN PREMIUM • TD",
       "password": "0604",
-      "category": "Mod",
+      "category": "Customization",
       "tags": [
-        "MOD"
+        "CUSTOM"
       ],
       "icon": "assets/vip-cabybara.png",
       "banner": "assets/banner.png",
@@ -122,18 +122,18 @@
       ],
       "featured": false,
       "isPrivate": false,
-      "description": "💎 DEMO, KO CÓ VIP\n\n╭──────────────────╮\n ✨ TÍNH NĂNG          \n╰──────────────────╯\n🔥 BYPASS ONLINE\n🎯 AIM TÙY CHỈNH\n👁️ IPAD VIEW\n🚗 XE NHANH\n⚡ NHIỀU TÍNH NĂNG KHÁC\n\n╭──────────────────╮\n 🔐 QUYỀN TRUY CẬP VIP \n╰──────────────────╯\n👑 Gói này dành cho thành viên TD VIP.\n\n╭──────────────────╮\n ⚠️ LƯU Ý QUAN TRỌNG  \n╰──────────────────╯\n• Hãy xóa bản mod cũ trước khi áp dụng patch này.\n• Nên sao lưu dữ liệu trước khi cài đặt.\n\n╭──────────────────╮\n 💬 HỖ TRỢ             \n╰──────────────────╯\n@owenindahouse\n\n❤️ Cảm ơn bạn đã ủng hộ!\n",
-      "changelog": "╭──────────────────╮\n ✨ PHÁT HÀNH          \n╰──────────────────╯\n\n🔐 GÓI DÀNH CHO THÀNH VIÊN VIP\n\n╭──────────────────╮\n 🚀 SẮP TỚI            \n╰──────────────────╯\n✨ Nhiều tính năng mới sẽ được bổ sung.\n🔄 Tiếp tục cập nhật và tối ưu trong các phiên bản tiếp theo.\n\n❤️ Cảm ơn bạn đã ủng hộ!\n"
+      "description": "💎 BẢN TRẢI NGHIỆM PREMIUM\n\n╭──────────────────╮\n ✨ TÍNH NĂNG\n╰──────────────────╯\n\n🔥 Tương thích Online\n🎯 Hỗ trợ ngắm tùy chỉnh\n👁️ iPad View\n🚗 Tùy chỉnh tốc độ xe\n⚡ Nhiều tính năng nâng cao khác\n\n╭──────────────────╮\n 🔐 QUYỀN TRUY CẬP PREMIUM\n╰──────────────────╯\n\n👑 Gói này dành cho thành viên TD Premium.\n\n╭──────────────────╮\n ⚠️ LƯU Ý QUAN TRỌNG\n╰──────────────────╯\n\n• Hãy xóa gói tùy chỉnh cũ trước khi áp dụng.\n• Nên sao lưu dữ liệu trước khi cài đặt.\n\n╭──────────────────╮\n 💬 HỖ TRỢ\n╰──────────────────╯\n\n@owenindahouse\n\n❤️ Cảm ơn bạn đã ủng hộ!\n",
+      "changelog": "╭──────────────────╮\n ✨ PHÁT HÀNH\n╰──────────────────╯\n\n🔐 GÓI DÀNH CHO THÀNH VIÊN PREMIUM\n\n╭──────────────────╮\n 🚀 SẮP TỚI\n╰──────────────────╯\n\n✨ Nhiều tính năng mới sẽ được bổ sung.\n\n🔄 Tiếp tục cập nhật và tối ưu trong các phiên bản tiếp theo.\n\n❤️ Cảm ơn bạn đã ủng hộ!\n"
     },
     {
       "identifier": "owen-002",
-      "name": "KÍCH HDR & 120FPS",
+      "name": "CUSTOM HDR & 120FPS",
       "author": "@owenindahouse",
       "version": "1.0.0",
-      "summary": "✨ PATCH FOR PUBG",
-      "category": "Patch",
+      "summary": "✨ GÓI TÙY CHỈNH HIỂN THỊ",
+      "category": "Enhancement",
       "tags": [
-        "PATCH"
+        "DISPLAY"
       ],
       "icon": "assets/hdr_120/ngong.png",
       "banner": "assets/banner.png",
@@ -167,19 +167,19 @@
       ],
       "featured": true,
       "isPrivate": false,
-      "description": "\n⚠️ LƯU Ý QUAN TRỌNG\n• Sau khi apply Patch vào game không được thay đổi phần ĐỒ HỌA.\n• Muốn về gốc chỉ cần thay đổi ĐỒ HỌA\n💬 HỖ TRỢ\nNếu gặp bất kỳ vấn đề nào, hãy liên hệ @owenindahouse.\n\n❤️ Chúc bạn chơi game vui vẻ và đón chờ những bản cập nhật tiếp theo!\n",
-      "changelog": "\n🛠️ Vui lòng báo lỗi cho @owenindahouse nếu gặp sự cố\n"
+      "description": "⚡ TÙY CHỈNH HIỂN THỊ\n\n⚠️ LƯU Ý QUAN TRỌNG\n\n• Sau khi áp dụng gói vào game không được thay đổi phần ĐỒ HỌA.\n• Muốn về gốc chỉ cần thay đổi ĐỒ HỌA.\n\n💬 HỖ TRỢ\n\nNếu gặp bất kỳ vấn đề nào, hãy liên hệ @owenindahouse.\n\n❤️ Chúc bạn chơi game vui vẻ và đón chờ những bản cập nhật tiếp theo!\n",
+      "changelog": "🛠️ Vui lòng báo lỗi cho @owenindahouse nếu gặp sự cố.\n"
     },
     {
       "identifier": "owen-003",
-      "name": "💥 Pubg Mod For Global",
+      "name": "💥 PUBG Custom For — GL",
       "author": "@owenindahouse",
       "version": "1.0.0",
-      "summary": "✨ FREE MOD",
+      "summary": "✨ ADVANCED CUSTOM BUILD",
       "password": "2752",
-      "category": "Mod",
+      "category": "Customization",
       "tags": [
-        "MOD"
+        "CUSTOM"
       ],
       "publishedAt": "2026-08-28T10:00:00Z",
       "icon": "assets/global/pubg_global.png",
@@ -215,19 +215,19 @@
       ],
       "featured": false,
       "isPrivate": false,
-      "description": "💎 FREE MOD\n\n╭──────────────────╮\n ✨ FEATURES         \n╰──────────────────╯\n🔥 BYPASS ONLINE\n🎯 AIM BOT\n👁️ IPAD VIEW\n🚗 INCREASE SPEED CAR\n⚡ ETC...\n\n╭──────────────────╮\n ⚠️ WARNING  \n╰──────────────────╯\n• Delete the old mod before applying this patch.\n• Backup your data before installing.\n\n╭──────────────────╮\n 💬 FOR SUPPORT            \n╰──────────────────╯\n@owenindahouse\n",
-      "changelog": "\n╭──────────────────╮\n 🚀 FUTURE UPDATE            \n╰──────────────────╯\n✨ Many new features will be added.\n🔄 Continuing updates and optimizations in future versions.\n\n❤️ Thank you for your support!\n"
+      "description": "💎 ADVANCED CUSTOM BUILD\n\n╭──────────────────╮\n ✨ FEATURES\n╰──────────────────╯\n\n🔥 Online Compatibility\n🎯 Aim Assistance\n👁️ iPad View\n🚗 Vehicle Enhancement\n⚡ Additional Features\n\n╭──────────────────╮\n ⚠️ IMPORTANT\n╰──────────────────╯\n\n• Remove any previous customization package before applying.\n• Backup your game data before installation.\n\n╭──────────────────╮\n 💬 SUPPORT\n╰──────────────────╯\n\n@owenindahouse\n",
+      "changelog": "╭──────────────────╮\n 🚀 FUTURE UPDATE\n╰──────────────────╯\n\n✨ Many new features will be added.\n🔄 Continuous updates and optimizations in future releases.\n\n❤️ Thank you for your support!\n"
     },
     {
       "identifier": "owen-004",
-      "name": "💫 Pubg Mod For Kr",
+      "name": "💫 PUBG Custom For — KR",
       "author": "@owenindahouse",
       "version": "1.0.0",
-      "summary": "✨ FREE MOD",
+      "summary": "✨ ADVANCED CUSTOM BUILD",
       "password": "2752",
-      "category": "Mod",
+      "category": "Customization",
       "tags": [
-        "MOD"
+        "CUSTOM"
       ],
       "icon": "assets/kr/pubg_kr.png",
       "banner": "assets/banner.png",
@@ -262,8 +262,8 @@
       ],
       "featured": false,
       "isPrivate": false,
-      "description": "💎 FREE MOD\n\n╭──────────────────╮\n ✨ FEATURES         \n╰──────────────────╯\n🔥 BYPASS ONLINE\n🎯 AIM BOT\n👁️ IPAD VIEW\n🚗 INCREASE SPEED CAR\n⚡ ETC...\n\n╭──────────────────╮\n ⚠️ WARNING  \n╰──────────────────╯\n• Delete the old mod before applying this patch.\n• Backup your data before installing.\n\n╭──────────────────╮\n 💬 FOR SUPPORT            \n╰──────────────────╯\n@owenindahouse\n",
-      "changelog": "\n╭──────────────────╮\n 🚀 FUTURE UPDATE            \n╰──────────────────╯\n✨ Many new features will be added.\n🔄 Continuing updates and optimizations in future versions.\n\n❤️ Thank you for your support!\n"
+      "description": "💎 ADVANCED CUSTOM BUILD\n\n╭──────────────────╮\n ✨ FEATURES\n╰──────────────────╯\n\n🔥 Online Compatibility\n🎯 Aim Assistance\n👁️ iPad View\n🚗 Vehicle Enhancement\n⚡ Additional Features\n\n╭──────────────────╮\n ⚠️ IMPORTANT\n╰──────────────────╯\n\n• Remove any previous customization package before applying.\n• Backup your game data before installation.\n\n╭──────────────────╮\n 💬 SUPPORT\n╰──────────────────╯\n\n@owenindahouse\n",
+      "changelog": "╭──────────────────╮\n 🚀 FUTURE UPDATE\n╰──────────────────╯\n\n✨ Many new features will be added.\n🔄 Continuous updates and optimizations in future releases.\n\n❤️ Thank you for your support!\n"
     }
   ]
 }
