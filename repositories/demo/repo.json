@@ -36,7 +36,7 @@
       "name": "Mẫu PUBG Custom Miễn Phí",
       "author": "@owenindahouse",
       "version": "1.0.0",
-      "summary": "✨ Mẫu Pubg • Bản dùng thử • Trải nghiệm tính năng nâng cao",
+      "summary": "✨ Mẫu Pubg • Đã Udate bản mới • Trải nghiệm tính năng nâng cao",
       "category": "Customization",
       "tags": [
         "CUSTOM"
@@ -50,9 +50,9 @@
         "assets/preview-third.png",
         "assets/preview-four.png"
       ],
-      "download": "packages/MOD_PUBG_V11.3105",
-      "sha256": "55AAD6176817352273A5927A5B2EB84819ACE122708606AB9A379DB8C36DAD5E",
-      "size": 17981,
+      "download": "packages/PATCH_V7.3105",
+      "sha256": "7DD4546001EE51A32D0AA392C1B7C9A151EAB9B9DAE992249050EFFE89BE91B0",
+      "size": 295145,
       "supportedOS": [
         {
           "minimum": "17.0",
@@ -75,15 +75,15 @@
       ],
       "featured": true,
       "isPrivate": false,
-      "description": "🔥 PUBG CUSTOM FREE\n\n✨ TÍNH NĂNG\n\n• Bộ Skin tùy chỉnh\n• Hỗ trợ ngắm & tùy chỉnh súng\n• Dễ Dàng Cài Đặt\n• Thường Xuyên Cập Nhật\n\n⚠️ LƯU Ý QUAN TRỌNG\n\n• Hãy xóa gói tùy chỉnh cũ trước khi áp dụng.\n• Nên sao lưu dữ liệu trước khi cài đặt.\n\n💬 HỖ TRỢ\n\nNếu gặp bất kỳ vấn đề nào, hãy liên hệ @owenindahouse.\n\n❤️ Chúc bạn chơi game vui vẻ và hãy đón chờ những bản cập nhật tiếp theo!\n",
+      "description": "🔥  Đã Update bản mới, mọi người nhấn Install hoặc Update là file mới về nhé\n\n✨ TÍNH NĂNG\n\n• Bộ Skin tùy chỉnh\n• Hỗ trợ ngắm & tùy chỉnh súng\n• Dễ Dàng Cài Đặt\n• Thường Xuyên Cập Nhật\n\n⚠️ LƯU Ý QUAN TRỌNG\n\n• Hãy xóa gói tùy chỉnh cũ trước khi áp dụng.\n• Nên sao lưu dữ liệu trước khi cài đặt.\n\n💬 HỖ TRỢ\n\nNếu gặp bất kỳ vấn đề nào, hãy liên hệ @owenindahouse.\n\n❤️ Chúc bạn chơi game vui vẻ và hãy đón chờ những bản cập nhật tiếp theo!\n",
       "changelog": "🎉 v1.0.0 — Phát hành lần đầu\n\n✨ Bản thử nghiệm công khai đầu tiên\n\n🛠️ Vui lòng báo lỗi cho @owenindahouse nếu gặp sự cố\n\n⚠️ Đây là phiên bản thử nghiệm ban đầu và có thể vẫn còn một số lỗi.\n"
     },
     {
       "identifier": "owen-000",
-      "name": "👑 Mẫu PUBG Custom Pre",
+      "name": "👑 Mẫu PUBG Custom Pre - Đã Update",
       "author": "@owenindahouse",
       "version": "1.0.0",
-      "summary": "✨Mẫu CUSTOM • PHIÊN BẢN PREMIUM",
+      "summary": "✨Mẫu CUSTOM • PHIÊN BẢN PREMIUM - UPDATED",
       "password": "0604",
       "category": "Customization",
       "tags": [
@@ -97,9 +97,9 @@
         "assets/preview-third.png",
         "assets/preview-four.png"
       ],
-      "download": "packages/MOD-PUBG-VIP.3105",
-      "sha256": "93BF31443CC8550081F84636C62294BA89AF91BBAB467436D90F768CABA97E20",
-      "size": 17991,
+      "download": "packages/PATCH_V7.3105",
+      "sha256": "7DD4546001EE51A32D0AA392C1B7C9A151EAB9B9DAE992249050EFFE89BE91B0",
+      "size": 295145,
       "supportedOS": [
         {
           "minimum": "17.0",
@@ -175,7 +175,7 @@
       "name": "Sample PUBG Custom For — GL",
       "author": "@owenindahouse",
       "version": "1.0.0",
-      "summary": "✨ ADVANCED CUSTOM BUILD",
+      "summary": "✨ ADVANCED CUSTOM BUILD - UPDATED",
       "password": "2752",
       "category": "Customization",
       "tags": [
@@ -190,9 +190,9 @@
         "assets/preview-third.png",
         "assets/preview-four.png"
       ],
-      "download": "packages/MOD_GL.3105",
-      "sha256": "7D6FFE7FC3F9EB999B30199263B25AE23ECF3CA89A2845E40B392814915D0F9E",
-      "size": 18082,
+      "download": "packages/PATCH_V7_GL.3105",
+      "sha256": "C89E2BEFC9EA6EE8990E1489EE9AAC73B1ADD54345F530FB90F6467B81346AAE",
+      "size": 295149,
       "supportedOS": [
         {
           "minimum": "17.0",
@@ -215,7 +215,7 @@
       ],
       "featured": false,
       "isPrivate": false,
-      "description": "💎 ADVANCED CUSTOM BUILD\n\n╭──────────────────╮\n ✨ FEATURES\n╰──────────────────╯\n\n🔥 Online Compatibility\n🎯 Aim Assistance\n👁️ iPad View\n🚗 Vehicle Enhancement\n⚡ Additional Features\n\n╭──────────────────╮\n ⚠️ IMPORTANT\n╰──────────────────╯\n\n• Remove any previous customization package before applying.\n• Backup your game data before installation.\n\n╭──────────────────╮\n 💬 SUPPORT\n╰──────────────────╯\n\n@owenindahouse\n",
+      "description": "💎 ADVANCED CUSTOM BUILD - UPDATED\n HAS BEEN UPDATED\n\n╭──────────────────╮\n ✨ FEATURES\n╰──────────────────╯\n\n🔥 Online Compatibility\n🎯 Aim Assistance\n👁️ iPad View\n🚗 Vehicle Enhancement\n⚡ Additional Features\n\n╭──────────────────╮\n ⚠️ IMPORTANT\n╰──────────────────╯\n\n• Remove any previous customization package before applying.\n• Backup your game data before installation.\n\n╭──────────────────╮\n 💬 SUPPORT\n╰──────────────────╯\n\n@owenindahouse\n",
       "changelog": "╭──────────────────╮\n 🚀 FUTURE UPDATE\n╰──────────────────╯\n\n✨ Many new features will be added.\n🔄 Continuous updates and optimizations in future releases.\n\n❤️ Thank you for your support!\n"
     },
     {
@@ -223,7 +223,7 @@
       "name": "💫 Sample PUBG Custom For — KR",
       "author": "@owenindahouse",
       "version": "1.0.0",
-      "summary": "✨ ADVANCED CUSTOM BUILD",
+      "summary": "✨ ADVANCED CUSTOM BUILD - UPDATED",
       "password": "2752",
       "category": "Customization",
       "tags": [
@@ -237,9 +237,9 @@
         "assets/preview-third.png",
         "assets/preview-four.png"
       ],
-      "download": "packages/MOD_KR.3105",
-      "sha256": "A063B566541FEA3654A2E0EF1955792D8A01E8B8AFE046D298E3D24C58EBDF9A",
-      "size": 18084,
+      "download": "packages/PATCH_V7_KR.3105",
+      "sha256": "0993AE6F9CA6A1A709D4FE076CB517A6722CD60E6AD8580CA407A725B22705F9",
+      "size": 295154,
       "supportedOS": [
         {
           "minimum": "17.0",
@@ -262,7 +262,7 @@
       ],
       "featured": false,
       "isPrivate": false,
-      "description": "💎 ADVANCED CUSTOM BUILD\n\n╭──────────────────╮\n ✨ FEATURES\n╰──────────────────╯\n\n🔥 Online Compatibility\n🎯 Aim Assistance\n👁️ iPad View\n🚗 Vehicle Enhancement\n⚡ Additional Features\n\n╭──────────────────╮\n ⚠️ IMPORTANT\n╰──────────────────╯\n\n• Remove any previous customization package before applying.\n• Backup your game data before installation.\n\n╭──────────────────╮\n 💬 SUPPORT\n╰──────────────────╯\n\n@owenindahouse\n",
+      "description": "💎 ADVANCED CUSTOM BUILD - HAS BEEN UPDATED\n\n╭──────────────────╮\n ✨ FEATURES\n╰──────────────────╯\n\n🔥 Online Compatibility\n🎯 Aim Assistance\n👁️ iPad View\n🚗 Vehicle Enhancement\n⚡ Additional Features\n\n╭──────────────────╮\n ⚠️ IMPORTANT\n╰──────────────────╯\n\n• Remove any previous customization package before applying.\n• Backup your game data before installation.\n\n╭──────────────────╮\n 💬 SUPPORT\n╰──────────────────╯\n\n@owenindahouse\n",
       "changelog": "╭──────────────────╮\n 🚀 FUTURE UPDATE\n╰──────────────────╯\n\n✨ Many new features will be added.\n🔄 Continuous updates and optimizations in future releases.\n\n❤️ Thank you for your support!\n"
     }
   ]
