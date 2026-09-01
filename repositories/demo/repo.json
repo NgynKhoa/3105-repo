@@ -33,10 +33,10 @@
   "packages": [
     {
       "identifier": "owen-trial",
-      "name": "🔥 PUBG Custom Miễn Phí",
+      "name": "Mẫu PUBG Custom Miễn Phí",
       "author": "@owenindahouse",
       "version": "1.0.0",
-      "summary": "✨ PUBG CUSTOM • Bản dùng thử miễn phí • Trải nghiệm tính năng nâng cao",
+      "summary": "✨ Mẫu Pubg • Bản dùng thử • Trải nghiệm tính năng nâng cao",
       "category": "Customization",
       "tags": [
         "CUSTOM"
@@ -80,10 +80,10 @@
     },
     {
       "identifier": "owen-000",
-      "name": "👑 PUBG Custom Pre",
+      "name": "👑 Mẫu PUBG Custom Pre",
       "author": "@owenindahouse",
       "version": "1.0.0",
-      "summary": "✨ CUSTOM • PHIÊN BẢN PREMIUM • TD",
+      "summary": "✨Mẫu CUSTOM • PHIÊN BẢN PREMIUM",
       "password": "0604",
       "category": "Customization",
       "tags": [
@@ -172,7 +172,7 @@
     },
     {
       "identifier": "owen-003",
-      "name": "💥 PUBG Custom For — GL",
+      "name": "Sample PUBG Custom For — GL",
       "author": "@owenindahouse",
       "version": "1.0.0",
       "summary": "✨ ADVANCED CUSTOM BUILD",
@@ -220,7 +220,7 @@
     },
     {
       "identifier": "owen-004",
-      "name": "💫 PUBG Custom For — KR",
+      "name": "💫 Sample PUBG Custom For — KR",
       "author": "@owenindahouse",
       "version": "1.0.0",
       "summary": "✨ ADVANCED CUSTOM BUILD",
