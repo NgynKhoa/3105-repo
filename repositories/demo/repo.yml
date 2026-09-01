@@ -28,6 +28,7 @@ identifier: com.owen.mod
 name: Owen Custom Repository
 description: "🎮 Kho lưu trữ các bản tùy chỉnh & tiện ích iOS của Owen. 🔥 Cập nhật thường xuyên ❤️"
 icon: assets/repo-icon.png
+accentColor: "#FF3B30"
 
 # ==========================================
 # DANH SÁCH PACKAGES
