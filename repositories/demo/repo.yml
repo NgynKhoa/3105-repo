@@ -1,11 +1,14 @@
 # ==========================================
 # KHU VỰC ĐỊNH NGHĨA DÙNG CHUNG (Tái sử dụng)
 # ==========================================
+
 shared_os: &os_rules
   - minimum: "17.0"
     maximum: "18.7.1"
+
   - minimum: "26.0"
     maximum: "26.6.1"
+
   - minimum: "27.0"
     maximum: "27.0"
     builds: ["24A5355q", "24A5370h", "24A5380h", "24A5390f"]
@@ -19,23 +22,25 @@ shared_screens: &screens
 # ==========================================
 # THÔNG TIN CHUNG CỦA REPO
 # ==========================================
+
 schemaVersion: 1
 identifier: com.owen.mod
-name: Owen Mod Repository
-description: "🎮 Kho lưu trữ Mod & tiện ích iOS của Owen. 🔥 Cập nhật thường xuyên ❤️"
+name: Owen Custom Repository
+description: "🎮 Kho lưu trữ các bản tùy chỉnh & tiện ích iOS của Owen. 🔥 Cập nhật thường xuyên ❤️"
 icon: assets/repo-icon.png
 
 # ==========================================
 # DANH SÁCH PACKAGES
 # ==========================================
+
 packages:
   - identifier: owen-trial
-    name: "🔥 Pubg Mod Free"
+    name: "🔥 PUBG Custom Miễn Phí"
     author: "@owenindahouse"
     version: "1.0.0"
-    summary: "✨ PUBG MOD • Bản dùng thử miễn phí • Trải nghiệm Premium"
-    category: Mod
-    tags: [MOD]
+    summary: "✨ PUBG CUSTOM • Bản dùng thử miễn phí • Trải nghiệm tính năng nâng cao"
+    category: Customization
+    tags: [CUSTOM]
     publishedAt: "2026-08-28T10:00:00Z"
     icon: assets/test.png
     banner: assets/banner.png
@@ -46,37 +51,45 @@ packages:
     supportedOS: *os_rules
     featured: true
     isPrivate: false
+
     description: |
-      🔥 PUBG MOD FREE BY TD
+      🔥 PUBG CUSTOM FREE
 
       ✨ TÍNH NĂNG
-      • Mod Skin 
-      • Aim Bot & Tùy Chỉnh Súng
+
+      • Bộ Skin tùy chỉnh
+      • Hỗ trợ ngắm & tùy chỉnh súng
       • Dễ Dàng Cài Đặt
       • Thường Xuyên Cập Nhật
 
       ⚠️ LƯU Ý QUAN TRỌNG
-      • Hãy xóa bản mod cũ trước khi áp dụng patch này.
+
+      • Hãy xóa gói tùy chỉnh cũ trước khi áp dụng.
+      • Nên sao lưu dữ liệu trước khi cài đặt.
 
       💬 HỖ TRỢ
+
       Nếu gặp bất kỳ vấn đề nào, hãy liên hệ @owenindahouse.
 
       ❤️ Chúc bạn chơi game vui vẻ và hãy đón chờ những bản cập nhật tiếp theo!
-    changelog: |
 
+    changelog: |
       🎉 v1.0.0 — Phát hành lần đầu
+
       ✨ Bản thử nghiệm công khai đầu tiên
+
       🛠️ Vui lòng báo lỗi cho @owenindahouse nếu gặp sự cố
+
       ⚠️ Đây là phiên bản thử nghiệm ban đầu và có thể vẫn còn một số lỗi.
 
   - identifier: owen-000
-    name: "👑 Pubg Mod VIP"
+    name: "👑 PUBG Custom Pre"
     author: "@owenindahouse"
     version: "1.0.0"
-    summary: "✨ PREMIUM MOD • VIP EDITION • TD"
+    summary: "✨ CUSTOM • PHIÊN BẢN PREMIUM • TD"
     password: "0604"
-    category: Mod
-    tags: [MOD]
+    category: Customization
+    tags: [CUSTOM]
     icon: assets/vip-cabybara.png
     banner: assets/banner.png
     screenshots: *screens
@@ -86,57 +99,65 @@ packages:
     supportedOS: *os_rules
     featured: false
     isPrivate: false
+
     description: |
-      💎 DEMO, KO CÓ VIP
+      💎 BẢN TRẢI NGHIỆM PREMIUM
 
       ╭──────────────────╮
-       ✨ TÍNH NĂNG          
+       ✨ TÍNH NĂNG
       ╰──────────────────╯
-      🔥 BYPASS ONLINE
-      🎯 AIM TÙY CHỈNH
-      👁️ IPAD VIEW
-      🚗 XE NHANH
-      ⚡ NHIỀU TÍNH NĂNG KHÁC
+
+      🔥 Tương thích Online
+      🎯 Hỗ trợ ngắm tùy chỉnh
+      👁️ iPad View
+      🚗 Tùy chỉnh tốc độ xe
+      ⚡ Nhiều tính năng nâng cao khác
 
       ╭──────────────────╮
-       🔐 QUYỀN TRUY CẬP VIP 
+       🔐 QUYỀN TRUY CẬP PREMIUM
       ╰──────────────────╯
-      👑 Gói này dành cho thành viên TD VIP.
+
+      👑 Gói này dành cho thành viên TD Premium.
 
       ╭──────────────────╮
-       ⚠️ LƯU Ý QUAN TRỌNG  
+       ⚠️ LƯU Ý QUAN TRỌNG
       ╰──────────────────╯
-      • Hãy xóa bản mod cũ trước khi áp dụng patch này.
+
+      • Hãy xóa gói tùy chỉnh cũ trước khi áp dụng.
       • Nên sao lưu dữ liệu trước khi cài đặt.
 
       ╭──────────────────╮
-       💬 HỖ TRỢ             
+       💬 HỖ TRỢ
       ╰──────────────────╯
+
       @owenindahouse
 
       ❤️ Cảm ơn bạn đã ủng hộ!
+
     changelog: |
       ╭──────────────────╮
-       ✨ PHÁT HÀNH          
+       ✨ PHÁT HÀNH
       ╰──────────────────╯
 
-      🔐 GÓI DÀNH CHO THÀNH VIÊN VIP
+      🔐 GÓI DÀNH CHO THÀNH VIÊN PREMIUM
 
       ╭──────────────────╮
-       🚀 SẮP TỚI            
+       🚀 SẮP TỚI
       ╰──────────────────╯
+
       ✨ Nhiều tính năng mới sẽ được bổ sung.
+
       🔄 Tiếp tục cập nhật và tối ưu trong các phiên bản tiếp theo.
 
       ❤️ Cảm ơn bạn đã ủng hộ!
 
   - identifier: owen-002
-    name: "KÍCH HDR & 120FPS"
+    name: "CUSTOM HDR & 120FPS"
     author: "@owenindahouse"
     version: "1.0.0"
-    summary: "✨ PATCH FOR PUBG"
-    category: Patch
-    tags: [PATCH]
+    summary: "✨ GÓI TÙY CHỈNH HIỂN THỊ"
+    category: Enhancement
+    tags: [DISPLAY]
     icon: assets/hdr_120/ngong.png
     banner: assets/banner.png
     screenshots:
@@ -149,27 +170,36 @@ packages:
     supportedOS: *os_rules
     featured: true
     isPrivate: false
+
     description: |
+      ⚡ TÙY CHỈNH HIỂN THỊ
 
       ⚠️ LƯU Ý QUAN TRỌNG
-      • Sau khi apply Patch vào game không được thay đổi phần ĐỒ HỌA.
-      • Muốn về gốc chỉ cần thay đổi ĐỒ HỌA
+
+      • Sau khi áp dụng gói vào game không được thay đổi phần ĐỒ HỌA.
+      • Muốn về gốc chỉ cần thay đổi ĐỒ HỌA.
+
       💬 HỖ TRỢ
+
       Nếu gặp bất kỳ vấn đề nào, hãy liên hệ @owenindahouse.
 
       ❤️ Chúc bạn chơi game vui vẻ và đón chờ những bản cập nhật tiếp theo!
-    changelog: |
 
-      🛠️ Vui lòng báo lỗi cho @owenindahouse nếu gặp sự cố
+    changelog: |
+      🛠️ Vui lòng báo lỗi cho @owenindahouse nếu gặp sự cố.
+
+  # ----------------------------------------
+  # GLOBAL CUSTOM BUILD
+  # ----------------------------------------
 
   - identifier: owen-003
-    name: "💥 Pubg Mod For Global"
+    name: "💥 PUBG Custom For — GL"
     author: "@owenindahouse"
     version: "1.0.0"
-    summary: "✨ FREE MOD"
-    password: "0604"
-    category: Mod
-    tags: [MOD]
+    summary: "✨ ADVANCED CUSTOM BUILD"
+    password: "2752"
+    category: Customization
+    tags: [CUSTOM]
     publishedAt: "2026-08-28T10:00:00Z"
     icon: assets/global/pubg_global.png
     banner: assets/banner.png
@@ -177,90 +207,100 @@ packages:
     download: packages/MOD_GL.3105
     sha256: 7D6FFE7FC3F9EB999B30199263B25AE23ECF3CA89A2845E40B392814915D0F9E
     size: 18082
-    password: "2752"
     supportedOS: *os_rules
     featured: false
     isPrivate: false
+
     description: |
-      💎 FREE MOD
+      💎 ADVANCED CUSTOM BUILD
 
       ╭──────────────────╮
-       ✨ FEATURES         
+       ✨ FEATURES
       ╰──────────────────╯
-      🔥 BYPASS ONLINE
-      🎯 AIM BOT
-      👁️ IPAD VIEW
-      🚗 INCREASE SPEED CAR
-      ⚡ ETC...
+
+      🔥 Online Compatibility
+      🎯 Aim Assistance
+      👁️ iPad View
+      🚗 Vehicle Enhancement
+      ⚡ Additional Features
 
       ╭──────────────────╮
-       ⚠️ WARNING  
+       ⚠️ IMPORTANT
       ╰──────────────────╯
-      • Delete the old mod before applying this patch.
-      • Backup your data before installing.
+
+      • Remove any previous customization package before applying.
+      • Backup your game data before installation.
 
       ╭──────────────────╮
-       💬 FOR SUPPORT            
+       💬 SUPPORT
       ╰──────────────────╯
+
       @owenindahouse
 
     changelog: |
-
       ╭──────────────────╮
-       🚀 FUTURE UPDATE            
+       🚀 FUTURE UPDATE
       ╰──────────────────╯
+
       ✨ Many new features will be added.
-      🔄 Continuing updates and optimizations in future versions.
+      🔄 Continuous updates and optimizations in future releases.
 
       ❤️ Thank you for your support!
 
+  # ----------------------------------------
+  # KR CUSTOM BUILD
+  # ----------------------------------------
+
   - identifier: owen-004
-    name: "💫 Pubg Mod For Kr"
+    name: "💫 PUBG Custom For — KR"
     author: "@owenindahouse"
     version: "1.0.0"
-    summary: "✨ FREE MOD"
-    password: "0604"
-    category: Mod
-    tags: [MOD]
+    summary: "✨ ADVANCED CUSTOM BUILD"
+    password: "2752"
+    category: Customization
+    tags: [CUSTOM]
     icon: assets/kr/pubg_kr.png
     banner: assets/banner.png
     screenshots: *screens
     download: packages/MOD_KR.3105
     sha256: A063B566541FEA3654A2E0EF1955792D8A01E8B8AFE046D298E3D24C58EBDF9A
     size: 18084
-    password: "2752"
     supportedOS: *os_rules
     featured: false
     isPrivate: false
+
     description: |
-      💎 FREE MOD
+      💎 ADVANCED CUSTOM BUILD
 
       ╭──────────────────╮
-       ✨ FEATURES         
+       ✨ FEATURES
       ╰──────────────────╯
-      🔥 BYPASS ONLINE
-      🎯 AIM BOT
-      👁️ IPAD VIEW
-      🚗 INCREASE SPEED CAR
-      ⚡ ETC...
+
+      🔥 Online Compatibility
+      🎯 Aim Assistance
+      👁️ iPad View
+      🚗 Vehicle Enhancement
+      ⚡ Additional Features
 
       ╭──────────────────╮
-       ⚠️ WARNING  
+       ⚠️ IMPORTANT
       ╰──────────────────╯
-      • Delete the old mod before applying this patch.
-      • Backup your data before installing.
+
+      • Remove any previous customization package before applying.
+      • Backup your game data before installation.
 
       ╭──────────────────╮
-       💬 FOR SUPPORT            
+       💬 SUPPORT
       ╰──────────────────╯
+
       @owenindahouse
 
     changelog: |
-
       ╭──────────────────╮
-       🚀 FUTURE UPDATE            
+       🚀 FUTURE UPDATE
       ╰──────────────────╯
+
       ✨ Many new features will be added.
-      🔄 Continuing updates and optimizations in future versions.
+      🔄 Continuous updates and optimizations in future releases.
 
       ❤️ Thank you for your support!
