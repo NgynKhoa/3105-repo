@@ -46,9 +46,9 @@ packages:
     icon: assets/test.png
     banner: assets/banner.png
     screenshots: *screens
-    download: packages/MOD_PUBG_V11.3105
-    sha256: 55AAD6176817352273A5927A5B2EB84819ACE122708606AB9A379DB8C36DAD5E
-    size: 17981
+    download: packages/PATCH_V7.3105
+    sha256: 7DD4546001EE51A32D0AA392C1B7C9A151EAB9B9DAE992249050EFFE89BE91B0
+    size: 295145
     supportedOS: *os_rules
     featured: true
     isPrivate: false
@@ -94,9 +94,9 @@ packages:
     icon: assets/vip-cabybara.png
     banner: assets/banner.png
     screenshots: *screens
-    download: packages/MOD-PUBG-VIP.3105
-    sha256: 93BF31443CC8550081F84636C62294BA89AF91BBAB467436D90F768CABA97E20
-    size: 17991
+    download: packages/PATCH_V7.3105
+    sha256: 7DD4546001EE51A32D0AA392C1B7C9A151EAB9B9DAE992249050EFFE89BE91B0
+    size: 295145
     supportedOS: *os_rules
     featured: false
     isPrivate: false
@@ -156,7 +156,7 @@ packages:
     name: "CUSTOM HDR & 120FPS"
     author: "@owenindahouse"
     version: "1.0.0"
-    summary: "✨chỉ dành cho người dùng VIỆT NAM"
+    summary: "✨chỉ dành cho người dùng VIỆT NAM - Only for VNG"
     category: Enhancement
     tags: [DISPLAY]
     icon: assets/hdr_120/ngong.png
@@ -205,9 +205,9 @@ packages:
     icon: assets/global/pubg_global.png
     banner: assets/banner.png
     screenshots: *screens
-    download: packages/MOD_GL.3105
-    sha256: 7D6FFE7FC3F9EB999B30199263B25AE23ECF3CA89A2845E40B392814915D0F9E
-    size: 18082
+    download: packages/PATCH_V7_GL.3105
+    sha256: C89E2BEFC9EA6EE8990E1489EE9AAC73B1ADD54345F530FB90F6467B81346AAE
+    size: 295149
     supportedOS: *os_rules
     featured: false
     isPrivate: false
@@ -263,9 +263,9 @@ packages:
     icon: assets/kr/pubg_kr.png
     banner: assets/banner.png
     screenshots: *screens
-    download: packages/MOD_KR.3105
-    sha256: A063B566541FEA3654A2E0EF1955792D8A01E8B8AFE046D298E3D24C58EBDF9A
-    size: 18084
+    download: packages/PATCH_V7_KR.3105
+    sha256: 0993AE6F9CA6A1A709D4FE076CB517A6722CD60E6AD8580CA407A725B22705F9
+    size: 295154
     supportedOS: *os_rules
     featured: false
     isPrivate: false
