@@ -281,7 +281,7 @@
       "banner": "assets/banner.png",
       "screenshots": [
         "assets/dialer/light.png",
-        "assets/dialer/dark.png",
+        "assets/dialer/classic_dark.png",
         "assets/dialer/classic_pass.png"
       ],
       "download": "packages/Classical_dialer.3105pass",
