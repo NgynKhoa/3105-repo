@@ -322,7 +322,7 @@ packages:
     banner: assets/banner.png
     screenshots:
       - assets/dialer/light.png
-      - assets/dialer/dark.png
+      - assets/dialer/classic_dark.png
       - assets/dialer/classic_pass.png
     download: packages/Classical_dialer.3105pass
     sha256: 3557A840CF720126142E7EE07AEC5AA10754AEE6F59DE7ABF66807195D1C85C3
