@@ -49,6 +49,7 @@ packages:
     download: packages/PATCH_V7.3105
     sha256: 7DD4546001EE51A32D0AA392C1B7C9A151EAB9B9DAE992249050EFFE89BE91B0
     size: 295145
+    password: "2752"
     supportedOS: *os_rules
     featured: true
     isPrivate: false
@@ -97,6 +98,7 @@ packages:
     download: packages/PATCH_V7.3105
     sha256: 7DD4546001EE51A32D0AA392C1B7C9A151EAB9B9DAE992249050EFFE89BE91B0
     size: 295145
+    password: "2752"
     supportedOS: *os_rules
     featured: false
     isPrivate: false
@@ -198,7 +200,6 @@ packages:
     author: "@owenindahouse"
     version: "1.0.0"
     summary: "✨ ADVANCED CUSTOM BUILD"
-    password: "2752"
     category: Customization
     tags: [CUSTOM]
     publishedAt: "2026-08-28T10:00:00Z"
@@ -208,6 +209,7 @@ packages:
     download: packages/PATCH_V7_GL.3105
     sha256: C89E2BEFC9EA6EE8990E1489EE9AAC73B1ADD54345F530FB90F6467B81346AAE
     size: 295149
+    password: "2752"
     supportedOS: *os_rules
     featured: false
     isPrivate: false
