@@ -305,3 +305,56 @@ packages:
       🔄 Continuous updates and optimizations in future releases.
 
       ❤️ Thank you for your support!
+
+  # ----------------------------------------
+  # DIALER
+  # ----------------------------------------
+
+  - identifier: owen-005
+    name: "Classical Dialer"
+    author: "@owenindahouse"
+    version: "1.0.0"
+    summary: "✨ Giao diện bàn phím cổ điển • Classic Dialer"
+    category: Customization
+    tags: [Dialer]
+    publishedAt: "2026-08-28T10:00:00Z"
+    icon: assets/dialer/Classic_dialer.png
+    banner: assets/banner.png
+    screenshots: *screens
+    download: packages/Classical_dialer.3105pass
+    sha256: 3557A840CF720126142E7EE07AEC5AA10754AEE6F59DE7ABF66807195D1C85C3
+    size: 829136
+    supportedOS: *os_rules
+    featured: true
+    isPrivate: false
+
+    description: |
+
+      ✨ TÍNH NĂNG NỔI BẬT / FEATURES
+
+      • Giao diện bàn phím gọi điện mang phong cách hoài cổ.
+      • Thiết kế tối giản, phím bấm rõ ràng và dễ nhìn.
+      • Tương thích tốt với chế độ sáng/tối (Light/Dark mode).
+
+      ⚠️ LƯU Ý QUAN TRỌNG / IMPORTANT NOTES
+
+      • Hãy mở bàn phím điện thoại lên trước và nhấn 1 vài phím
+      • Sau đó, vào 3105 mở Setting ở góc bên phải trên cùng
+      • Nhấn vào mục "Lấy dữ liệu Dialer" -> hiện Đã lấy
+      • Quay lại mục đã cài, nhấn vào Dialer đã tải về chọn "Áp dụng Dialer"
+      • Muốn quay về mặc định thì nhấn "Khôi phục Dialer gốc"
+      ───────────────
+      • First, open your phone's dialpad and press a few keys.
+      • Then, open the 3105 app and tap Settings in the top-right corner.
+      • Tap on "Fetch Dialer Data" -> it will display "Fetched" (or "Data Fetched").
+      • Go back to the installed items section, select the downloaded Dialer, and tap "Apply Dialer".
+      • To return to the default look, simply tap "Restore Original Dialer".
+
+      💬 HỖ TRỢ / SUPPORT
+
+      Nếu gặp bất kỳ vấn đề nào về hiển thị, hãy liên hệ @owenindahouse.
+      Contact me @owenindahouse if you encounter any display issues.
+      ❤️ Cảm ơn bạn đã sử dụng. Đừng quên đón chờ những bản cập nhật tiếp theo!
+      Thank you for using this theme. Stay tuned for future updates!
+    changelog: |
+      🎉 v1.0.0 — Phát hành lần đầu.
