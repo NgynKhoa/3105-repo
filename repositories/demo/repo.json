@@ -280,10 +280,9 @@
       "icon": "assets/dialer/Classic_dialer.png",
       "banner": "assets/banner.png",
       "screenshots": [
-        "assets/preview-first.png",
-        "assets/preview-second.png",
-        "assets/preview-third.png",
-        "assets/preview-four.png"
+        "assets/dialer/light.png",
+        "assets/dialer/dark.png",
+        "assets/dialer/classic_pass.png"
       ],
       "download": "packages/Classical_dialer.3105pass",
       "sha256": "3557A840CF720126142E7EE07AEC5AA10754AEE6F59DE7ABF66807195D1C85C3",
