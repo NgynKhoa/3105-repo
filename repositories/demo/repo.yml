@@ -46,9 +46,9 @@ packages:
     icon: assets/test.png
     banner: assets/banner.png
     screenshots: *screens
-    download: packages/PATCH_V7.3105
-    sha256: 7DD4546001EE51A32D0AA392C1B7C9A151EAB9B9DAE992249050EFFE89BE91B0
-    size: 295145
+    download: packages/PATCH_FREE_V12_BY_TD.3105
+    sha256: CE977931A02FA8D505E6DF202BAC4252811DB1055AE1632BCBDC1413C271FCE0
+    size: 37432
     password: "2752"
     supportedOS: *os_rules
     featured: true
@@ -95,9 +95,9 @@ packages:
     icon: assets/vip-cabybara.png
     banner: assets/banner.png
     screenshots: *screens
-    download: packages/PATCH_V7.3105
-    sha256: 7DD4546001EE51A32D0AA392C1B7C9A151EAB9B9DAE992249050EFFE89BE91B0
-    size: 295145
+    download: packages/PATCH_FREE_V12_BY_TD.3105
+    sha256: CE977931A02FA8D505E6DF202BAC4252811DB1055AE1632BCBDC1413C271FCE0
+    size: 37432
     password: "2752"
     supportedOS: *os_rules
     featured: false
@@ -206,9 +206,9 @@ packages:
     icon: assets/global/pubg_global.png
     banner: assets/banner.png
     screenshots: *screens
-    download: packages/PATCH_V7_GL.3105
-    sha256: C89E2BEFC9EA6EE8990E1489EE9AAC73B1ADD54345F530FB90F6467B81346AAE
-    size: 295149
+    download: packages/V12_GL.3105
+    sha256: C8669AEDFB5BFD0AB05029B3F6D09320FBC562859B1EB22F17EF602E66F3BC04
+    size: 37428
     password: "2752"
     supportedOS: *os_rules
     featured: false
@@ -265,9 +265,9 @@ packages:
     icon: assets/kr/pubg_kr.png
     banner: assets/banner.png
     screenshots: *screens
-    download: packages/PATCH_V7_KR.3105
-    sha256: 0993AE6F9CA6A1A709D4FE076CB517A6722CD60E6AD8580CA407A725B22705F9
-    size: 295154
+    download: packages/PATCH_FREE_V12_KR.3105
+    sha256: AB58206C6DD088D60D3471D8BA65E544D80519EAA365CC2832ED192E3F5AD503
+    size: 37429
     supportedOS: *os_rules
     featured: false
     isPrivate: false
