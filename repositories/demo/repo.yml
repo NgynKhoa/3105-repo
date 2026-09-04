@@ -324,7 +324,6 @@ packages:
     summary: "✨ Giao diện bàn phím cổ điển • Classic Dialer"
     category: Customization
     tags: [Dialer]
-    publishedAt: "2026-09-02T09:00:00Z"
     icon: assets/dialer/Classic_dialer/Classic_dialer.png
     banner: assets/banner.png
     screenshots:
@@ -525,8 +524,8 @@ packages:
       🛠️ Vui lòng báo lỗi cho @owenindahouse nếu gặp sự cố.
 
 
-  - identifier: owen-009
-    name: "Phụ Nữ Gất Iu Dialer"
+  - identifier: owen-009  
+    name: "Phụ Nữ Gất iu Dialer"
     author: "@owenindahouse"
     version: "1.0.0"
     summary: "✨ Giao diện phím Hồng Pinkchilling • Pink Dialer"
