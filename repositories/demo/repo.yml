@@ -36,10 +36,10 @@ accentColor: "#FF3B30"
 
 packages:
   - identifier: owen-trial
-    name: "Mẫu PUBG Custom Miễn Phí"
+    name: "PUBG Custom Miễn Phí V12"
     author: "@owenindahouse"
     version: "1.0.0"
-    summary: "✨ Mẫu Pubg • Bản dùng thử • Trải nghiệm tính năng nâng cao"
+    summary: "✨ Pubg • Bản dùng thử • Trải nghiệm tính năng nâng cao"
     category: Customization
     tags: [CUSTOM]
     publishedAt: "2026-08-28T10:00:00Z"
@@ -72,6 +72,7 @@ packages:
       💬 HỖ TRỢ
 
       Nếu gặp bất kỳ vấn đề nào, hãy liên hệ @owenindahouse.
+      Hoặc liên hệ admin Mod @Thanhdat1690.
 
       ❤️ Chúc bạn chơi game vui vẻ và hãy đón chờ những bản cập nhật tiếp theo!
 
@@ -85,10 +86,10 @@ packages:
       ⚠️ Đây là phiên bản thử nghiệm ban đầu và có thể vẫn còn một số lỗi.
 
   - identifier: owen-000
-    name: "👑 Mẫu PUBG Custom Pre"
+    name: "👑 PUBG Custom Pre "
     author: "@owenindahouse"
     version: "1.0.0"
-    summary: "✨Mẫu CUSTOM • PHIÊN BẢN PREMIUM"
+    summary: "✨ CUSTOM • PHIÊN BẢN PREMIUM"
     password: "0604"
     category: Customization
     tags: [CUSTOM]
@@ -185,21 +186,23 @@ packages:
       💬 HỖ TRỢ
 
       Nếu gặp bất kỳ vấn đề nào, hãy liên hệ @owenindahouse.
+      Hoặc liên hệ admin Mod @Thanhdat1690.
 
       ❤️ Chúc bạn chơi game vui vẻ và đón chờ những bản cập nhật tiếp theo!
 
     changelog: |
       🛠️ Vui lòng báo lỗi cho @owenindahouse nếu gặp sự cố.
 
+
   # ----------------------------------------
   # GLOBAL CUSTOM BUILD
   # ----------------------------------------
 
   - identifier: owen-003
-    name: "Sample PUBG Custom For — GL"
+    name: "PUBG Custom For GL V12"
     author: "@owenindahouse"
     version: "1.0.0"
-    summary: "✨ ADVANCED CUSTOM BUILD"
+    summary: "✨ ADVANCED CUSTOM 4 GLOBAL"
     category: Customization
     tags: [CUSTOM]
     publishedAt: "2026-08-28T10:00:00Z"
@@ -239,6 +242,7 @@ packages:
       ╰──────────────────╯
 
       @owenindahouse
+      admin Mod @Thanhdat1690.
 
     changelog: |
       ╭──────────────────╮
@@ -255,10 +259,10 @@ packages:
   # ----------------------------------------
 
   - identifier: owen-004
-    name: "💫 Sample PUBG Custom For — KR"
+    name: "💫 PUBG Custom For KR V12"
     author: "@owenindahouse"
     version: "1.0.0"
-    summary: "✨ ADVANCED CUSTOM BUILD"
+    summary: "✨ ADVANCED CUSTOM 4 KR"
     password: "2752"
     category: Customization
     tags: [CUSTOM]
@@ -297,6 +301,7 @@ packages:
       ╰──────────────────╯
 
       @owenindahouse
+      @Thanhdat1690.
 
     changelog: |
       ╭──────────────────╮
@@ -475,3 +480,46 @@ packages:
     changelog: |
       🎉 v1.0.0 — Phát hành lần đầu.
 
+
+  - identifier: owen-008
+    name: "GRAPHICS POTATO WITH 120FPS PUBG V12"
+    author: "@owenindahouse"
+    version: "1.0.0"
+    summary: "✨chỉ dành cho người dùng VIỆT NAM - Only for VNG"
+    category: Enhancement
+    tags: [DISPLAY]
+    icon: assets/potato_120fps/potato.png
+    banner: assets/banner.png
+    screenshots:
+      - assets/potato_120fps/potato_screenshot.png
+    download: packages/GRAPHICS_POTATO_WITH_120FPS.3105
+    sha256: F7A03FE347ADF7DD29E0358FCF6FAED628E519F6837C7DDC6D5EE50FE15663B3
+    size: 14102893
+    password: "2752"
+    supportedOS: *os_rules
+    featured: true
+    isPrivate: false
+
+    description: |
+      🔥 PUBG CUSTOM FREE
+
+      ✨ TÍNH NĂNG
+
+      • Bộ Skin tùy chỉnh
+      • Hỗ trợ ngắm & tùy chỉnh súng
+      • Dễ Dàng Cài Đặt
+      • Thường Xuyên Cập Nhật
+
+      ⚠️ LƯU Ý QUAN TRỌNG
+
+      • Hãy xóa gói tùy chỉnh cũ trước khi áp dụng.
+      • Nên sao lưu dữ liệu trước khi cài đặt.
+
+      💬 HỖ TRỢ
+
+      Nếu gặp bất kỳ vấn đề nào, hãy liên hệ @owenindahouse.
+      Hoặc liên hệ admin Mod @Thanhdat1690.
+      ❤️ Chúc bạn chơi game vui vẻ và hãy đón chờ những bản cập nhật tiếp theo!
+
+    changelog: |
+      🛠️ Vui lòng báo lỗi cho @owenindahouse nếu gặp sự cố.
