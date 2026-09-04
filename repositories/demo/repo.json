@@ -277,7 +277,6 @@
       "tags": [
         "Dialer"
       ],
-      "publishedAt": "2026-09-02T09:00:00Z",
       "icon": "assets/dialer/Classic_dialer/Classic_dialer.png",
       "banner": "assets/banner.png",
       "screenshots": [
@@ -450,7 +449,7 @@
     },
     {
       "identifier": "owen-009",
-      "name": "Phụ Nữ Gất Iu Dialer",
+      "name": "Phụ Nữ Gất iu Dialer",
       "author": "@owenindahouse",
       "version": "1.0.0",
       "summary": "✨ Giao diện phím Hồng Pinkchilling • Pink Dialer",
