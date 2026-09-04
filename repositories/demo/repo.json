@@ -447,6 +447,51 @@
       "isPrivate": false,
       "description": "🔥 PUBG CUSTOM FREE\n\n✨ TÍNH NĂNG\n\n• Bộ Skin tùy chỉnh\n• Hỗ trợ ngắm & tùy chỉnh súng\n• Dễ Dàng Cài Đặt\n• Thường Xuyên Cập Nhật\n\n⚠️ LƯU Ý QUAN TRỌNG\n\n• Hãy xóa gói tùy chỉnh cũ trước khi áp dụng.\n• Nên sao lưu dữ liệu trước khi cài đặt.\n\n💬 HỖ TRỢ\n\nNếu gặp bất kỳ vấn đề nào, hãy liên hệ @owenindahouse.\nHoặc liên hệ admin Mod @Thanhdat1690.\n❤️ Chúc bạn chơi game vui vẻ và hãy đón chờ những bản cập nhật tiếp theo!\n",
       "changelog": "🛠️ Vui lòng báo lỗi cho @owenindahouse nếu gặp sự cố.\n"
+    },
+    {
+      "identifier": "owen-005",
+      "name": "Phụ Nữ Gất Iu Dialer",
+      "author": "@owenindahouse",
+      "version": "1.0.0",
+      "summary": "✨ Giao diện phím Hồng Pinkchilling • Pink Dialer",
+      "category": "Customization",
+      "tags": [
+        "Dialer"
+      ],
+      "publishedAt": "2026-09-02T09:00:00Z",
+      "icon": "assets/dialer/B&F_Pink/F&B_pink.png",
+      "banner": "assets/banner.png",
+      "screenshots": [
+        "assets/dialer/B&F_Pink/B&F_light.png",
+        "assets/dialer/B&F_Pink/B&F_dark.png"
+      ],
+      "download": "packages/Flower&Butterfly_Pink.3105pass",
+      "sha256": "57EDB20E5572705C4A822F26DF41AC44EF95FAA52757DE0A6CDD836BA3BD67D1",
+      "size": 1052199,
+      "supportedOS": [
+        {
+          "minimum": "17.0",
+          "maximum": "18.7.1"
+        },
+        {
+          "minimum": "26.0",
+          "maximum": "26.6.1"
+        },
+        {
+          "minimum": "27.0",
+          "maximum": "27.0",
+          "builds": [
+            "24A5355q",
+            "24A5370h",
+            "24A5380h",
+            "24A5390f"
+          ]
+        }
+      ],
+      "featured": true,
+      "isPrivate": false,
+      "description": "\n✨ TÍNH NĂNG NỔI BẬT / FEATURES\n\n• Giao diện bàn phím gọi điện mang phong cách PinkPink.\n• Thiết kế nổi bật, phím bấm rõ ràng và dễ nhìn.\n• Tương thích tốt với chế độ sáng/tối (Light/Dark mode).\n\n⚠️ LƯU Ý QUAN TRỌNG / IMPORTANT NOTES\n\n• Hãy mở bàn phím điện thoại lên trước và nhấn 1 vài phím\n• Sau đó, vào 3105 mở Setting ở góc bên phải trên cùng\n• Nhấn vào mục \"Lấy dữ liệu Dialer\" -> hiện Đã lấy\n• Quay lại mục đã cài, nhấn vào Dialer đã tải về chọn \"Áp dụng Dialer\"\n• Muốn quay về mặc định thì nhấn \"Khôi phục Dialer gốc\"\n───────────────\n• First, open your phone's dialpad and press a few keys.\n• Then, open the 3105 app and tap Settings in the top-right corner.\n• Tap on \"Fetch Dialer Data\" -> it will display \"Fetched\" (or \"Data Fetched\").\n• Go back to the installed items section, select the downloaded Dialer, and tap \"Apply Dialer\".\n• To return to the default look, simply tap \"Restore Original Dialer\".\n\n💬 HỖ TRỢ / SUPPORT\n\nNếu gặp bất kỳ vấn đề nào về hiển thị, hãy liên hệ @owenindahouse.\nContact me @owenindahouse if you encounter any display issues.\n❤️ Cảm ơn bạn đã sử dụng. Đừng quên đón chờ những bản cập nhật tiếp theo!\nThank you for using this theme. Stay tuned for future updates!\n",
+      "changelog": "🎉 v1.0.0 — Phát hành lần đầu.\n"
     }
   ]
 }
