@@ -26,7 +26,7 @@ shared_screens: &screens
 schemaVersion: 1
 identifier: com.owen.mod
 name: Owen Custom Repository
-description: "🎮 Kho lưu trữ các bản tùy chỉnh & tiện ích iOS của Owen. 🔥 Cập nhật thường xuyên ❤️"
+description: "🎮 Kho lưu trữ các bản tùy chỉnh & tiện ích iOS của Owen. 🔥 Cập nhật thường xuyên ❤️ @owenindahouse"
 icon: assets/repo-icon.png
 accentColor: "#FF3B30"
 
@@ -531,7 +531,7 @@ packages:
     summary: "✨ Giao diện phím Hồng Pinkchilling • Pink Dialer"
     category: Customization
     tags: [Dialer]
-    publishedAt: "2026-09-04T11:00:00Z"
+    publishedAt: "2026-09-06T11:00:00Z"
     icon: assets/dialer/B&F_Pink/F&B_pink.png
     banner: assets/banner.png
     screenshots:
@@ -574,3 +574,79 @@ packages:
       Thank you for using this theme. Stay tuned for future updates!
     changelog: |
       🎉 v1.0.0 — Phát hành lần đầu.
+
+
+  - identifier: owen-010
+    name: "👑 PUBG ALL IN ONE "
+    author: "@owenindahouse"
+    version: "1.0.0"
+    summary: "✨ 1 PATCH FOR 3 SERVERS "
+    category: Customization
+    tags: [CUSTOM]
+    icon: assets/Allinone/allinone.png
+    banner: assets/banner.png
+    screenshots: *screens
+    download: packages/PATCH_VIP_V12_MOD_PUBG.3105
+    sha256: 9BF4F7C31A97C294714FA395AA9BE1674A5A4A4D414C5109FBBE9137DAF9C9DE
+    size: 38139
+    password: "owen"
+    supportedOS: *os_rules
+    featured: false
+    isPrivate: false
+
+    description: |
+      💎 PREMIUM
+      JUST ONE PATCH FOR 3 SERVERS
+      VNG - GLOBAL - KR
+      Just apply this patch and enjoy all features for 3 servers. 
+      No need to download 3 different patches.
+
+      ╭──────────────────╮
+       ✨ TÍNH NĂNG
+      ╰──────────────────╯
+
+      🔥1 Patch chơi được cả 3 server VNG - GLOBAL - KR
+      🔥Chỉ việc áp dụng patch là xong, không cần tải 3 patch khác nhau.
+      🔥 Tương thích Online
+      🎯 Hỗ trợ ngắm tùy chỉnh
+      👁️ iPad View
+      🚗 Tùy chỉnh tốc độ xe
+      ⚡ Nhiều tính năng nâng cao khác
+
+      ╭──────────────────╮
+       🔐 QUYỀN TRUY CẬP PREMIUM
+      ╰──────────────────╯
+
+      👑 Gói này dành cho thành viên TD Premium.
+
+      ╭──────────────────╮
+       ⚠️ LƯU Ý QUAN TRỌNG
+      ╰──────────────────╯
+
+      • Hãy xóa gói tùy chỉnh cũ trước khi áp dụng.
+      • Nên sao lưu dữ liệu trước khi cài đặt.
+
+      ╭──────────────────╮
+       💬 HỖ TRỢ
+      ╰──────────────────╯
+
+      @owenindahouse
+
+      ❤️ Cảm ơn bạn đã ủng hộ!
+
+    changelog: |
+      ╭──────────────────╮
+       ✨ PHÁT HÀNH
+      ╰──────────────────╯
+
+      🔐 GÓI DÀNH CHO THÀNH VIÊN PREMIUM
+
+      ╭──────────────────╮
+       🚀 SẮP TỚI
+      ╰──────────────────╯
+
+      ✨ Nhiều tính năng mới sẽ được bổ sung.
+
+      🔄 Tiếp tục cập nhật và tối ưu trong các phiên bản tiếp theo.
+
+      ❤️ Cảm ơn bạn đã ủng hộ!
