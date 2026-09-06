@@ -16,6 +16,8 @@ import os
 import pathlib
 import re
 import sys
+import threading
+import webbrowser
 from typing import Any
 
 import yaml
@@ -516,4 +518,18 @@ if __name__ == "__main__":
     print(f"Thu muc repo goc: {ROOT}")
     print("Nhan Ctrl+C de dung.")
     print("=" * 60)
+
+    # Tự động mở trình duyệt sau 1 giây (chỉ chạy 1 lần khi start).
+    # Dùng daemon thread để không chặn server Flask.
+    def _open_browser():
+        url = f"http://localhost:{port}"
+        try:
+            webbrowser.open(url)
+            print(f"[3105 Repo Builder] da tu mo trinh duyet: {url}")
+        except Exception as exc:
+            print(f"[3105 Repo Builder] khong the mo trinh duyet tu dong: {exc}")
+            print(f"  -> Hay tu mo: {url}")
+
+    threading.Timer(1.0, _open_browser).start()
+
     app.run(host="127.0.0.1", port=port, debug=False)
