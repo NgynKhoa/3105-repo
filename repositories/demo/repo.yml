@@ -583,6 +583,7 @@ packages:
     summary: "✨ 1 PATCH FOR 3 SERVERS "
     category: Customization
     tags: [CUSTOM]
+    publishedAt: "2026-09-06T11:00:00Z"
     icon: assets/Allinone/allinone.png
     banner: assets/banner.png
     screenshots: *screens
