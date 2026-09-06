@@ -7,6 +7,9 @@ const state = {
   currentRepo: null,
   repoMeta: {},
   packages: [],
+  packagesMeta: [],
+  sharedScreens: [],
+  sharedOS: [],
   assets: [],
   packageFiles: [],
   editingIndex: null,
@@ -41,17 +44,20 @@ async function api(path, options = {}) {
   return data;
 }
 
+// replaceAll không có sẵn ở một số trình duyệt cũ — dùng replace + regex /g.
 function escapeHtml(s) {
   if (s == null) return '';
   return String(s)
-    .replaceAll('&', '&amp;')
-    .replaceAll('<', '&lt;')
-    .replaceAll('>', '&gt;')
-    .replaceAll('"', '&quot;')
-    .replaceAll("'", '&#039;');
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
 }
 
 function formatSize(bytes) {
+  if (bytes === null || bytes === undefined) return '0 B';
+  bytes = Number(bytes);
   if (!bytes) return '0 B';
   const units = ['B', 'KB', 'MB', 'GB'];
   let i = 0;
@@ -60,6 +66,11 @@ function formatSize(bytes) {
     i++;
   }
   return `${bytes.toFixed(bytes >= 100 ? 0 : 1)} ${units[i]}`;
+}
+
+// SHA-256 hex 64 ký tự, in hoa
+function normalizeSha256(s) {
+  return String(s || '').trim().toUpperCase();
 }
 
 // ---------------------------------------------------------------------
@@ -83,7 +94,6 @@ async function loadRepositories() {
       opt.textContent = name;
       sel.appendChild(opt);
     });
-    // Chọn repo demo mặc định
     if (state.repositories.includes('demo')) {
       sel.value = 'demo';
     } else {
@@ -104,6 +114,10 @@ async function loadRepo() {
     // Load packages + meta
     const data = await api(`/api/repo/${repo}/packages`);
     state.repoMeta = data.repoMeta || {};
+    state.sharedScreens = data.sharedScreens || (window.DEFAULT_SCREENSHOTS || []);
+    state.sharedOS = data.sharedOS || (window.DEFAULT_OS_RULES || []);
+    // packagesMeta đi kèm từ backend — dùng để ghi lại YAML đúng anchor
+    state.packagesMeta = Array.isArray(data.packagesMeta) ? data.packagesMeta : [];
     state.packages = (data.packages || []).map(normalizePackage);
 
     // Load file listings
@@ -119,15 +133,14 @@ async function loadRepo() {
   }
 }
 
-function normalizePackage(pkg) {
-  // Thêm các cờ nội bộ giúp form hoạt động đúng
-  const p = { ...pkg };
-  p.__use_default_os = Array.isArray(p.supportedOS)
-    ? JSON.stringify(p.supportedOS) === JSON.stringify(window.DEFAULT_OS_RULES)
-    : true;
-  // Mặc định coi như dùng *screens khi list giống hệt shared
-  p.__use_default_screens = false;
-  return p;
+function normalizePackage(pkg, idx) {
+  // Giữ nguyên cờ anchor từ backend; chỉ thêm default nếu backend không cung cấp.
+  const meta = state.packagesMeta[idx] || {};
+  return {
+    ...pkg,
+    __use_default_os: !!meta.use_anchor_os,
+    __use_default_screens: !!meta.use_anchor_screens,
+  };
 }
 
 // ---------------------------------------------------------------------
@@ -152,7 +165,17 @@ function renderMeta() {
     opt.textContent = p;
     iconSel.appendChild(opt);
   });
-  if (state.repoMeta.icon) iconSel.value = state.repoMeta.icon;
+  // Đảm bảo icon hiện tại được chọn dù có/không có trong danh sách scan
+  if (state.repoMeta.icon) {
+    const exists = Array.from(iconSel.options).some(o => o.value === state.repoMeta.icon);
+    if (!exists) {
+      const opt = document.createElement('option');
+      opt.value = state.repoMeta.icon;
+      opt.textContent = `${state.repoMeta.icon} (không tìm thấy)`;
+      iconSel.appendChild(opt);
+    }
+    iconSel.value = state.repoMeta.icon;
+  }
 }
 
 // ---------------------------------------------------------------------
@@ -179,6 +202,7 @@ function renderPackageList() {
           <span class="font-medium truncate">${escapeHtml(pkg.name || '(chưa có tên)')}</span>
           ${pkg.featured ? '<span class="bg-yellow-100 text-yellow-800 text-xs px-2 py-0.5 rounded-full">featured</span>' : ''}
           ${pkg.isPrivate ? '<span class="bg-slate-200 text-slate-700 text-xs px-2 py-0.5 rounded-full">private</span>' : ''}
+          ${pkg.kind ? `<span class="bg-blue-100 text-blue-800 text-xs px-2 py-0.5 rounded-full">${escapeHtml(pkg.kind)}</span>` : ''}
         </div>
         <div class="text-xs text-slate-500 truncate">
           <code>${escapeHtml(pkg.identifier)}</code> · v${escapeHtml(pkg.version || '?')} · ${escapeHtml(pkg.category || '—')}
@@ -190,18 +214,20 @@ function renderPackageList() {
       </div>
       <div class="flex gap-1">
         <button data-action="edit" data-idx="${idx}" class="px-2 py-1 text-xs rounded border border-slate-300 hover:bg-slate-100">Sửa</button>
+        <button data-action="duplicate" data-idx="${idx}" class="px-2 py-1 text-xs rounded border border-slate-300 hover:bg-slate-100" title="Sao chép package này để tạo bản mới">Sao chép</button>
         <button data-action="delete" data-idx="${idx}" class="px-2 py-1 text-xs rounded border border-red-200 text-red-600 hover:bg-red-50">Xoá</button>
       </div>
     `;
     list.appendChild(row);
   });
 
-  // Bind action buttons
   $$('#packageList [data-action]').forEach(btn => {
     btn.addEventListener('click', () => {
       const idx = parseInt(btn.dataset.idx, 10);
-      if (btn.dataset.action === 'edit') openModal(idx);
-      else if (btn.dataset.action === 'delete') deletePackage(idx);
+      const action = btn.dataset.action;
+      if (action === 'edit') openModal(idx);
+      else if (action === 'delete') deletePackage(idx);
+      else if (action === 'duplicate') duplicatePackage(idx);
     });
   });
 }
@@ -275,6 +301,9 @@ function buildFormHtml(pkg) {
       const sel = p === current ? 'selected' : '';
       opts.push(`<option value="${escapeHtml(p)}" ${sel}>${escapeHtml(p)}</option>`);
     });
+    if (current && !state.assets.includes(current)) {
+      opts.push(`<option value="${escapeHtml(current)}" selected>${escapeHtml(current)} (không tìm thấy)</option>`);
+    }
     return opts.join('');
   };
 
@@ -284,8 +313,13 @@ function buildFormHtml(pkg) {
       const sel = p === current ? 'selected' : '';
       opts.push(`<option value="${escapeHtml(p)}" ${sel}>${escapeHtml(p)}</option>`);
     });
+    if (current && !state.packageFiles.includes(current)) {
+      opts.push(`<option value="${escapeHtml(current)}" selected>${escapeHtml(current)} (không tìm thấy)</option>`);
+    }
     return opts.join('');
   };
+
+  const defaultScreens = window.DEFAULT_SCREENSHOTS || [];
 
   return `
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -330,6 +364,15 @@ function buildFormHtml(pkg) {
       </label>
 
       <label class="block">
+        <span class="text-xs text-slate-500">Kind (để trống = package thường)</span>
+        <input id="f_kind" value="${escapeHtml(pkg.kind || '')}" placeholder="vd: wallpaper" class="w-full mt-1 border border-slate-300 rounded-md px-3 py-1.5 text-sm" />
+      </label>
+      <label class="block">
+        <span class="text-xs text-slate-500">PublishedAt (ISO 8601, tuỳ chọn)</span>
+        <input id="f_publishedAt" value="${escapeHtml(pkg.publishedAt || '')}" placeholder="2026-09-06T10:00:00Z" class="w-full mt-1 border border-slate-300 rounded-md px-3 py-1.5 text-sm font-mono" />
+      </label>
+
+      <label class="block">
         <span class="text-xs text-slate-500">Icon</span>
         <select id="f_icon" class="w-full mt-1 border border-slate-300 rounded-md px-3 py-1.5 text-sm">${assetOptions(pkg.icon)}</select>
       </label>
@@ -341,7 +384,8 @@ function buildFormHtml(pkg) {
       <label class="block md:col-span-2">
         <span class="text-xs text-slate-500 flex items-center gap-2">
           <input type="checkbox" id="f_use_default_screens" ${pkg.__use_default_screens ? 'checked' : ''} />
-          Dùng danh sách screenshot mặc định (4 ảnh preview-first → preview-fourth)
+          Dùng danh sách screenshot mặc định
+          <span class="text-slate-400">(4 ảnh: preview-first → preview-four)</span>
         </span>
       </label>
       <label class="block md:col-span-2" id="screensListWrap" style="${pkg.__use_default_screens ? 'display:none' : ''}">
@@ -388,6 +432,15 @@ function buildFormHtml(pkg) {
         <span class="text-xs text-slate-500">Changelog</span>
         <textarea id="f_changelog" rows="3" class="w-full mt-1 border border-slate-300 rounded-md px-3 py-1.5 text-sm">${escapeHtml(pkg.changelog || '')}</textarea>
       </label>
+
+      <details class="md:col-span-2 text-xs text-slate-500">
+        <summary class="cursor-pointer text-slate-600 hover:text-slate-900">📂 Mặc định dùng chung</summary>
+        <div class="mt-2 p-3 bg-slate-50 rounded-md font-mono text-[11px] whitespace-pre-wrap">iOS rules:
+${(window.DEFAULT_OS_RULES || []).map(r => '  - minimum: ' + r.minimum + ', maximum: ' + r.maximum + (r.builds ? ', builds: ' + JSON.stringify(r.builds) : '')).join('\n')}
+
+Screenshots mặc định:
+${(defaultScreens).map(s => '  - ' + s).join('\n')}</div>
+      </details>
     </div>
   `;
 }
@@ -428,12 +481,14 @@ function readFormToPackage() {
     summary: $('#f_summary').value.trim(),
     category: $('#f_category').value,
     tags: $('#f_tags').value.split(',').map(s => s.trim()).filter(Boolean),
+    kind: $('#f_kind').value.trim(),
+    publishedAt: $('#f_publishedAt').value.trim(),
     icon: $('#f_icon').value,
     banner: $('#f_banner').value,
     __use_default_screens: $('#f_use_default_screens').checked,
     screenshots: $('#f_screenshots').value.split('\n').map(s => s.trim()).filter(Boolean),
     download: $('#f_download').value,
-    sha256: $('#f_sha256').value.trim().toUpperCase(),
+    sha256: normalizeSha256($('#f_sha256').value),
     size: parseInt($('#f_size').value, 10) || 0,
     password: $('#f_password').value,
     featured: $('#f_featured').checked,
@@ -452,17 +507,33 @@ function savePackageFromForm() {
   if (!pkg.name) return toast('Thiếu tên.', 'error');
   if (!pkg.download) return toast('Thiếu file .3105.', 'error');
   if (!pkg.sha256) return toast('Thiếu SHA-256 (bấm "Tự động điền").', 'error');
-  if (!pkg.size) return toast('Thiếu size.', 'error');
+  if (!/^[0-9A-F]{64}$/.test(pkg.sha256)) return toast('SHA-256 phải là hex 64 ký tự.', 'error');
+  if (!pkg.size || pkg.size <= 0) return toast('Size không hợp lệ.', 'error');
 
   // Trùng identifier với package khác?
   const dup = state.packages.findIndex((p, i) =>
     p.identifier === pkg.identifier && i !== state.editingIndex);
   if (dup >= 0) return toast(`Identifier "${pkg.identifier}" đã tồn tại ở package #${dup + 1}.`, 'error');
 
+  // Tách các trường nội bộ ra khỏi object lưu trữ
+  const useOs = pkg.__use_default_os;
+  const useScreens = pkg.__use_default_screens;
+  const pkgClean = { ...pkg };
+  delete pkgClean.__use_default_os;
+  delete pkgClean.__use_default_screens;
+
   if (state.editingIndex === null) {
-    state.packages.push(pkg);
+    state.packages.push(pkgClean);
+    state.packagesMeta.push({
+      use_anchor_os: useOs,
+      use_anchor_screens: useScreens,
+    });
   } else {
-    state.packages[state.editingIndex] = pkg;
+    state.packages[state.editingIndex] = pkgClean;
+    state.packagesMeta[state.editingIndex] = {
+      use_anchor_os: useOs,
+      use_anchor_screens: useScreens,
+    };
   }
   closeModal();
   renderPackageList();
@@ -472,8 +543,35 @@ function savePackageFromForm() {
 function deletePackage(idx) {
   if (!confirm(`Xoá package "${state.packages[idx].identifier}"?`)) return;
   state.packages.splice(idx, 1);
+  state.packagesMeta.splice(idx, 1);
   renderPackageList();
   toast('Đã xoá khỏi bộ nhớ tạm.', 'info');
+}
+
+function duplicatePackage(idx) {
+  const src = state.packages[idx];
+  const used = new Set(state.packages.map(p => p.identifier));
+  let n = 1;
+  let newId = `${src.identifier}-copy`;
+  while (used.has(newId)) {
+    n += 1;
+    newId = `${src.identifier}-copy${n}`;
+  }
+  const copy = {
+    ...src,
+    identifier: newId,
+    name: `${src.name} (bản sao)`,
+    sha256: '',
+    size: 0,
+    download: '',
+  };
+  state.packages.splice(idx + 1, 0, copy);
+  state.packagesMeta.splice(idx + 1, 0, {
+    use_anchor_os: state.packagesMeta[idx]?.use_anchor_os ?? true,
+    use_anchor_screens: state.packagesMeta[idx]?.use_anchor_screens ?? true,
+  });
+  renderPackageList();
+  toast(`Đã sao chép package → ${newId}. Mở Sửa để điền SHA-256/file mới.`, 'success');
 }
 
 // ---------------------------------------------------------------------
@@ -484,6 +582,14 @@ async function saveAll() {
   if (!state.currentRepo) return toast('Chưa chọn repo.', 'error');
   if (state.packages.length === 0) {
     if (!confirm('Repo không có package nào. Vẫn ghi file?')) return;
+  }
+
+  // Đồng bộ meta packagesMeta cho khớp số lượng
+  while (state.packagesMeta.length < state.packages.length) {
+    state.packagesMeta.push({ use_anchor_os: true, use_anchor_screens: true });
+  }
+  if (state.packagesMeta.length > state.packages.length) {
+    state.packagesMeta.length = state.packages.length;
   }
 
   // Đọc meta từ form
@@ -502,9 +608,12 @@ async function saveAll() {
       body: JSON.stringify({
         repoMeta,
         packages: state.packages,
+        packagesMeta: state.packagesMeta,
       }),
     });
-    toast(`✓ Đã ghi file ${r.saved} (${r.count} package).`, 'success');
+    const anchors = r.anchors || {};
+    const anchorInfo = (anchors.os || anchors.screens) ? ` (anchor: ${[anchors.os && 'os', anchors.screens && 'screens'].filter(Boolean).join('+')})` : '';
+    toast(`✓ Đã ghi file ${r.saved} (${r.count} package)${anchorInfo}.`, 'success');
     if (r.next) {
       console.log('Bước tiếp theo:\n' + r.next.join('\n'));
     }
@@ -525,6 +634,13 @@ document.addEventListener('DOMContentLoaded', () => {
   $('#btnReload').addEventListener('click', loadRepo);
   $('#btnAdd').addEventListener('click', () => openModal(null));
   $('#btnSave').addEventListener('click', saveAll);
+
+  // Phím tắt: ESC đóng modal
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && !$('#modal').classList.contains('hidden')) {
+      closeModal();
+    }
+  });
 
   loadRepositories();
 });
