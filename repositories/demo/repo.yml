@@ -689,29 +689,3 @@ packages:
       🔄 Tiếp tục cập nhật và tối ưu trong các phiên bản tiếp theo.
       
       ❤️ Cảm ơn bạn đã ủng hộ!
-
-  # ----- owen-012 -----
-  - identifier: owen-012
-    name: tesssstttt
-    author: "@owenindahouse"
-    version: 1.0.0
-    summary: ststssssss
-    category: Customization
-    tags: [CUSTOM]
-    icon: assets/dialer/Dual_Horizontal/dual_dark.png
-    banner: assets/banner.png
-    download: packages/ALL_IN_ONE_V12.3105
-    sha256: FDC6EC1F47DC9C8D4BAA78FC2AC1957F4C1B486B34A886DB9F8221D13C6BFE0B
-    size: 38137
-    supportedOS:
-      - minimum: "17.0"
-        maximum: "18.7.1"
-      - minimum: "26.0"
-        maximum: "26.6.1"
-      - minimum: "27.0"
-        maximum: "27.0"
-        builds: ["24A5355q", "24A5370h", "24A5380h", "24A5390f"]
-    featured: false
-    isPrivate: false
-    description: tatawtatsssst tétttttt
-    changelog: 🎉 v1.0.0 — Phát hành lần đầu
