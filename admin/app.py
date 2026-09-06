@@ -112,41 +112,15 @@ def load_yaml(path: pathlib.Path) -> dict[str, Any]:
 
 
 def save_yaml(path: pathlib.Path, data: dict[str, Any]) -> None:
-    """Ghi YAML với anchor `&os_rules` / `&screens` để không lặp lại cấu hình chung.
+    """Ghi YAML không dùng anchor `&os_rules`/`&screens`.
 
-    Hàm này cố tình sinh ra cùng format với file YAML bạn đang sửa tay,
-    để GitHub Action build.yml vẫn convert sang JSON đúng cách.
+    Lý do: anchor YAML khi convert sang JSON không tự expand,
+    mà app 3105 đọc JSON sẽ không hiểu `*screens` hay `*os_rules`,
+    dẫn đến crash. Mỗi package sẽ được ghi `screenshots:` và
+    `supportedOS:` đầy đủ để tương thích tuyệt đối với schema JSON
+    của app 3105.
     """
-    # Đảm bảo các khóa chung xuất hiện đúng vị trí đầu file
-    shared_os = data.pop("__shared_os", None) or DEFAULT_OS_RULES
-    shared_screens = data.pop("__shared_screens", None) or [
-        "assets/preview-first.png",
-        "assets/preview-second.png",
-        "assets/preview-third.png",
-        "assets/preview-four.png",
-    ]
-
     lines: list[str] = []
-    lines.append("# ==========================================")
-    lines.append("# KHU VỰC ĐỊNH NGHĨA DÙNG CHUNG (Tái sử dụng)")
-    lines.append("# ==========================================")
-    lines.append("")
-
-    # Anchor cho OS rules
-    lines.append("shared_os: &os_rules")
-    for rule in shared_os:
-        lines.append(f"  - minimum: \"{rule['minimum']}\"")
-        lines.append(f"    maximum: \"{rule['maximum']}\"")
-        if rule.get("builds"):
-            lines.append(f"    builds: {json.dumps(rule['builds'], ensure_ascii=False)}")
-    lines.append("")
-
-    # Anchor cho screenshots mặc định
-    lines.append("shared_screens: &screens")
-    for shot in shared_screens:
-        lines.append(f"  - {shot}")
-    lines.append("")
-
     lines.append("# ==========================================")
     lines.append("# THÔNG TIN CHUNG CỦA REPO")
     lines.append("# ==========================================")
@@ -229,12 +203,10 @@ def _render_package_yaml(pkg: dict[str, Any]) -> list[str]:
     if pkg.get("banner"):
         lines.append(f"    banner: {pkg['banner']}")
 
-    # Screenshots - dùng anchor *screens nếu user chọn "mặc định",
-    # nếu không thì liệt kê từng dòng.
+    # Screenshots - luôn liệt kê đầy đủ để JSON sau khi convert
+    # không phụ thuộc anchor (tránh crash app 3105).
     screenshots = pkg.get("screenshots") or []
-    if pkg.get("__use_default_screens"):
-        lines.append("    screenshots: *screens")
-    elif screenshots:
+    if screenshots:
         lines.append("    screenshots:")
         for shot in screenshots:
             lines.append(f"      - {shot}")
@@ -246,16 +218,15 @@ def _render_package_yaml(pkg: dict[str, Any]) -> list[str]:
     if pkg.get("size") is not None:
         lines.append(f"    size: {pkg['size']}")
 
-    if pkg.get("__use_default_os"):
-        lines.append("    supportedOS: *os_rules")
-    else:
-        os_rules = pkg.get("supportedOS") or DEFAULT_OS_RULES
-        lines.append("    supportedOS:")
-        for rule in os_rules:
-            lines.append(f"      - minimum: \"{rule['minimum']}\"")
-            lines.append(f"        maximum: \"{rule['maximum']}\"")
-            if rule.get("builds"):
-                lines.append(f"        builds: {json.dumps(rule['builds'], ensure_ascii=False)}")
+    # supportedOS - luôn ghi đầy đủ để JSON sau khi convert
+    # không phụ thuộc anchor (tránh crash app 3105).
+    os_rules = pkg.get("supportedOS") or DEFAULT_OS_RULES
+    lines.append("    supportedOS:")
+    for rule in os_rules:
+        lines.append(f"      - minimum: \"{rule['minimum']}\"")
+        lines.append(f"        maximum: \"{rule['maximum']}\"")
+        if rule.get("builds"):
+            lines.append(f"        builds: {json.dumps(rule['builds'], ensure_ascii=False)}")
 
     lines.append(f"    featured: {str(bool(pkg.get('featured', False))).lower()}")
     lines.append(f"    isPrivate: {str(bool(pkg.get('isPrivate', False))).lower()}")
