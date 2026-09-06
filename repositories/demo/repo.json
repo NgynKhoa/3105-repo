@@ -247,6 +247,7 @@
       "author": "@owenindahouse",
       "version": "1.0.0",
       "summary": "✨ Giao diện bàn phím cổ điển • Classic Dialer",
+      "password": "",
       "category": "Customization",
       "tags": [
         "Dialer"
@@ -292,6 +293,7 @@
       "author": "@owenindahouse",
       "version": "1.0.0",
       "summary": "✨ Giao diện Vòng Cơ bản • Circle Cover Dialer",
+      "password": "",
       "category": "Customization",
       "tags": [
         "Dialer"
@@ -338,6 +340,7 @@
       "author": "@owenindahouse",
       "version": "1.0.0",
       "summary": "✨ Giao diện Bình Mình và Hoàng Hôn • DayBreak Dialer",
+      "password": "",
       "category": "Customization",
       "tags": [
         "Dialer"
@@ -427,6 +430,7 @@
       "author": "@owenindahouse",
       "version": "1.0.0",
       "summary": "✨ Giao diện phím Hồng Pinkchilling • Pink Dialer",
+      "password": "",
       "category": "Customization",
       "tags": [
         "Dialer"
@@ -559,7 +563,7 @@
       "featured": false,
       "isPrivate": true,
       "description": "TEST repo builder\n",
-      "changelog": "🎉 v1.0.0 — Phát hành lần đầu\n"
+      "changelog": "🎉 v1.0.0 — Phát hành lần đầu"
     }
   ]
 }
