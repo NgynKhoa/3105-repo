@@ -588,7 +588,7 @@ packages:
     banner: assets/banner.png
     screenshots: *screens
     download: packages/PATCH_VIP_V12_MOD_PUBG.3105
-    sha256: 9BF4F7C31A97C294714FA395AA9BE1674A5A4A4D414C5109FBBE9137DAF9C9DE
+    sha256: FDC6EC1F47DC9C8D4BAA78FC2AC1957F4C1B486B34A886DB9F8221D13C6BFE0B
     size: 38139
     password: "owen"
     supportedOS: *os_rules
