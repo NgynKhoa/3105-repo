@@ -334,6 +334,7 @@ packages:
     author: "@owenindahouse"
     version: 1.0.0
     summary: ✨ Giao diện bàn phím cổ điển • Classic Dialer
+    password: ""
     category: Customization
     tags: [Dialer]
     icon: assets/dialer/Classic_dialer/Classic_dialer.png
@@ -392,6 +393,7 @@ packages:
     author: "@owenindahouse"
     version: 1.0.0
     summary: ✨ Giao diện Vòng Cơ bản • Circle Cover Dialer
+    password: ""
     category: Customization
     tags: [Dialer]
     publishedAt: "2026-09-02T09:00:00Z"
@@ -401,7 +403,7 @@ packages:
       - assets/dialer/Basic_Circle/bs_light.png
       - assets/dialer/Basic_Circle/bs_dark.png
       - assets/dialer/Basic_Circle/bs_pass.png
-    download: packages/Basic_CircleB&W.3105pass
+    download: "packages/Basic_CircleB&W.3105pass"
     sha256: BA91799564D04544CFF874C897273037AA4717456A93B7A70798CBEFEE97AAF8
     size: 406950
     supportedOS:
@@ -451,6 +453,7 @@ packages:
     author: "@owenindahouse"
     version: 1.0.0
     summary: ✨ Giao diện Bình Mình và Hoàng Hôn • DayBreak Dialer
+    password: ""
     category: Customization
     tags: [Dialer]
     icon: assets/dialer/Dual_Horizontal/dual_horizon.png
@@ -558,15 +561,16 @@ packages:
     author: "@owenindahouse"
     version: 1.0.0
     summary: ✨ Giao diện phím Hồng Pinkchilling • Pink Dialer
+    password: ""
     category: Customization
     tags: [Dialer]
     publishedAt: "2026-09-06T11:00:00Z"
-    icon: assets/dialer/B&F_Pink/F&B_pink.png
+    icon: "assets/dialer/B&F_Pink/F&B_pink.png"
     banner: assets/banner.png
     screenshots:
-      - assets/dialer/B&F_Pink/B&F_light.png
-      - assets/dialer/B&F_Pink/B&F_dark.png
-    download: packages/Flower&Butterfly_Pink.3105pass
+      - "assets/dialer/B&F_Pink/B&F_light.png"
+      - "assets/dialer/B&F_Pink/B&F_dark.png"
+    download: "packages/Flower&Butterfly_Pink.3105pass"
     sha256: 57EDB20E5572705C4A822F26DF41AC44EF95FAA52757DE0A6CDD836BA3BD67D1
     size: 1052199
     supportedOS:
