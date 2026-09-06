@@ -1,10 +1,36 @@
 {
+  "shared_os": [
+    {
+      "minimum": "17.0",
+      "maximum": "18.7.1"
+    },
+    {
+      "minimum": "26.0",
+      "maximum": "26.6.1"
+    },
+    {
+      "minimum": "27.0",
+      "maximum": "27.0",
+      "builds": [
+        "24A5355q",
+        "24A5370h",
+        "24A5380h",
+        "24A5390f"
+      ]
+    }
+  ],
+  "shared_screens": [
+    "assets/preview-first.png",
+    "assets/preview-second.png",
+    "assets/preview-third.png",
+    "assets/preview-four.png"
+  ],
   "schemaVersion": 1,
   "identifier": "com.owen.mod",
   "name": "Owen Custom Repository",
-  "accentColor": "#FF3B30",
   "description": "🎮 Kho lưu trữ các bản tùy chỉnh & tiện ích iOS của Owen. 🔥 Cập nhật thường xuyên ❤️ @owenindahouse",
   "icon": "assets/repo-icon.png",
+  "accentColor": "#FF3B30",
   "packages": [
     {
       "identifier": "owen-trial",
@@ -12,7 +38,6 @@
       "author": "@owenindahouse",
       "version": "1.0.0",
       "summary": "✨ Pubg • Bản dùng thử • Trải nghiệm tính năng nâng cao",
-      "password": "2752",
       "category": "Customization",
       "tags": [
         "CUSTOM"
@@ -29,6 +54,7 @@
       "download": "packages/PATCH_FREE_V12_BY_TD.3105",
       "sha256": "CE977931A02FA8D505E6DF202BAC4252811DB1055AE1632BCBDC1413C271FCE0",
       "size": 37432,
+      "password": "2752",
       "supportedOS": [
         {
           "minimum": "17.0",
@@ -56,7 +82,7 @@
     },
     {
       "identifier": "owen-000",
-      "name": "👑 PUBG Custom Pre",
+      "name": "👑 PUBG Custom Pre ",
       "author": "@owenindahouse",
       "version": "1.0.0",
       "summary": "✨ CUSTOM • PHIÊN BẢN PREMIUM",
@@ -107,7 +133,6 @@
       "author": "@owenindahouse",
       "version": "1.0.0",
       "summary": "✨chỉ dành cho người dùng VIỆT NAM - Only for VNG",
-      "password": "2752",
       "category": "Enhancement",
       "tags": [
         "DISPLAY"
@@ -121,6 +146,7 @@
       "download": "packages/HDR_120FPS.3105",
       "sha256": "C6A6D2A32925B1BC8F844A3736DE7E3056EE06935E49836F1C89132A25851372",
       "size": 8200,
+      "password": "2752",
       "supportedOS": [
         {
           "minimum": "17.0",
@@ -152,7 +178,6 @@
       "author": "@owenindahouse",
       "version": "1.0.0",
       "summary": "✨ ADVANCED CUSTOM 4 GLOBAL",
-      "password": "2752",
       "category": "Customization",
       "tags": [
         "CUSTOM"
@@ -169,6 +194,7 @@
       "download": "packages/V12_GL.3105",
       "sha256": "C8669AEDFB5BFD0AB05029B3F6D09320FBC562859B1EB22F17EF602E66F3BC04",
       "size": 37428,
+      "password": "2752",
       "supportedOS": [
         {
           "minimum": "17.0",
@@ -247,7 +273,6 @@
       "author": "@owenindahouse",
       "version": "1.0.0",
       "summary": "✨ Giao diện bàn phím cổ điển • Classic Dialer",
-      "password": "",
       "category": "Customization",
       "tags": [
         "Dialer"
@@ -293,7 +318,6 @@
       "author": "@owenindahouse",
       "version": "1.0.0",
       "summary": "✨ Giao diện Vòng Cơ bản • Circle Cover Dialer",
-      "password": "",
       "category": "Customization",
       "tags": [
         "Dialer"
@@ -340,7 +364,6 @@
       "author": "@owenindahouse",
       "version": "1.0.0",
       "summary": "✨ Giao diện Bình Mình và Hoàng Hôn • DayBreak Dialer",
-      "password": "",
       "category": "Customization",
       "tags": [
         "Dialer"
@@ -386,7 +409,6 @@
       "author": "@owenindahouse",
       "version": "1.0.0",
       "summary": "✨chỉ dành cho người dùng VIỆT NAM - Only for VNG",
-      "password": "2752",
       "category": "Enhancement",
       "tags": [
         "DISPLAY"
@@ -399,6 +421,7 @@
       "download": "packages/GRAPHICS_POTATO_WITH_120FPS.3105",
       "sha256": "F7A03FE347ADF7DD29E0358FCF6FAED628E519F6837C7DDC6D5EE50FE15663B3",
       "size": 14102893,
+      "password": "2752",
       "supportedOS": [
         {
           "minimum": "17.0",
@@ -430,7 +453,6 @@
       "author": "@owenindahouse",
       "version": "1.0.0",
       "summary": "✨ Giao diện phím Hồng Pinkchilling • Pink Dialer",
-      "password": "",
       "category": "Customization",
       "tags": [
         "Dialer"
@@ -472,11 +494,10 @@
     },
     {
       "identifier": "owen-010",
-      "name": "👑 PUBG ALL IN ONE",
+      "name": "👑 PUBG ALL IN ONE ",
       "author": "@owenindahouse",
       "version": "1.0.0",
-      "summary": "✨ 1 PATCH FOR 3 SERVERS",
-      "password": "owen",
+      "summary": "✨ 1 PATCH FOR 3 SERVERS ",
       "category": "Customization",
       "tags": [
         "CUSTOM"
@@ -493,6 +514,7 @@
       "download": "packages/PATCH_VIP_V12_MOD_PUBG.3105",
       "sha256": "9BF4F7C31A97C294714FA395AA9BE1674A5A4A4D414C5109FBBE9137DAF9C9DE",
       "size": 38139,
+      "password": "owen",
       "supportedOS": [
         {
           "minimum": "17.0",
@@ -517,53 +539,6 @@
       "isPrivate": false,
       "description": "💎 PREMIUM\nJUST ONE PATCH FOR 3 SERVERS\nVNG - GLOBAL - KR\nJust apply this patch and enjoy all features for 3 servers. \nNo need to download 3 different patches.\n\n╭──────────────────╮\n ✨ TÍNH NĂNG\n╰──────────────────╯\n\n🔥1 Patch chơi được cả 3 server VNG - GLOBAL - KR\n🔥Chỉ việc áp dụng patch là xong, không cần tải 3 patch khác nhau.\n🔥 Tương thích Online\n🎯 Hỗ trợ ngắm tùy chỉnh\n👁️ iPad View\n🚗 Tùy chỉnh tốc độ xe\n⚡ Nhiều tính năng nâng cao khác\n\n╭──────────────────╮\n 🔐 QUYỀN TRUY CẬP PREMIUM\n╰──────────────────╯\n\n👑 Gói này dành cho thành viên TD Premium.\n\n╭──────────────────╮\n ⚠️ LƯU Ý QUAN TRỌNG\n╰──────────────────╯\n\n• Hãy xóa gói tùy chỉnh cũ trước khi áp dụng.\n• Nên sao lưu dữ liệu trước khi cài đặt.\n\n╭──────────────────╮\n 💬 HỖ TRỢ\n╰──────────────────╯\n\n@owenindahouse\n\n❤️ Cảm ơn bạn đã ủng hộ!\n",
       "changelog": "╭──────────────────╮\n ✨ PHÁT HÀNH\n╰──────────────────╯\n\n🔐 GÓI DÀNH CHO THÀNH VIÊN PREMIUM\n\n╭──────────────────╮\n 🚀 SẮP TỚI\n╰──────────────────╯\n\n✨ Nhiều tính năng mới sẽ được bổ sung.\n\n🔄 Tiếp tục cập nhật và tối ưu trong các phiên bản tiếp theo.\n\n❤️ Cảm ơn bạn đã ủng hộ!\n"
-    },
-    {
-      "identifier": "owen-012",
-      "name": "TESTINGG",
-      "author": "@owenindahouse",
-      "version": "1.0.0",
-      "summary": "test thôi",
-      "password": "",
-      "category": "Customization",
-      "tags": [
-        "CUSTOM"
-      ],
-      "icon": "assets/dialer/Basic_Circle/Basic_Circle.png",
-      "banner": "assets/banner.png",
-      "screenshots": [
-        "assets/preview-first.png",
-        "assets/preview-second.png",
-        "assets/preview-third.png",
-        "assets/preview-four.png"
-      ],
-      "download": "packages/GRAPHICS_POTATO_WITH_120FPS.3105",
-      "sha256": "F7A03FE347ADF7DD29E0358FCF6FAED628E519F6837C7DDC6D5EE50FE15663B3",
-      "size": 14102893,
-      "supportedOS": [
-        {
-          "minimum": "17.0",
-          "maximum": "18.7.1"
-        },
-        {
-          "minimum": "26.0",
-          "maximum": "26.6.1"
-        },
-        {
-          "minimum": "27.0",
-          "maximum": "27.0",
-          "builds": [
-            "24A5355q",
-            "24A5370h",
-            "24A5380h",
-            "24A5390f"
-          ]
-        }
-      ],
-      "featured": false,
-      "isPrivate": true,
-      "description": "TEST repo builder\n",
-      "changelog": "🎉 v1.0.0 — Phát hành lần đầu"
     }
   ]
 }
