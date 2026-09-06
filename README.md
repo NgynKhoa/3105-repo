@@ -75,3 +75,49 @@ Trong chuỗi JSON, dùng `\n` để xuống dòng. Không dùng `/n`.
 
 Mỗi `repo.json` phải được phục vụ qua HTTPS và tuân theo định dạng repository
 3105 schema version 1.
+
+## Quản lý repo qua web (Repo Builder)
+
+Thay vì sửa `repo.yml` tay rồi `git push`, bạn có thể dùng trang web chạy
+local để thêm/sửa/xoá package. Công cụ này tự tính SHA-256 + size, tự sinh
+anchor YAML chuẩn, không bao giờ làm hỏng format.
+
+### Cài đặt
+
+```bash
+pip install -r admin/requirements.txt
+```
+
+### Chạy
+
+```bash
+python admin/app.py
+```
+
+Mở trình duyệt: <http://localhost:5000>
+
+### Cách dùng
+
+1. **Chọn repo** trong dropdown (mặc định là `demo`). Tool hỗ trợ nhiều repo
+   con — nếu sau này tạo thêm `repositories/beta/` thì chỉ cần chọn trong
+   dropdown là chuyển sang repo đó.
+2. **Bấm `+ Thêm package`** để thêm mới, hoặc **Sửa** / **Xoá** trên từng dòng.
+3. Trong form, **chọn file `.3105`** trong dropdown rồi bấm **`⚡ Tự động điền`**
+   → SHA-256 và size sẽ được tính và điền tự động (không cần chạy `shasum` tay).
+4. Tick chọn `Dùng danh sách screenshot mặc định` và `Dùng iOS rule mặc định`
+   để giữ file YAML gọn (tool sẽ dùng anchor `*screens` / `*os_rules`).
+5. Bấm **`💾 Lưu & ghi file`** → tool ghi đè `repositories/<repo>/repo.yml`.
+6. Tự push lên GitHub bằng SSH (tool không tự push để bạn kiểm soát):
+
+   ```bash
+   git add repositories/<repo>/repo.yml
+   git commit -m "feat: thêm/sửa package"
+   git push
+   ```
+
+GitHub Action `build.yml` sẽ tự convert YAML → JSON, app 3105 refresh sau vài giây.
+
+### Vì sao chạy local (không host web công khai)?
+
+Repo có chứa **mật khẩu package** (`password: "..."`) — không thể để lộ trên
+web public. Khi chạy local, mật khẩu chỉ nằm trên máy bạn.
