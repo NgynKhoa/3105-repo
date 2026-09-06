@@ -1,30 +1,4 @@
 {
-  "shared_os": [
-    {
-      "minimum": "17.0",
-      "maximum": "18.7.1"
-    },
-    {
-      "minimum": "26.0",
-      "maximum": "26.6.1"
-    },
-    {
-      "minimum": "27.0",
-      "maximum": "27.0",
-      "builds": [
-        "24A5355q",
-        "24A5370h",
-        "24A5380h",
-        "24A5390f"
-      ]
-    }
-  ],
-  "shared_screens": [
-    "assets/preview-first.png",
-    "assets/preview-second.png",
-    "assets/preview-third.png",
-    "assets/preview-four.png"
-  ],
   "schemaVersion": 1,
   "identifier": "com.owen.mod",
   "name": "Owen Custom Repository",
@@ -38,6 +12,7 @@
       "author": "@owenindahouse",
       "version": "1.0.0",
       "summary": "✨ Pubg • Bản dùng thử • Trải nghiệm tính năng nâng cao",
+      "password": "2752",
       "category": "Customization",
       "tags": [
         "CUSTOM"
@@ -54,7 +29,6 @@
       "download": "packages/PATCH_FREE_V12_BY_TD.3105",
       "sha256": "CE977931A02FA8D505E6DF202BAC4252811DB1055AE1632BCBDC1413C271FCE0",
       "size": 37432,
-      "password": "2752",
       "supportedOS": [
         {
           "minimum": "17.0",
@@ -82,7 +56,7 @@
     },
     {
       "identifier": "owen-000",
-      "name": "👑 PUBG Custom Pre ",
+      "name": "👑 PUBG Custom Pre",
       "author": "@owenindahouse",
       "version": "1.0.0",
       "summary": "✨ CUSTOM • PHIÊN BẢN PREMIUM",
@@ -133,6 +107,7 @@
       "author": "@owenindahouse",
       "version": "1.0.0",
       "summary": "✨chỉ dành cho người dùng VIỆT NAM - Only for VNG",
+      "password": "2752",
       "category": "Enhancement",
       "tags": [
         "DISPLAY"
@@ -146,7 +121,6 @@
       "download": "packages/HDR_120FPS.3105",
       "sha256": "C6A6D2A32925B1BC8F844A3736DE7E3056EE06935E49836F1C89132A25851372",
       "size": 8200,
-      "password": "2752",
       "supportedOS": [
         {
           "minimum": "17.0",
@@ -170,7 +144,7 @@
       "featured": true,
       "isPrivate": false,
       "description": "⚡ TÙY CHỈNH HIỂN THỊ\n\n⚠️ LƯU Ý QUAN TRỌNG\n\n• Sau khi áp dụng gói vào game không được thay đổi phần ĐỒ HỌA.\n• Muốn về gốc chỉ cần thay đổi ĐỒ HỌA.\n\n💬 HỖ TRỢ\n\nNếu gặp bất kỳ vấn đề nào, hãy liên hệ @owenindahouse.\nHoặc liên hệ admin Mod @Thanhdat1690.\n\n❤️ Chúc bạn chơi game vui vẻ và đón chờ những bản cập nhật tiếp theo!\n",
-      "changelog": "🛠️ Vui lòng báo lỗi cho @owenindahouse nếu gặp sự cố.\n"
+      "changelog": "🛠️ Vui lòng báo lỗi cho @owenindahouse nếu gặp sự cố. "
     },
     {
       "identifier": "owen-003",
@@ -178,6 +152,7 @@
       "author": "@owenindahouse",
       "version": "1.0.0",
       "summary": "✨ ADVANCED CUSTOM 4 GLOBAL",
+      "password": "2752",
       "category": "Customization",
       "tags": [
         "CUSTOM"
@@ -194,7 +169,6 @@
       "download": "packages/V12_GL.3105",
       "sha256": "C8669AEDFB5BFD0AB05029B3F6D09320FBC562859B1EB22F17EF602E66F3BC04",
       "size": 37428,
-      "password": "2752",
       "supportedOS": [
         {
           "minimum": "17.0",
@@ -310,7 +284,7 @@
       "featured": true,
       "isPrivate": false,
       "description": "\n✨ TÍNH NĂNG NỔI BẬT / FEATURES\n\n• Giao diện bàn phím gọi điện mang phong cách hoài cổ.\n• Thiết kế tối giản, phím bấm rõ ràng và dễ nhìn.\n• Tương thích tốt với chế độ sáng/tối (Light/Dark mode).\n\n⚠️ LƯU Ý QUAN TRỌNG / IMPORTANT NOTES\n\n• Hãy mở bàn phím điện thoại lên trước và nhấn 1 vài phím\n• Sau đó, vào 3105 mở Setting ở góc bên phải trên cùng\n• Nhấn vào mục \"Lấy dữ liệu Dialer\" -> hiện Đã lấy\n• Quay lại mục đã cài, nhấn vào Dialer đã tải về chọn \"Áp dụng Dialer\"\n• Muốn quay về mặc định thì nhấn \"Khôi phục Dialer gốc\"\n───────────────\n• First, open your phone's dialpad and press a few keys.\n• Then, open the 3105 app and tap Settings in the top-right corner.\n• Tap on \"Fetch Dialer Data\" -> it will display \"Fetched\" (or \"Data Fetched\").\n• Go back to the installed items section, select the downloaded Dialer, and tap \"Apply Dialer\".\n• To return to the default look, simply tap \"Restore Original Dialer\".\n\n💬 HỖ TRỢ / SUPPORT\n\nNếu gặp bất kỳ vấn đề nào về hiển thị, hãy liên hệ @owenindahouse.\nContact me @owenindahouse if you encounter any display issues.\n❤️ Cảm ơn bạn đã sử dụng. Đừng quên đón chờ những bản cập nhật tiếp theo!\nThank you for using this theme. Stay tuned for future updates!\n",
-      "changelog": "🎉 v1.0.0 — Phát hành lần đầu.\n"
+      "changelog": "🎉 v1.0.0 — Phát hành lần đầu."
     },
     {
       "identifier": "owen-006",
@@ -356,7 +330,7 @@
       "featured": true,
       "isPrivate": false,
       "description": "\n✨ TÍNH NĂNG NỔI BẬT / FEATURES\n\n• Giao diện bàn phím gọi điện mang phong Tối giản, hiện đại.\n• Thiết kế tối giản, phím bấm rõ ràng và dễ nhìn.\n• Tương thích tốt với chế độ sáng/tối (Light/Dark mode).\n\n⚠️ LƯU Ý QUAN TRỌNG / IMPORTANT NOTES\n\n• Hãy mở bàn phím điện thoại lên trước và nhấn 1 vài phím\n• Sau đó, vào 3105 mở Setting ở góc bên phải trên cùng\n• Nhấn vào mục \"Lấy dữ liệu Dialer\" -> hiện Đã lấy\n• Quay lại mục đã cài, nhấn vào Dialer đã tải về chọn \"Áp dụng Dialer\"\n• Muốn quay về mặc định thì nhấn \"Khôi phục Dialer gốc\"\n───────────────\n• First, open your phone's dialpad and press a few keys.\n• Then, open the 3105 app and tap Settings in the top-right corner.\n• Tap on \"Fetch Dialer Data\" -> it will display \"Fetched\" (or \"Data Fetched\").\n• Go back to the installed items section, select the downloaded Dialer, and tap \"Apply Dialer\".\n• To return to the default look, simply tap \"Restore Original Dialer\".\n\n💬 HỖ TRỢ / SUPPORT\n\nNếu gặp bất kỳ vấn đề nào về hiển thị, hãy liên hệ @owenindahouse.\nContact me @owenindahouse if you encounter any display issues.\n❤️ Cảm ơn bạn đã sử dụng. Đừng quên đón chờ những bản cập nhật tiếp theo!\nThank you for using this theme. Stay tuned for future updates!\n",
-      "changelog": "🎉 v1.0.0 — Phát hành lần đầu.\n"
+      "changelog": "🎉 v1.0.0 — Phát hành lần đầu."
     },
     {
       "identifier": "owen-007",
@@ -401,7 +375,7 @@
       "featured": true,
       "isPrivate": false,
       "description": "\n✨ TÍNH NĂNG NỔI BẬT / FEATURES\n\n• Giao diện bàn phím gọi điện mang phong cách Bình minh và chiều tà.\n• Thiết kế tối giản, phím bấm rõ ràng và dễ nhìn.\n• Tương thích tốt với chế độ sáng/tối (Light/Dark mode).\n\n⚠️ LƯU Ý QUAN TRỌNG / IMPORTANT NOTES\n\n• Hãy mở bàn phím điện thoại lên trước và nhấn 1 vài phím\n• Sau đó, vào 3105 mở Setting ở góc bên phải trên cùng\n• Nhấn vào mục \"Lấy dữ liệu Dialer\" -> hiện Đã lấy\n• Quay lại mục đã cài, nhấn vào Dialer đã tải về chọn \"Áp dụng Dialer\"\n• Muốn quay về mặc định thì nhấn \"Khôi phục Dialer gốc\"\n───────────────\n• First, open your phone's dialpad and press a few keys.\n• Then, open the 3105 app and tap Settings in the top-right corner.\n• Tap on \"Fetch Dialer Data\" -> it will display \"Fetched\" (or \"Data Fetched\").\n• Go back to the installed items section, select the downloaded Dialer, and tap \"Apply Dialer\".\n• To return to the default look, simply tap \"Restore Original Dialer\".\n\n💬 HỖ TRỢ / SUPPORT\n\nNếu gặp bất kỳ vấn đề nào về hiển thị, hãy liên hệ @owenindahouse.\nContact me @owenindahouse if you encounter any display issues.\n❤️ Cảm ơn bạn đã sử dụng. Đừng quên đón chờ những bản cập nhật tiếp theo!\nThank you for using this theme. Stay tuned for future updates!\n",
-      "changelog": "🎉 v1.0.0 — Phát hành lần đầu.\n"
+      "changelog": "🎉 v1.0.0 — Phát hành lần đầu."
     },
     {
       "identifier": "owen-008",
@@ -409,6 +383,7 @@
       "author": "@owenindahouse",
       "version": "1.0.0",
       "summary": "✨chỉ dành cho người dùng VIỆT NAM - Only for VNG",
+      "password": "2752",
       "category": "Enhancement",
       "tags": [
         "DISPLAY"
@@ -421,7 +396,6 @@
       "download": "packages/GRAPHICS_POTATO_WITH_120FPS.3105",
       "sha256": "F7A03FE347ADF7DD29E0358FCF6FAED628E519F6837C7DDC6D5EE50FE15663B3",
       "size": 14102893,
-      "password": "2752",
       "supportedOS": [
         {
           "minimum": "17.0",
@@ -445,7 +419,7 @@
       "featured": true,
       "isPrivate": false,
       "description": "🔥 PUBG CUSTOM FREE\n\n✨ TÍNH NĂNG\n\n• Bộ Skin tùy chỉnh\n• Hỗ trợ ngắm & tùy chỉnh súng\n• Dễ Dàng Cài Đặt\n• Thường Xuyên Cập Nhật\n\n⚠️ LƯU Ý QUAN TRỌNG\n\n• Hãy xóa gói tùy chỉnh cũ trước khi áp dụng.\n• Nên sao lưu dữ liệu trước khi cài đặt.\n\n💬 HỖ TRỢ\n\nNếu gặp bất kỳ vấn đề nào, hãy liên hệ @owenindahouse.\nHoặc liên hệ admin Mod @Thanhdat1690.\n❤️ Chúc bạn chơi game vui vẻ và hãy đón chờ những bản cập nhật tiếp theo!\n",
-      "changelog": "🛠️ Vui lòng báo lỗi cho @owenindahouse nếu gặp sự cố.\n"
+      "changelog": "🛠️ Vui lòng báo lỗi cho @owenindahouse nếu gặp sự cố. "
     },
     {
       "identifier": "owen-009",
@@ -490,14 +464,15 @@
       "featured": true,
       "isPrivate": false,
       "description": "\n✨ TÍNH NĂNG NỔI BẬT / FEATURES\n\n• Giao diện bàn phím gọi điện mang phong cách PinkPink.\n• Thiết kế nổi bật, phím bấm rõ ràng và dễ nhìn.\n• Tương thích tốt với chế độ sáng/tối (Light/Dark mode).\n\n⚠️ LƯU Ý QUAN TRỌNG / IMPORTANT NOTES\n\n• Hãy mở bàn phím điện thoại lên trước và nhấn 1 vài phím\n• Sau đó, vào 3105 mở Setting ở góc bên phải trên cùng\n• Nhấn vào mục \"Lấy dữ liệu Dialer\" -> hiện Đã lấy\n• Quay lại mục đã cài, nhấn vào Dialer đã tải về chọn \"Áp dụng Dialer\"\n• Muốn quay về mặc định thì nhấn \"Khôi phục Dialer gốc\"\n───────────────\n• First, open your phone's dialpad and press a few keys.\n• Then, open the 3105 app and tap Settings in the top-right corner.\n• Tap on \"Fetch Dialer Data\" -> it will display \"Fetched\" (or \"Data Fetched\").\n• Go back to the installed items section, select the downloaded Dialer, and tap \"Apply Dialer\".\n• To return to the default look, simply tap \"Restore Original Dialer\".\n\n💬 HỖ TRỢ / SUPPORT\n\nNếu gặp bất kỳ vấn đề nào về hiển thị, hãy liên hệ @owenindahouse.\nContact me @owenindahouse if you encounter any display issues.\n❤️ Cảm ơn bạn đã sử dụng. Đừng quên đón chờ những bản cập nhật tiếp theo!\nThank you for using this theme. Stay tuned for future updates!\n",
-      "changelog": "🎉 v1.0.0 — Phát hành lần đầu.\n"
+      "changelog": "🎉 v1.0.0 — Phát hành lần đầu."
     },
     {
       "identifier": "owen-010",
-      "name": "👑 PUBG ALL IN ONE ",
+      "name": "👑 PUBG ALL IN ONE",
       "author": "@owenindahouse",
       "version": "1.0.0",
-      "summary": "✨ 1 PATCH FOR 3 SERVERS ",
+      "summary": "✨ 1 PATCH FOR 3 SERVERS",
+      "password": "owen",
       "category": "Customization",
       "tags": [
         "CUSTOM"
@@ -511,10 +486,9 @@
         "assets/preview-third.png",
         "assets/preview-four.png"
       ],
-      "download": "packages/PATCH_VIP_V12_MOD_PUBG.3105",
-      "sha256": "FDC6EC1F47DC9C8D4BAA78FC2AC1957F4C1B486B34A886DB9F8221D13C6BFE0B",
-      "size": 38139,
-      "password": "owen",
+      "download": "packages/ALL_IN_ONE_V12.3105",
+      "sha256": "9BF4F7C31A97C294714FA395AA9BE1674A5A4A4D414C5109FBBE9137DAF9C9DE",
+      "size": 38137,
       "supportedOS": [
         {
           "minimum": "17.0",
@@ -539,6 +513,46 @@
       "isPrivate": false,
       "description": "💎 PREMIUM\nJUST ONE PATCH FOR 3 SERVERS\nVNG - GLOBAL - KR\nJust apply this patch and enjoy all features for 3 servers. \nNo need to download 3 different patches.\n\n╭──────────────────╮\n ✨ TÍNH NĂNG\n╰──────────────────╯\n\n🔥1 Patch chơi được cả 3 server VNG - GLOBAL - KR\n🔥Chỉ việc áp dụng patch là xong, không cần tải 3 patch khác nhau.\n🔥 Tương thích Online\n🎯 Hỗ trợ ngắm tùy chỉnh\n👁️ iPad View\n🚗 Tùy chỉnh tốc độ xe\n⚡ Nhiều tính năng nâng cao khác\n\n╭──────────────────╮\n 🔐 QUYỀN TRUY CẬP PREMIUM\n╰──────────────────╯\n\n👑 Gói này dành cho thành viên TD Premium.\n\n╭──────────────────╮\n ⚠️ LƯU Ý QUAN TRỌNG\n╰──────────────────╯\n\n• Hãy xóa gói tùy chỉnh cũ trước khi áp dụng.\n• Nên sao lưu dữ liệu trước khi cài đặt.\n\n╭──────────────────╮\n 💬 HỖ TRỢ\n╰──────────────────╯\n\n@owenindahouse\n\n❤️ Cảm ơn bạn đã ủng hộ!\n",
       "changelog": "╭──────────────────╮\n ✨ PHÁT HÀNH\n╰──────────────────╯\n\n🔐 GÓI DÀNH CHO THÀNH VIÊN PREMIUM\n\n╭──────────────────╮\n 🚀 SẮP TỚI\n╰──────────────────╯\n\n✨ Nhiều tính năng mới sẽ được bổ sung.\n\n🔄 Tiếp tục cập nhật và tối ưu trong các phiên bản tiếp theo.\n\n❤️ Cảm ơn bạn đã ủng hộ!\n"
+    },
+    {
+      "identifier": "owen-012",
+      "name": "tesssstttt",
+      "author": "@owenindahouse",
+      "version": "1.0.0",
+      "summary": "ststssssss",
+      "category": "Customization",
+      "tags": [
+        "CUSTOM"
+      ],
+      "icon": "assets/dialer/Dual_Horizontal/dual_dark.png",
+      "banner": "assets/banner.png",
+      "download": "packages/ALL_IN_ONE_V12.3105",
+      "sha256": "FDC6EC1F47DC9C8D4BAA78FC2AC1957F4C1B486B34A886DB9F8221D13C6BFE0B",
+      "size": 38137,
+      "supportedOS": [
+        {
+          "minimum": "17.0",
+          "maximum": "18.7.1"
+        },
+        {
+          "minimum": "26.0",
+          "maximum": "26.6.1"
+        },
+        {
+          "minimum": "27.0",
+          "maximum": "27.0",
+          "builds": [
+            "24A5355q",
+            "24A5370h",
+            "24A5380h",
+            "24A5390f"
+          ]
+        }
+      ],
+      "featured": false,
+      "isPrivate": false,
+      "description": "tatawtatsssst tétttttt",
+      "changelog": "🎉 v1.0.0 — Phát hành lần đầu"
     }
   ]
 }
