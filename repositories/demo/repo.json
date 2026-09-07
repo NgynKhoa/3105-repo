@@ -513,6 +513,46 @@
       "isPrivate": false,
       "description": "💎 PREMIUM\nJUST ONE PATCH FOR 3 SERVERS\nVNG - GLOBAL - KR\nJust apply this patch and enjoy all features for 3 servers. \nNo need to download 3 different patches.\n\n╭──────────────────╮\n ✨ TÍNH NĂNG\n╰──────────────────╯\n\n🔥1 Patch chơi được cả 3 server VNG - GLOBAL - KR\n🔥Chỉ việc áp dụng patch là xong, không cần tải 3 patch khác nhau.\n🔥 Tương thích Online\n🎯 Hỗ trợ ngắm tùy chỉnh\n👁️ iPad View\n🚗 Tùy chỉnh tốc độ xe\n⚡ Nhiều tính năng nâng cao khác\n\n╭──────────────────╮\n 🔐 QUYỀN TRUY CẬP PREMIUM\n╰──────────────────╯\n\n👑 Gói này dành cho thành viên TD Premium.\n\n╭──────────────────╮\n ⚠️ LƯU Ý QUAN TRỌNG\n╰──────────────────╯\n\n• Hãy xóa gói tùy chỉnh cũ trước khi áp dụng.\n• Nên sao lưu dữ liệu trước khi cài đặt.\n\n╭──────────────────╮\n 💬 HỖ TRỢ\n╰──────────────────╯\n\n@owenindahouse\n\n❤️ Cảm ơn bạn đã ủng hộ!\n",
       "changelog": "╭──────────────────╮\n ✨ PHÁT HÀNH\n╰──────────────────╯\n\n🔐 GÓI DÀNH CHO THÀNH VIÊN PREMIUM\n\n╭──────────────────╮\n 🚀 SẮP TỚI\n╰──────────────────╯\n\n✨ Nhiều tính năng mới sẽ được bổ sung.\n\n🔄 Tiếp tục cập nhật và tối ưu trong các phiên bản tiếp theo.\n\n❤️ Cảm ơn bạn đã ủng hộ!\n"
+    },
+    {
+      "identifier": "owen-012",
+      "name": "tesssstttt",
+      "author": "@owenindahouse",
+      "version": "1.0.0",
+      "summary": "ststssssss",
+      "category": "Customization",
+      "tags": [
+        "CUSTOM"
+      ],
+      "icon": "assets/Allinone/allinone.png",
+      "banner": "assets/banner.png",
+      "download": "packages/ALL_IN_ONE_V12.3105",
+      "sha256": "FDC6EC1F47DC9C8D4BAA78FC2AC1957F4C1B486B34A886DB9F8221D13C6BFE0B",
+      "size": 38137,
+      "supportedOS": [
+        {
+          "minimum": "17.0",
+          "maximum": "18.7.1"
+        },
+        {
+          "minimum": "26.0",
+          "maximum": "26.6.1"
+        },
+        {
+          "minimum": "27.0",
+          "maximum": "27.0",
+          "builds": [
+            "24A5355q",
+            "24A5370h",
+            "24A5380h",
+            "24A5390f"
+          ]
+        }
+      ],
+      "featured": false,
+      "isPrivate": false,
+      "description": "testtt",
+      "changelog": "🎉 v1.0.0 — Phát hành lần đầu"
     }
   ]
 }
