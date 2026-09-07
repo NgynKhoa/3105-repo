@@ -515,29 +515,18 @@
       "changelog": "╭──────────────────╮\n ✨ PHÁT HÀNH\n╰──────────────────╯\n\n🔐 GÓI DÀNH CHO THÀNH VIÊN PREMIUM\n\n╭──────────────────╮\n 🚀 SẮP TỚI\n╰──────────────────╯\n\n✨ Nhiều tính năng mới sẽ được bổ sung.\n\n🔄 Tiếp tục cập nhật và tối ưu trong các phiên bản tiếp theo.\n\n❤️ Cảm ơn bạn đã ủng hộ!\n"
     },
     {
-      "identifier": "owen-001",
-      "name": "Testtingggggg 3",
+      "identifier": "owen-011",
+      "name": "test đợt 3",
       "author": "@owenindahouse",
       "version": "1.0.0",
-      "summary": "téttt",
+      "summary": "test thôi",
       "category": "Customization",
       "tags": [
         "CUSTOM"
       ],
-      "icon": "assets/icon/global-pubg_global.png",
-      "banner": "assets/banner.png",
-      "screenshots": [
-        "assets/icon/vip-cabybara.png",
-        "assets/kr/pubg_kr.png",
-        "assets/icon/global-pubg_global.png",
-        "assets/icon/hdr_120-ngong.png",
-        "assets/icon/kr-pubg_kr.png",
-        "assets/icon/potato.png",
-        "assets/icon/Basic_Circle.png",
-        "assets/icon/B&F_dark.png",
-        "assets/dialer/Dual_Horizontal/dual_dark.png"
-      ],
-      "download": "packages/Basic_CircleB&W.3105pass",
+      "icon": "assets/icon/allinone.png",
+      "banner": "assets/banner/banner.png",
+      "download": "Basic_CircleB&W.3105pass",
       "sha256": "BA91799564D04544CFF874C897273037AA4717456A93B7A70798CBEFEE97AAF8",
       "size": 406950,
       "supportedOS": [
@@ -562,7 +551,7 @@
       ],
       "featured": false,
       "isPrivate": false,
-      "description": "Testttt",
+      "description": "test",
       "changelog": "🎉 v1.0.0 — Phát hành lần đầu"
     }
   ]
