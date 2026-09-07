@@ -382,7 +382,7 @@ packages:
       Contact me @owenindahouse if you encounter any display issues.
       ❤️ Cảm ơn bạn đã sử dụng. Đừng quên đón chờ những bản cập nhật tiếp theo!
       Thank you for using this theme. Stay tuned for future updates!
-    changelog: 🎉 v1.0.0 — Phát hành lần đầu. 
+    changelog: 🎉 v1.0.0 — Phát hành lần đầu.
 
   # ----- owen-006 -----
   - identifier: owen-006
@@ -440,7 +440,7 @@ packages:
       Contact me @owenindahouse if you encounter any display issues.
       ❤️ Cảm ơn bạn đã sử dụng. Đừng quên đón chờ những bản cập nhật tiếp theo!
       Thank you for using this theme. Stay tuned for future updates!
-    changelog: 🎉 v1.0.0 — Phát hành lần đầu. 
+    changelog: 🎉 v1.0.0 — Phát hành lần đầu.
 
   # ----- owen-007 -----
   - identifier: owen-007
@@ -497,7 +497,7 @@ packages:
       Contact me @owenindahouse if you encounter any display issues.
       ❤️ Cảm ơn bạn đã sử dụng. Đừng quên đón chờ những bản cập nhật tiếp theo!
       Thank you for using this theme. Stay tuned for future updates!
-    changelog: 🎉 v1.0.0 — Phát hành lần đầu. 
+    changelog: 🎉 v1.0.0 — Phát hành lần đầu.
 
   # ----- owen-008 -----
   - identifier: owen-008
@@ -602,7 +602,7 @@ packages:
       Contact me @owenindahouse if you encounter any display issues.
       ❤️ Cảm ơn bạn đã sử dụng. Đừng quên đón chờ những bản cập nhật tiếp theo!
       Thank you for using this theme. Stay tuned for future updates!
-    changelog: 🎉 v1.0.0 — Phát hành lần đầu. 
+    changelog: 🎉 v1.0.0 — Phát hành lần đầu.
 
   # ----- owen-010 -----
   - identifier: owen-010
@@ -689,3 +689,29 @@ packages:
       🔄 Tiếp tục cập nhật và tối ưu trong các phiên bản tiếp theo.
       
       ❤️ Cảm ơn bạn đã ủng hộ!
+
+  # ----- owen-012 -----
+  - identifier: owen-012
+    name: tesssstttt
+    author: "@owenindahouse"
+    version: 1.0.0
+    summary: ststssssss
+    category: Customization
+    tags: [CUSTOM]
+    icon: assets/Allinone/allinone.png
+    banner: assets/banner.png
+    download: packages/ALL_IN_ONE_V12.3105
+    sha256: FDC6EC1F47DC9C8D4BAA78FC2AC1957F4C1B486B34A886DB9F8221D13C6BFE0B
+    size: 38137
+    supportedOS:
+      - minimum: "17.0"
+        maximum: "18.7.1"
+      - minimum: "26.0"
+        maximum: "26.6.1"
+      - minimum: "27.0"
+        maximum: "27.0"
+        builds: ["24A5355q", "24A5370h", "24A5380h", "24A5390f"]
+    featured: false
+    isPrivate: false
+    description: testtt 
+    changelog: 🎉 v1.0.0 — Phát hành lần đầu
