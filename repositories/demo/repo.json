@@ -515,20 +515,25 @@
       "changelog": "╭──────────────────╮\n ✨ PHÁT HÀNH\n╰──────────────────╯\n\n🔐 GÓI DÀNH CHO THÀNH VIÊN PREMIUM\n\n╭──────────────────╮\n 🚀 SẮP TỚI\n╰──────────────────╯\n\n✨ Nhiều tính năng mới sẽ được bổ sung.\n\n🔄 Tiếp tục cập nhật và tối ưu trong các phiên bản tiếp theo.\n\n❤️ Cảm ơn bạn đã ủng hộ!\n"
     },
     {
-      "identifier": "owen-012",
-      "name": "tesssstttt",
+      "identifier": "owen-013",
+      "name": "tessssttttttttttt 2",
       "author": "@owenindahouse",
       "version": "1.0.0",
-      "summary": "ststssssss",
+      "summary": "testtt",
       "category": "Customization",
       "tags": [
         "CUSTOM"
       ],
-      "icon": "assets/Allinone/allinone.png",
+      "icon": "assets/dialer/B&F_Pink/B&F_dark.png",
       "banner": "assets/banner.png",
-      "download": "packages/ALL_IN_ONE_V12.3105",
-      "sha256": "FDC6EC1F47DC9C8D4BAA78FC2AC1957F4C1B486B34A886DB9F8221D13C6BFE0B",
-      "size": 38137,
+      "screenshots": [
+        "assets/dialer/Classic_dialer/light.png",
+        "assets/dialer/Classic_dialer/dark.png",
+        "assets/dialer/Classic_dialer/pass.png"
+      ],
+      "download": "packages/Basic_CircleB&W.3105pass",
+      "sha256": "BA91799564D04544CFF874C897273037AA4717456A93B7A70798CBEFEE97AAF8",
+      "size": 406950,
       "supportedOS": [
         {
           "minimum": "17.0",
@@ -551,7 +556,7 @@
       ],
       "featured": false,
       "isPrivate": false,
-      "description": "testtt",
+      "description": "testt thui",
       "changelog": "🎉 v1.0.0 — Phát hành lần đầu"
     }
   ]
