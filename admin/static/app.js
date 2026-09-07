@@ -13,6 +13,12 @@ const state = {
   assets: [],
   packageFiles: [],
   editingIndex: null,
+  // Theo dõi thay đổi để sinh commit message
+  changes: {
+    added: [],    // [{identifier, name}]
+    edited: [],   // [{identifier, name}]
+    deleted: [],  // [{identifier, name}]
+  },
 };
 
 // ---------------------------------------------------------------------
@@ -74,8 +80,41 @@ function normalizeSha256(s) {
 }
 
 // ---------------------------------------------------------------------
-// Load repositories
+// Identifier helpers
 // ---------------------------------------------------------------------
+//
+// Quy ước: package identifier dạng "owen-XXX" với XXX là số 3 chữ số
+// (padding tự động). Hàm này tìm các số trống trong dãy hiện tại.
+
+function findMissingIdentifierIndices() {
+  const used = new Set();
+  state.packages.forEach(p => {
+    const m = /^owen-(\d+)$/.exec(p.identifier || '');
+    if (m) used.add(parseInt(m[1], 10));
+  });
+  // Tìm các số trống trong khoảng [0, maxUsed]
+  const missing = [];
+  if (used.size === 0) {
+    return [0];
+  }
+  const max = Math.max(...used);
+  for (let i = 0; i <= max; i++) {
+    if (!used.has(i)) missing.push(i);
+  }
+  // Nếu không có trống nào → gợi �ý số tiếp theo
+  if (missing.length === 0) missing.push(max + 1);
+  return missing;
+}
+
+function buildMissingIdentifierHint() {
+  const missing = findMissingIdentifierIndices();
+  if (missing.length === 0) return 'owen-001';
+  const padded = missing.map(n => `owen-${String(n).padStart(3, '0')}`);
+  if (padded.length <= 6) return padded.join(', ');
+  return padded.slice(0, 6).join(', ') + ` … (+${padded.length - 6} nữa)`;
+}
+
+
 
 async function loadRepositories() {
   try {
@@ -127,6 +166,8 @@ async function loadRepo() {
 
     renderMeta();
     renderPackageList();
+    // Reset tracking changes cho session mới
+    state.changes = { added: [], edited: [], deleted: [] };
     toast(`Đã tải ${state.packages.length} package từ repo "${repo}".`, 'success');
   } catch (err) {
     toast(`Lỗi tải repo: ${err.message}`, 'error');
@@ -239,6 +280,18 @@ function renderPackageList() {
 function openModal(editIdx = null) {
   state.editingIndex = editIdx;
   const isEdit = editIdx !== null;
+
+  // Tính số Identifier trống để gợi ý (chỉ khi THÊM mới)
+  let hintHtml = '';
+  if (!isEdit) {
+    const hint = buildMissingIdentifierHint();
+    hintHtml = `
+      <div class="bg-amber-50 border border-amber-200 text-amber-800 text-xs rounded-md px-3 py-2 mb-3">
+        💡 <b>Identifier trống đang có sẵn:</b> <code class="bg-amber-100 px-1 rounded">${escapeHtml(hint)}</code>
+        <span class="text-amber-700">— tool sẽ tự lấy số trống đầu tiên. Có thể sửa tay nếu muốn.</span>
+      </div>`;
+  }
+
   $('#modalTitle').textContent = isEdit ? `Sửa package #${editIdx + 1}` : 'Thêm package mới';
   $('#modalStatus').textContent = isEdit
     ? `Đang sửa: ${state.packages[editIdx].identifier || '(chưa có id)'}`
@@ -248,7 +301,7 @@ function openModal(editIdx = null) {
     ? { ...state.packages[editIdx] }
     : newPackageTemplate();
 
-  $('#modalBody').innerHTML = buildFormHtml(pkg);
+  $('#modalBody').innerHTML = hintHtml + buildFormHtml(pkg);
   bindFormEvents();
   $('#modal').classList.remove('hidden');
   $('#modal').classList.add('flex');
@@ -261,11 +314,10 @@ function closeModal() {
 }
 
 function newPackageTemplate() {
-  // Sinh identifier tự động dựa trên packages hiện có
-  const used = new Set(state.packages.map(p => p.identifier));
-  let next = state.packages.length + 1;
-  while (used.has(`owen-${String(next).padStart(3, '0')}`)) next++;
-  const id = `owen-${String(next).padStart(3, '0')}`;
+  // Ưu tiên dùng số Identifier trống trong dãy owen-XXX
+  const missing = findMissingIdentifierIndices();
+  const nextNum = missing[0];
+  const id = `owen-${String(nextNum).padStart(3, '0')}`;
   return {
     identifier: id,
     name: '',
@@ -327,7 +379,11 @@ function buildFormHtml(pkg) {
         <span class="text-xs text-slate-500">File .3105 (chọn để tự động điền SHA-256 + size)</span>
         <div class="flex gap-2 mt-1">
           <select id="f_download" class="flex-1 border border-slate-300 rounded-md px-3 py-1.5 text-sm">${packageOptions(pkg.download)}</select>
-          <button id="btnAutoFill" type="button" class="px-3 py-1.5 rounded-md bg-blue-500 hover:bg-blue-600 text-white text-sm whitespace-nowrap">⚡ Tự động điền</button>
+          <button id="btnAutoFill" type="button" class="px-3 py-1.5 rounded-md bg-blue-500 hover:bg-blue-600 text-white text-sm whitespace-nowrap">⚡ Lấy hash và size</button>
+        </div>
+        <div id="pkgUploadZone" class="mt-2 border-2 border-dashed border-slate-300 rounded-md p-3 text-center text-xs text-slate-500 cursor-pointer hover:border-slate-400">
+          📂 Kéo thả file <code>.3105</code> vào đây, hoặc bấm để chọn file → file sẽ tự upload vào <code>packages/</code>
+          <input type="file" id="f_pkg_upload" accept=".3105,.3105pass,.tendies" multiple class="hidden" />
         </div>
       </label>
 
@@ -372,14 +428,47 @@ function buildFormHtml(pkg) {
         <input id="f_publishedAt" value="${escapeHtml(pkg.publishedAt || '')}" placeholder="2026-09-06T10:00:00Z" class="w-full mt-1 border border-slate-300 rounded-md px-3 py-1.5 text-sm font-mono" />
       </label>
 
-      <label class="block">
-        <span class="text-xs text-slate-500">Icon</span>
-        <select id="f_icon" class="w-full mt-1 border border-slate-300 rounded-md px-3 py-1.5 text-sm">${assetOptions(pkg.icon)}</select>
-      </label>
-      <label class="block">
-        <span class="text-xs text-slate-500">Banner</span>
-        <select id="f_banner" class="w-full mt-1 border border-slate-300 rounded-md px-3 py-1.5 text-sm">${assetOptions(pkg.banner)}</select>
-      </label>
+      <div class="block md:col-span-2">
+        <span class="text-xs text-slate-500 flex items-center gap-2">
+          <span>Icon (ảnh đại diện package)</span>
+          <span class="text-slate-400" id="iconPickerCurrent"></span>
+        </span>
+        <div class="flex flex-wrap items-center gap-2 mb-2 mt-1">
+          <span class="text-xs text-slate-500">Thư mục ảnh:</span>
+          <select id="f_icon_folder" class="border border-slate-300 rounded-md px-2 py-1 text-sm bg-white">
+            <option value="">— root (assets/) —</option>
+          </select>
+          <button type="button" id="btnIconRefreshFolders" class="text-xs px-2 py-1 rounded border border-slate-300 hover:bg-slate-100">↻</button>
+          <button type="button" id="btnIconNewFolder" class="text-xs px-2 py-1 rounded border border-slate-300 hover:bg-slate-100">+ Thư mục</button>
+          <button type="button" id="btnIconUpload" class="text-xs px-2 py-1 rounded border border-slate-300 hover:bg-slate-100">⬆ Upload ảnh</button>
+          <input type="file" id="f_icon_upload" accept="image/*" multiple class="hidden" />
+          <button type="button" id="btnIconToggle" class="text-xs px-2 py-1 rounded border border-slate-300 hover:bg-slate-100 ml-auto">Hiện ảnh</button>
+        </div>
+        <div id="iconPickerGrid" class="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-2 hidden"></div>
+        <input type="hidden" id="f_icon" value="${escapeHtml(pkg.icon || '')}" />
+        <p class="text-xs text-slate-400 mt-1">Bấm vào ảnh để chọn làm icon.</p>
+      </div>
+
+      <div class="block md:col-span-2">
+        <span class="text-xs text-slate-500 flex items-center gap-2">
+          <span>Banner (ảnh nền)</span>
+          <span class="text-slate-400" id="bannerPickerCurrent"></span>
+        </span>
+        <div class="flex flex-wrap items-center gap-2 mb-2 mt-1">
+          <span class="text-xs text-slate-500">Thư mục ảnh:</span>
+          <select id="f_banner_folder" class="border border-slate-300 rounded-md px-2 py-1 text-sm bg-white">
+            <option value="">— root (assets/) —</option>
+          </select>
+          <button type="button" id="btnBannerRefreshFolders" class="text-xs px-2 py-1 rounded border border-slate-300 hover:bg-slate-100">↻</button>
+          <button type="button" id="btnBannerNewFolder" class="text-xs px-2 py-1 rounded border border-slate-300 hover:bg-slate-100">+ Thư mục</button>
+          <button type="button" id="btnBannerUpload" class="text-xs px-2 py-1 rounded border border-slate-300 hover:bg-slate-100">⬆ Upload ảnh</button>
+          <input type="file" id="f_banner_upload" accept="image/*" multiple class="hidden" />
+          <button type="button" id="btnBannerToggle" class="text-xs px-2 py-1 rounded border border-slate-300 hover:bg-slate-100 ml-auto">Hiện ảnh</button>
+        </div>
+        <div id="bannerPickerGrid" class="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-2 hidden"></div>
+        <input type="hidden" id="f_banner" value="${escapeHtml(pkg.banner || '')}" />
+        <p class="text-xs text-slate-400 mt-1">Bấm vào ảnh để chọn làm banner.</p>
+      </div>
 
       <label class="block md:col-span-2">
         <span class="text-xs text-slate-500 flex items-center gap-2">
@@ -389,12 +478,19 @@ function buildFormHtml(pkg) {
         </span>
       </label>
       <div class="block md:col-span-2" id="screensListWrap" style="${pkg.__use_default_screens ? 'display:none' : ''}">
-        <div class="flex items-center justify-between mb-1">
-          <span class="text-xs text-slate-500">Chọn ảnh (bấm để chọn / bỏ chọn)</span>
-          <span id="screenCount" class="text-xs text-slate-400"></span>
+        <div class="flex flex-wrap items-center gap-2 mb-2">
+          <span class="text-xs text-slate-500">Thư mục ảnh:</span>
+          <select id="f_screen_folder" class="border border-slate-300 rounded-md px-2 py-1 text-sm bg-white">
+            <option value="">— root (assets/) —</option>
+          </select>
+          <button type="button" id="btnRefreshFolders" class="text-xs px-2 py-1 rounded border border-slate-300 hover:bg-slate-100">↻</button>
+          <button type="button" id="btnNewFolder" class="text-xs px-2 py-1 rounded border border-slate-300 hover:bg-slate-100">+ Thư mục</button>
+          <button type="button" id="btnUploadImages" class="text-xs px-2 py-1 rounded border border-slate-300 hover:bg-slate-100">⬆ Upload ảnh</button>
+          <input type="file" id="f_image_upload" accept="image/*" multiple class="hidden" />
+          <span id="screenCount" class="text-xs text-slate-400 ml-auto"></span>
         </div>
         <div id="screensGrid" class="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-2"></div>
-        <p class="text-xs text-slate-400 mt-1">Chọn thứ tự ảnh bằng cách bấm giữ và kéo thả để sắp xếp.</p>
+        <p class="text-xs text-slate-400 mt-1">Bấm để chọn / bỏ chọn. Kéo thả để sắp xếp thứ tự.</p>
       </div>
 
       <label class="block md:col-span-2">
@@ -451,97 +547,273 @@ ${(defaultScreens).map(s => '  - ' + s).join('\n')}</div>
 
 // Module-level state cho screenshots grid trong modal
 let currentSelectedScreens = [];
+let currentScreenFolder = '';   // subfolder hiện tại đang xem ('' = root)
+let currentFolderFolders = [];  // cache cây folder
+let currentIconFolder = '';     // folder hiện tại cho icon picker
+let currentBannerFolder = '';   // folder hiện tại cho banner picker
 
-function initScreensGrid(initialScreens) {
+function _flattenFolders(tree) {
+  const out = [];
+  function walk(nodes, prefix) {
+    nodes.forEach(f => {
+      const p = prefix ? `${prefix}/${f.name}` : f.name;
+      out.push({ path: p, name: f.name, depth: p.split('/').length });
+      if (f.children && f.children.length) walk(f.children, p);
+    });
+  }
+  walk(tree, '');
+  return out;
+}
+
+async function loadFoldersIntoSelect() {
+  try {
+    const data = await api(`/api/repo/${state.currentRepo}/folders`);
+    currentFolderFolders = data.folders || [];
+    const flat = _flattenFolders(currentFolderFolders);
+    // Screens picker
+    const sel = $('#f_screen_folder');
+    if (sel) {
+      sel.innerHTML = '<option value="">— root (assets/) —</option>';
+      flat.forEach(f => {
+        const opt = document.createElement('option');
+        opt.value = f.path;
+        opt.textContent = '— '.repeat(f.depth - 1) + f.name;
+        sel.appendChild(opt);
+      });
+      // Mặc định suggest thư mục 'preview' cho screens nếu tồn tại
+      if (!currentScreenFolder) {
+        const def = flat.find(f => f.path === 'preview');
+        if (def) currentScreenFolder = 'preview';
+      }
+      sel.value = currentScreenFolder;
+    }
+    // Icon picker
+    const selIcon = $('#f_icon_folder');
+    if (selIcon) {
+      selIcon.innerHTML = '<option value="">— root (assets/) —</option>';
+      flat.forEach(f => {
+        const opt = document.createElement('option');
+        opt.value = f.path;
+        opt.textContent = '— '.repeat(f.depth - 1) + f.name;
+        selIcon.appendChild(opt);
+      });
+      // Mặc định suggest thư mục 'icon' cho icon picker
+      if (!currentIconFolder) {
+        const def = flat.find(f => f.path === 'icon');
+        if (def) currentIconFolder = 'icon';
+      }
+      selIcon.value = currentIconFolder;
+    }
+    // Banner picker
+    const selBanner = $('#f_banner_folder');
+    if (selBanner) {
+      selBanner.innerHTML = '<option value="">— root (assets/) —</option>';
+      flat.forEach(f => {
+        const opt = document.createElement('option');
+        opt.value = f.path;
+        opt.textContent = '— '.repeat(f.depth - 1) + f.name;
+        selBanner.appendChild(opt);
+      });
+      if (!currentBannerFolder) {
+        const def = flat.find(f => f.path === 'banner');
+        if (def) currentBannerFolder = 'banner';
+      }
+      selBanner.value = currentBannerFolder;
+    }
+  } catch (err) {
+    console.warn('load folders failed:', err);
+  }
+}
+
+async function initScreensGrid(initialScreens) {
   currentSelectedScreens = [...(initialScreens || [])];
+  // Suy ra folder từ icon/banner path nếu có, để grid hiển thị thẳng folder đó
+  const initIcon = state.editingIndex !== null ? (state.packages[state.editingIndex]?.icon || '') : '';
+  const initBanner = state.editingIndex !== null ? (state.packages[state.editingIndex]?.banner || '') : '';
+  if (initIcon && initIcon.startsWith('assets/')) currentIconFolder = initIcon.slice('assets/'.length).replace(/\/[^\/]+$/, '');
+  if (initBanner && initBanner.startsWith('assets/')) currentBannerFolder = initBanner.slice('assets/'.length).replace(/\/[^\/]+$/, '');
+  await loadFoldersIntoSelect();
+  await refreshScreenGrid();
+  await refreshIconPicker();
+  await refreshBannerPicker();
+  updatePickerCurrentLabels();
+}
+
+async function refreshIconPicker() {
+  const grid = $('#iconPickerGrid');
+  if (!grid) return;
+  grid.innerHTML = '<p class="text-xs text-slate-400 col-span-8">Đang tải...</p>';
+  try {
+    const data = await api(`/api/repo/${state.currentRepo}/folder-files?path=${encodeURIComponent(currentIconFolder)}`);
+    const files = data.files || [];
+    const selected = $('#f_icon')?.value || '';
+    grid.innerHTML = '';
+    if (files.length === 0) {
+      grid.innerHTML = '<p class="text-xs text-slate-400 col-span-8">Thư mục này chưa có ảnh. Upload hoặc chọn thư mục khác.</p>';
+      return;
+    }
+    files.forEach(path => {
+      const item = document.createElement('div');
+      const isSelected = path === selected;
+      item.className = `relative border rounded-md overflow-hidden cursor-pointer aspect-square ${isSelected ? 'ring-2 ring-blue-500 border-blue-500' : 'border-slate-200 hover:border-blue-300'}`;
+      item.title = path;
+      item.innerHTML = `
+        <img src="/repo-asset?repo=${state.currentRepo}&path=${encodeURIComponent(path)}"
+             class="w-full h-full object-cover" onerror="this.style.display='none'" />
+        ${isSelected ? '<div class="absolute inset-0 bg-blue-500/20 flex items-center justify-center"><span class="bg-blue-500 text-white text-xs px-1 rounded">✓</span></div>' : ''}
+        <div class="absolute bottom-0 left-0 right-0 bg-black/60 text-white text-[10px] px-1 py-0.5 truncate">${escapeHtml(path.split('/').pop())}</div>
+      `;
+      item.addEventListener('click', () => selectIcon(path));
+      grid.appendChild(item);
+    });
+  } catch (err) {
+    grid.innerHTML = `<p class="text-xs text-red-400 col-span-8">Lỗi: ${escapeHtml(err.message)}</p>`;
+  }
+}
+
+async function refreshBannerPicker() {
+  const grid = $('#bannerPickerGrid');
+  if (!grid) return;
+  grid.innerHTML = '<p class="text-xs text-slate-400 col-span-8">Đang tải...</p>';
+  try {
+    const data = await api(`/api/repo/${state.currentRepo}/folder-files?path=${encodeURIComponent(currentBannerFolder)}`);
+    const files = data.files || [];
+    const selected = $('#f_banner')?.value || '';
+    grid.innerHTML = '';
+    if (files.length === 0) {
+      grid.innerHTML = '<p class="text-xs text-slate-400 col-span-8">Thư mục này chưa có ảnh. Upload hoặc chọn thư mục khác.</p>';
+      return;
+    }
+    files.forEach(path => {
+      const item = document.createElement('div');
+      const isSelected = path === selected;
+      item.className = `relative border rounded-md overflow-hidden cursor-pointer aspect-square ${isSelected ? 'ring-2 ring-blue-500 border-blue-500' : 'border-slate-200 hover:border-blue-300'}`;
+      item.title = path;
+      item.innerHTML = `
+        <img src="/repo-asset?repo=${state.currentRepo}&path=${encodeURIComponent(path)}"
+             class="w-full h-full object-cover" onerror="this.style.display='none'" />
+        ${isSelected ? '<div class="absolute inset-0 bg-blue-500/20 flex items-center justify-center"><span class="bg-blue-500 text-white text-xs px-1 rounded">✓</span></div>' : ''}
+        <div class="absolute bottom-0 left-0 right-0 bg-black/60 text-white text-[10px] px-1 py-0.5 truncate">${escapeHtml(path.split('/').pop())}</div>
+      `;
+      item.addEventListener('click', () => selectBanner(path));
+      grid.appendChild(item);
+    });
+  } catch (err) {
+    grid.innerHTML = `<p class="text-xs text-red-400 col-span-8">Lỗi: ${escapeHtml(err.message)}</p>`;
+  }
+}
+
+function selectIcon(path) {
+  const hidden = $('#f_icon');
+  if (hidden) hidden.value = path;
+  updatePickerCurrentLabels();
+  refreshIconPicker();
+}
+
+function selectBanner(path) {
+  const hidden = $('#f_banner');
+  if (hidden) hidden.value = path;
+  updatePickerCurrentLabels();
+  refreshBannerPicker();
+}
+
+function updatePickerCurrentLabels() {
+  const ic = $('#f_icon')?.value;
+  const bn = $('#f_banner')?.value;
+  const icLab = $('#iconPickerCurrent');
+  const bnLab = $('#bannerPickerCurrent');
+  if (icLab) icLab.textContent = ic ? `→ ${ic.split('/').pop()}` : '';
+  if (bnLab) bnLab.textContent = bn ? `→ ${bn.split('/').pop()}` : '';
+}
+
+async function refreshScreenGrid() {
   const grid = $('#screensGrid');
   if (!grid) return;
-
-  grid.innerHTML = '';
-
-  if (state.assets.length === 0) {
-    grid.innerHTML = '<p class="text-xs text-slate-400 col-span-8">Không có ảnh nào trong thư mục assets/.</p>';
-    return;
-  }
-
-  state.assets.forEach(path => {
-    const isSelected = currentSelectedScreens.includes(path);
-    const item = document.createElement('div');
-    item.className = 'relative group aspect-video rounded-lg overflow-hidden border-2 cursor-pointer select-none ' +
-      (isSelected ? 'border-blue-500 ring-2 ring-blue-200' : 'border-slate-200 hover:border-slate-400');
-    item.dataset.path = path;
-    item.draggable = true;
-    item.title = path;
-
-    item.innerHTML = `
-      <img src="/repo-asset?repo=${state.currentRepo}&path=${encodeURIComponent(path)}"
-           class="w-full h-full object-cover" onerror="this.style.display='none'" />
-      ${isSelected ? '<div class="absolute inset-0 bg-blue-500/20 flex items-center justify-center"><span class="bg-blue-500 text-white text-xs px-1 rounded">✓</span></div>' : ''}
-      <div class="absolute bottom-0 left-0 right-0 bg-black/60 text-white text-[10px] px-1 py-0.5 truncate">${escapeHtml(path.split('/').pop())}</div>
-    `;
-
-    // Click toggle
-    item.addEventListener('click', () => {
-      const idx = currentSelectedScreens.indexOf(path);
-      if (idx >= 0) {
-        currentSelectedScreens.splice(idx, 1);
-      } else {
-        currentSelectedScreens.push(path);
-      }
-      // Cập nhật UI ngay mà không re-render toàn bộ grid
-      item.classList.toggle('border-blue-500', currentSelectedScreens.includes(path));
-      item.classList.toggle('ring-2', currentSelectedScreens.includes(path));
-      item.classList.toggle('ring-blue-200', currentSelectedScreens.includes(path));
-      item.classList.toggle('border-slate-200', !currentSelectedScreens.includes(path));
-      const overlay = item.querySelector('.bg-blue-500\\/20');
-      if (currentSelectedScreens.includes(path)) {
-        if (!overlay) {
-          const div = document.createElement('div');
-          div.className = 'absolute inset-0 bg-blue-500/20 flex items-center justify-center';
-          div.innerHTML = '<span class="bg-blue-500 text-white text-xs px-1 rounded">✓</span>';
-          item.appendChild(div);
-        }
-      } else if (overlay) {
-        overlay.remove();
-      }
+  grid.innerHTML = '<p class="text-xs text-slate-400 col-span-8">Đang tải...</p>';
+  try {
+    const data = await api(`/api/repo/${state.currentRepo}/folder-files?path=${encodeURIComponent(currentScreenFolder)}`);
+    const files = data.files || [];
+    grid.innerHTML = '';
+    if (files.length === 0) {
+      grid.innerHTML = '<p class="text-xs text-slate-400 col-span-8">Không có ảnh trong thư mục này.</p>';
       updateScreenCount();
-    });
+      return;
+    }
+    files.forEach(path => {
+      const isSelected = currentSelectedScreens.includes(path);
+      const item = document.createElement('div');
+      item.className = 'relative group aspect-video rounded-lg overflow-hidden border-2 cursor-pointer select-none ' +
+        (isSelected ? 'border-blue-500 ring-2 ring-blue-200' : 'border-slate-200 hover:border-slate-400');
+      item.dataset.path = path;
+      item.draggable = true;
+      item.title = path;
 
-    // Drag events
-    item.addEventListener('dragstart', e => {
-      e.dataTransfer.setData('text/plain', path);
-      item.classList.add('opacity-50');
-    });
-    item.addEventListener('dragend', () => {
-      item.classList.remove('opacity-50');
-    });
-    item.addEventListener('dragover', e => {
-      e.preventDefault();
-      item.classList.add('ring-2', 'ring-blue-400');
-    });
-    item.addEventListener('dragleave', () => {
-      item.classList.remove('ring-2', 'ring-blue-400');
-    });
-    item.addEventListener('drop', e => {
-      e.preventDefault();
-      item.classList.remove('ring-2', 'ring-blue-400');
-      const fromPath = e.dataTransfer.getData('text/plain');
-      if (fromPath === path) return;
-      const fromIdx = currentSelectedScreens.indexOf(fromPath);
-      const toIdx = currentSelectedScreens.indexOf(path);
-      if (fromIdx >= 0 && toIdx >= 0) {
-        currentSelectedScreens.splice(fromIdx, 1);
-        currentSelectedScreens.splice(toIdx, 0, fromPath);
-        // Re-render grid
-        const selected = [...currentSelectedScreens];
-        initScreensGrid(selected);
-      }
-    });
+      item.innerHTML = `
+        <img src="/repo-asset?repo=${state.currentRepo}&path=${encodeURIComponent(path)}"
+             class="w-full h-full object-cover" onerror="this.style.display='none'" />
+        ${isSelected ? '<div class="absolute inset-0 bg-blue-500/20 flex items-center justify-center"><span class="bg-blue-500 text-white text-xs px-1 rounded">✓</span></div>' : ''}
+        <div class="absolute bottom-0 left-0 right-0 bg-black/60 text-white text-[10px] px-1 py-0.5 truncate">${escapeHtml(path.split('/').pop())}</div>
+      `;
 
-    grid.appendChild(item);
-  });
+      item.addEventListener('click', () => {
+        const idx = currentSelectedScreens.indexOf(path);
+        if (idx >= 0) {
+          currentSelectedScreens.splice(idx, 1);
+        } else {
+          currentSelectedScreens.push(path);
+        }
+        item.classList.toggle('border-blue-500', currentSelectedScreens.includes(path));
+        item.classList.toggle('ring-2', currentSelectedScreens.includes(path));
+        item.classList.toggle('ring-blue-200', currentSelectedScreens.includes(path));
+        item.classList.toggle('border-slate-200', !currentSelectedScreens.includes(path));
+        const overlay = item.querySelector('.bg-blue-500\\/20');
+        if (currentSelectedScreens.includes(path)) {
+          if (!overlay) {
+            const div = document.createElement('div');
+            div.className = 'absolute inset-0 bg-blue-500/20 flex items-center justify-center';
+            div.innerHTML = '<span class="bg-blue-500 text-white text-xs px-1 rounded">✓</span>';
+            item.appendChild(div);
+          }
+        } else if (overlay) {
+          overlay.remove();
+        }
+        updateScreenCount();
+      });
 
-  updateScreenCount();
+      item.addEventListener('dragstart', e => {
+        e.dataTransfer.setData('text/plain', path);
+        item.classList.add('opacity-50');
+      });
+      item.addEventListener('dragend', () => {
+        item.classList.remove('opacity-50');
+      });
+      item.addEventListener('dragover', e => {
+        e.preventDefault();
+        item.classList.add('ring-2', 'ring-blue-400');
+      });
+      item.addEventListener('dragleave', () => {
+        item.classList.remove('ring-2', 'ring-blue-400');
+      });
+      item.addEventListener('drop', e => {
+        e.preventDefault();
+        item.classList.remove('ring-2', 'ring-blue-400');
+        const fromPath = e.dataTransfer.getData('text/plain');
+        if (fromPath === path) return;
+        const fromIdx = currentSelectedScreens.indexOf(fromPath);
+        const toIdx = currentSelectedScreens.indexOf(path);
+        if (fromIdx >= 0 && toIdx >= 0) {
+          currentSelectedScreens.splice(fromIdx, 1);
+          currentSelectedScreens.splice(toIdx, 0, fromPath);
+          updateScreenCount();
+        }
+      });
+
+      grid.appendChild(item);
+    });
+    updateScreenCount();
+  } catch (err) {
+    grid.innerHTML = `<p class="text-xs text-red-500 col-span-8">Lỗi: ${escapeHtml(err.message)}</p>`;
+  }
 }
 
 function updateScreenCount() {
@@ -561,7 +833,7 @@ function bindFormEvents() {
       $('#f_download').value = r.path;
       $('#f_sha256').value = r.sha256;
       $('#f_size').value = r.size;
-      toast(`Đã điền SHA-256 + size cho ${r.path}`, 'success');
+      toast(`Đã lấy hash + size cho ${r.path}`, 'success');
     } catch (err) {
       toast(`Lỗi: ${err.message}`, 'error');
     }
@@ -569,6 +841,235 @@ function bindFormEvents() {
 
   $('#f_use_default_screens')?.addEventListener('change', e => {
     $('#screensListWrap').style.display = e.target.checked ? 'none' : 'block';
+  });
+
+  // Upload file .3105 - drag-drop + click
+  const uploadZone = $('#pkgUploadZone');
+  const fileInput = $('#f_pkg_upload');
+  if (uploadZone && fileInput) {
+    uploadZone.addEventListener('click', () => fileInput.click());
+    ['dragover', 'dragenter'].forEach(evt => {
+      uploadZone.addEventListener(evt, e => {
+        e.preventDefault();
+        uploadZone.classList.add('border-blue-500', 'bg-blue-50');
+      });
+    });
+    ['dragleave', 'drop'].forEach(evt => {
+      uploadZone.addEventListener(evt, e => {
+        e.preventDefault();
+        uploadZone.classList.remove('border-blue-500', 'bg-blue-50');
+      });
+    });
+    uploadZone.addEventListener('drop', async e => {
+      const files = Array.from(e.dataTransfer.files || []);
+      if (files.length > 0) await uploadPackages(files);
+    });
+    fileInput.addEventListener('change', async e => {
+      const files = Array.from(e.target.files || []);
+      if (files.length > 0) await uploadPackages(files);
+      e.target.value = '';
+    });
+  }
+
+  async function uploadPackages(files) {
+    const fd = new FormData();
+    files.forEach(f => fd.append('files', f));
+    try {
+      const r = await api(`/api/repo/${state.currentRepo}/upload?kind=package`, {
+        method: 'POST',
+        body: fd,
+      });
+      toast(`Đã upload ${r.saved.length} file .3105 vào packages/.`, 'success');
+      // Refresh danh sách package file
+      const list = await api(`/api/repo/${state.currentRepo}/files`);
+      state.packageFiles = list.packages || [];
+      // Cập nhật lại <select id="f_download"> mà không re-render toàn bộ form
+      const sel = $('#f_download');
+      if (sel) {
+        const currentVal = sel.value;
+        sel.innerHTML = '<option value="">— chọn file .3105 —</option>' +
+          state.packageFiles.map(p =>
+            `<option value="${escapeHtml(p)}" ${p === currentVal ? 'selected' : ''}>${escapeHtml(p)}</option>`
+          ).join('');
+        if (currentVal) sel.value = currentVal;
+      }
+    } catch (err) {
+      toast(`Lỗi: ${err.message}`, 'error');
+    }
+  }
+
+  $('#f_screen_folder')?.addEventListener('change', e => {
+    currentScreenFolder = e.target.value;
+    refreshScreenGrid();
+  });
+
+  $('#btnRefreshFolders')?.addEventListener('click', async () => {
+    await loadFoldersIntoSelect();
+    await refreshScreenGrid();
+  });
+
+  $('#btnNewFolder')?.addEventListener('click', async () => {
+    const name = prompt('Tên thư mục mới (vd: owen-013, hdr, v.v):');
+    if (!name) return;
+    // Nếu đang ở subfolder thì tạo con
+    const path = currentScreenFolder ? `${currentScreenFolder}/${name}` : name;
+    try {
+      await api(`/api/repo/${state.currentRepo}/mkdir`, {
+        method: 'POST',
+        body: JSON.stringify({ folder: path }),
+      });
+      toast(`Đã tạo thư mục "${path}"`, 'success');
+      currentScreenFolder = path;
+      await loadFoldersIntoSelect();
+      await refreshScreenGrid();
+      // Refresh toàn bộ asset list cho icon/banner
+      const files = await api(`/api/repo/${state.currentRepo}/files`);
+      state.assets = files.assets || [];
+    } catch (err) {
+      toast(`Lỗi: ${err.message}`, 'error');
+    }
+  });
+
+  $('#btnUploadImages')?.addEventListener('click', () => {
+    $('#f_image_upload').click();
+  });
+
+  $('#f_image_upload')?.addEventListener('change', async e => {
+    const files = Array.from(e.target.files || []);
+    if (files.length === 0) return;
+    const fd = new FormData();
+    files.forEach(f => fd.append('files', f));
+    try {
+      const r = await api(`/api/repo/${state.currentRepo}/upload?kind=image&folder=${encodeURIComponent(currentScreenFolder)}`, {
+        method: 'POST',
+        body: fd,
+      });
+      toast(`Đã upload ${r.saved.length} ảnh vào ${currentScreenFolder || 'assets/'}.`, 'success');
+      // Refresh asset list
+      const list = await api(`/api/repo/${state.currentRepo}/files`);
+      state.assets = list.assets || [];
+      await refreshScreenGrid();
+      await refreshIconPicker();
+      await refreshBannerPicker();
+    } catch (err) {
+      toast(`Lỗi: ${err.message}`, 'error');
+    } finally {
+      e.target.value = ''; // reset để có thể chọn lại cùng file
+    }
+  });
+
+  // ====== Icon picker handlers ======
+  $('#f_icon_folder')?.addEventListener('change', e => {
+    currentIconFolder = e.target.value;
+    refreshIconPicker();
+  });
+  $('#btnIconRefreshFolders')?.addEventListener('click', async () => {
+    await loadFoldersIntoSelect();
+    await refreshIconPicker();
+  });
+  $('#btnIconNewFolder')?.addEventListener('click', async () => {
+    const name = prompt('Tên thư mục mới cho icon (sẽ tạo bên trong thư mục hiện tại):');
+    if (!name) return;
+    const path = currentIconFolder ? `${currentIconFolder}/${name}` : name;
+    try {
+      await api(`/api/repo/${state.currentRepo}/mkdir`, {
+        method: 'POST',
+        body: JSON.stringify({ folder: path }),
+      });
+      toast(`Đã tạo thư mục "${path}"`, 'success');
+      currentIconFolder = path;
+      await loadFoldersIntoSelect();
+      await refreshIconPicker();
+      const files = await api(`/api/repo/${state.currentRepo}/files`);
+      state.assets = files.assets || [];
+    } catch (err) {
+      toast(`Lỗi: ${err.message}`, 'error');
+    }
+  });
+  $('#btnIconUpload')?.addEventListener('click', () => $('#f_icon_upload').click());
+  $('#f_icon_upload')?.addEventListener('change', async e => {
+    const files = Array.from(e.target.files || []);
+    if (files.length === 0) return;
+    const fd = new FormData();
+    files.forEach(f => fd.append('files', f));
+    try {
+      const r = await api(`/api/repo/${state.currentRepo}/upload?kind=image&folder=${encodeURIComponent(currentIconFolder)}`, {
+        method: 'POST',
+        body: fd,
+      });
+      toast(`Đã upload ${r.saved.length} ảnh vào ${currentIconFolder || 'assets/'}.`, 'success');
+      const list = await api(`/api/repo/${state.currentRepo}/files`);
+      state.assets = list.assets || [];
+      await refreshIconPicker();
+    } catch (err) {
+      toast(`Lỗi: ${err.message}`, 'error');
+    } finally {
+      e.target.value = '';
+    }
+  });
+  $('#btnIconToggle')?.addEventListener('click', () => {
+    const grid = $('#iconPickerGrid');
+    if (!grid) return;
+    grid.classList.toggle('hidden');
+    const btn = $('#btnIconToggle');
+    btn.textContent = grid.classList.contains('hidden') ? 'Hiện ảnh' : 'Ẩn ảnh';
+  });
+
+  // ====== Banner picker handlers ======
+  $('#f_banner_folder')?.addEventListener('change', e => {
+    currentBannerFolder = e.target.value;
+    refreshBannerPicker();
+  });
+  $('#btnBannerRefreshFolders')?.addEventListener('click', async () => {
+    await loadFoldersIntoSelect();
+    await refreshBannerPicker();
+  });
+  $('#btnBannerNewFolder')?.addEventListener('click', async () => {
+    const name = prompt('Tên thư mục mới cho banner (sẽ tạo bên trong thư mục hiện tại):');
+    if (!name) return;
+    const path = currentBannerFolder ? `${currentBannerFolder}/${name}` : name;
+    try {
+      await api(`/api/repo/${state.currentRepo}/mkdir`, {
+        method: 'POST',
+        body: JSON.stringify({ folder: path }),
+      });
+      toast(`Đã tạo thư mục "${path}"`, 'success');
+      currentBannerFolder = path;
+      await loadFoldersIntoSelect();
+      await refreshBannerPicker();
+      const files = await api(`/api/repo/${state.currentRepo}/files`);
+      state.assets = files.assets || [];
+    } catch (err) {
+      toast(`Lỗi: ${err.message}`, 'error');
+    }
+  });
+  $('#btnBannerUpload')?.addEventListener('click', () => $('#f_banner_upload').click());
+  $('#f_banner_upload')?.addEventListener('change', async e => {
+    const files = Array.from(e.target.files || []);
+    if (files.length === 0) return;
+    const fd = new FormData();
+    files.forEach(f => fd.append('files', f));
+    try {
+      const r = await api(`/api/repo/${state.currentRepo}/upload?kind=image&folder=${encodeURIComponent(currentBannerFolder)}`, {
+        method: 'POST',
+        body: fd,
+      });
+      toast(`Đã upload ${r.saved.length} ảnh vào ${currentBannerFolder || 'assets/'}.`, 'success');
+      const list = await api(`/api/repo/${state.currentRepo}/files`);
+      state.assets = list.assets || [];
+      await refreshBannerPicker();
+    } catch (err) {
+      toast(`Lỗi: ${err.message}`, 'error');
+    } finally {
+      e.target.value = '';
+    }
+  });
+  $('#btnBannerToggle')?.addEventListener('click', () => {
+    const grid = $('#bannerPickerGrid');
+    if (!grid) return;
+    grid.classList.toggle('hidden');
+    const btn = $('#btnBannerToggle');
+    btn.textContent = grid.classList.contains('hidden') ? 'Hiện ảnh' : 'Ẩn ảnh';
   });
 
   // Init screenshots grid sau khi form HTML đã render
@@ -638,24 +1139,40 @@ function savePackageFromForm() {
       use_anchor_os: useOs,
       use_anchor_screens: useScreens,
     });
+    // Ghi nhận added
+    state.changes.added.push({
+      identifier: pkgClean.identifier,
+      name: pkgClean.name || pkgClean.identifier,
+    });
   } else {
     state.packages[state.editingIndex] = pkgClean;
     state.packagesMeta[state.editingIndex] = {
       use_anchor_os: useOs,
       use_anchor_screens: useScreens,
     };
+    // Ghi nhận edited
+    state.changes.edited.push({
+      identifier: pkgClean.identifier,
+      name: pkgClean.name || pkgClean.identifier,
+    });
   }
   closeModal();
   renderPackageList();
-  toast('Đã lưu package vào bộ nhớ tạm. Bấm "💾 Lưu & ghi file" để ghi ra repo.yml.', 'success');
+  toast(`Đã lưu package "${pkgClean.identifier}" vào bộ nhớ tạm. Bấm "🚀 Lưu & Push Git" để ghi ra repo.yml.`, 'success');
 }
 
 function deletePackage(idx) {
-  if (!confirm(`Xoá package "${state.packages[idx].identifier}"?`)) return;
+  const pkg = state.packages[idx];
+  if (!confirm(`Xoá package "${pkg.identifier}" (${pkg.name || ''})?`)) return;
+  // Ghi nhận deleted
+  state.changes.deleted.push({
+    identifier: pkg.identifier,
+    name: pkg.name || pkg.identifier,
+  });
   state.packages.splice(idx, 1);
   state.packagesMeta.splice(idx, 1);
   renderPackageList();
-  toast('Đã xoá khỏi bộ nhớ tạm.', 'info');
+  toast(`Đã xoá "${pkg.identifier}" khỏi bộ nhớ tạm.`, 'info');
 }
 
 function duplicatePackage(idx) {
@@ -688,9 +1205,31 @@ function duplicatePackage(idx) {
 // Save to YAML
 // ---------------------------------------------------------------------
 
+function buildCommitMessage() {
+  // Sinh commit message kiểu: "Add ow-001 PUBG ALL", "Update ow-005, ow-007", "Remove ow-009"
+  const parts = [];
+  const fmtList = (items, prefix) => {
+    if (items.length === 0) return '';
+    if (items.length === 1) return `${prefix} ${items[0].identifier} (${items[0].name})`;
+    if (items.length <= 3) {
+      const ids = items.map(i => i.identifier).join(', ');
+      return `${prefix} ${ids}`;
+    }
+    return `${prefix} ${items.length} packages`;
+  };
+  const a = fmtList(state.changes.added, 'Add');
+  const e = fmtList(state.changes.edited, 'Update');
+  const d = fmtList(state.changes.deleted, 'Remove');
+  [a, e, d].forEach(p => { if (p) parts.push(p); });
+  if (parts.length === 0) {
+    return `Update ${state.currentRepo}`;
+  }
+  return parts.join('; ');
+}
+
 async function saveAll() {
   if (!state.currentRepo) return toast('Chưa chọn repo.', 'error');
-  if (state.packages.length === 0) {
+  if (state.packages.length === 0 && state.changes.deleted.length === 0) {
     if (!confirm('Repo không có package nào. Vẫn ghi file?')) return;
   }
 
@@ -712,6 +1251,8 @@ async function saveAll() {
     accentColor: $('#meta_accentColor').value.trim() || '#FF3B30',
   };
 
+  const commitMsg = buildCommitMessage();
+
   // Disable nút để tránh double-click
   const btn = $('#btnSave');
   btn.disabled = true;
@@ -732,13 +1273,18 @@ async function saveAll() {
     toast(`✓ Đã ghi file ${r.saved} (${r.count} package)${anchorInfo}. Đang push...`, 'info');
 
     // Bước 2: Push lên GitHub
-    const push = await api(`/api/repo/${state.currentRepo}/push`, { method: 'POST' });
+    const push = await api(`/api/repo/${state.currentRepo}/push`, {
+      method: 'POST',
+      body: JSON.stringify({ commit_msg: commitMsg }),
+    });
 
     if (push.step === 'nothing-to-commit') {
       toast('✓ Không có thay đổi nào. Git đã sạch.', 'success');
     } else {
-      toast(`🚀 Push thành công! "${push.message}"`, 'success');
+      toast(`🚀 Push thành công! Commit: "${commitMsg}"`, 'success');
     }
+    // Reset changes sau khi push thành công
+    state.changes = { added: [], edited: [], deleted: [] };
   } catch (err) {
     toast(`Lỗi: ${err.message}`, 'error');
   } finally {

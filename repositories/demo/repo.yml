@@ -6,7 +6,7 @@ schemaVersion: 1
 identifier: com.owen.mod
 name: Owen Custom Repository
 description: "🎮 Kho lưu trữ các bản tùy chỉnh & tiện ích iOS của Owen. 🔥 Cập nhật thường xuyên ❤️ @owenindahouse"
-icon: assets/repo-icon.png
+icon: assets/icon/repo-icon.png
 accentColor: "#FF3B30"
 
 # ==========================================
@@ -24,13 +24,13 @@ packages:
     category: Customization
     tags: [CUSTOM]
     publishedAt: "2026-08-28T10:00:00Z"
-    icon: assets/test.png
-    banner: assets/banner.png
+    icon: assets/icon/test.png
+    banner: assets/banner/banner.png
     screenshots:
-      - assets/preview-first.png
-      - assets/preview-second.png
-      - assets/preview-third.png
-      - assets/preview-four.png
+      - assets/preview/preview-first.png
+      - assets/preview/preview-second.png
+      - assets/preview/preview-third.png
+      - assets/preview/preview-fourth.png
     download: packages/PATCH_FREE_V12_BY_TD.3105
     sha256: CE977931A02FA8D505E6DF202BAC4252811DB1055AE1632BCBDC1413C271FCE0
     size: 37432
@@ -83,13 +83,13 @@ packages:
     password: "2752"
     category: Customization
     tags: [CUSTOM]
-    icon: assets/vip-cabybara.png
-    banner: assets/banner.png
+    icon: assets/icon/vip-cabybara.png
+    banner: assets/banner/banner.png
     screenshots:
-      - assets/preview-first.png
-      - assets/preview-second.png
-      - assets/preview-third.png
-      - assets/preview-four.png
+      - assets/preview/preview-first.png
+      - assets/preview/preview-second.png
+      - assets/preview/preview-third.png
+      - assets/preview/preview-fourth.png
     download: packages/PATCH_FREE_V12_BY_TD.3105
     sha256: CE977931A02FA8D505E6DF202BAC4252811DB1055AE1632BCBDC1413C271FCE0
     size: 37432
@@ -162,8 +162,8 @@ packages:
     password: "2752"
     category: Enhancement
     tags: [DISPLAY]
-    icon: assets/hdr_120/ngong.png
-    banner: assets/banner.png
+    icon: assets/icon/hdr_120-ngong.png
+    banner: assets/banner/banner.png
     screenshots:
       - assets/hdr_120/before.png
       - assets/hdr_120/after.png
@@ -206,13 +206,13 @@ packages:
     category: Customization
     tags: [CUSTOM]
     publishedAt: "2026-08-28T10:00:00Z"
-    icon: assets/global/pubg_global.png
-    banner: assets/banner.png
+    icon: assets/icon/global-pubg_global.png
+    banner: assets/banner/banner.png
     screenshots:
-      - assets/preview-first.png
-      - assets/preview-second.png
-      - assets/preview-third.png
-      - assets/preview-four.png
+      - assets/preview/preview-first.png
+      - assets/preview/preview-second.png
+      - assets/preview/preview-third.png
+      - assets/preview/preview-fourth.png
     download: packages/V12_GL.3105
     sha256: C8669AEDFB5BFD0AB05029B3F6D09320FBC562859B1EB22F17EF602E66F3BC04
     size: 37428
@@ -271,13 +271,13 @@ packages:
     password: "2752"
     category: Customization
     tags: [CUSTOM]
-    icon: assets/kr/pubg_kr.png
-    banner: assets/banner.png
+    icon: assets/icon/kr-pubg_kr.png
+    banner: assets/banner/banner.png
     screenshots:
-      - assets/preview-first.png
-      - assets/preview-second.png
-      - assets/preview-third.png
-      - assets/preview-four.png
+      - assets/preview/preview-first.png
+      - assets/preview/preview-second.png
+      - assets/preview/preview-third.png
+      - assets/preview/preview-fourth.png
     download: packages/PATCH_FREE_V12_KR.3105
     sha256: AB58206C6DD088D60D3471D8BA65E544D80519EAA365CC2832ED192E3F5AD503
     size: 37429
@@ -335,8 +335,8 @@ packages:
     summary: ✨ Giao diện bàn phím cổ điển • Classic Dialer
     category: Customization
     tags: [Dialer]
-    icon: assets/dialer/Classic_dialer/Classic_dialer.png
-    banner: assets/banner.png
+    icon: assets/icon/Classic_dialer.png
+    banner: assets/banner/banner.png
     screenshots:
       - assets/dialer/Classic_dialer/light.png
       - assets/dialer/Classic_dialer/dark.png
@@ -393,8 +393,8 @@ packages:
     category: Customization
     tags: [Dialer]
     publishedAt: "2026-09-02T09:00:00Z"
-    icon: assets/dialer/Basic_Circle/Basic_Circle.png
-    banner: assets/banner.png
+    icon: assets/icon/Basic_Circle.png
+    banner: assets/banner/banner.png
     screenshots:
       - assets/dialer/Basic_Circle/bs_light.png
       - assets/dialer/Basic_Circle/bs_dark.png
@@ -450,8 +450,8 @@ packages:
     summary: ✨ Giao diện Bình Mình và Hoàng Hôn • DayBreak Dialer
     category: Customization
     tags: [Dialer]
-    icon: assets/dialer/Dual_Horizontal/dual_horizon.png
-    banner: assets/banner.png
+    icon: assets/icon/dual_horizon.png
+    banner: assets/banner/banner.png
     screenshots:
       - assets/dialer/Dual_Horizontal/dual_dark.png
       - assets/dialer/Dual_Horizontal/dual_light.png
@@ -508,8 +508,8 @@ packages:
     password: "2752"
     category: Enhancement
     tags: [DISPLAY]
-    icon: assets/potato_120fps/potato.png
-    banner: assets/banner.png
+    icon: assets/icon/potato.png
+    banner: assets/banner/banner.png
     screenshots:
       - assets/potato_120fps/potato_screenshot.png
     download: packages/GRAPHICS_POTATO_WITH_120FPS.3105
@@ -556,8 +556,8 @@ packages:
     category: Customization
     tags: [Dialer]
     publishedAt: "2026-09-06T11:00:00Z"
-    icon: assets/dialer/B&F_Pink/F&B_pink.png
-    banner: assets/banner.png
+    icon: assets/icon/F&B_pink.png
+    banner: assets/banner/banner.png
     screenshots:
       - assets/dialer/B&F_Pink/B&F_light.png
       - assets/dialer/B&F_Pink/B&F_dark.png
@@ -614,13 +614,13 @@ packages:
     category: Customization
     tags: [CUSTOM]
     publishedAt: "2026-09-06T11:00:00Z"
-    icon: assets/Allinone/allinone.png
-    banner: assets/banner.png
+    icon: assets/icon/allinone.png
+    banner: assets/banner/banner.png
     screenshots:
-      - assets/preview-first.png
-      - assets/preview-second.png
-      - assets/preview-third.png
-      - assets/preview-four.png
+      - assets/preview/preview-first.png
+      - assets/preview/preview-second.png
+      - assets/preview/preview-third.png
+      - assets/preview/preview-fourth.png
     download: packages/ALL_IN_ONE_V12.3105
     sha256: 9BF4F7C31A97C294714FA395AA9BE1674A5A4A4D414C5109FBBE9137DAF9C9DE
     size: 38137
@@ -690,20 +690,26 @@ packages:
       
       ❤️ Cảm ơn bạn đã ủng hộ!
 
-  # ----- owen-013 -----
-  - identifier: owen-013
-    name: tessssttttttttttt 2
+  # ----- owen-001 -----
+  - identifier: owen-001
+    name: Testtingggggg 3
     author: "@owenindahouse"
     version: 1.0.0
-    summary: testtt
+    summary: téttt
     category: Customization
     tags: [CUSTOM]
-    icon: assets/dialer/B&F_Pink/B&F_dark.png
+    icon: assets/icon/global-pubg_global.png
     banner: assets/banner.png
     screenshots:
-      - assets/dialer/Classic_dialer/light.png
-      - assets/dialer/Classic_dialer/dark.png
-      - assets/dialer/Classic_dialer/pass.png
+      - assets/icon/vip-cabybara.png
+      - assets/kr/pubg_kr.png
+      - assets/icon/global-pubg_global.png
+      - assets/icon/hdr_120-ngong.png
+      - assets/icon/kr-pubg_kr.png
+      - assets/icon/potato.png
+      - assets/icon/Basic_Circle.png
+      - assets/icon/B&F_dark.png
+      - assets/dialer/Dual_Horizontal/dual_dark.png
     download: packages/Basic_CircleB&W.3105pass
     sha256: BA91799564D04544CFF874C897273037AA4717456A93B7A70798CBEFEE97AAF8
     size: 406950
@@ -717,5 +723,5 @@ packages:
         builds: ["24A5355q", "24A5370h", "24A5380h", "24A5390f"]
     featured: false
     isPrivate: false
-    description: testt thui
+    description: Testttt
     changelog: 🎉 v1.0.0 — Phát hành lần đầu

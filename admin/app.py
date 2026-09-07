@@ -19,8 +19,10 @@ import json
 import os
 import pathlib
 import re
+import shutil
 import sys
 import threading
+import uuid
 import webbrowser
 from typing import Any
 
@@ -76,6 +78,8 @@ CATEGORY_OPTIONS = [
 IDENTIFIER_RE = re.compile(r"^[a-z0-9][a-z0-9._-]{1,63}$")
 
 app = Flask(__name__, template_folder="templates", static_folder="static")
+# Tăng giới hạn upload lên 200MB cho phép upload file .3105 và ảnh lớn
+app.config["MAX_CONTENT_LENGTH"] = 200 * 1024 * 1024
 
 
 # ---------------------------------------------------------------------------
@@ -563,6 +567,116 @@ def api_files(repo: str):
     })
 
 
+def _list_subdirs(directory: pathlib.Path, base: pathlib.Path) -> list[dict[str, Any]]:
+    """Trả về danh sách thư mục con (relative path) của directory."""
+    if not directory.is_dir():
+        return []
+    out: list[dict[str, Any]] = []
+    for p in sorted(directory.iterdir(), key=lambda x: x.name.lower()):
+        if p.is_dir():
+            rel = p.relative_to(base).as_posix()
+            children = _list_subdirs(p, base)
+            out.append({"path": rel, "name": p.name, "children": children})
+    return out
+
+
+@app.get("/api/repo/<repo>/folders")
+def api_folders(repo: str):
+    """Trả về cây thư mục con trong assets/ để chọn khi thêm screenshot."""
+    paths = repo_paths(repo)
+    return jsonify({
+        "folders": _list_subdirs(paths["assets"], paths["assets"]),
+    })
+
+
+@app.get("/api/repo/<repo>/folder-files")
+def api_folder_files(repo: str):
+    """Trả về danh sách ảnh trong một folder cụ thể (relative đến repo root)."""
+    paths = repo_paths(repo)
+    folder = request.args.get("path", "").replace("\\", "/").lstrip("/")
+    target = paths["assets"]
+    if folder:
+        target = target / folder
+    if not target.is_dir():
+        abort(404, description=f"Folder not found: {folder}")
+    rel_files: list[str] = []
+    for f in sorted(target.rglob("*")):
+        if f.is_file() and f.suffix.lower() in IMAGE_EXT:
+            rel = f.relative_to(paths["root"]).as_posix()
+            rel_files.append(rel)
+    all_files = scan_files(paths["assets"], IMAGE_EXT)
+    return jsonify({
+        "files": rel_files,
+        "folder": folder,
+        "all_count": len(all_files),
+    })
+
+
+@app.post("/api/repo/<repo>/upload")
+def api_upload(repo: str):
+    """Upload file ảnh hoặc .3105 lên repo.
+
+    - kind=image  → lưu vào assets/<subfolder>/
+    - kind=package → lưu vào packages/
+    """
+    paths = repo_paths(repo)
+    kind = request.args.get("kind", "image")
+    subfolder = request.args.get("folder", "").strip().replace("\\", "/").strip("/")
+
+    if kind == "image":
+        target_dir = paths["assets"]
+        if subfolder:
+            target_dir = target_dir / subfolder
+        allowed_exts = IMAGE_EXT
+    elif kind == "package":
+        target_dir = paths["packages"]
+        allowed_exts = PACKAGE_EXT
+    else:
+        abort(400, description=f"Unknown upload kind: {kind}")
+
+    target_dir.mkdir(parents=True, exist_ok=True)
+    saved: list[str] = []
+    for f in request.files.getlist("files"):
+        if not f.filename:
+            continue
+        ext = pathlib.Path(f.filename).suffix.lower()
+        if ext not in allowed_exts:
+            abort(400, description=f"File extension không hợp lệ: {f.filename}")
+        safe_name = pathlib.Path(f.filename).name
+        safe_name = re.sub(r"[^A-Za-z0-9._-]", "_", safe_name)
+        dest = target_dir / safe_name
+        if dest.exists():
+            stem, suffix = dest.stem, dest.suffix
+            i = 2
+            while True:
+                candidate = target_dir / f"{stem}_{i}{suffix}"
+                if not candidate.exists():
+                    dest = candidate
+                    break
+                i += 1
+        f.save(str(dest))
+        rel = dest.relative_to(paths["root"]).as_posix()
+        saved.append(rel)
+    return jsonify({"ok": True, "saved": saved})
+
+
+@app.post("/api/repo/<repo>/mkdir")
+def api_mkdir(repo: str):
+    """Tạo thư mục con trong assets/."""
+    paths = repo_paths(repo)
+    payload = request.get_json(silent=True) or {}
+    folder = (payload.get("folder") or "").strip().replace("\\", "/").strip("/")
+    if not folder:
+        abort(400, description="Missing folder")
+    if ".." in folder.split("/"):
+        abort(400, description="Invalid folder path")
+    target = paths["assets"] / folder
+    if target.exists():
+        abort(409, description=f"Folder đã tồn tại: {folder}")
+    target.mkdir(parents=True, exist_ok=False)
+    return jsonify({"ok": True, "folder": folder})
+
+
 @app.post("/api/repo/<repo>/hash")
 def api_hash(repo: str):
     """Tính SHA-256 và size cho file .3105 nằm trong thư mục packages của repo."""
@@ -663,23 +777,32 @@ def api_save(repo: str):
             "os": use_anchor_os_any,
             "screens": use_anchor_screens_any,
         },
-        "next": [
-            "git add repositories/" + repo + "/repo.yml",
-            "git commit -m \"feat(" + repo + "): cập nhật danh sách package\"",
-            "git push",
-        ],
     })
 
 
 @app.post("/api/repo/<repo>/push")
 def api_push(repo: str):
-    """Chạy git pull → add → commit → push cho repo đang active."""
+    """Chạy git pull → add → commit → push cho repo đang active.
+
+    Body JSON: {"commit_msg": "..."}  (tuỳ chọn, sẽ dùng default nếu thiếu)
+    """
     paths = repo_paths(repo)
 
     # Kiểm tra đây có phải git repo không
     git_dir = ROOT / ".git"
     if not git_dir.is_dir():
         abort(400, description="Thư mục này không phải là git repository (không tìm thấy .git ở thư mục gốc project).")
+
+    payload = request.get_json(silent=True) or {}
+    commit_msg = (payload.get("commit_msg") or "").strip()
+    if not commit_msg:
+        # Fallback: dùng identifier repo
+        try:
+            data = load_yaml(paths["yml"])
+            ident = data.get("identifier", repo)
+        except Exception:
+            ident = repo
+        commit_msg = f"Update {ident}"
 
     def _run(*cmd: str) -> tuple[int, str]:
         import subprocess
@@ -724,14 +847,6 @@ def api_push(repo: str):
         })
 
     # 4. git commit
-    repo_ident = paths["yml"].read_text(encoding="utf-8")
-    import yaml as _yaml
-    try:
-        meta = _yaml.safe_load(repo_ident) or {}
-        ident = meta.get("identifier", repo)
-    except Exception:
-        ident = repo
-    commit_msg = f"Update {ident}"
     code, out = _run("git", "commit", "-m", commit_msg)
     commit_out = (out or "").strip()
     if code != 0:
