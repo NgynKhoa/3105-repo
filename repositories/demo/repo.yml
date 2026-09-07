@@ -690,19 +690,23 @@ packages:
       
       ❤️ Cảm ơn bạn đã ủng hộ!
 
-  # ----- owen-012 -----
-  - identifier: owen-012
-    name: tesssstttt
+  # ----- owen-013 -----
+  - identifier: owen-013
+    name: tessssttttttttttt 2
     author: "@owenindahouse"
     version: 1.0.0
-    summary: ststssssss
+    summary: testtt
     category: Customization
     tags: [CUSTOM]
-    icon: assets/Allinone/allinone.png
+    icon: assets/dialer/B&F_Pink/B&F_dark.png
     banner: assets/banner.png
-    download: packages/ALL_IN_ONE_V12.3105
-    sha256: FDC6EC1F47DC9C8D4BAA78FC2AC1957F4C1B486B34A886DB9F8221D13C6BFE0B
-    size: 38137
+    screenshots:
+      - assets/dialer/Classic_dialer/light.png
+      - assets/dialer/Classic_dialer/dark.png
+      - assets/dialer/Classic_dialer/pass.png
+    download: packages/Basic_CircleB&W.3105pass
+    sha256: BA91799564D04544CFF874C897273037AA4717456A93B7A70798CBEFEE97AAF8
+    size: 406950
     supportedOS:
       - minimum: "17.0"
         maximum: "18.7.1"
@@ -713,5 +717,5 @@ packages:
         builds: ["24A5355q", "24A5370h", "24A5380h", "24A5390f"]
     featured: false
     isPrivate: false
-    description: testtt 
+    description: testt thui
     changelog: 🎉 v1.0.0 — Phát hành lần đầu

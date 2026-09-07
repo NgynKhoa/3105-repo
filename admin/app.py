@@ -671,6 +671,97 @@ def api_save(repo: str):
     })
 
 
+@app.post("/api/repo/<repo>/push")
+def api_push(repo: str):
+    """Chạy git pull → add → commit → push cho repo đang active."""
+    paths = repo_paths(repo)
+
+    # Kiểm tra đây có phải git repo không
+    git_dir = ROOT / ".git"
+    if not git_dir.is_dir():
+        abort(400, description="Thư mục này không phải là git repository (không tìm thấy .git ở thư mục gốc project).")
+
+    def _run(*cmd: str) -> tuple[int, str]:
+        import subprocess
+        result = subprocess.run(
+            cmd,
+            cwd=str(ROOT),
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+        )
+        return result.returncode, result.stdout + result.stderr
+
+    # 1. git pull origin main
+    code, out = _run("git", "pull", "origin", "main")
+    pull_out = (out or "").strip()
+    if code != 0:
+        return jsonify({
+            "ok": False,
+            "step": "pull",
+            "message": f"git pull thất bại (exit {code})",
+            "detail": pull_out[:500],
+        })
+
+    # 2. git add -A
+    code, out = _run("git", "add", "-A")
+    if code != 0:
+        return jsonify({
+            "ok": False,
+            "step": "add",
+            "message": f"git add thất bại (exit {code})",
+            "detail": (out or "").strip()[:500],
+        })
+
+    # 3. Kiểm tra có thay đổi không
+    code, out = _run("git", "status", "--porcelain")
+    if code == 0 and not (out or "").strip():
+        return jsonify({
+            "ok": True,
+            "step": "nothing-to-commit",
+            "message": "Không có thay đổi nào để commit.",
+        })
+
+    # 4. git commit
+    repo_ident = paths["yml"].read_text(encoding="utf-8")
+    import yaml as _yaml
+    try:
+        meta = _yaml.safe_load(repo_ident) or {}
+        ident = meta.get("identifier", repo)
+    except Exception:
+        ident = repo
+    commit_msg = f"Update {ident}"
+    code, out = _run("git", "commit", "-m", commit_msg)
+    commit_out = (out or "").strip()
+    if code != 0:
+        return jsonify({
+            "ok": False,
+            "step": "commit",
+            "message": f"git commit thất bại (exit {code})",
+            "detail": commit_out[:500],
+        })
+
+    # 5. git push origin main
+    code, out = _run("git", "push", "origin", "main")
+    push_out = (out or "").strip()
+    if code != 0:
+        return jsonify({
+            "ok": False,
+            "step": "push",
+            "message": f"git push thất bại (exit {code})",
+            "detail": push_out[:500],
+        })
+
+    return jsonify({
+        "ok": True,
+        "step": "done",
+        "message": f"Đã push thành công. Commit: {commit_msg}",
+        "pull": pull_out[:200],
+        "commit": commit_msg,
+    })
+
+
 # ---------------------------------------------------------------------------
 # Chạy
 # ---------------------------------------------------------------------------

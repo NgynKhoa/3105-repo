@@ -40,7 +40,7 @@
         </select>
         <button id="btnReload" type="button" class="text-sm px-3 py-1.5 rounded-md border border-slate-300 hover:bg-slate-100">↻ Tải lại</button>
         <button id="btnAdd" type="button" class="text-sm px-3 py-1.5 rounded-md bg-red-500 hover:bg-red-600 text-white font-medium">+ Thêm package</button>
-        <button id="btnSave" type="button" class="text-sm px-3 py-1.5 rounded-md bg-emerald-600 hover:bg-emerald-700 text-white font-medium">💾 Lưu & ghi file</button>
+        <button id="btnSave" type="button" class="text-sm px-3 py-1.5 rounded-md bg-emerald-600 hover:bg-emerald-700 text-white font-medium">🚀 Lưu & Push Git</button>
       </div>
     </div>
   </header>
@@ -91,12 +91,9 @@
 
     <!-- ============================ HƯỚNG DẪN ============================ -->
     <section class="mt-6 bg-amber-50 border border-amber-200 rounded-xl p-5 text-sm text-amber-900">
-      <h3 class="font-semibold mb-2">📌 Sau khi bấm Lưu</h3>
-      <p class="mb-2">Tool chỉ ghi file <code class="bg-amber-100 px-1 rounded">repositories/&lt;repo&gt;/repo.yml</code>. Bạn tự push lên GitHub bằng SSH:</p>
-      <pre class="bg-amber-100 rounded-md p-3 text-xs overflow-x-auto"><code>git add repositories/&lt;repo&gt;/repo.yml
-git commit -m "feat: thêm/sửa package"
-git push</code></pre>
-      <p class="mt-2 text-xs">GitHub Action <code>build.yml</code> sẽ tự convert YAML → JSON. App 3105 sẽ refresh trong vài giây.</p>
+      <h3 class="font-semibold mb-2">📌 Cách sử dụng</h3>
+      <p class="mb-2">Bấm <b>🚀 Lưu & Push Git</b> để ghi file <code class="bg-amber-100 px-1 rounded">repositories/&lt;repo&gt;/repo.yml</code> và push lên GitHub tự động.</p>
+      <p class="mb-2">GitHub Action <code>build.yml</code> sẽ tự convert YAML → JSON. App 3105 sẽ refresh trong vài giây.</p>
       <p class="mt-2 text-xs text-amber-800">Mẹo: tick "Dùng danh sách screenshot mặc định" và "Dùng iOS rule mặc định" để giữ file YAML gọn (dùng anchor).</p>
     </section>
   </main>

@@ -388,10 +388,14 @@ function buildFormHtml(pkg) {
           <span class="text-slate-400">(4 ảnh: preview-first → preview-four)</span>
         </span>
       </label>
-      <label class="block md:col-span-2" id="screensListWrap" style="${pkg.__use_default_screens ? 'display:none' : ''}">
-        <span class="text-xs text-slate-500">Screenshot tuỳ chỉnh (mỗi dòng 1 path)</span>
-        <textarea id="f_screenshots" rows="3" class="w-full mt-1 border border-slate-300 rounded-md px-3 py-1.5 text-sm font-mono">${escapeHtml((pkg.screenshots || []).join('\n'))}</textarea>
-      </label>
+      <div class="block md:col-span-2" id="screensListWrap" style="${pkg.__use_default_screens ? 'display:none' : ''}">
+        <div class="flex items-center justify-between mb-1">
+          <span class="text-xs text-slate-500">Chọn ảnh (bấm để chọn / bỏ chọn)</span>
+          <span id="screenCount" class="text-xs text-slate-400"></span>
+        </div>
+        <div id="screensGrid" class="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-2"></div>
+        <p class="text-xs text-slate-400 mt-1">Chọn thứ tự ảnh bằng cách bấm giữ và kéo thả để sắp xếp.</p>
+      </div>
 
       <label class="block md:col-span-2">
         <span class="text-xs text-slate-500 flex items-center gap-2">
@@ -445,6 +449,106 @@ ${(defaultScreens).map(s => '  - ' + s).join('\n')}</div>
   `;
 }
 
+// Module-level state cho screenshots grid trong modal
+let currentSelectedScreens = [];
+
+function initScreensGrid(initialScreens) {
+  currentSelectedScreens = [...(initialScreens || [])];
+  const grid = $('#screensGrid');
+  if (!grid) return;
+
+  grid.innerHTML = '';
+
+  if (state.assets.length === 0) {
+    grid.innerHTML = '<p class="text-xs text-slate-400 col-span-8">Không có ảnh nào trong thư mục assets/.</p>';
+    return;
+  }
+
+  state.assets.forEach(path => {
+    const isSelected = currentSelectedScreens.includes(path);
+    const item = document.createElement('div');
+    item.className = 'relative group aspect-video rounded-lg overflow-hidden border-2 cursor-pointer select-none ' +
+      (isSelected ? 'border-blue-500 ring-2 ring-blue-200' : 'border-slate-200 hover:border-slate-400');
+    item.dataset.path = path;
+    item.draggable = true;
+    item.title = path;
+
+    item.innerHTML = `
+      <img src="/repo-asset?repo=${state.currentRepo}&path=${encodeURIComponent(path)}"
+           class="w-full h-full object-cover" onerror="this.style.display='none'" />
+      ${isSelected ? '<div class="absolute inset-0 bg-blue-500/20 flex items-center justify-center"><span class="bg-blue-500 text-white text-xs px-1 rounded">✓</span></div>' : ''}
+      <div class="absolute bottom-0 left-0 right-0 bg-black/60 text-white text-[10px] px-1 py-0.5 truncate">${escapeHtml(path.split('/').pop())}</div>
+    `;
+
+    // Click toggle
+    item.addEventListener('click', () => {
+      const idx = currentSelectedScreens.indexOf(path);
+      if (idx >= 0) {
+        currentSelectedScreens.splice(idx, 1);
+      } else {
+        currentSelectedScreens.push(path);
+      }
+      // Cập nhật UI ngay mà không re-render toàn bộ grid
+      item.classList.toggle('border-blue-500', currentSelectedScreens.includes(path));
+      item.classList.toggle('ring-2', currentSelectedScreens.includes(path));
+      item.classList.toggle('ring-blue-200', currentSelectedScreens.includes(path));
+      item.classList.toggle('border-slate-200', !currentSelectedScreens.includes(path));
+      const overlay = item.querySelector('.bg-blue-500\\/20');
+      if (currentSelectedScreens.includes(path)) {
+        if (!overlay) {
+          const div = document.createElement('div');
+          div.className = 'absolute inset-0 bg-blue-500/20 flex items-center justify-center';
+          div.innerHTML = '<span class="bg-blue-500 text-white text-xs px-1 rounded">✓</span>';
+          item.appendChild(div);
+        }
+      } else if (overlay) {
+        overlay.remove();
+      }
+      updateScreenCount();
+    });
+
+    // Drag events
+    item.addEventListener('dragstart', e => {
+      e.dataTransfer.setData('text/plain', path);
+      item.classList.add('opacity-50');
+    });
+    item.addEventListener('dragend', () => {
+      item.classList.remove('opacity-50');
+    });
+    item.addEventListener('dragover', e => {
+      e.preventDefault();
+      item.classList.add('ring-2', 'ring-blue-400');
+    });
+    item.addEventListener('dragleave', () => {
+      item.classList.remove('ring-2', 'ring-blue-400');
+    });
+    item.addEventListener('drop', e => {
+      e.preventDefault();
+      item.classList.remove('ring-2', 'ring-blue-400');
+      const fromPath = e.dataTransfer.getData('text/plain');
+      if (fromPath === path) return;
+      const fromIdx = currentSelectedScreens.indexOf(fromPath);
+      const toIdx = currentSelectedScreens.indexOf(path);
+      if (fromIdx >= 0 && toIdx >= 0) {
+        currentSelectedScreens.splice(fromIdx, 1);
+        currentSelectedScreens.splice(toIdx, 0, fromPath);
+        // Re-render grid
+        const selected = [...currentSelectedScreens];
+        initScreensGrid(selected);
+      }
+    });
+
+    grid.appendChild(item);
+  });
+
+  updateScreenCount();
+}
+
+function updateScreenCount() {
+  const el = $('#screenCount');
+  if (el) el.textContent = `${currentSelectedScreens.length} ảnh đã chọn`;
+}
+
 function bindFormEvents() {
   $('#btnAutoFill')?.addEventListener('click', async () => {
     const path = $('#f_download').value;
@@ -467,6 +571,12 @@ function bindFormEvents() {
     $('#screensListWrap').style.display = e.target.checked ? 'none' : 'block';
   });
 
+  // Init screenshots grid sau khi form HTML đã render
+  const initScreens = state.editingIndex !== null
+    ? (state.packages[state.editingIndex]?.screenshots || [])
+    : [];
+  initScreensGrid(initScreens);
+
   $('#btnSavePackage').onclick = savePackageFromForm;
   $('#btnCancel').onclick = closeModal;
   $('#btnCloseModal').onclick = closeModal;
@@ -486,7 +596,7 @@ function readFormToPackage() {
     icon: $('#f_icon').value,
     banner: $('#f_banner').value,
     __use_default_screens: $('#f_use_default_screens').checked,
-    screenshots: $('#f_screenshots').value.split('\n').map(s => s.trim()).filter(Boolean),
+    screenshots: currentSelectedScreens.slice(),
     download: $('#f_download').value,
     sha256: normalizeSha256($('#f_sha256').value),
     size: parseInt($('#f_size').value, 10) || 0,
@@ -602,7 +712,13 @@ async function saveAll() {
     accentColor: $('#meta_accentColor').value.trim() || '#FF3B30',
   };
 
+  // Disable nút để tránh double-click
+  const btn = $('#btnSave');
+  btn.disabled = true;
+  btn.textContent = '⏳ Đang lưu...';
+
   try {
+    // Bước 1: Ghi file YAML
     const r = await api(`/api/repo/${state.currentRepo}/save`, {
       method: 'POST',
       body: JSON.stringify({
@@ -613,12 +729,21 @@ async function saveAll() {
     });
     const anchors = r.anchors || {};
     const anchorInfo = (anchors.os || anchors.screens) ? ` (anchor: ${[anchors.os && 'os', anchors.screens && 'screens'].filter(Boolean).join('+')})` : '';
-    toast(`✓ Đã ghi file ${r.saved} (${r.count} package)${anchorInfo}.`, 'success');
-    if (r.next) {
-      console.log('Bước tiếp theo:\n' + r.next.join('\n'));
+    toast(`✓ Đã ghi file ${r.saved} (${r.count} package)${anchorInfo}. Đang push...`, 'info');
+
+    // Bước 2: Push lên GitHub
+    const push = await api(`/api/repo/${state.currentRepo}/push`, { method: 'POST' });
+
+    if (push.step === 'nothing-to-commit') {
+      toast('✓ Không có thay đổi nào. Git đã sạch.', 'success');
+    } else {
+      toast(`🚀 Push thành công! "${push.message}"`, 'success');
     }
   } catch (err) {
     toast(`Lỗi: ${err.message}`, 'error');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '🚀 Lưu & Push Git';
   }
 }
 
