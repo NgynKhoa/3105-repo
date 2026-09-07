@@ -13,6 +13,10 @@ const state = {
   assets: [],
   packageFiles: [],
   editingIndex: null,
+  // Search & pagination
+  pkgSearchQuery: '',
+  pkgPage: 1,
+  pkgPageSize: 20,
   // Theo dõi thay đổi để sinh commit message
   changes: {
     added: [],    // [{identifier, name}]
@@ -39,8 +43,11 @@ function toast(msg, type = 'info') {
 }
 
 async function api(path, options = {}) {
+  // Không set Content-Type khi dùng FormData (upload), browser tự điền boundary
+  const isFormData = options.body instanceof FormData;
+  const headers = isFormData ? {} : { 'Content-Type': 'application/json' };
   const res = await fetch(path, {
-    headers: { 'Content-Type': 'application/json' },
+    headers,
     ...options,
   });
   const data = await res.json().catch(() => ({}));
@@ -59,6 +66,10 @@ function escapeHtml(s) {
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#039;');
+}
+
+function escapeReg(s) {
+  return String(s).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
 function formatSize(bytes) {
@@ -149,6 +160,11 @@ async function loadRepo() {
   const repo = state.currentRepo;
   if (!repo) return;
 
+  // Reset search & pagination khi chuyển repo
+  state.pkgPage = 1;
+  state.pkgSearchQuery = '';
+  $('#pkgSearchInput').value = '';
+
   try {
     // Load packages + meta
     const data = await api(`/api/repo/${repo}/packages`);
@@ -162,15 +178,39 @@ async function loadRepo() {
     // Load file listings
     const files = await api(`/api/repo/${repo}/files`);
     state.assets = files.assets || [];
-    state.packageFiles = files.packages || [];
+    state.packageFiles = (files.packages || []).map(p => p.replace(/^packages\//, ''));
 
     renderMeta();
     renderPackageList();
     // Reset tracking changes cho session mới
     state.changes = { added: [], edited: [], deleted: [] };
+    updateAvatar();
     toast(`Đã tải ${state.packages.length} package từ repo "${repo}".`, 'success');
   } catch (err) {
     toast(`Lỗi tải repo: ${err.message}`, 'error');
+  }
+}
+
+function updateAvatar() {
+  const el = $('#mast-avatar');
+  if (!el) return;
+  const iconPath = state.repoMeta.icon;
+  if (iconPath) {
+    const repo = state.currentRepo;
+    el.innerHTML = `<img src="/repo-asset?repo=${encodeURIComponent(repo)}&path=${encodeURIComponent(iconPath)}" alt="repo icon" style="width:100%;height:100%;object-fit:cover;display:block;" onerror="this.style.display='none';this.nextElementSibling&&(this.nextElementSibling.style.display='')"/>` +
+      `<svg viewBox="0 0 52 52" xmlns="http://www.w3.org/2000/svg" style="display:none;position:absolute;inset:0;width:100%;height:100%;">` +
+      `<rect x="0" y="0" width="52" height="52" rx="4" fill="rgba(10,14,26,0.95)"/>` +
+      `<text x="26" y="34" text-anchor="middle" font-family="'Press Start 2P',monospace" font-size="12" fill="#39ff14">?</text>` +
+      `</svg>`;
+  } else {
+    el.innerHTML = `<svg viewBox="0 0 52 52" xmlns="http://www.w3.org/2000/svg" style="display:block;width:100%;height:100%;">` +
+      `<defs><linearGradient id="avg" x1="0" x2="1" y1="0" y2="1"><stop offset="0%" stop-color="#39ff14"/><stop offset="100%" stop-color="#00f0ff"/></linearGradient></defs>` +
+      `<rect x="0" y="0" width="52" height="52" rx="4" fill="rgba(10,14,26,0.95)" stroke="url(#avg)" stroke-width="1.5"/>` +
+      `<text x="26" y="34" text-anchor="middle" font-family="'Press Start 2P',monospace" font-size="12" fill="url(#avg)" filter="url(#glow)">?</text>` +
+      `<filter id="glow"><feGaussianBlur stdDeviation="0.8"/></filter>` +
+      `<rect x="16" y="20" width="3" height="3" fill="#39ff14" opacity="0.7"/>` +
+      `<rect x="33" y="20" width="3" height="3" fill="#39ff14" opacity="0.7"/>` +
+      `</svg>`;
   }
 }
 
@@ -193,6 +233,7 @@ function renderMeta() {
   $('#meta_name').value = state.repoMeta.name || '';
   $('#meta_description').value = state.repoMeta.description || '';
   $('#meta_accentColor').value = state.repoMeta.accentColor || '#FF3B30';
+  updateAvatar();
 
   const iconSel = $('#meta_icon');
   iconSel.innerHTML = '';
@@ -220,43 +261,106 @@ function renderMeta() {
 }
 
 // ---------------------------------------------------------------------
-// Render: package list
+// Render: package list (with search filter + pagination)
 // ---------------------------------------------------------------------
+const MAX_PAGE_BUTTONS = 5;
 
 function renderPackageList() {
   const list = $('#packageList');
-  list.innerHTML = '';
-  $('#packageCount').textContent = `${state.packages.length} package`;
-  $('#emptyHint').classList.toggle('hidden', state.packages.length > 0);
+  const q = state.pkgSearchQuery.toLowerCase().trim();
 
-  state.packages.forEach((pkg, idx) => {
+  // Lọc
+  const filtered = q
+    ? state.packages.filter(p =>
+        (p.name || '').toLowerCase().includes(q) ||
+        (p.identifier || '').toLowerCase().includes(q) ||
+        (p.version || '').toLowerCase().includes(q) ||
+        (p.category || '').toLowerCase().includes(q) ||
+        (p.author || '').toLowerCase().includes(q)
+      )
+    : state.packages;
+
+  // Reset page nếu vượt quá
+  const totalPages = Math.max(1, Math.ceil(filtered.length / state.pkgPageSize));
+  if (state.pkgPage > totalPages) state.pkgPage = totalPages;
+
+  // Slice trang hiện tại
+  const start = (state.pkgPage - 1) * state.pkgPageSize;
+  const pageItems = filtered.slice(start, start + state.pkgPageSize);
+
+  // Count / pagination UI
+  $('#packageCount').textContent = `${filtered.length} / ${state.packages.length} package`;
+  $('#emptyHint').classList.toggle('hidden', filtered.length > 0);
+
+  const paginationEl = $('#pkgPagination');
+  const paginationInfo = $('#pkgPaginationInfo');
+  const pageNumbers = $('#pkgPageNumbers');
+  const btnPrev = $('#pkgPagePrev');
+  const btnNext = $('#pkgPageNext');
+
+  if (filtered.length <= state.pkgPageSize) {
+    paginationEl?.classList.add('hidden');
+  } else {
+    paginationEl?.classList.remove('hidden');
+    paginationInfo.textContent = `Hiển thị ${start + 1}–${Math.min(start + pageItems.length, filtered.length)} của ${filtered.length}`;
+
+    // Prev / Next
+    btnPrev.disabled = state.pkgPage <= 1;
+    btnNext.disabled = state.pkgPage >= totalPages;
+
+    // Page number buttons (slide window)
+    const half = Math.floor(MAX_PAGE_BUTTONS / 2);
+    let startPage = Math.max(1, state.pkgPage - half);
+    let endPage = Math.min(totalPages, startPage + MAX_PAGE_BUTTONS - 1);
+    if (endPage - startPage < MAX_PAGE_BUTTONS - 1) {
+      startPage = Math.max(1, endPage - MAX_PAGE_BUTTONS + 1);
+    }
+    pageNumbers.innerHTML = '';
+    for (let p = startPage; p <= endPage; p++) {
+      const btn = document.createElement('button');
+      btn.textContent = p;
+      btn.className = `w-7 h-7 text-xs rounded border ${p === state.pkgPage
+        ? 'bg-red-500 text-white border-red-500'
+        : 'border-slate-300 hover:bg-slate-100'}`;
+      btn.addEventListener('click', () => {
+        state.pkgPage = p;
+        renderPackageList();
+      });
+      pageNumbers.appendChild(btn);
+    }
+  }
+
+  // Render rows
+  list.innerHTML = '';
+  pageItems.forEach((pkg, i) => {
+    const realIdx = state.packages.indexOf(pkg);
     const row = document.createElement('div');
-    row.className = 'px-5 py-3 hover:bg-slate-50 flex items-center gap-3';
+    row.className = 'px-4 py-3 hover:bg-slate-50 flex items-center gap-2 sm:gap-3';
     row.innerHTML = `
-      <div class="flex-shrink-0 w-10 h-10 rounded-md bg-slate-200 overflow-hidden flex items-center justify-center">
+      <div class="flex-shrink-0 w-9 h-9 rounded-md bg-slate-200 overflow-hidden flex items-center justify-center">
         ${pkg.icon
-          ? `<img src="/repo-asset?repo=${state.currentRepo}&path=${encodeURIComponent(pkg.icon)}" class="w-full h-full object-cover" onerror="this.style.display='none'" />`
-          : '<span class="text-slate-400 text-xs">no img</span>'}
+          ? `<img src="/repo-asset?repo=${state.currentRepo}&path=${encodeURIComponent(pkg.icon)}" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block;" onerror="this.style.display='none'" />`
+          : '<span class="text-slate-400 text-[10px]">no img</span>'}
       </div>
       <div class="flex-1 min-w-0">
-        <div class="flex items-center gap-2">
-          <span class="font-medium truncate">${escapeHtml(pkg.name || '(chưa có tên)')}</span>
-          ${pkg.featured ? '<span class="bg-yellow-100 text-yellow-800 text-xs px-2 py-0.5 rounded-full">featured</span>' : ''}
-          ${pkg.isPrivate ? '<span class="bg-slate-200 text-slate-700 text-xs px-2 py-0.5 rounded-full">private</span>' : ''}
-          ${pkg.kind ? `<span class="bg-blue-100 text-blue-800 text-xs px-2 py-0.5 rounded-full">${escapeHtml(pkg.kind)}</span>` : ''}
+        <div class="flex flex-wrap items-center gap-1.5">
+          <span class="font-medium text-sm truncate">${escapeHtml(pkg.name || '(chưa có tên)')}</span>
+          ${pkg.featured ? '<span class="bg-yellow-100 text-yellow-800 text-[10px] px-1.5 py-0.5 rounded-full">featured</span>' : ''}
+          ${pkg.isPrivate ? '<span class="bg-slate-200 text-slate-700 text-[10px] px-1.5 py-0.5 rounded-full">private</span>' : ''}
+          ${pkg.kind ? `<span class="bg-blue-100 text-blue-800 text-[10px] px-1.5 py-0.5 rounded-full">${escapeHtml(pkg.kind)}</span>` : ''}
         </div>
-        <div class="text-xs text-slate-500 truncate">
+        <div class="text-[11px] text-slate-500 truncate">
           <code>${escapeHtml(pkg.identifier)}</code> · v${escapeHtml(pkg.version || '?')} · ${escapeHtml(pkg.category || '—')}
         </div>
       </div>
-      <div class="text-xs text-slate-500 text-right">
+      <div class="hidden sm:block text-[11px] text-slate-500 text-right flex-shrink-0">
         <div>${formatSize(pkg.size)}</div>
-        <div class="truncate max-w-[120px]" title="${escapeHtml(pkg.sha256 || '')}">${escapeHtml((pkg.sha256 || '').slice(0, 10))}…</div>
+        <div class="truncate max-w-[100px]" title="${escapeHtml(pkg.sha256 || '')}">${escapeHtml((pkg.sha256 || '').slice(0, 10))}…</div>
       </div>
-      <div class="flex gap-1">
-        <button data-action="edit" data-idx="${idx}" class="px-2 py-1 text-xs rounded border border-slate-300 hover:bg-slate-100">Sửa</button>
-        <button data-action="duplicate" data-idx="${idx}" class="px-2 py-1 text-xs rounded border border-slate-300 hover:bg-slate-100" title="Sao chép package này để tạo bản mới">Sao chép</button>
-        <button data-action="delete" data-idx="${idx}" class="px-2 py-1 text-xs rounded border border-red-200 text-red-600 hover:bg-red-50">Xoá</button>
+      <div class="flex gap-1 flex-shrink-0">
+        <button data-action="edit" data-idx="${realIdx}" class="btn btn-xs neon-edit whitespace-nowrap">Sửa</button>
+        <button data-action="duplicate" data-idx="${realIdx}" class="hidden sm:table-cell btn btn-xs neon-edit" title="Sao chép">Copy</button>
+        <button data-action="delete" data-idx="${realIdx}" class="btn btn-xs neon-delete">✕</button>
       </div>
     `;
     list.appendChild(row);
@@ -343,6 +447,11 @@ function newPackageTemplate() {
 }
 
 function buildFormHtml(pkg) {
+  // Nếu chưa có os_minimum/os_maximum mà có supportedOS (custom), fill vào
+  if ((!pkg.os_minimum || !pkg.os_maximum) && Array.isArray(pkg.supportedOS) && pkg.supportedOS[0]) {
+    if (!pkg.os_minimum) pkg.os_minimum = String(pkg.supportedOS[0].minimum || '');
+    if (!pkg.os_maximum) pkg.os_maximum = String(pkg.supportedOS[0].maximum || '');
+  }
   const options = (items, selected) => items.map(it =>
     `<option value="${escapeHtml(it)}" ${it === selected ? 'selected' : ''}>${escapeHtml(it)}</option>`
   ).join('');
@@ -360,15 +469,8 @@ function buildFormHtml(pkg) {
   };
 
   const packageOptions = (current) => {
-    const opts = ['<option value="">— chọn file .3105 —</option>'];
-    state.packageFiles.forEach(p => {
-      const sel = p === current ? 'selected' : '';
-      opts.push(`<option value="${escapeHtml(p)}" ${sel}>${escapeHtml(p)}</option>`);
-    });
-    if (current && !state.packageFiles.includes(current)) {
-      opts.push(`<option value="${escapeHtml(current)}" selected>${escapeHtml(current)} (không tìm thấy)</option>`);
-    }
-    return opts.join('');
+    // Trả về giá trị để set vào input (combobox), không phải <option>
+    return escapeHtml(current || '');
   };
 
   const defaultScreens = window.DEFAULT_SCREENSHOTS || [];
@@ -378,8 +480,15 @@ function buildFormHtml(pkg) {
       <label class="block md:col-span-2">
         <span class="text-xs text-slate-500">File .3105 (chọn để tự động điền SHA-256 + size)</span>
         <div class="flex gap-2 mt-1">
-          <select id="f_download" class="flex-1 border border-slate-300 rounded-md px-3 py-1.5 text-sm">${packageOptions(pkg.download)}</select>
-          <button id="btnAutoFill" type="button" class="px-3 py-1.5 rounded-md bg-blue-500 hover:bg-blue-600 text-white text-sm whitespace-nowrap">⚡ Lấy hash và size</button>
+          <div class="flex-1 relative">
+            <input id="f_download" type="text" autocomplete="off" placeholder="— gõ để tìm file .3105 —"
+                   class="w-full border border-slate-300 rounded-md px-3 py-1.5 text-sm pr-8" />
+            <button type="button" id="f_download_clear" title="Xoá lựa chọn"
+                    class="absolute right-1 top-1/2 -translate-y-1/2 hidden w-6 h-6 text-slate-400 hover:text-slate-600 text-base leading-none">✕</button>
+            <div id="f_download_menu" class="hidden absolute z-50 left-0 right-0 mt-1 max-h-60 overflow-y-auto bg-white border border-slate-300 rounded-md shadow-lg text-sm"></div>
+          </div>
+          <button id="btnAutoFill" type="button" class="btn btn-sm neon-edit whitespace-nowrap">⚡ Lấy hash</button>
+          <button id="btnDeletePackageFile" type="button" class="btn btn-sm neon-delete" title="Xoá file .3105 đã chọn">🗑</button>
         </div>
         <div id="pkgUploadZone" class="mt-2 border-2 border-dashed border-slate-300 rounded-md p-3 text-center text-xs text-slate-500 cursor-pointer hover:border-slate-400">
           📂 Kéo thả file <code>.3105</code> vào đây, hoặc bấm để chọn file → file sẽ tự upload vào <code>packages/</code>
@@ -423,10 +532,16 @@ function buildFormHtml(pkg) {
         <span class="text-xs text-slate-500">Kind (để trống = package thường)</span>
         <input id="f_kind" value="${escapeHtml(pkg.kind || '')}" placeholder="vd: wallpaper" class="w-full mt-1 border border-slate-300 rounded-md px-3 py-1.5 text-sm" />
       </label>
-      <label class="block">
-        <span class="text-xs text-slate-500">PublishedAt (ISO 8601, tuỳ chọn)</span>
-        <input id="f_publishedAt" value="${escapeHtml(pkg.publishedAt || '')}" placeholder="2026-09-06T10:00:00Z" class="w-full mt-1 border border-slate-300 rounded-md px-3 py-1.5 text-sm font-mono" />
-      </label>
+      <div class="block md:col-span-2">
+        <span class="text-xs text-slate-500 flex items-center gap-2">
+          <input type="checkbox" id="f_no_publishedAt" class="accent-red-500" />
+          <label for="f_no_publishedAt" class="cursor-pointer">Không dùng publishedAt</label>
+        </span>
+        <div id="publishedAtBox" class="flex items-center gap-2 mt-1">
+          <input id="f_publishedAt" type="datetime-local" step="1" class="flex-1 border border-slate-300 rounded-md px-3 py-1.5 text-sm font-mono" />
+          <button type="button" id="btnNowPublishedAt" class="btn btn-xs neon-edit whitespace-nowrap">🕐 Bây giờ</button>
+        </div>
+      </div>
 
       <div class="block md:col-span-2">
         <span class="text-xs text-slate-500 flex items-center gap-2">
@@ -435,14 +550,21 @@ function buildFormHtml(pkg) {
         </span>
         <div class="flex flex-wrap items-center gap-2 mb-2 mt-1">
           <span class="text-xs text-slate-500">Thư mục ảnh:</span>
-          <select id="f_icon_folder" class="border border-slate-300 rounded-md px-2 py-1 text-sm bg-white">
+          <select id="f_icon_folder" class="border border-slate-300 rounded-md px-2 py-1 text-sm bg-white flex-1 min-w-0">
             <option value="">— root (assets/) —</option>
           </select>
-          <button type="button" id="btnIconRefreshFolders" class="text-xs px-2 py-1 rounded border border-slate-300 hover:bg-slate-100">↻</button>
-          <button type="button" id="btnIconNewFolder" class="text-xs px-2 py-1 rounded border border-slate-300 hover:bg-slate-100">+ Thư mục</button>
-          <button type="button" id="btnIconUpload" class="text-xs px-2 py-1 rounded border border-slate-300 hover:bg-slate-100">⬆ Upload ảnh</button>
+          <button type="button" id="btnIconRefreshFolders" class="btn btn-xs neon-edit">↻</button>
+          <button type="button" id="btnDeleteIconFolder" class="btn btn-xs neon-delete" title="Xoá thư mục hiện tại">🗑</button>
+          <div class="relative" id="iconAddDropdown">
+            <button type="button" id="btnIconAdd" class="btn btn-xs neon-edit">+</button>
+            <div id="iconAddMenu" class="hidden absolute top-full left-0 mt-1 bg-white border border-slate-200 rounded-md shadow-lg z-10 min-w-[140px]">
+              <button type="button" id="btnIconNewFolder" class="w-full text-left px-3 py-2 text-xs neon-edit rounded-t-md">📁 Thêm thư mục</button>
+              <button type="button" id="btnIconUpload" class="w-full text-left px-3 py-2 text-xs neon-edit rounded-b-md">⬆ Upload ảnh</button>
+            </div>
+          </div>
           <input type="file" id="f_icon_upload" accept="image/*" multiple class="hidden" />
-          <button type="button" id="btnIconToggle" class="text-xs px-2 py-1 rounded border border-slate-300 hover:bg-slate-100 ml-auto">Hiện ảnh</button>
+          <input type="search" id="f_icon_search" placeholder="🔍 tìm ảnh..." class="text-xs px-2 py-1 rounded border border-slate-300 bg-white" />
+          <button type="button" id="btnIconToggle" class="btn btn-xs neon-edit ml-auto">Hiện ảnh</button>
         </div>
         <div id="iconPickerGrid" class="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-2 hidden"></div>
         <input type="hidden" id="f_icon" value="${escapeHtml(pkg.icon || '')}" />
@@ -456,14 +578,21 @@ function buildFormHtml(pkg) {
         </span>
         <div class="flex flex-wrap items-center gap-2 mb-2 mt-1">
           <span class="text-xs text-slate-500">Thư mục ảnh:</span>
-          <select id="f_banner_folder" class="border border-slate-300 rounded-md px-2 py-1 text-sm bg-white">
+          <select id="f_banner_folder" class="border border-slate-300 rounded-md px-2 py-1 text-sm bg-white flex-1 min-w-0">
             <option value="">— root (assets/) —</option>
           </select>
-          <button type="button" id="btnBannerRefreshFolders" class="text-xs px-2 py-1 rounded border border-slate-300 hover:bg-slate-100">↻</button>
-          <button type="button" id="btnBannerNewFolder" class="text-xs px-2 py-1 rounded border border-slate-300 hover:bg-slate-100">+ Thư mục</button>
-          <button type="button" id="btnBannerUpload" class="text-xs px-2 py-1 rounded border border-slate-300 hover:bg-slate-100">⬆ Upload ảnh</button>
+          <button type="button" id="btnBannerRefreshFolders" class="btn btn-xs neon-edit">↻</button>
+          <button type="button" id="btnDeleteBannerFolder" class="btn btn-xs neon-delete" title="Xoá thư mục hiện tại">🗑</button>
+          <div class="relative" id="bannerAddDropdown">
+            <button type="button" id="btnBannerAdd" class="btn btn-xs neon-edit">+</button>
+            <div id="bannerAddMenu" class="hidden absolute top-full left-0 mt-1 bg-white border border-slate-200 rounded-md shadow-lg z-10 min-w-[140px]">
+              <button type="button" id="btnBannerNewFolder" class="w-full text-left px-3 py-2 text-xs neon-edit rounded-t-md">📁 Thêm thư mục</button>
+              <button type="button" id="btnBannerUpload" class="w-full text-left px-3 py-2 text-xs neon-edit rounded-b-md">⬆ Upload ảnh</button>
+            </div>
+          </div>
           <input type="file" id="f_banner_upload" accept="image/*" multiple class="hidden" />
-          <button type="button" id="btnBannerToggle" class="text-xs px-2 py-1 rounded border border-slate-300 hover:bg-slate-100 ml-auto">Hiện ảnh</button>
+          <input type="search" id="f_banner_search" placeholder="🔍 tìm ảnh..." class="text-xs px-2 py-1 rounded border border-slate-300 bg-white" />
+          <button type="button" id="btnBannerToggle" class="btn btn-xs neon-edit ml-auto">Hiện ảnh</button>
         </div>
         <div id="bannerPickerGrid" class="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-2 hidden"></div>
         <input type="hidden" id="f_banner" value="${escapeHtml(pkg.banner || '')}" />
@@ -480,13 +609,20 @@ function buildFormHtml(pkg) {
       <div class="block md:col-span-2" id="screensListWrap" style="${pkg.__use_default_screens ? 'display:none' : ''}">
         <div class="flex flex-wrap items-center gap-2 mb-2">
           <span class="text-xs text-slate-500">Thư mục ảnh:</span>
-          <select id="f_screen_folder" class="border border-slate-300 rounded-md px-2 py-1 text-sm bg-white">
+          <select id="f_screen_folder" class="border border-slate-300 rounded-md px-2 py-1 text-sm bg-white flex-1 min-w-0">
             <option value="">— root (assets/) —</option>
           </select>
-          <button type="button" id="btnRefreshFolders" class="text-xs px-2 py-1 rounded border border-slate-300 hover:bg-slate-100">↻</button>
-          <button type="button" id="btnNewFolder" class="text-xs px-2 py-1 rounded border border-slate-300 hover:bg-slate-100">+ Thư mục</button>
-          <button type="button" id="btnUploadImages" class="text-xs px-2 py-1 rounded border border-slate-300 hover:bg-slate-100">⬆ Upload ảnh</button>
+          <button type="button" id="btnRefreshFolders" class="btn btn-xs neon-edit">↻</button>
+          <button type="button" id="btnDeleteScreenFolder" class="btn btn-xs neon-delete" title="Xoá thư mục hiện tại">🗑</button>
+          <div class="relative" id="screenAddDropdown">
+            <button type="button" id="btnScreenAdd" class="btn btn-xs neon-edit">+</button>
+            <div id="screenAddMenu" class="hidden absolute top-full left-0 mt-1 bg-white border border-slate-200 rounded-md shadow-lg z-10 min-w-[140px]">
+              <button type="button" id="btnNewFolder" class="w-full text-left px-3 py-2 text-xs neon-edit rounded-t-md">📁 Thêm thư mục</button>
+              <button type="button" id="btnUploadImages" class="w-full text-left px-3 py-2 text-xs neon-edit rounded-b-md">⬆ Upload ảnh</button>
+            </div>
+          </div>
           <input type="file" id="f_image_upload" accept="image/*" multiple class="hidden" />
+          <input type="search" id="f_screen_search" placeholder="🔍 tìm ảnh..." class="text-xs px-2 py-1 rounded border border-slate-300 bg-white" />
           <span id="screenCount" class="text-xs text-slate-400 ml-auto"></span>
         </div>
         <div id="screensGrid" class="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-2"></div>
@@ -499,6 +635,16 @@ function buildFormHtml(pkg) {
           Dùng iOS rule mặc định (17.0 → 27.0)
         </span>
       </label>
+      <div id="f_ios_custom_wrap" class="md:col-span-2 grid grid-cols-2 gap-2" style="${pkg.__use_default_os ? 'display:none' : ''}">
+        <label class="block">
+          <span class="text-xs text-slate-500">Hỗ trợ từ iOS (minimum)</span>
+          <input id="f_ios_min" type="number" step="0.1" min="1" max="30" value="${escapeHtml(pkg.os_minimum ?? '17.0')}" placeholder="17.0" class="w-full mt-1 border border-slate-300 rounded-md px-3 py-1.5 text-sm font-mono" />
+        </label>
+        <label class="block">
+          <span class="text-xs text-slate-500">Đến iOS (maximum)</span>
+          <input id="f_ios_max" type="number" step="0.1" min="1" max="30" value="${escapeHtml(pkg.os_maximum ?? '27.0')}" placeholder="27.0" class="w-full mt-1 border border-slate-300 rounded-md px-3 py-1.5 text-sm font-mono" />
+        </label>
+      </div>
 
       <label class="block">
         <span class="text-xs text-slate-500">SHA-256 *</span>
@@ -652,22 +798,52 @@ async function refreshIconPicker() {
       grid.innerHTML = '<p class="text-xs text-slate-400 col-span-8">Thư mục này chưa có ảnh. Upload hoặc chọn thư mục khác.</p>';
       return;
     }
-    files.forEach(path => {
+    // Filter theo search input
+    const q = ($('#f_icon_search')?.value || '').toLowerCase().trim();
+    const filtered = q ? files.filter(p => p.toLowerCase().includes(q)) : files;
+    if (filtered.length === 0) {
+      grid.innerHTML = `<p class="text-xs text-slate-400 col-span-8">Không có ảnh nào khớp "${escapeHtml(q)}".</p>`;
+      return;
+    }
+    filtered.forEach(path => {
       const item = document.createElement('div');
       const isSelected = path === selected;
       item.className = `relative border rounded-md overflow-hidden cursor-pointer aspect-square ${isSelected ? 'ring-2 ring-blue-500 border-blue-500' : 'border-slate-200 hover:border-blue-300'}`;
       item.title = path;
+      const fileName = path.split('/').pop();
       item.innerHTML = `
         <img src="/repo-asset?repo=${state.currentRepo}&path=${encodeURIComponent(path)}"
-             class="w-full h-full object-cover" onerror="this.style.display='none'" />
+             loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block;" onerror="this.style.display='none'" />
         ${isSelected ? '<div class="absolute inset-0 bg-blue-500/20 flex items-center justify-center"><span class="bg-blue-500 text-white text-xs px-1 rounded">✓</span></div>' : ''}
-        <div class="absolute bottom-0 left-0 right-0 bg-black/60 text-white text-[10px] px-1 py-0.5 truncate">${escapeHtml(path.split('/').pop())}</div>
+        <div class="absolute bottom-0 left-0 right-0 bg-black/60 text-white text-[10px] px-1 py-0.5 truncate">${escapeHtml(fileName)}</div>
+        <button type="button" class="delete-asset-btn absolute top-1 right-1 w-5 h-5 bg-red-500 hover:bg-red-600 text-white rounded-full text-[10px] leading-none flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity" data-path="${encodeURIComponent(path)}" data-kind="image" title="Xoá ảnh">✕</button>
       `;
-      item.addEventListener('click', () => selectIcon(path));
+      item.classList.add('group');
+      item.addEventListener('click', (e) => {
+        if (e.target.classList.contains('delete-asset-btn')) { e.stopPropagation(); handleDeleteAsset(e.target); return; }
+        selectIcon(path);
+      });
       grid.appendChild(item);
     });
   } catch (err) {
     grid.innerHTML = `<p class="text-xs text-red-400 col-span-8">Lỗi: ${escapeHtml(err.message)}</p>`;
+  }
+}
+
+async function handleDeleteAsset(btn) {
+  const path = decodeURIComponent(btn.dataset.path || '');
+  const kind = btn.dataset.kind || 'image';
+  if (!confirm(`Xoá "${path}"? Hành động này không thể hoàn tác.`)) return;
+  try {
+    await api(`/api/repo/${state.currentRepo}/file?path=${encodeURIComponent(path)}&kind=${kind}`, { method: 'DELETE' });
+    toast(`Đã xoá: ${path}`, 'success');
+    await refreshIconPicker();
+    await refreshBannerPicker();
+    await refreshScreenGrid();
+    const files = await api(`/api/repo/${state.currentRepo}/files`);
+    state.assets = files.assets || [];
+  } catch (err) {
+    toast(`Lỗi xoá: ${err.message}`, 'error');
   }
 }
 
@@ -684,18 +860,29 @@ async function refreshBannerPicker() {
       grid.innerHTML = '<p class="text-xs text-slate-400 col-span-8">Thư mục này chưa có ảnh. Upload hoặc chọn thư mục khác.</p>';
       return;
     }
-    files.forEach(path => {
+    const q = ($('#f_banner_search')?.value || '').toLowerCase().trim();
+    const filtered = q ? files.filter(p => p.toLowerCase().includes(q)) : files;
+    if (filtered.length === 0) {
+      grid.innerHTML = `<p class="text-xs text-slate-400 col-span-8">Không có ảnh nào khớp "${escapeHtml(q)}".</p>`;
+      return;
+    }
+    filtered.forEach(path => {
       const item = document.createElement('div');
       const isSelected = path === selected;
-      item.className = `relative border rounded-md overflow-hidden cursor-pointer aspect-square ${isSelected ? 'ring-2 ring-blue-500 border-blue-500' : 'border-slate-200 hover:border-blue-300'}`;
+      item.className = `relative border rounded-md overflow-hidden cursor-pointer aspect-square ${isSelected ? 'ring-2 ring-blue-500 border-blue-500' : 'border-slate-200 hover:border-blue-300'} group`;
       item.title = path;
+      const fileName = path.split('/').pop();
       item.innerHTML = `
         <img src="/repo-asset?repo=${state.currentRepo}&path=${encodeURIComponent(path)}"
-             class="w-full h-full object-cover" onerror="this.style.display='none'" />
+             loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block;" onerror="this.style.display='none'" />
         ${isSelected ? '<div class="absolute inset-0 bg-blue-500/20 flex items-center justify-center"><span class="bg-blue-500 text-white text-xs px-1 rounded">✓</span></div>' : ''}
-        <div class="absolute bottom-0 left-0 right-0 bg-black/60 text-white text-[10px] px-1 py-0.5 truncate">${escapeHtml(path.split('/').pop())}</div>
+        <div class="absolute bottom-0 left-0 right-0 bg-black/60 text-white text-[10px] px-1 py-0.5 truncate">${escapeHtml(fileName)}</div>
+        <button type="button" class="delete-asset-btn absolute top-1 right-1 w-5 h-5 bg-red-500 hover:bg-red-600 text-white rounded-full text-[10px] leading-none flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity" data-path="${encodeURIComponent(path)}" data-kind="image" title="Xoá ảnh">✕</button>
       `;
-      item.addEventListener('click', () => selectBanner(path));
+      item.addEventListener('click', (e) => {
+        if (e.target.classList.contains('delete-asset-btn')) { e.stopPropagation(); handleDeleteAsset(e.target); return; }
+        selectBanner(path);
+      });
       grid.appendChild(item);
     });
   } catch (err) {
@@ -739,7 +926,14 @@ async function refreshScreenGrid() {
       updateScreenCount();
       return;
     }
-    files.forEach(path => {
+    const q = ($('#f_screen_search')?.value || '').toLowerCase().trim();
+    const filtered = q ? files.filter(p => p.toLowerCase().includes(q)) : files;
+    if (filtered.length === 0) {
+      grid.innerHTML = `<p class="text-xs text-slate-400 col-span-8">Không có ảnh nào khớp "${escapeHtml(q)}".</p>`;
+      updateScreenCount();
+      return;
+    }
+    filtered.forEach(path => {
       const isSelected = currentSelectedScreens.includes(path);
       const item = document.createElement('div');
       item.className = 'relative group aspect-video rounded-lg overflow-hidden border-2 cursor-pointer select-none ' +
@@ -747,15 +941,17 @@ async function refreshScreenGrid() {
       item.dataset.path = path;
       item.draggable = true;
       item.title = path;
-
+      const fileName = path.split('/').pop();
       item.innerHTML = `
         <img src="/repo-asset?repo=${state.currentRepo}&path=${encodeURIComponent(path)}"
-             class="w-full h-full object-cover" onerror="this.style.display='none'" />
-        ${isSelected ? '<div class="absolute inset-0 bg-blue-500/20 flex items-center justify-center"><span class="bg-blue-500 text-white text-xs px-1 rounded">✓</span></div>' : ''}
-        <div class="absolute bottom-0 left-0 right-0 bg-black/60 text-white text-[10px] px-1 py-0.5 truncate">${escapeHtml(path.split('/').pop())}</div>
+             loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block;" onerror="this.style.display='none'" />
+        ${isSelected ? '<div class="absolute inset-0 bg-blue-500/20 flex items-center justify-center check-overlay"><span class="bg-blue-500 text-white text-xs px-1 rounded">✓</span></div>' : ''}
+        <div class="absolute bottom-0 left-0 right-0 bg-black/60 text-white text-[10px] px-1 py-0.5 truncate">${escapeHtml(fileName)}</div>
+        <button type="button" class="delete-asset-btn absolute top-1 right-1 w-5 h-5 bg-red-500 hover:bg-red-600 text-white rounded-full text-[10px] leading-none flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity" data-path="${encodeURIComponent(path)}" data-kind="image" title="Xoá ảnh">✕</button>
       `;
 
-      item.addEventListener('click', () => {
+      item.addEventListener('click', (e) => {
+        if (e.target.classList.contains('delete-asset-btn')) { e.stopPropagation(); handleDeleteAsset(e.target); return; }
         const idx = currentSelectedScreens.indexOf(path);
         if (idx >= 0) {
           currentSelectedScreens.splice(idx, 1);
@@ -766,11 +962,11 @@ async function refreshScreenGrid() {
         item.classList.toggle('ring-2', currentSelectedScreens.includes(path));
         item.classList.toggle('ring-blue-200', currentSelectedScreens.includes(path));
         item.classList.toggle('border-slate-200', !currentSelectedScreens.includes(path));
-        const overlay = item.querySelector('.bg-blue-500\\/20');
+        const overlay = item.querySelector('.check-overlay');
         if (currentSelectedScreens.includes(path)) {
           if (!overlay) {
             const div = document.createElement('div');
-            div.className = 'absolute inset-0 bg-blue-500/20 flex items-center justify-center';
+            div.className = 'absolute inset-0 bg-blue-500/20 flex items-center justify-center check-overlay';
             div.innerHTML = '<span class="bg-blue-500 text-white text-xs px-1 rounded">✓</span>';
             item.appendChild(div);
           }
@@ -822,6 +1018,38 @@ function updateScreenCount() {
 }
 
 function bindFormEvents() {
+  // ====== PublishedAt: checkbox toggle + auto now ======
+  const noPubChk = $('#f_no_publishedAt');
+  const pubBox = $('#publishedAtBox');
+  const pubInput = $('#f_publishedAt');
+  const btnNow = $('#btnNowPublishedAt');
+
+  const togglePubBox = () => {
+    pubBox?.classList.toggle('hidden', noPubChk?.checked ?? false);
+  };
+  noPubChk?.addEventListener('change', togglePubBox);
+  btnNow?.addEventListener('click', () => {
+    // Fill current time in local format for datetime-local input
+    const now = new Date();
+    const pad = n => String(n).padStart(2, '0');
+    pubInput.value = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}T${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+    noPubChk.checked = false;
+    pubBox.classList.remove('hidden');
+  });
+  // Init: if pkg has no publishedAt → check the box; else pre-fill
+  {
+    const val = state.editingIndex !== null ? (state.packages[state.editingIndex]?.publishedAt || '') : '';
+    if (!val) { noPubChk.checked = true; pubBox.classList.add('hidden'); }
+    else {
+      // Parse ISO string to datetime-local value
+      try {
+        const d = new Date(val);
+        const pad = n => String(n).padStart(2, '0');
+        pubInput.value = `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+      } catch { pubInput.value = val; }
+    }
+  }
+
   $('#btnAutoFill')?.addEventListener('click', async () => {
     const path = $('#f_download').value;
     if (!path) { toast('Chọn file .3105 trước đã.', 'error'); return; }
@@ -830,9 +1058,10 @@ function bindFormEvents() {
         method: 'POST',
         body: JSON.stringify({ path }),
       });
-      $('#f_download').value = r.path;
+      $('#f_download').value = (r.path || '').replace(/^packages\//, '');
       $('#f_sha256').value = r.sha256;
       $('#f_size').value = r.size;
+      if (typeof syncDlClearBtn === 'function') syncDlClearBtn();
       toast(`Đã lấy hash + size cho ${r.path}`, 'success');
     } catch (err) {
       toast(`Lỗi: ${err.message}`, 'error');
@@ -841,6 +1070,47 @@ function bindFormEvents() {
 
   $('#f_use_default_screens')?.addEventListener('change', e => {
     $('#screensListWrap').style.display = e.target.checked ? 'none' : 'block';
+  });
+
+  // iOS: tick "mặc định" -> ẩn 2 ô min/max; bỏ tick -> hiện
+  // Set cả inline display:none AND thêm attribute để CSS rule [style*="display:none"] chắc chắn match
+  const setIosWrap = (hide) => {
+    const wrap = $('#f_ios_custom_wrap');
+    if (!wrap) return;
+    wrap.style.display = hide ? 'none' : '';
+    if (hide) wrap.setAttribute('data-hidden', '1');
+    else wrap.removeAttribute('data-hidden');
+  };
+  $('#f_use_default_os')?.addEventListener('change', e => {
+    setIosWrap(e.target.checked);
+  });
+
+  // Search input: gõ → auto bật grid + filter; xoá hết → ẩn grid lại
+  const autoShow = (gridId, toggleId) => {
+    const grid = $(gridId);
+    const btn = $(toggleId);
+    if (grid?.classList.contains('hidden') && btn) {
+      btn.click();
+    }
+  };
+  const autoHide = (gridId, toggleId) => {
+    const grid = $(gridId);
+    const btn = $(toggleId);
+    if (!grid?.classList.contains('hidden') && btn) {
+      btn.click();
+    }
+  };
+  $('#f_icon_search')?.addEventListener('input', function () {
+    if (this.value.trim()) { autoShow('#iconPickerGrid', '#btnIconToggle'); refreshIconPicker(); }
+    else { autoHide('#iconPickerGrid', '#btnIconToggle'); }
+  });
+  $('#f_banner_search')?.addEventListener('input', function () {
+    if (this.value.trim()) { autoShow('#bannerPickerGrid', '#btnBannerToggle'); refreshBannerPicker(); }
+    else { autoHide('#bannerPickerGrid', '#btnBannerToggle'); }
+  });
+  $('#f_screen_search')?.addEventListener('input', function () {
+    if (this.value.trim()) { refreshScreenGrid(); }
+    else { autoHide('#screensGrid', '#btnRefreshFolders'); }
   });
 
   // Upload file .3105 - drag-drop + click
@@ -871,6 +1141,78 @@ function bindFormEvents() {
     });
   }
 
+  // ====== Combobox tìm kiếm file .3105 ======
+  const dlInput = $('#f_download');
+  const dlMenu = $('#f_download_menu');
+  const dlClear = $('#f_download_clear');
+
+  function syncDlClearBtn() {
+    if (!dlClear) return;
+    dlClear.classList.toggle('hidden', !dlInput.value);
+  }
+
+  function renderDlMenu(query) {
+    const q = (query || '').trim().toLowerCase();
+    const all = Array.isArray(state.packageFiles) ? state.packageFiles : [];
+    const matches = q
+      ? all.filter(p => p.toLowerCase().includes(q))
+      : all;
+    if (!dlMenu) return;
+    if (matches.length === 0) {
+      dlMenu.innerHTML = '<div class="px-3 py-2 text-slate-400">Không có file .3105 nào</div>';
+    } else {
+      dlMenu.innerHTML = matches.map(p => {
+        const hl = q ? escapeHtml(p).replace(new RegExp(escapeReg(q), 'ig'),
+          m => `<mark class="dl-hl">${m}</mark>`) : escapeHtml(p);
+        return `<button type="button" data-val="${escapeHtml(p)}"
+          class="dl-item block w-full text-left px-3 py-1.5 truncate">${hl}</button>`;
+      }).join('');
+    }
+  }
+
+  function openDlMenu() {
+    if (!dlMenu) return;
+    renderDlMenu(dlInput.value);
+    dlMenu.classList.add('show');
+  }
+  function closeDlMenu() {
+    if (!dlMenu) return;
+    dlMenu.classList.remove('show');
+  }
+
+  if (dlInput && dlMenu) {
+    dlInput.addEventListener('focus', openDlMenu);
+    dlInput.addEventListener('input', () => {
+      syncDlClearBtn();
+      openDlMenu();
+    });
+    dlInput.addEventListener('keydown', e => {
+      if (e.key === 'Escape') { closeDlMenu(); dlInput.blur(); }
+    });
+    dlMenu.addEventListener('mousedown', e => {
+      // mousedown để input không mất focus trước khi click xử lý
+      const btn = e.target.closest('button[data-val]');
+      if (!btn) return;
+      e.preventDefault();
+      dlInput.value = btn.dataset.val;
+      closeDlMenu();
+      syncDlClearBtn();
+      dlInput.focus();
+    });
+  }
+  dlClear?.addEventListener('click', () => {
+    if (!dlInput) return;
+    dlInput.value = '';
+    syncDlClearBtn();
+    openDlMenu();
+    dlInput.focus();
+  });
+  document.addEventListener('click', e => {
+    if (!dlMenu || !dlInput) return;
+    if (e.target === dlInput || dlMenu.contains(e.target) || dlClear?.contains(e.target)) return;
+    closeDlMenu();
+  });
+
   async function uploadPackages(files) {
     const fd = new FormData();
     files.forEach(f => fd.append('files', f));
@@ -882,16 +1224,18 @@ function bindFormEvents() {
       toast(`Đã upload ${r.saved.length} file .3105 vào packages/.`, 'success');
       // Refresh danh sách package file
       const list = await api(`/api/repo/${state.currentRepo}/files`);
-      state.packageFiles = list.packages || [];
+      state.packageFiles = (list.packages || []).map(p => p.replace(/^packages\//, ''));
       // Cập nhật lại <select id="f_download"> mà không re-render toàn bộ form
       const sel = $('#f_download');
       if (sel) {
-        const currentVal = sel.value;
-        sel.innerHTML = '<option value="">— chọn file .3105 —</option>' +
-          state.packageFiles.map(p =>
-            `<option value="${escapeHtml(p)}" ${p === currentVal ? 'selected' : ''}>${escapeHtml(p)}</option>`
-          ).join('');
-        if (currentVal) sel.value = currentVal;
+        const saved = r.saved || [];
+        const firstSaved = saved.length > 0 ? saved[0].replace('packages/', '') : '';
+        if (firstSaved && state.packageFiles.includes(firstSaved)) {
+          sel.value = firstSaved;
+          sel.focus();
+          if (typeof renderDlMenu === 'function') renderDlMenu(firstSaved);
+          if (typeof syncDlClearBtn === 'function') syncDlClearBtn();
+        }
       }
     } catch (err) {
       toast(`Lỗi: ${err.message}`, 'error');
@@ -901,6 +1245,43 @@ function bindFormEvents() {
   $('#f_screen_folder')?.addEventListener('change', e => {
     currentScreenFolder = e.target.value;
     refreshScreenGrid();
+  });
+
+  // ====== Xoá thư mục (Icon / Banner / Screen) ======
+  const deleteFolder = async (folder, setterFn) => {
+    if (!folder) return;
+    if (!confirm(`Xoá thư mục "${folder}" và toàn bộ nội dung bên trong? Hành động này không thể hoàn tác.`)) return;
+    try {
+      await api(`/api/repo/${state.currentRepo}/file?path=${encodeURIComponent(folder)}&kind=image`, { method: 'DELETE' });
+      toast(`Đã xoá thư mục: ${folder}`, 'success');
+      setterFn('');  // reset về root
+      await loadFoldersIntoSelect();
+      await refreshIconPicker();
+      await refreshBannerPicker();
+      await refreshScreenGrid();
+    } catch (err) {
+      toast(`Lỗi xoá thư mục: ${err.message}`, 'error');
+    }
+  };
+  $('#btnDeleteIconFolder')?.addEventListener('click', () => deleteFolder(currentIconFolder, v => { currentIconFolder = v; }));
+  $('#btnDeleteBannerFolder')?.addEventListener('click', () => deleteFolder(currentBannerFolder, v => { currentBannerFolder = v; }));
+  $('#btnDeleteScreenFolder')?.addEventListener('click', () => deleteFolder(currentScreenFolder, v => { currentScreenFolder = v; }));
+  $('#btnDeletePackageFile')?.addEventListener('click', async () => {
+    const path = $('#f_download')?.value;
+    if (!path) return;
+    if (!confirm(`Xoá file "${path}"? Không thể hoàn tác.`)) return;
+    try {
+      await api(`/api/repo/${state.currentRepo}/file?path=${encodeURIComponent('packages/' + path)}&kind=package`, { method: 'DELETE' });
+      toast(`Đã xoá: ${path}`, 'success');
+      $('#f_download').value = '';
+      $('#f_sha256').value = '';
+      $('#f_size').value = '';
+      const list = await api(`/api/repo/${state.currentRepo}/files`);
+      state.packageFiles = (list.packages || []).map(p => p.replace(/^packages\//, ''));
+      if (typeof syncDlClearBtn === 'function') syncDlClearBtn();
+    } catch (err) {
+      toast(`Lỗi xoá: ${err.message}`, 'error');
+    }
   });
 
   $('#btnRefreshFolders')?.addEventListener('click', async () => {
@@ -957,6 +1338,24 @@ function bindFormEvents() {
       e.target.value = ''; // reset để có thể chọn lại cùng file
     }
   });
+
+  // ====== Dropdown + (Thêm thư mục / Upload ảnh) ======
+  const setupDropdown = (btnId, menuId) => {
+    const btn = $(btnId);
+    const menu = $(menuId);
+    if (!btn || !menu) return;
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      // Close other menus
+      $$('[id$="AddMenu"]').forEach(m => { if (m !== menu) m.classList.add('hidden'); });
+      menu.classList.toggle('hidden');
+    });
+  };
+  setupDropdown('#btnIconAdd', '#iconAddMenu');
+  setupDropdown('#btnBannerAdd', '#bannerAddMenu');
+  setupDropdown('#btnScreenAdd', '#screenAddMenu');
+  // Close menus on outside click
+  document.addEventListener('click', () => $$('[id$="AddMenu"]').forEach(m => m.classList.add('hidden')));
 
   // ====== Icon picker handlers ======
   $('#f_icon_folder')?.addEventListener('change', e => {
@@ -1093,7 +1492,7 @@ function readFormToPackage() {
     category: $('#f_category').value,
     tags: $('#f_tags').value.split(',').map(s => s.trim()).filter(Boolean),
     kind: $('#f_kind').value.trim(),
-    publishedAt: $('#f_publishedAt').value.trim(),
+    publishedAt: $('#f_no_publishedAt').checked ? '' : ($('#f_publishedAt').value ? new Date($('#f_publishedAt').value).toISOString() : ''),
     icon: $('#f_icon').value,
     banner: $('#f_banner').value,
     __use_default_screens: $('#f_use_default_screens').checked,
@@ -1105,6 +1504,8 @@ function readFormToPackage() {
     featured: $('#f_featured').checked,
     isPrivate: $('#f_isPrivate').checked,
     __use_default_os: $('#f_use_default_os').checked,
+    os_minimum: $('#f_ios_min')?.value.trim() || '',
+    os_maximum: $('#f_ios_max')?.value.trim() || '',
     description: $('#f_description').value,
     changelog: $('#f_changelog').value,
   };
@@ -1132,6 +1533,16 @@ function savePackageFromForm() {
   const pkgClean = { ...pkg };
   delete pkgClean.__use_default_os;
   delete pkgClean.__use_default_screens;
+  // Nếu user bỏ check "dùng iOS rule mặc định" → ghi rõ supportedOS vào package
+  if (!useOs) {
+    const min = parseFloat(pkgClean.os_minimum) || 0;
+    const max = parseFloat(pkgClean.os_maximum) || 0;
+    pkgClean.supportedOS = [{ minimum: String(min), maximum: String(max) }];
+  } else {
+    delete pkgClean.supportedOS;
+  }
+  delete pkgClean.os_minimum;
+  delete pkgClean.os_maximum;
 
   if (state.editingIndex === null) {
     state.packages.push(pkgClean);
@@ -1302,7 +1713,16 @@ document.addEventListener('DOMContentLoaded', () => {
     state.currentRepo = e.target.value;
     if (state.currentRepo) loadRepo();
   });
-  $('#btnReload').addEventListener('click', loadRepo);
+  $('#btnReload').addEventListener('click', async () => {
+    if (!state.currentRepo) {
+      toast('Chưa chọn repo nào.', 'error');
+      return;
+    }
+    const btn = $('#btnReload');
+    btn.disabled = true;
+    await loadRepo();
+    btn.disabled = false;
+  });
   $('#btnAdd').addEventListener('click', () => openModal(null));
   $('#btnSave').addEventListener('click', saveAll);
 
@@ -1314,4 +1734,22 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   loadRepositories();
+
+  // Package search + pagination
+  let _pkgSearchTimer = null;
+  $('#pkgSearchInput')?.addEventListener('input', function () {
+    clearTimeout(_pkgSearchTimer);
+    _pkgSearchTimer = setTimeout(() => {
+      state.pkgSearchQuery = this.value;
+      state.pkgPage = 1;
+      renderPackageList();
+    }, 200);
+  });
+  $('#pkgPagePrev')?.addEventListener('click', () => {
+    if (state.pkgPage > 1) { state.pkgPage--; renderPackageList(); }
+  });
+  $('#pkgPageNext')?.addEventListener('click', () => {
+    state.pkgPage++;
+    renderPackageList();
+  });
 });

@@ -600,7 +600,8 @@ def api_folder_files(repo: str):
     if not target.is_dir():
         abort(404, description=f"Folder not found: {folder}")
     rel_files: list[str] = []
-    for f in sorted(target.rglob("*")):
+    # root assets/ → chỉ lấy file trực tiếp (không đệ quy), tránh trùng ảnh subfolder
+    for f in sorted(target.glob("*") if not folder else target.rglob("*")):
         if f.is_file() and f.suffix.lower() in IMAGE_EXT:
             rel = f.relative_to(paths["root"]).as_posix()
             rel_files.append(rel)
@@ -658,6 +659,44 @@ def api_upload(repo: str):
         rel = dest.relative_to(paths["root"]).as_posix()
         saved.append(rel)
     return jsonify({"ok": True, "saved": saved})
+
+
+@app.route("/api/repo/<repo>/file", methods=["DELETE"])
+def api_delete_file(repo: str):
+    """Xoá file hoặc thư mục (assets/ hoặc packages/)."""
+    paths = repo_paths(repo)
+    path_arg = request.args.get("path", "").strip().replace("\\", "/").strip("/")
+    kind = request.args.get("kind", "image")  # "image" | "package"
+    if not path_arg:
+        abort(400, description="Missing path")
+    if ".." in path_arg:
+        abort(403, description="Path traversal not allowed")
+
+    if kind == "package":
+        target_dir = paths["packages"]
+        prefix = "packages/"
+    else:
+        target_dir = paths["assets"]
+        prefix = "assets/"
+
+    # Strip the dir prefix from path_arg so we can safely join with target_dir
+    if path_arg.startswith(prefix):
+        path_arg = path_arg[len(prefix):]
+    target = target_dir / path_arg
+
+    # An toàn: chỉ xóa bên trong repo
+    safe_root = target_dir.resolve()
+    if not target.resolve().is_relative_to(safe_root):
+        abort(403, description="Cannot delete outside repo directory")
+
+    if target.is_dir():
+        shutil.rmtree(target)
+        return jsonify({"ok": True, "deleted": path_arg, "type": "directory"})
+    elif target.is_file():
+        target.unlink()
+        return jsonify({"ok": True, "deleted": path_arg, "type": "file"})
+    else:
+        abort(404, description="Path not found")
 
 
 @app.post("/api/repo/<repo>/mkdir")
