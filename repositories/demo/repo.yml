@@ -667,3 +667,160 @@ packages:
            
            ❤️ Cảm ơn bạn đã ủng hộ!
     changelog: 🎉 v4.6.0 — Phiên bản 4.6 mới nhất đã được cập nhật
+
+  # ----- owen-000 -----
+  - identifier: owen-000
+    name: PUBG Custom Version 4.6 For KR
+    author: "@owenindahouse"
+    version: 4.6.0
+    summary: PUBG for Server Korean
+    password: "2752"
+    category: Customization
+    tags: [CUSTOM]
+    publishedAt: "2026-09-08T16:45:27.000Z"
+    icon: assets/icon/kr-pubg_kr.png
+    banner: assets/banner/banner.png
+    download: packages/PATCH_PUBG_V46_FOR_KR.3105
+    sha256: 1BB59B93DB2D4187F25EDD53C0BECB9EF15FB825ED7C0C479D62F48999B43930
+    size: 1179331
+    supportedOS:
+      - minimum: "17"
+        maximum: "27"
+    featured: true
+    isPrivate: false
+    description: |
+            💎 ADVANCED CUSTOM BUILD
+            
+            ╭──────────────────╮
+             ✨ FEATURES
+            ╰──────────────────╯
+            
+            🔥 Online Compatibility
+            🎯 Aim Assistance
+            👁️ iPad View
+            🚗 Vehicle Enhancement
+            ⚡ Additional Features
+            
+            ╭──────────────────╮
+             ⚠️ IMPORTANT
+            ╰──────────────────╯
+            
+            • Remove any previous customization package before applying.
+            • Backup your game data before installation.
+            
+            ╭──────────────────╮
+             💬 SUPPORT
+            ╰──────────────────╯
+            
+            @owenindahouse
+            @Thanhdat1690.
+    changelog: 🎉 v4.6.0 — Phát hành lần đầu
+
+  # ----- owen-011 -----
+  - identifier: owen-011
+    name: PUBG Custom Version 4.6 For VNG
+    author: "@owenindahouse"
+    version: 4.6.0
+    summary: PUBG for Server VNG
+    password: "2752"
+    category: Customization
+    tags: [CUSTOM]
+    publishedAt: "2026-09-08T16:48:13.000Z"
+    icon: assets/icon/test.png
+    banner: assets/banner/banner.png
+    download: packages/PATCH_FOR_V46_PUBG_VNG.3105
+    sha256: 5B7FF2AD45BE505D398A1F2A0584831BBB7B690198E79DB1B9F79F44003A98F1
+    size: 1179332
+    supportedOS:
+      - minimum: "17"
+        maximum: "27"
+    featured: true
+    isPrivate: false
+    description: |
+            💎 PREMIUM
+            JUST ONE PATCH FOR 3 SERVERS
+            VNG - GLOBAL - KR
+            Just apply this patch and enjoy all features for 3 servers. 
+            No need to download 3 different patches.
+            
+            ╭──────────────────╮
+             ✨ TÍNH NĂNG
+            ╰──────────────────╯
+            
+            🔥1 Patch chơi được cả 3 server VNG - GLOBAL - KR
+            🔥Chỉ việc áp dụng patch là xong, không cần tải 3 patch khác nhau.
+            🔥 Tương thích Online
+            🔥 Custom Skin 
+            🎯 Hỗ trợ ngắm tùy chỉnh
+            👁️ iPad View
+            🚗 Tùy chỉnh tốc độ xe
+            ⚡ Nhiều tính năng nâng cao khác
+            
+            ╭──────────────────╮
+             🔐 QUYỀN TRUY CẬP PREMIUM
+            ╰──────────────────╯
+            
+            👑 Gói này dành cho thành viên TD Premium.
+            
+            ╭──────────────────╮
+             ⚠️ LƯU Ý QUAN TRỌNG
+            ╰──────────────────╯
+            
+            • Hãy xóa gói tùy chỉnh cũ trước khi áp dụng.
+            • Nên sao lưu dữ liệu trước khi cài đặt.
+            
+            ╭──────────────────╮
+             💬 HỖ TRỢ
+            ╰──────────────────╯
+            
+            @owenindahouse
+            
+            ❤️ Cảm ơn bạn đã ủng hộ!
+    changelog: 🎉 v4.6.0 — Phát hành lần đầu
+
+  # ----- owen-012 -----
+  - identifier: owen-012
+    name: PUBG Custom Version 4.6 For Global
+    author: "@owenindahouse"
+    version: 4.6.0
+    summary: PUBG for Server Global
+    password: "2752"
+    category: Customization
+    tags: [CUSTOM]
+    icon: assets/icon/global-pubg_global.png
+    banner: assets/banner/banner.png
+    download: packages/PATCH_PUBG_V46_GLOBAL.3105
+    sha256: D71D28CE86665C243A3540D81CEF6E19108C4AC325FA12243AA8DB8805344C8F
+    size: 1179326
+    supportedOS:
+      - minimum: "17"
+        maximum: "27"
+    featured: true
+    isPrivate: false
+    description: |
+            💎 ADVANCED CUSTOM BUILD
+            
+            ╭──────────────────╮
+             ✨ FEATURES
+            ╰──────────────────╯
+            
+            🔥 Online Compatibility
+            🎯 Aim Assistance
+            👁️ iPad View
+            🚗 Vehicle Enhancement
+            ⚡ Additional Features
+            
+            ╭──────────────────╮
+             ⚠️ IMPORTANT
+            ╰──────────────────╯
+            
+            • Remove any previous customization package before applying.
+            • Backup your game data before installation.
+            
+            ╭──────────────────╮
+             💬 SUPPORT
+            ╰──────────────────╯
+            
+            @owenindahouse
+            admin Mod @Thanhdat1690.
+    changelog: 🎉 v4.6.0 — Phát hành lần đầu
