@@ -607,9 +607,9 @@ packages:
 
   # ----- owen-001 -----
   - identifier: owen-001
-    name: PUBG Version 4.6 For VNG,KR,GLOBAL
+    name: PUBG Version 4.6 For VNG,KR,GLOBAL UPDATED
     author: "@owenindahouse"
-    version: 1.0.0
+    version: 4.6.0
     summary: 1 Patch dùng được cho 3 server
     password: "0604"
     category: Customization
@@ -617,15 +617,18 @@ packages:
     publishedAt: "2026-09-08T13:34:24.000Z"
     icon: assets/icon/New_ver46/new_4_6.png
     banner: assets/banner/banner.png
-    download: packages/PATCH_NEW_VERSION_4-6_PUBG.3105
-    sha256: B034279BB80D6C00F12335801680ACEFEA63A592AED81FE1500DDB6E3B20963C
-    size: 49189
+    download: packages/PATCH_NEW_VERSION_4_6_PUBG_UD.3105
+    sha256: DC021A8DF3C7D05BB704E213CD15DE88D53080CC835C9E95C213FC451E8F5B4E
+    size: 1173271
     supportedOS:
       - minimum: "17"
         maximum: "27"
     featured: true
     isPrivate: false
     description: |
+       ĐÃ UPDATED LẠI FILE, MỌI NGƯỜI CÓ THỂ CÀI ĐẶT HOẶC UPDATE ĐỂ TẢI XUỐNG FILE MỚI
+       HAS BEEN UPDATED NEW FILE, PLS INSTALL OR PRESS UPDATE BUTTON TO DOWNLOAD NEW FILE
+      
       🔥1 Patch chơi được cả 3 server VNG - GLOBAL - KR
       🔥1 Patch For 3 server VNG - GLOBAL - KR
       
@@ -663,4 +666,4 @@ packages:
             🔄 Tiếp tục cập nhật và tối ưu trong các phiên bản tiếp theo.
             
             ❤️ Cảm ơn bạn đã ủng hộ!
-    changelog: 🎉 v4.6.0 — Phiên bản 4.6 mới nhất
+    changelog: 🎉 v4.6.0 — Phiên bản 4.6 mới nhất đã được cập nhật
