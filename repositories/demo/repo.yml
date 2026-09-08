@@ -528,7 +528,6 @@ packages:
     password: "owen"
     category: Customization
     tags: [CUSTOM]
-    publishedAt: "2026-09-06T11:00:00.000Z"
     icon: assets/icon/allinone.png
     banner: assets/banner/banner.png
     screenshots:
@@ -677,7 +676,6 @@ packages:
     password: "2752"
     category: Customization
     tags: [CUSTOM]
-    publishedAt: "2026-09-08T16:45:27.000Z"
     icon: assets/icon/kr-pubg_kr.png
     banner: assets/banner/banner.png
     download: packages/PATCH_PUBG_V46_FOR_KR.3105
@@ -686,7 +684,7 @@ packages:
     supportedOS:
       - minimum: "17"
         maximum: "27"
-    featured: true
+    featured: false
     isPrivate: false
     description: |
             💎 ADVANCED CUSTOM BUILD
@@ -787,6 +785,7 @@ packages:
     password: "2752"
     category: Customization
     tags: [CUSTOM]
+    publishedAt: "2026-09-08T17:44:35.000Z"
     icon: assets/icon/global-pubg_global.png
     banner: assets/banner/banner.png
     download: packages/PATCH_PUBG_V46_GLOBAL.3105
