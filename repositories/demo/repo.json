@@ -8,7 +8,7 @@
   "packages": [
     {
       "identifier": "owen-trial",
-      "name": "PUBG Custom Miễn Phí V12",
+      "name": "PUBG Custom Miễn Phí Version 4.5",
       "author": "@owenindahouse",
       "version": "1.0.0",
       "summary": "✨ Pubg • Bản dùng thử • Trải nghiệm tính năng nâng cao",
@@ -17,7 +17,6 @@
       "tags": [
         "CUSTOM"
       ],
-      "publishedAt": "2026-08-28T10:00:00Z",
       "icon": "assets/icon/test.png",
       "banner": "assets/banner/banner.png",
       "screenshots": [
@@ -31,75 +30,14 @@
       "size": 37432,
       "supportedOS": [
         {
-          "minimum": "17.0",
-          "maximum": "18.7.1"
-        },
-        {
-          "minimum": "26.0",
-          "maximum": "26.6.1"
-        },
-        {
-          "minimum": "27.0",
-          "maximum": "27.0",
-          "builds": [
-            "24A5355q",
-            "24A5370h",
-            "24A5380h",
-            "24A5390f"
-          ]
-        }
-      ],
-      "featured": true,
-      "isPrivate": false,
-      "description": "🔥 PUBG CUSTOM FREE\n\n✨ TÍNH NĂNG\n\n• Bộ Skin tùy chỉnh\n• Hỗ trợ ngắm & tùy chỉnh súng\n• Dễ Dàng Cài Đặt\n• Thường Xuyên Cập Nhật\n\n⚠️ LƯU Ý QUAN TRỌNG\n\n• Hãy xóa gói tùy chỉnh cũ trước khi áp dụng.\n• Nên sao lưu dữ liệu trước khi cài đặt.\n\n💬 HỖ TRỢ\n\nNếu gặp bất kỳ vấn đề nào, hãy liên hệ @owenindahouse.\nHoặc liên hệ admin Mod @Thanhdat1690.\n\n❤️ Chúc bạn chơi game vui vẻ và hãy đón chờ những bản cập nhật tiếp theo!\n",
-      "changelog": "🎉 v1.0.0 — Phát hành lần đầu\n\n✨ Bản thử nghiệm công khai đầu tiên\n\n🛠️ Vui lòng báo lỗi cho @owenindahouse nếu gặp sự cố\n\n⚠️ Đây là phiên bản thử nghiệm ban đầu và có thể vẫn còn một số lỗi.\n"
-    },
-    {
-      "identifier": "owen-000",
-      "name": "👑 PUBG Custom Pre",
-      "author": "@owenindahouse",
-      "version": "1.0.0",
-      "summary": "✨ CUSTOM • PHIÊN BẢN PREMIUM",
-      "password": "2752",
-      "category": "Customization",
-      "tags": [
-        "CUSTOM"
-      ],
-      "icon": "assets/icon/vip-cabybara.png",
-      "banner": "assets/banner/banner.png",
-      "screenshots": [
-        "assets/preview/preview-first.png",
-        "assets/preview/preview-second.png",
-        "assets/preview/preview-third.png",
-        "assets/preview/preview-fourth.png"
-      ],
-      "download": "packages/PATCH_FREE_V12_BY_TD.3105",
-      "sha256": "CE977931A02FA8D505E6DF202BAC4252811DB1055AE1632BCBDC1413C271FCE0",
-      "size": 37432,
-      "supportedOS": [
-        {
-          "minimum": "17.0",
-          "maximum": "18.7.1"
-        },
-        {
-          "minimum": "26.0",
-          "maximum": "26.6.1"
-        },
-        {
-          "minimum": "27.0",
-          "maximum": "27.0",
-          "builds": [
-            "24A5355q",
-            "24A5370h",
-            "24A5380h",
-            "24A5390f"
-          ]
+          "minimum": "17",
+          "maximum": "27"
         }
       ],
       "featured": false,
       "isPrivate": false,
-      "description": "💎 BẢN TRẢI NGHIỆM PREMIUM\n\n╭──────────────────╮\n ✨ TÍNH NĂNG\n╰──────────────────╯\n\n🔥 Tương thích Online\n🎯 Hỗ trợ ngắm tùy chỉnh\n👁️ iPad View\n🚗 Tùy chỉnh tốc độ xe\n⚡ Nhiều tính năng nâng cao khác\n\n╭──────────────────╮\n 🔐 QUYỀN TRUY CẬP PREMIUM\n╰──────────────────╯\n\n👑 Gói này dành cho thành viên TD Premium.\n\n╭──────────────────╮\n ⚠️ LƯU Ý QUAN TRỌNG\n╰──────────────────╯\n\n• Hãy xóa gói tùy chỉnh cũ trước khi áp dụng.\n• Nên sao lưu dữ liệu trước khi cài đặt.\n\n╭──────────────────╮\n 💬 HỖ TRỢ\n╰──────────────────╯\n\n@owenindahouse\n\n❤️ Cảm ơn bạn đã ủng hộ!\n",
-      "changelog": "╭──────────────────╮\n ✨ PHÁT HÀNH\n╰──────────────────╯\n\n🔐 GÓI DÀNH CHO THÀNH VIÊN PREMIUM\n\n╭──────────────────╮\n 🚀 SẮP TỚI\n╰──────────────────╯\n\n✨ Nhiều tính năng mới sẽ được bổ sung.\n\n🔄 Tiếp tục cập nhật và tối ưu trong các phiên bản tiếp theo.\n\n❤️ Cảm ơn bạn đã ủng hộ!\n"
+      "description": "🔥 PUBG CUSTOM FREE\n\n✨ TÍNH NĂNG\n\n• Bộ Skin tùy chỉnh\n• Hỗ trợ ngắm & tùy chỉnh súng\n• Dễ Dàng Cài Đặt\n• Thường Xuyên Cập Nhật\n\n⚠️ LƯU Ý QUAN TRỌNG\n\n• Hãy xóa gói tùy chỉnh cũ trước khi áp dụng.\n• Nên sao lưu dữ liệu trước khi cài đặt.\n\n💬 HỖ TRỢ\n\nNếu gặp bất kỳ vấn đề nào, hãy liên hệ @owenindahouse.\nHoặc liên hệ admin Mod @Thanhdat1690.\n\n❤️ Chúc bạn chơi game vui vẻ và hãy đón chờ những bản cập nhật tiếp theo!\n",
+      "changelog": "🎉 v1.0.0 — Phát hành lần đầu\n\n✨ Bản thử nghiệm công khai đầu tiên\n\n🛠️ Vui lòng báo lỗi cho @owenindahouse nếu gặp sự cố\n\n⚠️ Đây là phiên bản thử nghiệm ban đầu và có thể vẫn còn một số lỗi.\n"
     },
     {
       "identifier": "owen-002",
@@ -148,7 +86,7 @@
     },
     {
       "identifier": "owen-003",
-      "name": "PUBG Custom For GL V12",
+      "name": "PUBG Custom For GL Version 4.5",
       "author": "@owenindahouse",
       "version": "1.0.0",
       "summary": "✨ ADVANCED CUSTOM 4 GLOBAL",
@@ -157,7 +95,7 @@
       "tags": [
         "CUSTOM"
       ],
-      "publishedAt": "2026-08-28T10:00:00Z",
+      "publishedAt": "2026-08-28T10:00:00.000Z",
       "icon": "assets/icon/global-pubg_global.png",
       "banner": "assets/banner/banner.png",
       "screenshots": [
@@ -196,7 +134,7 @@
     },
     {
       "identifier": "owen-004",
-      "name": "💫 PUBG Custom For KR V12",
+      "name": "💫 PUBG Custom For KR Version 4.5",
       "author": "@owenindahouse",
       "version": "1.0.0",
       "summary": "✨ ADVANCED CUSTOM 4 KR",
@@ -379,7 +317,7 @@
     },
     {
       "identifier": "owen-008",
-      "name": "GRAPHICS POTATO WITH 120FPS PUBG V12",
+      "name": "GRAPHICS POTATO WITH 120FPS PUBG Ver 4.5",
       "author": "@owenindahouse",
       "version": "1.0.0",
       "summary": "✨chỉ dành cho người dùng VIỆT NAM - Only for VNG",
@@ -468,7 +406,7 @@
     },
     {
       "identifier": "owen-010",
-      "name": "👑 PUBG ALL IN ONE",
+      "name": "👑 PUBG ALL IN ONE Ver 4.5",
       "author": "@owenindahouse",
       "version": "1.0.0",
       "summary": "✨ 1 PATCH FOR 3 SERVERS",
@@ -477,7 +415,7 @@
       "tags": [
         "CUSTOM"
       ],
-      "publishedAt": "2026-09-06T11:00:00Z",
+      "publishedAt": "2026-09-06T11:00:00.000Z",
       "icon": "assets/icon/allinone.png",
       "banner": "assets/banner/banner.png",
       "screenshots": [
@@ -513,46 +451,6 @@
       "isPrivate": false,
       "description": "💎 PREMIUM\nJUST ONE PATCH FOR 3 SERVERS\nVNG - GLOBAL - KR\nJust apply this patch and enjoy all features for 3 servers. \nNo need to download 3 different patches.\n\n╭──────────────────╮\n ✨ TÍNH NĂNG\n╰──────────────────╯\n\n🔥1 Patch chơi được cả 3 server VNG - GLOBAL - KR\n🔥Chỉ việc áp dụng patch là xong, không cần tải 3 patch khác nhau.\n🔥 Tương thích Online\n🎯 Hỗ trợ ngắm tùy chỉnh\n👁️ iPad View\n🚗 Tùy chỉnh tốc độ xe\n⚡ Nhiều tính năng nâng cao khác\n\n╭──────────────────╮\n 🔐 QUYỀN TRUY CẬP PREMIUM\n╰──────────────────╯\n\n👑 Gói này dành cho thành viên TD Premium.\n\n╭──────────────────╮\n ⚠️ LƯU Ý QUAN TRỌNG\n╰──────────────────╯\n\n• Hãy xóa gói tùy chỉnh cũ trước khi áp dụng.\n• Nên sao lưu dữ liệu trước khi cài đặt.\n\n╭──────────────────╮\n 💬 HỖ TRỢ\n╰──────────────────╯\n\n@owenindahouse\n\n❤️ Cảm ơn bạn đã ủng hộ!\n",
       "changelog": "╭──────────────────╮\n ✨ PHÁT HÀNH\n╰──────────────────╯\n\n🔐 GÓI DÀNH CHO THÀNH VIÊN PREMIUM\n\n╭──────────────────╮\n 🚀 SẮP TỚI\n╰──────────────────╯\n\n✨ Nhiều tính năng mới sẽ được bổ sung.\n\n🔄 Tiếp tục cập nhật và tối ưu trong các phiên bản tiếp theo.\n\n❤️ Cảm ơn bạn đã ủng hộ!\n"
-    },
-    {
-      "identifier": "owen-011",
-      "name": "test đợt 3",
-      "author": "@owenindahouse",
-      "version": "1.0.0",
-      "summary": "test thôi",
-      "category": "Customization",
-      "tags": [
-        "CUSTOM"
-      ],
-      "icon": "assets/icon/allinone.png",
-      "banner": "assets/banner/banner.png",
-      "download": "Basic_CircleB&W.3105pass",
-      "sha256": "BA91799564D04544CFF874C897273037AA4717456A93B7A70798CBEFEE97AAF8",
-      "size": 406950,
-      "supportedOS": [
-        {
-          "minimum": "17.0",
-          "maximum": "18.7.1"
-        },
-        {
-          "minimum": "26.0",
-          "maximum": "26.6.1"
-        },
-        {
-          "minimum": "27.0",
-          "maximum": "27.0",
-          "builds": [
-            "24A5355q",
-            "24A5370h",
-            "24A5380h",
-            "24A5390f"
-          ]
-        }
-      ],
-      "featured": false,
-      "isPrivate": false,
-      "description": "test",
-      "changelog": "🎉 v1.0.0 — Phát hành lần đầu"
     },
     {
       "identifier": "owen-001",
