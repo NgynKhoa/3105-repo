@@ -10,11 +10,30 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Fira+Code:wght@400;500&family=Be+Vietnam+Pro:wght@300;400;500;600&family=VT323&display=swap" rel="stylesheet" />
   <style>
+    /* === FPS overlay widget (chỉ chữ) === */
+    #fps-box {
+      position: fixed;
+      top: 6px;
+      left: 6px;
+      z-index: 999999;
+      padding: 0;
+      font-family: 'VT323', 'Fira Code', monospace;
+      font-size: 14px;
+      line-height: 1;
+      color: #39ff14;
+      background: transparent;
+      border: none;
+      pointer-events: none;
+      text-shadow: 0 0 4px currentColor;
+      letter-spacing: 1px;
+      user-select: none;
+    }
+
     /* ============================
        CSS VARIABLES (portfolio theme)
     ============================ */
     :root {
-      --neon: #39ff14;
+      --neon: #80ff40;
       --neon-rgb: 57, 255, 20;
       --neon-pink: #ff2d7b;
       --neon-pink-rgb: 255, 45, 123;
@@ -105,7 +124,7 @@
     #shell {
       position: relative;
       z-index: 2;
-      max-width: 1280px;
+      max-width: 980px; /* packages 720 + sidebar 220 + gap */
       margin: 0 auto;
       padding: 0 18px 48px;
     }
@@ -164,33 +183,237 @@
     }
 
     #logo-text {
-      font-family: 'VT323', 'Press Start 2P', monospace;
-      font-size: 2.0rem;
+      font-family: 'Press Start 2P', 'VT323', monospace;
+      font-size: 1.15rem;
       color: var(--neon);
-      line-height: 1.2;
-      letter-spacing: 3px;
+      line-height: 1.4;
+      letter-spacing: 2px;
       text-transform: uppercase;
+      /* Perspective cho hiệu ứng rotateX 3D */
+      perspective: 200px;
+      transform-style: preserve-3d;
       text-shadow:
         0 0 10px var(--neon),
         0 0 20px var(--neon);
         0 0 50px rgba(var(--neon-rgb), 0.4),
         0 0 90px rgba(var(--neon-rgb), 0.18);
-      animation: neonFlicker 8s infinite;
       letter-spacing: 1px;
     }
 
-    @keyframes neonFlicker {
-      0%, 100% { opacity: 1; }
-      4% { opacity: .82; }
-      6% { opacity: 1; }
-      8% { opacity: .88; }
-      9% { opacity: 1; }
+    /* === Neon flicker per-letter (broken sign style) === */
+    /* Keyframe mặc định (giữ tương thích cũ) */
+    @keyframes neonFlickerLetter {
+      0% { opacity: 1; transform: skewX(0deg) translateY(0); }
+      3% { opacity: 0.4; transform: skewX(-4deg) translateY(1px); }
+      4% { opacity: 1; transform: skewX(0deg) translateY(0); }
+      6% { opacity: 0.7; }
+      7% { opacity: 1; }
+      17% { opacity: 1; }
+      19% { opacity: 0.5; transform: skewX(5deg) translateY(-1px); }
+      20% { opacity: 1; transform: skewX(0deg) translateY(0); }
+      35% { opacity: 0.85; }
       50% { opacity: 1; }
-      52% { opacity: .86; }
-      53% { opacity: 1; }
-      70% { opacity: 1; }
-      72% { opacity: .9; }
-      73% { opacity: 1; }
+      63% { opacity: 0.3; transform: skewX(-3deg) translateY(0); }
+      64% { opacity: 1; transform: skewX(0deg); }
+      75% { opacity: 0.95; }
+      78% { opacity: 0.2; }
+      79% { opacity: 1; }
+      100% { opacity: 1; transform: skewX(0deg) translateY(0); }
+    }
+
+    /* Keyframe nhẹ dành cho chữ bình thường — chỉ nhấp nhá opacity, KHÔNG skew/translate */
+    @keyframes neonFlickerSubtle {
+      0%, 100% { opacity: 1; }
+      18% { opacity: 0.92; }
+      19% { opacity: 1; }
+      47% { opacity: 0.85; }
+      48% { opacity: 1; }
+      73% { opacity: 0.9; }
+      74% { opacity: 1; }
+    }
+
+    /* Hiệu ứng chữ 3D depth + neon flicker per-letter.
+       ~30% chữ (class .broken) sẽ chập chờn mạnh + skew + mờ + đổi màu như biển neon hư.
+       ~70% chữ còn lại chỉ nhấp nhá nhẹ. */
+    #logo-text .lt {
+      display: inline-block;
+      transform-origin: center bottom;
+      will-change: opacity;
+      /* Depth + glow rất nhẹ — chỉ phát sáng depth chữ, không halo rộng */
+      text-shadow:
+        1px 1px 0 rgba(57,255,20,0.7),
+        2px 2px 0 rgba(57,255,20,0.65),
+        3px 3px 0 rgba(0,240,255,0.55),
+        4px 4px 0 rgba(0,240,255,0.50),
+        5px 5px 0 rgba(0,255,170,0.55),
+        6px 6px 0 rgba(0,255,170,0.50),
+        7px 7px 0 rgba(0,0,0,0.7);
+    }
+
+    /* Wrapper mỗi từ */
+    #logo-text .word {
+      display: inline-block;
+      white-space: nowrap;
+    }
+    #logo-text .word.space {
+      width: 0.4em;
+    }
+
+    /* === Từ nguyên — ĐỨNG IM hoàn toàn, không animation === */
+    #logo-text .lt:not(.broken) {
+      animation: none;
+      opacity: 1;
+    }
+    #logo-text .lt:not(.broken).word-space {
+      /* Override delay cũ nếu có */
+      animation: none !important;
+    }
+
+    /* === 3 chữ cái đơn lẻ broken — chớp nhá + nghiêng theo hướng riêng ===
+       Mỗi chữ có class riêng: .broken-right (nghiêng phải), .broken-left (nghiêng trái),
+       .broken-back (ngửa ra sau). Hướng random khi tạo DOM. */
+    #logo-text .lt.broken {
+      animation-duration: 3.2s;
+      animation-iteration-count: infinite;
+      animation-timing-function: steps(40);
+      animation-delay: var(--bd, 0s);
+      filter: blur(0.4px);
+      /* Viền + depth + halo xanh lá sáng cho chữ broken */
+      -webkit-text-stroke: 0.7px rgba(0,150,20,0.95);
+      text-shadow:
+        1px 1px 0 rgba(0,200,30,1),
+        2px 2px 0 rgba(0,200,30,0.95),
+        3px 3px 0 rgba(0,180,30,1),
+        4px 4px 0 rgba(0,150,20,1),
+        0 0 4px rgba(120,255,40,1),
+        0 0 10px rgba(100,255,30,0.9),
+        0 0 20px rgba(80,255,20,0.75),
+        0 0 40px rgba(60,255,15,0.6),
+        0 0 70px rgba(57,255,14,0.35);
+    }
+    #logo-text .lt.broken-right { animation-name: neonBrokenRight; }
+    #logo-text .lt.broken-left  { animation-name: neonBrokenLeft; }
+    #logo-text .lt.broken-back  { animation-name: neonBrokenBack; }
+
+    /* Nghiêng sang PHẢI (skewX dương) */
+    @keyframes neonBrokenRight {
+      0%   { opacity: 1;    transform: skewX(0deg)  translateY(0); }
+      4%   { opacity: 0.05; transform: skewX(7deg)  translateY(2px); }
+      5%   { opacity: 0.9;  transform: skewX(7deg)  translateY(2px); }
+      6%   { opacity: 0.05; transform: skewX(7deg)  translateY(2px); }
+      8%   { opacity: 1;    transform: skewX(0deg)  translateY(0); }
+      22%  { opacity: 1;    transform: skewX(0deg); }
+      24%  { opacity: 0.03; transform: skewX(6deg); }
+      25%  { opacity: 1;    transform: skewX(0deg); }
+      45%  { opacity: 1;    transform: skewX(0deg); }
+      47%  { opacity: 0.3;  transform: skewX(8deg)  translateY(-2px); }
+      48%  { opacity: 1;    transform: skewX(0deg); }
+      62%  { opacity: 1;    transform: skewX(0deg); }
+      64%  { opacity: 0.15; transform: skewX(5deg); }
+      65%  { opacity: 1;    transform: skewX(0deg); }
+      80%  { opacity: 1; }
+      82%  { opacity: 0.08; }
+      83%  { opacity: 1; }
+      100% { opacity: 1;    transform: skewX(0deg) translateY(0); }
+    }
+
+    /* Nghiêng sang TRÁI (skewX âm) */
+    @keyframes neonBrokenLeft {
+      0%   { opacity: 1;    transform: skewX(0deg)  translateY(0); }
+      4%   { opacity: 0.05; transform: skewX(-7deg) translateY(2px); }
+      5%   { opacity: 0.9;  transform: skewX(-7deg) translateY(2px); }
+      6%   { opacity: 0.05; transform: skewX(-7deg) translateY(2px); }
+      8%   { opacity: 1;    transform: skewX(0deg)  translateY(0); }
+      22%  { opacity: 1;    transform: skewX(0deg); }
+      24%  { opacity: 0.03; transform: skewX(-6deg); }
+      25%  { opacity: 1;    transform: skewX(0deg); }
+      45%  { opacity: 1;    transform: skewX(0deg); }
+      47%  { opacity: 0.3;  transform: skewX(-8deg) translateY(-2px); }
+      48%  { opacity: 1;    transform: skewX(0deg); }
+      62%  { opacity: 1;    transform: skewX(0deg); }
+      64%  { opacity: 0.15; transform: skewX(-5deg); }
+      65%  { opacity: 1;    transform: skewX(0deg); }
+      80%  { opacity: 1; }
+      82%  { opacity: 0.08; }
+      83%  { opacity: 1; }
+      100% { opacity: 1;    transform: skewX(0deg) translateY(0); }
+    }
+
+    /* Ngửa ra SAU (rotateX 3D + skewX nhẹ) */
+    @keyframes neonBrokenBack {
+      0%   { opacity: 1;    transform: rotateX(0deg)  translateY(0); }
+      4%   { opacity: 0.05; transform: rotateX(-25deg) translateY(3px); }
+      5%   { opacity: 0.9;  transform: rotateX(-25deg) translateY(3px); }
+      6%   { opacity: 0.05; transform: rotateX(-25deg) translateY(3px); }
+      8%   { opacity: 1;    transform: rotateX(0deg)  translateY(0); }
+      22%  { opacity: 1;    transform: rotateX(0deg); }
+      24%  { opacity: 0.03; transform: rotateX(-30deg); }
+      25%  { opacity: 1;    transform: rotateX(0deg); }
+      45%  { opacity: 1;    transform: rotateX(0deg); }
+      47%  { opacity: 0.3;  transform: rotateX(-20deg) translateY(-2px); }
+      48%  { opacity: 1;    transform: rotateX(0deg); }
+      62%  { opacity: 1;    transform: rotateX(0deg); }
+      64%  { opacity: 0.15; transform: rotateX(-22deg); }
+      65%  { opacity: 1;    transform: rotateX(0deg); }
+      80%  { opacity: 1; }
+      82%  { opacity: 0.08; }
+      83%  { opacity: 1; }
+      100% { opacity: 1;    transform: rotateX(0deg) translateY(0); }
+    }
+
+            /* Glow depth mặc định cho từ nguyên — viền đen + depth + halo glow xanh lá sáng */
+    #logo-text .lt {
+      /* Viền chữ (text-stroke) đen tối */
+      -webkit-text-stroke: 0.5px rgba(0,150,20,0.9);
+      text-shadow:
+        1px 1px 0 rgba(0,200,30,0.95),
+        2px 2px 0 rgba(0,200,30,0.9),
+        3px 3px 0 rgba(0,180,30,1),
+        4px 4px 0 rgba(0,150,20,1),
+        0 0 4px rgba(120,255,40,0.95),
+        0 0 10px rgba(100,255,30,0.8),
+        0 0 20px rgba(80,255,20,0.65),
+        0 0 40px rgba(60,255,15,0.5),
+        0 0 70px rgba(57,255,14,0.3);
+    }
+
+    /* === 3 từ broken — DEPTH GLOW đậm hơn (không skew, không flicker) === */
+    /* Rule đã được đặt ở trên cùng (.lt.broken) — giữ chỗ này để dễ tìm */
+    #logo-text .lt.broken {
+      /* Inherited từ rule trên: animation: none, opacity: 1, filter: none, glow depth đậm */
+    }
+
+    /* === Box depth effect === */
+    /* BỎ khung viền quanh logo — chỉ giữ chữ 3D depth bằng text-shadow */
+    #logo {
+      padding: 0;
+      background: none;
+      border: none;
+      box-shadow: none;
+      transition: none;
+    }
+    #logo:hover {
+      transform: none;
+      box-shadow: none;
+    }
+
+    #logo-text .lt {
+      display: inline-block;
+      transform-origin: center bottom;
+      animation: neonFlickerLetter 6s infinite steps(60);
+      will-change: opacity, transform;
+      /* Hiệu ứng chữ 3D: viền đen + depth + halo glow xanh lá sáng */
+      -webkit-text-stroke: 0.5px rgba(0,150,20,0.9);
+      text-shadow:
+        1px 1px 0 rgba(0,200,30,0.95),
+        2px 2px 0 rgba(0,200,30,0.9),
+        3px 3px 0 rgba(0,180,30,1),
+        4px 4px 0 rgba(0,150,20,1),
+        0 0 4px rgba(120,255,40,0.95),
+        0 0 10px rgba(100,255,30,0.8),
+        0 0 20px rgba(80,255,20,0.65),
+        0 0 40px rgba(60,255,15,0.5),
+        0 0 70px rgba(57,255,14,0.3);
     }
 
     #logo-sub {
@@ -379,6 +602,7 @@
       border: 1px solid rgba(var(--neon-rgb),0.5);
       padding: 8px 13px;
       font-size: 0.78rem;
+      align-self: center; /* tránh button trong flex row bị stretch bất thường */
       display: inline-flex;
       align-items: center;
       gap: 6px;
@@ -533,6 +757,9 @@
     }
 
     /* ============================ PACKAGE LIST ============================ */
+    #packageList {
+      overflow-y: auto;
+    }
     .pkg-header {
       display: flex;
       align-items: center;
@@ -593,7 +820,8 @@
     }
 
     #packageList {
-      min-height: 60px;
+      min-height: 280px;
+      padding: 0;
     }
 
     .pkg-item {
@@ -602,6 +830,10 @@
       display: flex;
       align-items: center;
       gap: 12px;
+      height: 56px;
+      min-height: 56px;
+      box-sizing: border-box;
+      flex-shrink: 0;
       transition: background 0.15s;
     }
     .pkg-item:last-child { border-bottom: none; }
@@ -645,31 +877,36 @@
     }
     #pkgPagination.hidden { display: none; }
     .pages { display: flex; gap: 4px; align-items: center; }
-    #pkgPagination button {
-      padding: 4px 10px;
-      font-size: 0.72rem;
+    .page-num, #pkgPagination .page-nav {
+      min-width: 28px;
+      height: 28px;
+      padding: 0 6px;
+      font-family: 'VT323', monospace;
+      font-size: 14px;
+      line-height: 1;
       background: rgba(var(--neon-rgb),0.06);
       border: 1px solid var(--border);
       color: var(--text);
+      border-radius: 3px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s;
     }
-    #pkgPagination button:hover:not(:disabled) {
+    .page-num:hover, #pkgPagination .page-nav:hover:not(:disabled) {
       border-color: var(--border-glow);
       color: var(--neon);
-    }
-    #pkgPagination button:disabled { opacity: 0.3; cursor: not-allowed; }
-    .page-num {
-      padding: 4px 8px;
-      font-size: 0.72rem;
-      background: transparent;
-      border: 1px solid transparent;
-      color: rgba(122,154,134,0.35);
-      cursor: pointer;
+      box-shadow: 0 0 6px rgba(57,255,20,0.25);
     }
     .page-num.active {
       color: var(--neon);
       border-color: var(--border-glow);
-      background: rgba(var(--neon-rgb),0.07);
+      background: rgba(var(--neon-rgb),0.10);
+      box-shadow: 0 0 6px rgba(57,255,20,0.25);
     }
+    #pkgPagination .page-nav:disabled { opacity: 0.3; cursor: not-allowed; }
+    #pkgPagination .page-nav svg { width: 10px; height: 10px; fill: currentColor; }
 
     /* ============================ HINT BOX ============================ */
     .hint-box {
@@ -1157,13 +1394,393 @@
     /* === Toast compatibility === */
     #toast.hidden { display: none !important; }
 
-    /* === Package list (uses .px-4 .py-3 .hover:bg-slate-50) === */
-    #packageList > div {
-      padding: 11px 14px;
+    /* ============================ PAGE GRID (packages+blog | sidebar) ============================ */
+    .page-grid {
+      display: flex;
+      flex-direction: row;
+      gap: 14px;
+      align-items: flex-start;
+      margin-bottom: 18px;
+    }
+    .page-grid .packages-col {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      flex: 1 1 auto;
+      min-width: 0;
+    }
+    .page-grid .packages-col .box { margin-bottom: 0; }
+    .page-grid .packages-col #packagesBox { height: 403px; min-height: 403px; overflow: hidden; }
+    .page-grid .packages-col .package-list { height: 280px; overflow-y: auto; }
+    .page-grid .packages-col .box { margin-bottom: 0; }
+    .page-grid .sidebar-col { flex: 0 0 200px; width: 200px; min-width: 200px; }
+
+    /* ============================ SIDEBAR COL (Stars + Music + Moon stacked) ============================ */
+    .sidebar-col {
+      flex: 0 0 200px;
+      width: 200px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .sidebar-box {
+      background: linear-gradient(180deg, rgba(255,255,255,0.04), transparent 30%),
+                  rgba(8, 12, 22, 0.92);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--neon);
+      border-radius: 4px;
+      padding: 14px;
+      box-shadow: var(--shadow), var(--inset);
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* ============================ STARS NAV (dimden.dev style, IN-FLOW column) ============================ */
+    #stars {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 4px;
+      padding: 14px 14px 14px 13px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.04), transparent 30%),
+                  rgba(8, 12, 22, 0.92);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--neon);
+      border-radius: 4px;
+      box-shadow: var(--shadow), var(--inset);
+    }
+    .star-title, .star-link, .star-divider, .star-status {
+      width: 100%;
+    }
+    .star-title {
+      font-family: 'VT323', monospace;
+      font-size: 14px;
+      color: var(--neon);
+      letter-spacing: 2px;
+      text-shadow: 0 0 8px var(--neon);
+      margin-bottom: 12px;
+      opacity: 0.85;
+      padding-bottom: 10px;
+      border-bottom: 1px solid rgba(57, 255, 20, 0.15);
+    }
+    .star-link {
+      font-family: 'VT323', monospace;
+      font-size: 14px;
+      color: var(--neon);
+      text-decoration: none;
+      letter-spacing: 1px;
+      text-shadow: 0 0 4px rgba(57, 255, 20, 0.4);
+      transition: all 0.15s;
+      opacity: 0.75;
+      line-height: 1;
+      padding: 8px 10px;
+      border-radius: 2px;
+      display: block;
+    }
+    .star-link:hover {
+      opacity: 1;
+      text-shadow: 0 0 10px var(--neon), 0 0 20px rgba(57, 255, 20, 0.5);
+      background: rgba(57, 255, 20, 0.08);
+    }
+    .star-divider {
+      font-family: 'VT323', monospace;
+      font-size: 11px;
+      color: var(--muted);
+      margin: 10px 0;
+      opacity: 0.4;
+      text-align: center;
+      width: 100%;
+    }
+    .star-status {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-family: 'VT323', monospace;
+      font-size: 11px;
+      color: var(--muted);
+      opacity: 0.75;
+      padding: 8px 10px;
+      margin-top: auto;
+    }
+    #status-dot {
+      width: 6px;
+      height: 6px;
+      background: var(--neon);
+      border-radius: 50%;
+      box-shadow: 0 0 6px var(--neon);
+      animation: statusPulse 2s ease-in-out infinite;
+    }
+    @keyframes statusPulse {
+      0%, 100% { opacity: 1; box-shadow: 0 0 6px var(--neon); }
+      50% { opacity: 0.5; box-shadow: 0 0 3px var(--neon); }
+    }
+    @media (max-width: 900px) {
+      .main-grid { flex-direction: column; }
+      .sidebar-col { width: 100%; flex: 1 1 auto; }
+    }
+
+    /* ============================ BLOG ITEMS ============================ */
+    #blog-section { height: 320px; overflow: hidden; }
+    #blogList { height: 220px; overflow-y: auto; }
+    .blog-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 16px;
       border-bottom: 1px solid var(--border);
       transition: background 0.15s;
     }
-    #packageList > div:hover { background: rgba(var(--neon-rgb),0.035); }
+    .blog-item:last-child { border-bottom: none; }
+    .blog-item:hover { background: rgba(var(--neon-rgb),0.035); }
+    .blog-icon { font-size: 0.95rem; flex-shrink: 0; width: 22px; text-align: center; }
+    .blog-link {
+      flex: 1 1 auto;
+      min-width: 0;
+      font-size: 0.82rem;
+      color: var(--text-bright);
+      text-decoration: none;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      transition: color 0.15s;
+      padding-right: 8px;
+    }
+    .blog-link:hover { color: var(--neon); text-shadow: 0 0 6px rgba(var(--neon-rgb),0.5); }
+    .blog-date { font-size: 0.7rem; color: var(--text-dim); flex-shrink: 0; }
+
+    /* ============================ BLOG PAGINATION ============================ */
+    #blogPagination {
+      padding: 10px 14px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 8px;
+      font-size: 0.72rem;
+      color: rgba(122,154,134,0.45);
+    }
+    #blogPagination.hidden { display: none; }
+    #blogPagination .pages { display: flex; gap: 4px; align-items: center; }
+    #blogPageNumbers .page-num, #blogPagination .page-nav {
+      min-width: 28px;
+      height: 28px;
+      padding: 0 6px;
+      font-family: 'VT323', monospace;
+      font-size: 14px;
+      line-height: 1;
+      background: rgba(var(--neon-rgb),0.06);
+      border: 1px solid var(--border);
+      color: var(--text);
+      border-radius: 3px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s;
+    }
+    #blogPageNumbers .page-num:hover, #blogPagination .page-nav:hover:not(:disabled) {
+      border-color: var(--border-glow);
+      color: var(--neon);
+      box-shadow: 0 0 6px rgba(57,255,20,0.25);
+    }
+    #blogPageNumbers .page-num.active {
+      background: rgba(var(--neon-rgb),0.10);
+      color: var(--neon);
+      border-color: var(--neon);
+      box-shadow: 0 0 6px rgba(57,255,20,0.25);
+    }
+    #blogPagination .page-nav:disabled { opacity: 0.3; cursor: not-allowed; }
+    #blogPagination .page-nav svg { width: 10px; height: 10px; fill: currentColor; }
+    #blogCount { font-size: 0.72rem; color: rgba(122,154,134,0.45); }
+
+    /* ============================ MUSIC PLAYER ============================ */
+    #music-player {
+      font-family: 'VT323', monospace;
+      color: var(--neon);
+    }
+    .mp-cover {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 6px 0 8px;
+      position: relative;
+    }
+    .mp-cover-inner {
+      width: 68px; height: 68px;
+      border-radius: 4px;
+      background: rgba(8,12,22,0.8);
+      border: 2px solid var(--neon);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      box-shadow: 0 0 10px rgba(57,255,20,0.25), inset 0 0 6px rgba(0,0,0,0.6);
+      image-rendering: pixelated;
+    }
+    #music-player.playing .mp-cover-inner {
+      animation: mpSpin 6s linear infinite;
+      box-shadow: 0 0 16px rgba(57,255,20,0.5), inset 0 0 6px rgba(0,0,0,0.6);
+    }
+    @keyframes mpSpin { from { transform: rotate(0); } to { transform: rotate(360deg); } }
+    /* pixel neon disc */
+    .mp-disc-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 8px);
+      grid-template-rows: repeat(7, 8px);
+      gap: 1px;
+    }
+    .mp-disc-grid span {
+      width: 8px; height: 8px;
+      background: var(--neon);
+      display: block;
+    }
+    .mp-disc-grid .d0  { background: transparent; }
+    .mp-disc-grid .d1  { background: rgba(57,255,20,0.9); }
+    .mp-disc-grid .d2  { background: rgba(57,255,20,0.5); box-shadow: 0 0 4px var(--neon); }
+    .mp-disc-grid .dn  { background: #06060e; }
+    .mp-disc-grid .dc  { background: var(--neon); box-shadow: 0 0 6px var(--neon); }
+    .mp-cover-inner::after {
+      content: '';
+      position: absolute;
+      width: 10px; height: 10px;
+      background: var(--bg);
+      border-radius: 50%;
+      border: 1px solid var(--border);
+    }
+    .mp-info {
+      text-align: center;
+      margin-bottom: 10px;
+      min-height: 36px;
+    }
+    .mp-title {
+      font-size: 15px;
+      letter-spacing: 1px;
+      color: var(--text-bright);
+      text-shadow: 0 0 6px rgba(57,255,20,0.5);
+      line-height: 1.1;
+    }
+    .mp-artist {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 2px;
+      letter-spacing: 1px;
+    }
+    .mp-progress { margin-bottom: 10px; }
+    .mp-bar {
+      height: 3px;
+      background: rgba(57,255,20,0.12);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .mp-bar-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--neon), var(--neon-cyan));
+      box-shadow: 0 0 6px var(--neon);
+      transition: width 0.25s linear;
+    }
+    .mp-times {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 4px;
+      letter-spacing: 1px;
+    }
+    .mp-controls {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+    }
+    .mp-btn {
+      width: 28px; height: 28px;
+      border: 1px solid var(--border);
+      background: rgba(8,12,22,0.5);
+      color: var(--neon);
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 10px;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.15s;
+      line-height: 1;
+      padding: 0;
+    }
+    .mp-btn svg { width: 10px; height: 10px; fill: currentColor; display: block; }
+    .mp-btn-main svg { width: 12px; height: 12px; }
+    .mp-btn:hover {
+      border-color: var(--neon);
+      box-shadow: 0 0 8px rgba(57,255,20,0.5);
+      background: rgba(57,255,20,0.08);
+    }
+    .mp-btn-main {
+      width: 36px; height: 36px;
+      font-size: 13px;
+      background: rgba(57,255,20,0.1);
+      border-color: var(--neon);
+      box-shadow: 0 0 8px rgba(57,255,20,0.4);
+    }
+
+    /* ============================ MOON WIDGET ============================ */
+    #moon-widget {
+      font-family: 'VT323', monospace;
+    }
+    .moon-row {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      margin: 8px 0 12px;
+    }
+    .moon-visual svg {
+      filter: drop-shadow(0 0 6px rgba(255,255,200,0.35));
+    }
+    .moon-info { flex: 1; min-width: 0; }
+    .moon-phase-name {
+      font-size: 14px;
+      color: var(--text-bright);
+      letter-spacing: 1px;
+      text-shadow: 0 0 4px rgba(57,255,20,0.5);
+      line-height: 1.1;
+    }
+    .moon-illum {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 2px;
+      letter-spacing: 1px;
+    }
+    .moon-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      margin-bottom: 6px;
+    }
+    .moon-cell {
+      background: rgba(8,12,22,0.5);
+      border: 1px solid rgba(57,255,20,0.1);
+      border-radius: 3px;
+      padding: 6px 8px;
+    }
+    .moon-key {
+      font-size: 10px;
+      color: var(--muted);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 2px;
+    }
+    .moon-val {
+      font-size: 13px;
+      color: var(--neon);
+      text-shadow: 0 0 4px rgba(57,255,20,0.3);
+      letter-spacing: 1px;
+    }
+    .moon-clock { text-align: center; }
+    .moon-time {
+      font-size: 18px;
+      color: var(--text-bright);
+      text-shadow: 0 0 6px var(--neon);
+      letter-spacing: 2px;
+    }
   </style>
 </head>
 
@@ -1232,10 +1849,10 @@
             <label for="meta_accentColor">Accent color</label>
             <input id="meta_accentColor" placeholder="#FF3B30" />
           </div>
-          <label class="field" style="grid-column:1/-1;">
-            <span>Mô tả ngắn</span>
+          <div class="field" style="grid-column:1/-1;">
+            <label for="meta_description">Summary</label>
             <input id="meta_description" />
-          </label>
+          </div>
           <div class="field">
             <label for="meta_icon">Icon repo (path)</label>
             <select id="meta_icon"></select>
@@ -1243,8 +1860,10 @@
         </div>
       </section>
 
-      <!-- ============================ PACKAGES ============================ -->
-      <section class="box" style="padding:0; overflow:hidden;">
+      <!-- ============================ PAGE GRID: PACKAGES + BLOG (left) | SIDEBAR (right) ============================ -->
+      <div class="page-grid">
+      <div class="packages-col">
+      <section class="box" id="packagesBox" style="padding:0; overflow:hidden;">
         <div style="padding:14px 16px; border-bottom:1px solid var(--border);">
           <div class="pkg-header">
             <div class="section-title" style="margin-bottom:0;">Danh sách packages</div>
@@ -1254,19 +1873,142 @@
             </div>
           </div>
         </div>
-        <div id="packageList" style="min-height:60px;"></div>
+        <div id="packageList" class="package-list"></div>
         <div id="emptyHint" class="hidden">
           Chưa có package nào. Bấm <b>+ Thêm package</b> để bắt đầu.
         </div>
         <div id="pkgPagination" class="hidden">
           <span id="pkgPaginationInfo"></span>
           <div class="pages">
-            <button id="pkgPagePrev" class="btn">←</button>
+            <button id="pkgPagePrev" class="page-nav" title="Trang trước" aria-label="Trang trước">
+              <svg viewBox="0 0 8 8" xmlns="http://www.w3.org/2000/svg"><path d="M5 1 L1.5 4 L5 7 Z"/></svg>
+            </button>
             <span id="pkgPageNumbers"></span>
-            <button id="pkgPageNext" class="btn">→</button>
+            <button id="pkgPageNext" class="page-nav" title="Trang sau" aria-label="Trang sau">
+              <svg viewBox="0 0 8 8" xmlns="http://www.w3.org/2000/svg"><path d="M3 1 L6.5 4 L3 7 Z"/></svg>
+            </button>
           </div>
         </div>
       </section>
+
+      <!-- ============================ BLOG (inside packages-col) ============================ -->
+      <section class="box" id="blog-section" style="padding:0; overflow:hidden;">
+        <div style="padding:14px 16px; border-bottom:1px solid var(--border);">
+          <div class="pkg-header">
+            <div class="section-title" style="margin-bottom:0;">📝 Blog</div>
+            <div class="pkg-search-wrap">
+              <span id="blogCount">0 bài viết</span>
+            </div>
+          </div>
+        </div>
+        <div id="blogList" class="blog-list"></div>
+        <div id="blogPagination" style="padding:12px 16px; border-top:1px solid var(--border);">
+          <div class="pages">
+            <button id="blogPagePrev" class="page-nav" title="Trang trước" aria-label="Trang trước">
+              <svg viewBox="0 0 8 8" xmlns="http://www.w3.org/2000/svg"><path d="M5 1 L1.5 4 L5 7 Z"/></svg>
+            </button>
+            <span id="blogPageNumbers"></span>
+            <button id="blogPageNext" class="page-nav" title="Trang sau" aria-label="Trang sau">
+              <svg viewBox="0 0 8 8" xmlns="http://www.w3.org/2000/svg"><path d="M3 1 L6.5 4 L3 7 Z"/></svg>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      </div><!-- /packages-col -->
+
+      <!-- ============================ SIDEBAR COL: Stars + Music + Moon ============================ -->
+      <div class="sidebar-col">
+
+        <!-- ============= STARS NAV ============= -->
+        <div id="stars">
+          <div class="star-title">✩ Links</div>
+          <a class="star-link" href="/">✩ Home</a>
+          <a class="star-link" href="/admin">✩ Admin</a>
+          <a class="star-link" href="https://github.com" target="_blank">✩ GitHub</a>
+          <a class="star-link" href="mailto:nk@example.com">✩ E-mail</a>
+          <div class="star-divider">—</div>
+          <div class="star-status">
+            <span id="status-dot"></span>
+            <span id="status-text">online</span>
+          </div>
+        </div>
+
+        <!-- ============= BLOG (Music Player) ============= -->
+        <div id="music-player" class="sidebar-box">
+          <div class="star-title">♫ Now Playing</div>
+          <div class="mp-cover">
+            <div class="mp-cover-inner" id="mpCover">
+              <div class="mp-disc-grid">
+                <span class="dn"></span><span class="dn"></span><span class="d2"></span><span class="dc"></span><span class="d2"></span><span class="dn"></span><span class="dn"></span>
+                <span class="dn"></span><span class="d1"></span><span class="dc"></span><span class="dc"></span><span class="dc"></span><span class="d1"></span><span class="dn"></span>
+                <span class="d2"></span><span class="dc"></span><span class="dc"></span><span class="dc"></span><span class="dc"></span><span class="dc"></span><span class="d2"></span>
+                <span class="dc"></span><span class="dc"></span><span class="dc"></span><span class="dc"></span><span class="dc"></span><span class="dc"></span><span class="dc"></span>
+                <span class="d2"></span><span class="dc"></span><span class="dc"></span><span class="dc"></span><span class="dc"></span><span class="dc"></span><span class="d2"></span>
+                <span class="dn"></span><span class="d1"></span><span class="dc"></span><span class="dc"></span><span class="dc"></span><span class="d1"></span><span class="dn"></span>
+                <span class="dn"></span><span class="dn"></span><span class="d2"></span><span class="dc"></span><span class="d2"></span><span class="dn"></span><span class="dn"></span>
+              </div>
+            </div>
+          </div>
+          <div class="mp-info">
+            <div class="mp-title" id="mpTitle">Synthwave Drift</div>
+            <div class="mp-artist" id="mpArtist">— Owen · 80s Mix</div>
+          </div>
+          <div class="mp-progress">
+            <div class="mp-bar"><div class="mp-bar-fill" id="mpBarFill"></div></div>
+            <div class="mp-times"><span id="mpCur">0:00</span><span id="mpDur">3:21</span></div>
+          </div>
+          <div class="mp-controls">
+            <button class="mp-btn" id="mpPrev" title="Trước" aria-label="Bài trước">
+              <svg viewBox="0 0 8 8" xmlns="http://www.w3.org/2000/svg"><path d="M5 0.5 L1 4 L5 7.5 Z M6 0.5 H7 V7.5 H6 Z"/></svg>
+            </button>
+            <button class="mp-btn mp-btn-main" id="mpPlay" title="Play/Pause" aria-label="Phát/Dừng">
+              <svg viewBox="0 0 8 8" xmlns="http://www.w3.org/2000/svg"><path d="M2 1 L7 4 L2 7 Z"/></svg>
+            </button>
+            <button class="mp-btn" id="mpNext" title="Sau" aria-label="Bài sau">
+              <svg viewBox="0 0 8 8" xmlns="http://www.w3.org/2000/svg"><path d="M3 0.5 L7 4 L3 7.5 Z M1 0.5 H2 V7.5 H1 Z"/></svg>
+            </button>
+          </div>
+          <audio id="mpAudio" loop></audio>
+        </div>
+
+        <!-- ============= MOON WIDGET ============= -->
+        <div id="moon-widget" class="sidebar-box">
+          <div class="star-title">☾ Moon</div>
+          <div class="moon-row">
+            <div class="moon-visual">
+              <svg viewBox="-1.05 -1.05 2.1 2.1" width="64" height="64" id="moonSvg">
+                <defs>
+                  <radialGradient id="moonGrad" cx="0.4" cy="0.4">
+                    <stop offset="0%" stop-color="#fff8d8"/>
+                    <stop offset="100%" stop-color="#8a7a48"/>
+                  </radialGradient>
+                </defs>
+                <circle r="1" fill="url(#moonGrad)"/>
+                <circle id="moonShadow" r="1" fill="#0a0a14"/>
+                <!-- craters -->
+                <circle cx="-0.4" cy="0.3" r="0.05" fill="#5a4a28" opacity="0.6"/>
+                <circle cx="0.2" cy="-0.5" r="0.04" fill="#5a4a28" opacity="0.6"/>
+                <circle cx="0.5" cy="0.4" r="0.06" fill="#5a4a28" opacity="0.5"/>
+              </svg>
+            </div>
+            <div class="moon-info">
+              <div class="moon-phase-name" id="moonPhaseName">Waning Crescent</div>
+              <div class="moon-illum" id="moonIllum">12% illuminated</div>
+            </div>
+          </div>
+          <div class="moon-grid">
+            <div class="moon-cell"><div class="moon-key">Azimuth</div><div class="moon-val" id="moonAz">286°54'</div></div>
+            <div class="moon-cell"><div class="moon-key">Altitude</div><div class="moon-val" id="moonAlt">37°43' ▾</div></div>
+          </div>
+          <div class="moon-cell moon-clock">
+            <div class="moon-key">// UTC+7 (VN)</div>
+            <div class="moon-val moon-time" id="moonClock">09:09:37</div>
+          </div>
+        </div>
+
+      </div><!-- /sidebar-col -->
+      </div><!-- /page-grid -->
 
       <!-- ============================ HINT ============================ -->
       <section class="hint-box mt-4">
@@ -1301,7 +2043,7 @@
   <div id="toast"></div>
 
   <!-- App JS -->
-  <script src="/admin/static/app.js?v=6"></script>
+  <script src="/admin/static/app.js?v=9"></script>
   <!-- Bootstrap data -->
   <script>{{ bootstrap_js | safe }}</script>
 
@@ -1438,6 +2180,244 @@
     setTimeout(function() {
       var el = document.getElementById('twFallback');
     }, 3000);
-  </script>
+
+    // === FPS Overlay (góc trái trên) — lấy cảm hứng từ dimden.dev/oneko ===
+    (function () {
+      var box = document.createElement('div');
+      box.id = 'fps-box';
+      box.title = 'FPS';
+      box.textContent = 'FPS --';
+      document.body.appendChild(box);
+
+      // Exponential moving average (EMA) cho FPS mượt
+      var alpha = 0.1;            // 0.1 = update nhanh, 0.05 = mượt hơn
+      var lastTime = performance.now();
+      var smoothedFps = 60;
+      var lastTextUpdate = 0;
+
+      function loop(now) {
+        var dt = now - lastTime;
+        lastTime = now;
+        if (dt > 0) {
+          var instant = 1000 / dt;
+          // EMA: gộp giá trị mới với giá trị cũ
+          smoothedFps = smoothedFps + alpha * (instant - smoothedFps);
+        }
+        // Cập nhật text mỗi ~100ms (nhanh, không flicker)
+        if (now - lastTextUpdate >= 100) {
+          var fps = Math.round(smoothedFps);
+          var color = fps >= 55 ? '#39ff14' : fps >= 30 ? '#ffdd00' : '#ff4040';
+          box.style.color = color;
+          box.textContent = 'FPS ' + fps;
+          lastTextUpdate = now;
+        }
+        requestAnimationFrame(loop);
+    }
+    requestAnimationFrame(loop);
+})();
+
+/* ============================ MUSIC PLAYER ============================ */
+(function() {
+  const player   = document.getElementById('music-player');
+  const audio    = document.getElementById('mpAudio');
+  const btnPlay  = document.getElementById('mpPlay');
+  const btnPrev  = document.getElementById('mpPrev');
+  const btnNext  = document.getElementById('mpNext');
+  const barFill  = document.getElementById('mpBarFill');
+  const elCur    = document.getElementById('mpCur');
+  const elDur    = document.getElementById('mpDur');
+
+  const tracks = [
+    { title: 'Synthwave Drift',  artist: 'Owen · 80s Mix' },
+    { title: 'Neon Rain',        artist: 'Cyber Lo-fi'     },
+    { title: 'Hanoi Midnight',   artist: 'Phase FM'        },
+    { title: 'CRT Memories',     artist: 'Analog Tape'     },
+  ];
+  const TOTAL = 201; // 3:21
+  let idx = 0, cur = 0, playing = false;
+
+  function fmt(s){
+    s = Math.max(0, Math.floor(s));
+    return Math.floor(s/60)+':'+String(s%60).padStart(2,'0');
+  }
+  const PLAY_SVG  = '<svg viewBox="0 0 8 8" xmlns="http://www.w3.org/2000/svg"><path d="M2 1 L7 4 L2 7 Z"/></svg>';
+  const PAUSE_SVG = '<svg viewBox="0 0 8 8" xmlns="http://www.w3.org/2000/svg"><path d="M2 1 H3.5 V7 H2 Z M4.5 1 H6 V7 H4.5 Z"/></svg>';
+  function stopSim() {
+    clearInterval(player._sim);
+    playing = false;
+    player.classList.remove('playing');
+    btnPlay.innerHTML = PLAY_SVG;
+  }
+  function reset() {
+    stopSim();
+    cur = 0;
+    barFill.style.width = '0%';
+    elCur.textContent = '0:00';
+  }
+  function render() {
+    document.getElementById('mpTitle').textContent  = tracks[idx].title;
+    document.getElementById('mpArtist').textContent = '— ' + tracks[idx].artist;
+    elDur.textContent = fmt(TOTAL);
+    reset();
+  }
+  function startSim() {
+    stopSim();
+    playing = true;
+    player.classList.add('playing');
+    btnPlay.textContent = '⏸';
+    clearInterval(player._sim);
+    player._sim = setInterval(() => {
+      cur = (cur + 1) % TOTAL;
+      barFill.style.width = (cur/TOTAL*100)+'%';
+      elCur.textContent = fmt(cur);
+    }, 1000);
+  }
+
+  btnPlay.addEventListener('click', () => {
+    if (!audio.src) {
+      if (playing) stopSim(); else startSim();
+      return;
+    }
+    if (audio.paused) { audio.play(); startSim(); }
+    else              { audio.pause(); stopSim(); }
+  });
+  audio.addEventListener('timeupdate', () => {
+    if (!audio.duration) return;
+    barFill.style.width = (audio.currentTime/audio.duration*100)+'%';
+    elCur.textContent = fmt(audio.currentTime);
+  });
+  audio.addEventListener('loadedmetadata', () => elDur.textContent = fmt(audio.duration));
+
+  btnPrev.addEventListener('click', () => {
+    idx = (idx-1+tracks.length)%tracks.length;
+    audio.currentTime = 0;
+    render();
+  });
+  btnNext.addEventListener('click', () => {
+    idx = (idx+1)%tracks.length;
+    audio.currentTime = 0;
+    render();
+  });
+
+  render();
+})();
+
+/* ============================ MOON WIDGET (real-time) ============================ */
+(function() {
+  // ----- Moon phase calculation -----
+  // Reference new moon: 2000-01-06 18:14 UTC. Synodic month = 29.530588853 days.
+  const REF_NEW_MOON = Date.UTC(2000, 0, 6, 18, 14, 0) / 86400000; // days
+  const SYNODIC = 29.530588853;
+  function daysSinceRef(d) { return (d - REF_NEW_MOON) / SYNODIC; }
+  function moonAgeDays(date) {
+    const nowDays = (date.getTime() / 86400000);
+    let phase = (nowDays - REF_NEW_MOON) % SYNODIC;
+    if (phase < 0) phase += SYNODIC;
+    return phase;
+  }
+  function phaseInfo(date) {
+    const age = moonAgeDays(date);
+    const illum = (1 - Math.cos(2 * Math.PI * age / SYNODIC)) / 2;
+    let name;
+    if      (age < 1.84566)   name = 'New Moon';
+    else if (age < 5.53699)   name = 'Waxing Crescent';
+    else if (age < 9.22831)   name = 'First Quarter';
+    else if (age < 12.91963)  name = 'Waxing Gibbous';
+    else if (age < 16.61096)  name = 'Full Moon';
+    else if (age < 20.30228)  name = 'Waning Gibbous';
+    else if (age < 23.99361)  name = 'Last Quarter';
+    else if (age < 27.68493)  name = 'Waning Crescent';
+    else                      name = 'New Moon';
+    return { age, illum, name };
+  }
+
+  // ----- Render moon shadow SVG -----
+  function paintMoon(illum, waxing) {
+    const shadow = document.getElementById('moonShadow');
+    if (!shadow) return;
+    // r = illuminated radius fraction (0..1)
+    const r = Math.abs(0.5 - illum) * 2; // 0 at half, 1 at new
+    // Place shadow circle offset horizontally to carve lit portion
+    const cx = waxing ? -1 + r : 1 - r;
+    shadow.setAttribute('cx', cx.toFixed(3));
+    shadow.setAttribute('r', r.toFixed(3));
+    shadow.setAttribute('fill', '#0a0a14');
+  }
+
+  // ----- Approximate Az/Alt (Hanoi ~ 21°N, 105.85°E) -----
+  function moonAltAz(date, lat=21.0285, lon=105.8542) {
+    // Simplified algorithm — accuracy ~ few degrees, fine for widget.
+    const jd  = date.getTime()/86400000 + 2440587.5;
+    const T   = (jd - 2451545.0) / 36525;
+    const L   = (218.3164477 + 481267.88123421*T) % 360;
+    const M   = (134.9633964 + 477198.8675055*T) % 360;
+    const F   = (93.2720950  + 483202.0175233*T) % 360;
+    const lonEcl = L + 6.289 * Math.sin(M*Math.PI/180);
+    const latEcl = 5.128 * Math.sin(F*Math.PI/180);
+    const obl   = 23.4397;
+    const sinDec = Math.sin(latEcl*Math.PI/180)*Math.cos(obl*Math.PI/180)
+                 + Math.cos(latEcl*Math.PI/180)*Math.sin(obl*Math.PI/180)*Math.sin(lonEcl*Math.PI/180);
+    const dec   = Math.asin(sinDec) * 180/Math.PI;
+
+    // RA
+    const y = Math.sin(lonEcl*Math.PI/180)*Math.cos(obl*Math.PI/180)
+            - Math.tan(latEcl*Math.PI/180)*Math.sin(obl*Math.PI/180);
+    const x = Math.cos(lonEcl*Math.PI/180);
+    const ra = Math.atan2(y, x) * 180/Math.PI;
+
+    // Local sidereal time
+    const gmst = (280.46061837 + 360.98564736629*(jd-2451545.0)
+                  + 0.000387933*T*T - (T*T*T)/38710000) % 360;
+    const lst  = (gmst + lon) % 360;
+    let HA = lst - ra; if (HA < -180) HA += 360; if (HA > 180) HA -= 360;
+
+    const sinAlt = Math.sin(lat*Math.PI/180)*Math.sin(dec*Math.PI/180)
+                 + Math.cos(lat*Math.PI/180)*Math.cos(dec*Math.PI/180)*Math.cos(HA*Math.PI/180);
+    const alt = Math.asin(sinAlt) * 180/Math.PI;
+
+    const sinAz = -Math.sin(HA*Math.PI/180)*Math.cos(dec*Math.PI/180) / Math.cos(alt*Math.PI/180);
+    const cosAz = (Math.sin(dec*Math.PI/180) - Math.sin(alt*Math.PI/180)*Math.sin(lat*Math.PI/180))
+                / (Math.cos(alt*Math.PI/180)*Math.cos(lat*Math.PI/180));
+    let az = Math.atan2(sinAz, cosAz) * 180/Math.PI;
+    if (az < 0) az += 360;
+
+    return { alt, az };
+  }
+  function dms(deg) {
+    const sign = deg < 0 ? '-' : '';
+    const a = Math.abs(deg);
+    const d = Math.floor(a);
+    const m = Math.floor((a - d) * 60);
+    return sign + d + '°' + String(m).padStart(2,'0') + "'";
+  }
+  function trend(alt) {
+    // Compare to 1 min ago (we just use last value stored on element)
+    const el = document.getElementById('moonAlt');
+    if (!el._last) el._last = alt;
+    const arrow = alt < el._last ? '▾' : '▴';
+    el._last = alt;
+    return arrow;
+  }
+
+  function tick() {
+    const now = new Date();
+    const p = phaseInfo(now);
+    const waxing = p.age < SYNODIC/2;
+    paintMoon(p.illum, waxing);
+    const aa = moonAltAz(now);
+
+    document.getElementById('moonPhaseName').textContent = p.name;
+    document.getElementById('moonIllum').textContent     = Math.round(p.illum*100) + '% illuminated';
+    document.getElementById('moonAz').textContent        = dms(aa.az);
+    document.getElementById('moonAlt').textContent       = dms(aa.alt) + ' ' + trend(aa.alt);
+
+    // VN clock
+    const opts = { hour:'2-digit', minute:'2-digit', second:'2-digit', hour12:false, timeZone:'Asia/Ho_Chi_Minh' };
+    document.getElementById('moonClock').textContent = new Intl.DateTimeFormat('en-GB', opts).format(now);
+  }
+  tick();
+  setInterval(tick, 1000);
+})();
+</script>
 </body>
 </html>

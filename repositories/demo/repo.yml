@@ -715,3 +715,68 @@ packages:
     isPrivate: false
     description: test
     changelog: 🎉 v1.0.0 — Phát hành lần đầu
+
+  # ----- owen-001 -----
+  - identifier: owen-001
+    name: PUBG Version 4.6 For VNG,KR,GLOBAL
+    author: "@owenindahouse"
+    version: 1.0.0
+    summary: 1 Patch dùng được cho 3 server
+    password: "0604"
+    category: Customization
+    tags: [CUSTOM]
+    publishedAt: "2026-09-08T13:34:24.000Z"
+    icon: assets/icon/New_ver46/new_4_6.png
+    banner: assets/banner.png
+    download: packages/PATCH_NEW_VERSION_4-6_PUBG.3105
+    sha256: B034279BB80D6C00F12335801680ACEFEA63A592AED81FE1500DDB6E3B20963C
+    size: 49189
+    supportedOS:
+      - minimum: "17.0"
+        maximum: "18.7.1"
+      - minimum: "26.0"
+        maximum: "26.6.1"
+      - minimum: "27.0"
+        maximum: "27.0"
+        builds: ["24A5355q", "24A5370h", "24A5380h", "24A5390f"]
+    featured: true
+    isPrivate: false
+    description: |
+      🔥1 Patch chơi được cả 3 server VNG - GLOBAL - KR
+      🔥1 Patch For 3 server VNG - GLOBAL - KR
+      
+            🔥Chỉ việc áp dụng patch là xong, không cần tải 3 patch khác nhau.
+            🔥 Bypass Online 
+            🎯 Hỗ trợ ngắm tùy chỉnh/ Aim Bot
+            👁️ iPad View
+            🚗 Tùy chỉnh tốc độ xe/ increase Speed Car
+            ⚡ Nhiều tính năng nâng cao khác/ More another Feature
+            
+            
+            ╭──────────────────╮
+             ⚠️ LƯU Ý QUAN TRỌNG
+            ╰──────────────────╯
+            
+            • Hãy xóa gói tùy chỉnh cũ trước khi áp dụng.
+            • Nên sao lưu dữ liệu trước khi cài đặt.
+            
+            ╭──────────────────╮
+             💬 HỖ TRỢ
+            ╰──────────────────╯
+            
+            @owenindahouse
+            
+            ❤️ Cảm ơn bạn đã ủng hộ!
+          changelog: |
+            
+            
+            ╭──────────────────╮
+             🚀 SẮP TỚI
+            ╰──────────────────╯
+            
+            ✨ Nhiều tính năng mới sẽ được bổ sung.
+            
+            🔄 Tiếp tục cập nhật và tối ưu trong các phiên bản tiếp theo.
+            
+            ❤️ Cảm ơn bạn đã ủng hộ!
+    changelog: 🎉 v4.6.0 — Phiên bản 4.6 mới nhất

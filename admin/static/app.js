@@ -16,7 +16,20 @@ const state = {
   // Search & pagination
   pkgSearchQuery: '',
   pkgPage: 1,
-  pkgPageSize: 20,
+  pkgPageSize: 5,
+  // Blog pagination
+  blogPage: 1,
+  blogPageSize: 5,
+  blogPosts: [
+    { icon: '📦', title: 'Cách cài đặt Repository trên ứng dụng 3105', date: '2 ngày trước' },
+    { icon: '🛡️', title: 'Bảo mật khi sử dụng Mod - Những lưu ý quan trọng', date: '5 ngày trước' },
+    { icon: '⚡', title: 'Cập nhật v1.2 - Tính năng mới & cải tiến', date: '1 tuần trước' },
+    { icon: '🎨', title: 'Hướng dẫn tạo Custom Dialer cho riêng bạn', date: '2 tuần trước' },
+    { icon: '🎮', title: 'So sánh các gói Custom: VNG vs Global vs KR', date: '3 tuần trước' },
+    { icon: '🔧', title: 'Sửa lỗi thường gặp khi sử dụng 3105', date: '1 tháng trước' },
+    { icon: '🚀', title: 'Tối ưu hiệu suất thiết bị với các mẹo nhỏ', date: '1 tháng trước' },
+    { icon: '📱', title: 'Hỗ trợ iOS 17 - Danh sách tính năng tương thích', date: '2 tháng trước' },
+  ],
   // Theo dõi thay đổi để sinh commit message
   changes: {
     added: [],    // [{identifier, name}]
@@ -261,6 +274,62 @@ function renderMeta() {
 }
 
 // ---------------------------------------------------------------------
+// Render: blog list (with pagination)
+// ---------------------------------------------------------------------
+function renderBlogList() {
+  const list = $('#blogList');
+  if (!list) return;
+
+  const totalPosts = state.blogPosts.length;
+  const totalPages = Math.max(1, Math.ceil(totalPosts / state.blogPageSize));
+  if (state.blogPage > totalPages) state.blogPage = totalPages;
+
+  const start = (state.blogPage - 1) * state.blogPageSize;
+  const pageItems = state.blogPosts.slice(start, start + state.blogPageSize);
+
+  $('#blogCount').textContent = `${totalPosts} bài viết`;
+
+  list.innerHTML = pageItems.map(post => `
+    <div class="blog-item">
+      <span class="blog-icon">${post.icon}</span>
+      <a href="#" class="blog-link">${post.title}</a>
+      <span class="blog-date">${post.date}</span>
+    </div>
+  `).join('');
+
+  const paginationEl = $('#blogPagination');
+  const pageNumbers = $('#blogPageNumbers');
+  const btnPrev = $('#blogPagePrev');
+  const btnNext = $('#blogPageNext');
+
+  if (totalPosts <= state.blogPageSize) {
+    paginationEl?.classList.add('hidden');
+  } else {
+    paginationEl?.classList.remove('hidden');
+    btnPrev.disabled = state.blogPage <= 1;
+    btnNext.disabled = state.blogPage >= totalPages;
+
+    const half = Math.floor(MAX_PAGE_BUTTONS / 2);
+    let startPage = Math.max(1, state.blogPage - half);
+    let endPage = Math.min(totalPages, startPage + MAX_PAGE_BUTTONS - 1);
+    if (endPage - startPage < MAX_PAGE_BUTTONS - 1) {
+      startPage = Math.max(1, endPage - MAX_PAGE_BUTTONS + 1);
+    }
+    pageNumbers.innerHTML = '';
+    for (let p = startPage; p <= endPage; p++) {
+      const btn = document.createElement('button');
+      btn.textContent = p;
+      btn.className = `page-num ${p === state.blogPage ? 'active' : ''}`;
+      btn.addEventListener('click', () => {
+        state.blogPage = p;
+        renderBlogList();
+      });
+      pageNumbers.appendChild(btn);
+    }
+  }
+}
+
+// ---------------------------------------------------------------------
 // Render: package list (with search filter + pagination)
 // ---------------------------------------------------------------------
 const MAX_PAGE_BUTTONS = 5;
@@ -291,6 +360,7 @@ function renderPackageList() {
   // Count / pagination UI
   $('#packageCount').textContent = `${filtered.length} / ${state.packages.length} package`;
   $('#emptyHint').classList.toggle('hidden', filtered.length > 0);
+  $('#packageList').style.display = filtered.length === 0 ? 'none' : 'block';
 
   const paginationEl = $('#pkgPagination');
   const paginationInfo = $('#pkgPaginationInfo');
@@ -319,9 +389,7 @@ function renderPackageList() {
     for (let p = startPage; p <= endPage; p++) {
       const btn = document.createElement('button');
       btn.textContent = p;
-      btn.className = `w-7 h-7 text-xs rounded border ${p === state.pkgPage
-        ? 'bg-red-500 text-white border-red-500'
-        : 'border-slate-300 hover:bg-slate-100'}`;
+      btn.className = `page-num ${p === state.pkgPage ? 'active' : ''}`;
       btn.addEventListener('click', () => {
         state.pkgPage = p;
         renderPackageList();
@@ -335,7 +403,7 @@ function renderPackageList() {
   pageItems.forEach((pkg, i) => {
     const realIdx = state.packages.indexOf(pkg);
     const row = document.createElement('div');
-    row.className = 'px-4 py-3 hover:bg-slate-50 flex items-center gap-2 sm:gap-3';
+    row.className = 'pkg-item';
     row.innerHTML = `
       <div class="flex-shrink-0 w-9 h-9 rounded-md bg-slate-200 overflow-hidden flex items-center justify-center">
         ${pkg.icon
@@ -346,7 +414,7 @@ function renderPackageList() {
         <div class="flex flex-wrap items-center gap-1.5">
           <span class="font-medium text-sm truncate">${escapeHtml(pkg.name || '(chưa có tên)')}</span>
           ${pkg.featured ? '<span class="bg-yellow-100 text-yellow-800 text-[10px] px-1.5 py-0.5 rounded-full">featured</span>' : ''}
-          ${pkg.isPrivate ? '<span class="bg-slate-200 text-slate-700 text-[10px] px-1.5 py-0.5 rounded-full">private</span>' : ''}
+          ${pkg.isPrivate ? '<span class="text-[10px] px-1.5 py-0.5 rounded-full" style="background:transparent;border:none;color:#39ff14;text-shadow:0 0 4px rgba(57,255,20,0.7);">private</span>' : ''}
           ${pkg.kind ? `<span class="bg-blue-100 text-blue-800 text-[10px] px-1.5 py-0.5 rounded-full">${escapeHtml(pkg.kind)}</span>` : ''}
         </div>
         <div class="text-[11px] text-slate-500 truncate">
@@ -381,6 +449,14 @@ function renderPackageList() {
 // Modal: thêm / sửa package
 // ---------------------------------------------------------------------
 
+// Định nghĩa global để openModal() gọi được (không phụ thuộc bindFormEvents)
+function syncDlClearBtn() {
+  const dlInput = $('#f_download');
+  const dlClear = $('#f_download_clear');
+  if (!dlClear || !dlInput) return;
+  dlClear.classList.toggle('hidden', !dlInput.value);
+}
+
 function openModal(editIdx = null) {
   state.editingIndex = editIdx;
   const isEdit = editIdx !== null;
@@ -407,6 +483,13 @@ function openModal(editIdx = null) {
 
   $('#modalBody').innerHTML = hintHtml + buildFormHtml(pkg);
   bindFormEvents();
+  // Pre-fill file .3105 đã chọn — combobox input chỉ hiện TÊN FILE (vd: myapp.3105), không kèm "packages/"
+  const dlInput = $('#f_download');
+  if (dlInput && pkg.download) {
+    const fileName = String(pkg.download).replace(/^packages\//, '').replace(/^.*[\\\/]/, '');
+    dlInput.value = fileName;
+    syncDlClearBtn();
+  }
   $('#modal').classList.remove('hidden');
   $('#modal').classList.add('flex');
 }
@@ -895,6 +978,13 @@ function selectIcon(path) {
   if (hidden) hidden.value = path;
   updatePickerCurrentLabels();
   refreshIconPicker();
+  // Sau khi chọn ảnh xong → ẩn grid luôn cho gọn
+  const grid = $('#iconPickerGrid');
+  if (grid && !grid.classList.contains('hidden')) {
+    grid.classList.add('hidden');
+    const btn = $('#btnIconToggle');
+    if (btn) btn.textContent = 'Hiện ảnh';
+  }
 }
 
 function selectBanner(path) {
@@ -902,6 +992,13 @@ function selectBanner(path) {
   if (hidden) hidden.value = path;
   updatePickerCurrentLabels();
   refreshBannerPicker();
+  // Sau khi chọn ảnh xong → ẩn grid luôn cho gọn
+  const grid = $('#bannerPickerGrid');
+  if (grid && !grid.classList.contains('hidden')) {
+    grid.classList.add('hidden');
+    const btn = $('#btnBannerToggle');
+    if (btn) btn.textContent = 'Hiện ảnh';
+  }
 }
 
 function updatePickerCurrentLabels() {
@@ -1145,11 +1242,6 @@ function bindFormEvents() {
   const dlInput = $('#f_download');
   const dlMenu = $('#f_download_menu');
   const dlClear = $('#f_download_clear');
-
-  function syncDlClearBtn() {
-    if (!dlClear) return;
-    dlClear.classList.toggle('hidden', !dlInput.value);
-  }
 
   function renderDlMenu(query) {
     const q = (query || '').trim().toLowerCase();
@@ -1497,7 +1589,13 @@ function readFormToPackage() {
     banner: $('#f_banner').value,
     __use_default_screens: $('#f_use_default_screens').checked,
     screenshots: currentSelectedScreens.slice(),
-    download: $('#f_download').value,
+    download: (() => {
+      const v = $('#f_download').value.trim();
+      if (!v) return '';
+      // Nếu người dùng lỡ gõ đường dẫn đầy đủ, strip về tên file
+      const fileName = v.replace(/^packages\//, '').replace(/^.*[\\\/]/, '');
+      return fileName ? `packages/${fileName}` : '';
+    })(),
     sha256: normalizeSha256($('#f_sha256').value),
     size: parseInt($('#f_size').value, 10) || 0,
     password: $('#f_password').value,
@@ -1709,6 +1807,53 @@ async function saveAll() {
 // ---------------------------------------------------------------------
 
 document.addEventListener('DOMContentLoaded', () => {
+  // Tách từng ký tự trong #logo-text thành span.lt.
+  // 3 CHỮ CÁI ĐƠN LẺ ngẫu nhiên được đánh dấu "broken" (chớp nhá + nghiêng).
+  // Các chữ còn lại đứng im hoàn toàn, không animation.
+  const logoText = document.getElementById('logo-text');
+  if (logoText && !logoText.dataset.split) {
+    logoText.dataset.split = '1';
+    const original = logoText.textContent.trim();
+    const words = original.split(/\s+/);
+
+    // Thu thập tất cả chữ cái (không tính khoảng trắng) — index trong từ + index tổng
+    const allLetters = [];
+    words.forEach((word, wi) => {
+      [...word].forEach((ch, ci) => {
+        allLetters.push({ ch, wi, ci });
+      });
+    });
+
+    // Chọn ngẫu nhiên đúng 3 chữ cái để broken
+    const brokenSet = new Set();
+    while (brokenSet.size < Math.min(3, allLetters.length)) {
+      brokenSet.add(Math.floor(Math.random() * allLetters.length));
+    }
+
+    // 3 hướng nghiêng: phải / trái / ngửa sau
+    const directionClasses = ['broken-right', 'broken-left', 'broken-back'];
+
+    let html = '';
+    let letterIdx = 0;
+    words.forEach((word, wi) => {
+      html += `<span class="word">`;
+      [...word].forEach(ch => {
+        if (brokenSet.has(letterIdx)) {
+          // Random 1 trong 3 hướng cho mỗi chữ broken
+          const dir = directionClasses[Math.floor(Math.random() * 3)];
+          const delay = `-${(Math.random() * 3).toFixed(2)}s`;
+          html += `<span class="lt broken ${dir}" style="--bd: ${delay};">${ch}</span>`;
+        } else {
+          html += `<span class="lt">${ch}</span>`;
+        }
+        letterIdx++;
+      });
+      html += '</span>';
+      if (wi < words.length - 1) html += '<span class="word space">&nbsp;</span>';
+    });
+    logoText.innerHTML = html;
+  }
+
   $('#repoSelect').addEventListener('change', e => {
     state.currentRepo = e.target.value;
     if (state.currentRepo) loadRepo();
@@ -1751,5 +1896,15 @@ document.addEventListener('DOMContentLoaded', () => {
   $('#pkgPageNext')?.addEventListener('click', () => {
     state.pkgPage++;
     renderPackageList();
+  });
+
+  // Blog pagination
+  renderBlogList();
+  $('#blogPagePrev')?.addEventListener('click', () => {
+    if (state.blogPage > 1) { state.blogPage--; renderBlogList(); }
+  });
+  $('#blogPageNext')?.addEventListener('click', () => {
+    state.blogPage++;
+    renderBlogList();
   });
 });

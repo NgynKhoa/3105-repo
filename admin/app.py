@@ -78,8 +78,9 @@ CATEGORY_OPTIONS = [
 IDENTIFIER_RE = re.compile(r"^[a-z0-9][a-z0-9._-]{1,63}$")
 
 app = Flask(__name__, template_folder="templates", static_folder="static")
-# Tăng giới hạn upload lên 200MB cho phép upload file .3105 và ảnh lớn
-app.config["MAX_CONTENT_LENGTH"] = 200 * 1024 * 1024
+# Giới hạn upload: 95MB mỗi file
+# Lưu ý: GitHub hard-blocks push nếu file >= 100MB, nên để dưới 100MB
+app.config["MAX_CONTENT_LENGTH"] = 95 * 1024 * 1024
 
 
 # ---------------------------------------------------------------------------
