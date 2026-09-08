@@ -16,14 +16,13 @@ accentColor: "#FF3B30"
 packages:
   # ----- owen-trial -----
   - identifier: owen-trial
-    name: PUBG Custom Miễn Phí V12
+    name: PUBG Custom Miễn Phí Version 4.5
     author: "@owenindahouse"
     version: 1.0.0
     summary: ✨ Pubg • Bản dùng thử • Trải nghiệm tính năng nâng cao
     password: "2752"
     category: Customization
     tags: [CUSTOM]
-    publishedAt: "2026-08-28T10:00:00Z"
     icon: assets/icon/test.png
     banner: assets/banner/banner.png
     screenshots:
@@ -35,14 +34,9 @@ packages:
     sha256: CE977931A02FA8D505E6DF202BAC4252811DB1055AE1632BCBDC1413C271FCE0
     size: 37432
     supportedOS:
-      - minimum: "17.0"
-        maximum: "18.7.1"
-      - minimum: "26.0"
-        maximum: "26.6.1"
-      - minimum: "27.0"
-        maximum: "27.0"
-        builds: ["24A5355q", "24A5370h", "24A5380h", "24A5390f"]
-    featured: true
+      - minimum: "17"
+        maximum: "27"
+    featured: false
     isPrivate: false
     description: |
       🔥 PUBG CUSTOM FREE
@@ -73,85 +67,6 @@ packages:
       🛠️ Vui lòng báo lỗi cho @owenindahouse nếu gặp sự cố
       
       ⚠️ Đây là phiên bản thử nghiệm ban đầu và có thể vẫn còn một số lỗi.
-
-  # ----- owen-000 -----
-  - identifier: owen-000
-    name: 👑 PUBG Custom Pre
-    author: "@owenindahouse"
-    version: 1.0.0
-    summary: ✨ CUSTOM • PHIÊN BẢN PREMIUM
-    password: "2752"
-    category: Customization
-    tags: [CUSTOM]
-    icon: assets/icon/vip-cabybara.png
-    banner: assets/banner/banner.png
-    screenshots:
-      - assets/preview/preview-first.png
-      - assets/preview/preview-second.png
-      - assets/preview/preview-third.png
-      - assets/preview/preview-fourth.png
-    download: packages/PATCH_FREE_V12_BY_TD.3105
-    sha256: CE977931A02FA8D505E6DF202BAC4252811DB1055AE1632BCBDC1413C271FCE0
-    size: 37432
-    supportedOS:
-      - minimum: "17.0"
-        maximum: "18.7.1"
-      - minimum: "26.0"
-        maximum: "26.6.1"
-      - minimum: "27.0"
-        maximum: "27.0"
-        builds: ["24A5355q", "24A5370h", "24A5380h", "24A5390f"]
-    featured: false
-    isPrivate: false
-    description: |
-      💎 BẢN TRẢI NGHIỆM PREMIUM
-      
-      ╭──────────────────╮
-       ✨ TÍNH NĂNG
-      ╰──────────────────╯
-      
-      🔥 Tương thích Online
-      🎯 Hỗ trợ ngắm tùy chỉnh
-      👁️ iPad View
-      🚗 Tùy chỉnh tốc độ xe
-      ⚡ Nhiều tính năng nâng cao khác
-      
-      ╭──────────────────╮
-       🔐 QUYỀN TRUY CẬP PREMIUM
-      ╰──────────────────╯
-      
-      👑 Gói này dành cho thành viên TD Premium.
-      
-      ╭──────────────────╮
-       ⚠️ LƯU Ý QUAN TRỌNG
-      ╰──────────────────╯
-      
-      • Hãy xóa gói tùy chỉnh cũ trước khi áp dụng.
-      • Nên sao lưu dữ liệu trước khi cài đặt.
-      
-      ╭──────────────────╮
-       💬 HỖ TRỢ
-      ╰──────────────────╯
-      
-      @owenindahouse
-      
-      ❤️ Cảm ơn bạn đã ủng hộ!
-    changelog: |
-      ╭──────────────────╮
-       ✨ PHÁT HÀNH
-      ╰──────────────────╯
-      
-      🔐 GÓI DÀNH CHO THÀNH VIÊN PREMIUM
-      
-      ╭──────────────────╮
-       🚀 SẮP TỚI
-      ╰──────────────────╯
-      
-      ✨ Nhiều tính năng mới sẽ được bổ sung.
-      
-      🔄 Tiếp tục cập nhật và tối ưu trong các phiên bản tiếp theo.
-      
-      ❤️ Cảm ơn bạn đã ủng hộ!
 
   # ----- owen-002 -----
   - identifier: owen-002
@@ -198,14 +113,14 @@ packages:
 
   # ----- owen-003 -----
   - identifier: owen-003
-    name: PUBG Custom For GL V12
+    name: PUBG Custom For GL Version 4.5
     author: "@owenindahouse"
     version: 1.0.0
     summary: ✨ ADVANCED CUSTOM 4 GLOBAL
     password: "2752"
     category: Customization
     tags: [CUSTOM]
-    publishedAt: "2026-08-28T10:00:00Z"
+    publishedAt: "2026-08-28T10:00:00.000Z"
     icon: assets/icon/global-pubg_global.png
     banner: assets/banner/banner.png
     screenshots:
@@ -264,7 +179,7 @@ packages:
 
   # ----- owen-004 -----
   - identifier: owen-004
-    name: 💫 PUBG Custom For KR V12
+    name: 💫 PUBG Custom For KR Version 4.5
     author: "@owenindahouse"
     version: 1.0.0
     summary: ✨ ADVANCED CUSTOM 4 KR
@@ -501,7 +416,7 @@ packages:
 
   # ----- owen-008 -----
   - identifier: owen-008
-    name: GRAPHICS POTATO WITH 120FPS PUBG V12
+    name: GRAPHICS POTATO WITH 120FPS PUBG Ver 4.5
     author: "@owenindahouse"
     version: 1.0.0
     summary: ✨chỉ dành cho người dùng VIỆT NAM - Only for VNG
@@ -606,14 +521,14 @@ packages:
 
   # ----- owen-010 -----
   - identifier: owen-010
-    name: 👑 PUBG ALL IN ONE
+    name: 👑 PUBG ALL IN ONE Ver 4.5
     author: "@owenindahouse"
     version: 1.0.0
     summary: ✨ 1 PATCH FOR 3 SERVERS
     password: "owen"
     category: Customization
     tags: [CUSTOM]
-    publishedAt: "2026-09-06T11:00:00Z"
+    publishedAt: "2026-09-06T11:00:00.000Z"
     icon: assets/icon/allinone.png
     banner: assets/banner/banner.png
     screenshots:
@@ -689,32 +604,6 @@ packages:
       🔄 Tiếp tục cập nhật và tối ưu trong các phiên bản tiếp theo.
       
       ❤️ Cảm ơn bạn đã ủng hộ!
-
-  # ----- owen-011 -----
-  - identifier: owen-011
-    name: test đợt 3
-    author: "@owenindahouse"
-    version: 1.0.0
-    summary: test thôi
-    category: Customization
-    tags: [CUSTOM]
-    icon: assets/icon/allinone.png
-    banner: assets/banner/banner.png
-    download: Basic_CircleB&W.3105pass
-    sha256: BA91799564D04544CFF874C897273037AA4717456A93B7A70798CBEFEE97AAF8
-    size: 406950
-    supportedOS:
-      - minimum: "17.0"
-        maximum: "18.7.1"
-      - minimum: "26.0"
-        maximum: "26.6.1"
-      - minimum: "27.0"
-        maximum: "27.0"
-        builds: ["24A5355q", "24A5370h", "24A5380h", "24A5390f"]
-    featured: false
-    isPrivate: false
-    description: test
-    changelog: 🎉 v1.0.0 — Phát hành lần đầu
 
   # ----- owen-001 -----
   - identifier: owen-001
