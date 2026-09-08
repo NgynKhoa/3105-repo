@@ -514,7 +514,7 @@ function newPackageTemplate() {
     category: 'Customization',
     tags: ['CUSTOM'],
     icon: '',
-    banner: 'assets/banner.png',
+    banner: '',
     screenshots: [],
     download: '',
     sha256: '',

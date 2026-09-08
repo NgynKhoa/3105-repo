@@ -616,18 +616,13 @@ packages:
     tags: [CUSTOM]
     publishedAt: "2026-09-08T13:34:24.000Z"
     icon: assets/icon/New_ver46/new_4_6.png
-    banner: assets/banner.png
+    banner: assets/banner/banner.png
     download: packages/PATCH_NEW_VERSION_4-6_PUBG.3105
     sha256: B034279BB80D6C00F12335801680ACEFEA63A592AED81FE1500DDB6E3B20963C
     size: 49189
     supportedOS:
-      - minimum: "17.0"
-        maximum: "18.7.1"
-      - minimum: "26.0"
-        maximum: "26.6.1"
-      - minimum: "27.0"
-        maximum: "27.0"
-        builds: ["24A5355q", "24A5370h", "24A5380h", "24A5390f"]
+      - minimum: "17"
+        maximum: "27"
     featured: true
     isPrivate: false
     description: |
@@ -646,7 +641,7 @@ packages:
              ⚠️ LƯU Ý QUAN TRỌNG
             ╰──────────────────╯
             
-            • Hãy xóa gói tùy chỉnh cũ trước khi áp dụng.
+            • Hãy xóa gói mod cũ,clear data trước khi áp dụng.
             • Nên sao lưu dữ liệu trước khi cài đặt.
             
             ╭──────────────────╮
