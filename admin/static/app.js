@@ -19,7 +19,7 @@ const state = {
   pkgPageSize: 5,
   // Blog pagination
   blogPage: 1,
-  blogPageSize: 5,
+  blogPageSize: 3,
   blogPosts: [
     { icon: '📦', title: 'Cách cài đặt Repository trên ứng dụng 3105', date: '2 ngày trước' },
     { icon: '🛡️', title: 'Bảo mật khi sử dụng Mod - Những lưu ý quan trọng', date: '5 ngày trước' },
