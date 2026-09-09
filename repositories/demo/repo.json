@@ -59,10 +59,8 @@
       "icon": "assets/icon/hdr_120-ngong.png",
       "banner": "assets/banner/banner.png",
       "screenshots": [
-        "assets/preview-first.png",
-        "assets/preview-second.png",
-        "assets/preview-third.png",
-        "assets/preview-four.png"
+        "assets/hdr_120/after.png",
+        "assets/hdr_120/before.png"
       ],
       "download": "packages/HDR_120FPS.3105",
       "sha256": "C6A6D2A32925B1BC8F844A3736DE7E3056EE06935E49836F1C89132A25851372",
@@ -182,10 +180,10 @@
       "icon": "assets/icon/Classic_dialer.png",
       "banner": "assets/banner/banner.png",
       "screenshots": [
-        "assets/preview-first.png",
-        "assets/preview-second.png",
-        "assets/preview-third.png",
-        "assets/preview-four.png"
+        "assets/dialer/Classic_dialer/Classic_dialer.png",
+        "assets/dialer/Classic_dialer/dark.png",
+        "assets/dialer/Classic_dialer/light.png",
+        "assets/dialer/Classic_dialer/pass.png"
       ],
       "download": "packages/Classical_dialer.3105pass",
       "sha256": "3557A840CF720126142E7EE07AEC5AA10754AEE6F59DE7ABF66807195D1C85C3",
@@ -223,10 +221,9 @@
       "icon": "assets/icon/Basic_Circle.png",
       "banner": "assets/banner/banner.png",
       "screenshots": [
-        "assets/preview-first.png",
-        "assets/preview-second.png",
-        "assets/preview-third.png",
-        "assets/preview-four.png"
+        "assets/dialer/Basic_Circle/bs_dark.png",
+        "assets/dialer/Basic_Circle/bs_light.png",
+        "assets/dialer/Basic_Circle/bs_pass.png"
       ],
       "download": "packages/Basic_CircleB&W.3105pass",
       "sha256": "BA91799564D04544CFF874C897273037AA4717456A93B7A70798CBEFEE97AAF8",
@@ -304,10 +301,7 @@
       "icon": "assets/icon/potato.png",
       "banner": "assets/banner/banner.png",
       "screenshots": [
-        "assets/preview-first.png",
-        "assets/preview-second.png",
-        "assets/preview-third.png",
-        "assets/preview-four.png"
+        "assets/potato_120fps/potato_screenshot.png"
       ],
       "download": "packages/GRAPHICS_POTATO_WITH_120FPS.3105",
       "sha256": "F7A03FE347ADF7DD29E0358FCF6FAED628E519F6837C7DDC6D5EE50FE15663B3",
@@ -345,10 +339,8 @@
       "icon": "assets/icon/F&B_pink.png",
       "banner": "assets/banner/banner.png",
       "screenshots": [
-        "assets/preview-first.png",
-        "assets/preview-second.png",
-        "assets/preview-third.png",
-        "assets/preview-four.png"
+        "assets/dialer/B&F_Pink/B&F_dark.png",
+        "assets/dialer/B&F_Pink/B&F_light.png"
       ],
       "download": "packages/Flower&Butterfly_Pink.3105pass",
       "sha256": "57EDB20E5572705C4A822F26DF41AC44EF95FAA52757DE0A6CDD836BA3BD67D1",
