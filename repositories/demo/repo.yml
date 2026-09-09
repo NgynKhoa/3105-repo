@@ -15,6 +15,14 @@ _shared_screens: &screens
   - assets/preview-third.png
   - assets/preview-four.png
 
+_shared_os_rules: &os_rules
+  - minimum: "17.0"
+    maximum: "18.7.1"
+  - minimum: "26.0"
+    maximum: "26.6.1"
+  - minimum: "27.0"
+    maximum: "27.0"
+
 # ==========================================
 # DANH SÁCH PACKAGES
 # ==========================================
@@ -810,3 +818,24 @@ packages:
       @owenindahouse
       admin Mod @Thanhdat1690.
     changelog: 🎉 v4.6.0 — Phát hành lần đầu
+
+  # ----- owen-013 -----
+  - identifier: owen-013
+    name: Test Package EndToEnd
+    author: "@owenindahouse"
+    version: 1.0.0
+    summary: Test thêm package end-to-end
+    password: "testpass"
+    category: Customization
+    tags: [CUSTOM]
+    screenshots: *screens
+    download: packages/ALL_IN_ONE_V12.3105
+    sha256: FDC6EC1F47DC9C8D4BAA78FC2AC1957F4C1B486B34A886DB9F8221D13C6BFE0B
+    size: 38137
+    supportedOS: *os_rules
+    featured: false
+    isPrivate: false
+    description: |
+      Mô tả test
+      Nhiều dòng
+    changelog: v1.0.0 - Test changelog
