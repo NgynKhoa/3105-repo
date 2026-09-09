@@ -11,20 +11,6 @@
     "assets/preview-third.png",
     "assets/preview-four.png"
   ],
-  "_shared_os_rules": [
-    {
-      "minimum": "17.0",
-      "maximum": "18.7.1"
-    },
-    {
-      "minimum": "26.0",
-      "maximum": "26.6.1"
-    },
-    {
-      "minimum": "27.0",
-      "maximum": "27.0"
-    }
-  ],
   "packages": [
     {
       "identifier": "owen-trial",
@@ -50,16 +36,8 @@
       "size": 37432,
       "supportedOS": [
         {
-          "minimum": "17.0",
-          "maximum": "18.7.1"
-        },
-        {
-          "minimum": "26.0",
-          "maximum": "26.6.1"
-        },
-        {
-          "minimum": "27.0",
-          "maximum": "27.0"
+          "minimum": "17",
+          "maximum": "0"
         }
       ],
       "featured": false,
