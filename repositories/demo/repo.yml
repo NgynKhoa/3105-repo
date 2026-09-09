@@ -36,8 +36,14 @@ packages:
     sha256: CE977931A02FA8D505E6DF202BAC4252811DB1055AE1632BCBDC1413C271FCE0
     size: 37432
     supportedOS:
+      - minimum: "16"
+        maximum: ""
       - minimum: "17"
         maximum: "27"
+      - minimum: "18"
+        maximum: ""
+      - minimum: "26"
+        maximum: ""
     featured: false
     isPrivate: false
     description: |
@@ -194,7 +200,13 @@ packages:
     size: 37429
     supportedOS:
       - minimum: "16"
-        maximum: "0"
+        maximum: ""
+      - minimum: "17"
+        maximum: ""
+      - minimum: "18"
+        maximum: ""
+      - minimum: "26"
+        maximum: ""
     featured: false
     isPrivate: false
     description: |
@@ -640,19 +652,7 @@ packages:
            
            @owenindahouse
            
-           ❤️ Cảm ơn bạn đã ủng hộ!
-         changelog: |
-           
-           
-           ╭──────────────────╮
-            🚀 SẮP TỚI
-           ╰──────────────────╯
-           
-           ✨ Nhiều tính năng mới sẽ được bổ sung.
-           
-           🔄 Tiếp tục cập nhật và tối ưu trong các phiên bản tiếp theo.
-           
-           ❤️ Cảm ơn bạn đã ủng hộ!
+      ❤️ Cảm ơn bạn đã ủng hộ!
     changelog: 🎉 v4.6.0 — Phiên bản 4.6 mới nhất đã được cập nhật
 
   # ----- owen-000 -----
