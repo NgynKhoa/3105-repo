@@ -9,6 +9,12 @@ description: "🎮 Kho lưu trữ các bản tùy chỉnh & tiện ích iOS củ
 icon: assets/icon/repo-icon.png
 accentColor: "#FF3B30"
 
+_shared_screens: &screens
+  - assets/preview-first.png
+  - assets/preview-second.png
+  - assets/preview-third.png
+  - assets/preview-four.png
+
 # ==========================================
 # DANH SÁCH PACKAGES
 # ==========================================
@@ -81,7 +87,15 @@ packages:
     download: packages/HDR_120FPS.3105
     sha256: C6A6D2A32925B1BC8F844A3736DE7E3056EE06935E49836F1C89132A25851372
     size: 8200
-    supportedOS: *os_rules
+    supportedOS:
+      - minimum: "16"
+        maximum: ""
+      - minimum: "17"
+        maximum: ""
+      - minimum: "18"
+        maximum: ""
+      - minimum: "26"
+        maximum: ""
     featured: true
     isPrivate: false
     description: |
@@ -116,7 +130,15 @@ packages:
     download: packages/V12_GL.3105
     sha256: C8669AEDFB5BFD0AB05029B3F6D09320FBC562859B1EB22F17EF602E66F3BC04
     size: 37428
-    supportedOS: *os_rules
+    supportedOS:
+      - minimum: "16"
+        maximum: ""
+      - minimum: "17"
+        maximum: ""
+      - minimum: "18"
+        maximum: ""
+      - minimum: "26"
+        maximum: ""
     featured: false
     isPrivate: false
     description: |
@@ -170,7 +192,9 @@ packages:
     download: packages/PATCH_FREE_V12_KR.3105
     sha256: AB58206C6DD088D60D3471D8BA65E544D80519EAA365CC2832ED192E3F5AD503
     size: 37429
-    supportedOS: *os_rules
+    supportedOS:
+      - minimum: "16"
+        maximum: "0"
     featured: false
     isPrivate: false
     description: |
@@ -227,7 +251,15 @@ packages:
     download: packages/Classical_dialer.3105pass
     sha256: 3557A840CF720126142E7EE07AEC5AA10754AEE6F59DE7ABF66807195D1C85C3
     size: 829136
-    supportedOS: *os_rules
+    supportedOS:
+      - minimum: "16"
+        maximum: ""
+      - minimum: "17"
+        maximum: ""
+      - minimum: "18"
+        maximum: ""
+      - minimum: "26"
+        maximum: ""
     featured: true
     isPrivate: false
     description: |
@@ -277,7 +309,15 @@ packages:
     download: packages/Basic_CircleB&W.3105pass
     sha256: BA91799564D04544CFF874C897273037AA4717456A93B7A70798CBEFEE97AAF8
     size: 406950
-    supportedOS: *os_rules
+    supportedOS:
+      - minimum: "16"
+        maximum: ""
+      - minimum: "17"
+        maximum: ""
+      - minimum: "18"
+        maximum: ""
+      - minimum: "26"
+        maximum: ""
     featured: true
     isPrivate: false
     description: |
@@ -323,7 +363,15 @@ packages:
     download: packages/Dual_Horizon.3105pass
     sha256: 48807D528F2CF645C6B726A911C242FE4E826295C9076E1660D9C5D4788229EB
     size: 928132
-    supportedOS: *os_rules
+    supportedOS:
+      - minimum: "16"
+        maximum: ""
+      - minimum: "17"
+        maximum: ""
+      - minimum: "18"
+        maximum: ""
+      - minimum: "26"
+        maximum: ""
     featured: true
     isPrivate: false
     description: |
@@ -371,7 +419,15 @@ packages:
     download: packages/GRAPHICS_POTATO_WITH_120FPS.3105
     sha256: F7A03FE347ADF7DD29E0358FCF6FAED628E519F6837C7DDC6D5EE50FE15663B3
     size: 14102893
-    supportedOS: *os_rules
+    supportedOS:
+      - minimum: "16"
+        maximum: ""
+      - minimum: "17"
+        maximum: ""
+      - minimum: "18"
+        maximum: ""
+      - minimum: "26"
+        maximum: ""
     featured: true
     isPrivate: false
     description: |
@@ -413,7 +469,15 @@ packages:
     download: packages/Flower&Butterfly_Pink.3105pass
     sha256: 57EDB20E5572705C4A822F26DF41AC44EF95FAA52757DE0A6CDD836BA3BD67D1
     size: 1052199
-    supportedOS: *os_rules
+    supportedOS:
+      - minimum: "16"
+        maximum: ""
+      - minimum: "17"
+        maximum: ""
+      - minimum: "18"
+        maximum: ""
+      - minimum: "26"
+        maximum: ""
     featured: true
     isPrivate: false
     description: |
@@ -460,7 +524,15 @@ packages:
     download: packages/ALL_IN_ONE_V12.3105
     sha256: 9BF4F7C31A97C294714FA395AA9BE1674A5A4A4D414C5109FBBE9137DAF9C9DE
     size: 38137
-    supportedOS: *os_rules
+    supportedOS:
+      - minimum: "16"
+        maximum: ""
+      - minimum: "17"
+        maximum: ""
+      - minimum: "18"
+        maximum: ""
+      - minimum: "26"
+        maximum: ""
     featured: false
     isPrivate: false
     description: |

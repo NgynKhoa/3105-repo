@@ -374,13 +374,37 @@ def save_yaml(
         lines.append(f"accentColor: {_yaml_scalar(data['accentColor'])}")
     lines.append("")
 
+    # ---- ANCHORS cho shared screenshots / supportedOS ----
+    # Định nghĩa anchor ở root YAML dưới key hidden (prefix `_`) để app 3105 không đọc.
+    packages = data.get("packages") or []
+    shared_screens = None
+    shared_os = None
+    if packages_meta and len(packages_meta) == len(packages):
+        any_screens = any(bool(m.get("use_anchor_screens")) for m in packages_meta)
+        any_os = any(bool(m.get("use_anchor_os")) for m in packages_meta)
+        if any_screens:
+            shared_screens = DEFAULT_SCREENSHOTS
+        if any_os:
+            shared_os = DEFAULT_OS_RULES
+
+    if shared_screens is not None:
+        lines.append(f"_shared_screens: &{ANCHOR_SCREENS}")
+        for s in shared_screens:
+            lines.append(f"  - {s}")
+        lines.append("")
+    if shared_os is not None:
+        lines.append(f"_shared_os_rules: &{ANCHOR_OS_RULES}")
+        for rule in shared_os:
+            lines.append(f"  - minimum: \"{rule['minimum']}\"")
+            lines.append(f"    maximum: \"{rule['maximum']}\"")
+        lines.append("")
+
     # ---- DANH SÁCH PACKAGES ----
     lines.append("# ==========================================")
     lines.append("# DANH SÁCH PACKAGES")
     lines.append("# ==========================================")
     lines.append("")
     lines.append("packages:")
-    packages = data.get("packages") or []
     for idx, pkg in enumerate(packages):
         # Luôn ghi đầy đủ screenshots + supportedOS cho mỗi package
         # để JSON xuất ra không phụ thuộc anchor ở root.
