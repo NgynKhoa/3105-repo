@@ -683,6 +683,22 @@
       border-color: var(--neon);
       text-shadow: 0 0 10px rgba(var(--neon-rgb),0.6);
     }
+    /* Loading state — dùng ::before giả để button KHÔNG bị to ra */
+    #btnSave[data-loading]::before {
+      content: '[~]';
+      animation: save-pulse 0.9s linear infinite;
+    }
+    @keyframes save-pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.35; }
+    }
+    /* Kích thước cố định — không đổi dù text dài ngắn */
+    #btnSave, #btnAdd, #btnReload {
+      min-width: 52px;
+      min-height: 36px;
+      padding: 6px 14px;
+      box-sizing: border-box;
+    }
 
     /* Reload */
     #btnReload::before { content: '[R]'; }

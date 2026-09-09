@@ -1788,7 +1788,9 @@ async function saveAll() {
   // Disable nút để tránh double-click
   const btn = $('#btnSave');
   btn.disabled = true;
-  btn.textContent = '⏳ Đang lưu...';
+  // Lưu text gốc để restore sau; dùng ::before pseudo qua CSS
+  btn.dataset.loading = '1';
+  btn.textContent = '';
 
   try {
     // Bước 1: Ghi file YAML
@@ -1821,7 +1823,8 @@ async function saveAll() {
     toast(`Lỗi: ${err.message}`, 'error');
   } finally {
     btn.disabled = false;
-    btn.textContent = '🚀 Lưu & Push Git';
+    btn.textContent = '';
+    delete btn.dataset.loading;
   }
 }
 
