@@ -4,7 +4,7 @@
 
 schemaVersion: 1
 identifier: com.owen.mod
-name: Owen Custom Repository TEST
+name: Owen Custom Repository
 description: "🎮 Kho lưu trữ các bản tùy chỉnh & tiện ích iOS của Owen. 🔥 Cập nhật thường xuyên ❤️ @owenindahouse"
 icon: assets/icon/repo-icon.png
 accentColor: "#FF3B30"
