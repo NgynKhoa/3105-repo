@@ -801,6 +801,27 @@
       gap: 8px;
     }
 
+    /* ============================ BOX HEADER WRAPPERS ============================ */
+    #packagesBox .box-header-wrap,
+    #blog-section .box-header-wrap {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    #packagesBox .box-header-wrap .pkg-header,
+    #blog-section .box-header-wrap .pkg-header {
+      margin: 0;
+      width: 100%;
+    }
+    #packagesBox .box-header-wrap .pkg-search-wrap,
+    #blog-section .box-header-wrap .pkg-search-wrap {
+      flex-shrink: 0;
+    }
+
     #pkgSearchInput {
       width: 170px;
       padding: 7px 12px;
@@ -1889,7 +1910,7 @@
       <div class="page-grid">
       <div class="packages-col">
       <section class="box" id="packagesBox" style="padding:0; overflow:hidden;">
-        <div style="padding:14px 16px; border-bottom:1px solid var(--border);">
+        <div class="box-header-wrap">
           <div class="pkg-header">
             <div class="section-title" style="margin-bottom:0;">Danh sách packages</div>
             <div class="pkg-search-wrap">
@@ -1918,7 +1939,7 @@
 
       <!-- ============================ BLOG (inside packages-col) ============================ -->
       <section class="box" id="blog-section" style="padding:0; overflow:hidden;">
-        <div style="padding:14px 16px; border-bottom:1px solid var(--border);">
+        <div class="box-header-wrap">
           <div class="pkg-header">
             <div class="section-title" style="margin-bottom:0;">Blog</div>
             <div class="pkg-search-wrap">
