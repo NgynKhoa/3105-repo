@@ -504,16 +504,25 @@
     }
 
     /* ============================ SECTION HEADINGS ============================ */
-    .section-title {
+    /* UNIFIED: tất cả tiêu đề dùng chung style green neon */
+    .section-title,
+    .modal-header h3,
+    .star-title,
+    .mp-title {
       font-family: 'Press Start 2P', monospace;
+      font-size: 0.65rem;
+      color: var(--neon);
+      text-shadow: 0 0 8px var(--neon), 0 0 18px rgba(var(--neon-rgb), 0.4);
+      letter-spacing: 0.5px;
+    }
+
+    .section-title {
       font-size: 0.7rem;
-      color: var(--neon-cyan);
       margin-bottom: 6px;
       display: flex;
       align-items: center;
       gap: 8px;
       line-height: 1.4;
-      text-shadow: 0 0 10px rgba(var(--neon-cyan-rgb),0.35);
     }
 
     .section-title::before {
@@ -989,16 +998,13 @@
       position: absolute;
       left: 0; right: 0; bottom: 0;
       height: 1px;
-      background: linear-gradient(90deg, var(--neon-cyan), transparent 50%);
+      background: linear-gradient(90deg, var(--neon), transparent 50%);
       opacity: 0.4;
     }
 
     .modal-header h3 {
-      font-family: 'Press Start 2P', monospace;
-      font-size: 0.65rem;
-      color: var(--neon-cyan);
-      text-shadow: 0 0 10px rgba(var(--neon-cyan-rgb),0.4);
-      letter-spacing: 0.5px;
+      /* inherits .section-title unified style */
+      margin: 0;
     }
 
     #btnCloseModal {
@@ -1470,13 +1476,8 @@
       width: 100%;
     }
     .star-title {
-      font-family: 'VT323', monospace;
-      font-size: 14px;
-      color: var(--neon);
-      letter-spacing: 2px;
-      text-shadow: 0 0 8px var(--neon);
+      /* inherits .section-title unified style */
       margin-bottom: 12px;
-      opacity: 0.85;
       padding-bottom: 10px;
       border-bottom: 1px solid rgba(57, 255, 20, 0.15);
     }
@@ -1670,11 +1671,12 @@
       min-height: 36px;
     }
     .mp-title {
-      font-size: 15px;
-      letter-spacing: 1px;
-      color: var(--text-bright);
-      text-shadow: 0 0 6px rgba(57,255,20,0.5);
-      line-height: 1.1;
+      /* inherits .section-title unified style */
+      font-size: 0.65rem;
+      line-height: 1.4;
+      letter-spacing: 0.5px;
+      color: var(--neon);
+      text-shadow: 0 0 8px var(--neon), 0 0 18px rgba(var(--neon-rgb), 0.4);
     }
     .mp-artist {
       font-size: 12px;
