@@ -969,12 +969,12 @@
 
     .modal-content {
       background: linear-gradient(180deg, rgba(255,255,255,0.04), transparent 30%),
-                  linear-gradient(135deg, rgba(var(--neon-cyan-rgb),0.04), transparent 40%),
+                  linear-gradient(135deg, rgba(var(--neon-rgb),0.04), transparent 40%),
                   rgba(8, 12, 22, 0.96);
       border: 1px solid var(--border);
-      border-left: 3px solid var(--neon-cyan);
+      border-left: 3px solid var(--neon);
       border-radius: 4px;
-      box-shadow: 0 0 40px rgba(var(--neon-cyan-rgb),0.12), 0 0 80px rgba(0,0,0,0.6);
+      box-shadow: 0 0 40px rgba(var(--neon-rgb),0.12), 0 0 80px rgba(0,0,0,0.6);
       width: 100%;
       max-width: 860px;
       max-height: 90vh;
@@ -1003,7 +1003,11 @@
     }
 
     .modal-header h3 {
-      /* inherits .section-title unified style */
+      /* Dùng Be Vietnam Pro để hiển thị tiếng Việt tốt, vẫn giữ neon style */
+      font-family: 'Be Vietnam Pro', 'Press Start 2P', monospace;
+      font-size: 0.9rem;
+      font-weight: 600;
+      letter-spacing: 0.3px;
       margin: 0;
     }
 
