@@ -480,7 +480,62 @@ def index():
     return render_template(
         "index.html",
         bootstrap_js=bootstrap_js,
+        cache_version=14,
     )
+
+
+@app.route("/blog")
+@app.route("/blog/<int:post_id>")
+def blog_page(post_id: int = None):
+    """Trang Blog - hiển thị danh sách hoặc bài viết cụ thể."""
+    return render_template("blog.html", post_id=post_id)
+
+
+@app.route("/dashboard")
+def dashboard():
+    """Trang Admin Dashboard."""
+    return render_template("dashboard.html")
+
+
+# ===================== BLOG DATA =====================
+BLOG_POSTS = [
+    {"id": 1, "icon": "📦", "title": "Cách cài đặt Repository trên ứng dụng 3105", "date": "2 ngày trước",
+     "excerpt": "Hướng dẫn chi tiết cách cài đặt và sử dụng Repository trên ứng dụng 3105 Mod Collection...",
+     "content": "<h2>Giới thiệu</h2><p>Repository là nơi lưu trữ các gói mod, theme và tiện ích mở rộng cho ứng dụng 3105. Bài viết này sẽ hướng dẫn bạn cách cài đặt Repository một cách dễ dàng.</p><h3>Bước 1: Truy cập ứng dụng</h3><p>Mở ứng dụng 3105 Mod Collection và điều hướng đến mục <strong>Cài đặt</strong>.</p><h3>Bước 2: Thêm Repository</h3><p>Nhấn nút <em>Thêm Repository</em> và nhập đường link Repository của bạn.</p><h3>Bước 3: Xác nhận</h3><p>Sau khi thêm thành công, bạn có thể tải về các gói mod từ Repository.</p>"},
+    {"id": 2, "icon": "🛡️", "title": "Bảo mật khi sử dụng Mod - Những lưu ý quan trọng", "date": "5 ngày trước",
+     "excerpt": "Tìm hiểu về các biện pháp bảo mật khi sử dụng mod trên thiết bị của bạn...",
+     "content": "<h2>Tại sao bảo mật quan trọng?</h2><p>Việc sử dụng mod có thể tiềm ẩn rủi ro bảo mật nếu không cẩn thận.</p><h3>Các lưu ý:</h3><ul><li>Chỉ tải mod từ nguồn đáng tin cậy</li><li>Kiểm tra quyền trước khi cài đặt</li><li>Sao lưu dữ liệu thường xuyên</li></ul>"},
+    {"id": 3, "icon": "⚡", "title": "Cập nhật v1.2 - Tính năng mới & cải tiến", "date": "1 tuần trước",
+     "excerpt": "Khám phá các tính năng mới trong phiên bản v1.2 của ứng dụng 3105...",
+     "content": "<h2>Phiên bản v1.2</h2><p>Phiên bản mới mang đến nhiều cải tiến đáng chú ý.</p><h3>Tính năng mới:</h3><ul><li>Giao diện người dùng được cải thiện</li><li>Tốc độ tải nhanh hơn 50%</li><li>Hỗ trợ nhiều ngôn ngữ mới</li></ul>"},
+    {"id": 4, "icon": "🎨", "title": "Hướng dẫn tạo Custom Dialer cho riêng bạn", "date": "2 tuần trước",
+     "excerpt": "Cách tạo bộ quay số tùy chỉnh với giao diện và hiệu ứng yêu thích...",
+     "content": "<h2>Custom Dialer</h2><p>Tạo bộ quay số riêng biệt với phong cách của bạn.</p><h3>Các bước thực hiện:</h3><ol><li>Chọn hình nền yêu thích</li><li>Tùy chỉnh màu sắc nút bấm</li><li>Thêm hiệu ứng animation</li></ol>"},
+    {"id": 5, "icon": "🎮", "title": "So sánh các gói Custom: VNG vs Global vs KR", "date": "3 tuần trước",
+     "excerpt": "So sánh chi tiết các gói custom dialer phổ biến nhất hiện nay...",
+     "content": "<h2>So sánh các gói Custom</h2><p>Chúng ta cùng so sánh 3 gói dialer phổ biến nhất.</p><table><tr><th>Tính năng</th><th>VNG</th><th>Global</th><th>KR</th></tr><tr><td>Giá</td><td>Miễn phí</td><td>Cao</td><td>Trung bình</td></tr><tr><td>Chất lượng</td><td>Tốt</td><td>Xuất sắc</td><td>Tốt</td></tr></table>"},
+    {"id": 6, "icon": "🔧", "title": "Khắc phục lỗi thường gặp khi cập nhật Repository", "date": "1 tháng trước",
+     "excerpt": "Các lỗi thường gặp và cách khắc phục nhanh chóng...",
+     "content": "<h2>Sửa lỗi Repository</h2><p>Một số lỗi phổ biến và cách khắc phục.</p><h3>Lỗi kết nối:</h3><p>Kiểm tra đường truyền internet và thử lại sau.</p>"},
+    {"id": 7, "icon": "💎", "title": "Premium Features có gì mới trong bản cập nhật", "date": "1 tháng trước",
+     "excerpt": "Khám phá các tính năng Premium độc quyền dành cho người dùng...",
+     "content": "<h2>Tính năng Premium</h2><p>Người dùng Premium được hưởng nhiều đặc quyền.</p><ul><li>Không quảng cáo</li><li>Hỗ trợ ưu tiên</li><li>Tính năng độc quyền</li></ul>"}
+]
+
+
+@app.route("/api/blog/posts")
+def api_blog_posts():
+    """API trả về danh sách blog posts."""
+    return jsonify({"posts": BLOG_POSTS})
+
+
+@app.route("/api/blog/post/<int:post_id>")
+def api_blog_post(post_id: int):
+    """API trả về một bài viết cụ thể."""
+    post = next((p for p in BLOG_POSTS if p["id"] == post_id), None)
+    if post:
+        return jsonify(post)
+    abort(404, description="Post not found")
 
 
 @app.route("/admin/static/<path:filename>")

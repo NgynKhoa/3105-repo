@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Dashboard — 3105</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Fira+Code:wght@400;500&family=Be+Vietnam+Pro:wght@300;400;500;600&family=VT323&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --neon: #80ff40;
+      --neon-rgb: 57, 255, 20;
+      --neon-pink: #ff2d7b;
+      --neon-pink-rgb: 255, 45, 123;
+      --neon-cyan: #00f0ff;
+      --neon-cyan-rgb: 0, 240, 255;
+      --neon-yellow: #f0e040;
+      --neon-lavender: #b388ff;
+      --bg: #06060e;
+      --panel: rgba(10, 14, 26, 0.92);
+      --panel-alt: rgba(6, 9, 18, 0.96);
+      --text: #c0d8cc;
+      --text-bright: #e8fff0;
+      --muted: #7a9a86;
+      --border: rgba(57, 255, 20, 0.15);
+      --border-glow: rgba(57, 255, 20, 0.38);
+      --shadow: 0 0 14px rgba(0,0,0,0.4), 0 0 28px rgba(var(--neon-rgb),0.08);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Be Vietnam Pro', 'Fira Code', monospace;
+      min-height: 100vh;
+      text-shadow: 0 0 4px rgba(232,255,240,0.3), 0 0 8px rgba(var(--neon-rgb),0.1);
+      overflow-x: hidden;
+    }
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 9999;
+      background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.04) 2px, rgba(0,0,0,0.04) 4px);
+    }
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      background: repeating-linear-gradient(90deg, rgba(255,255,255,0.025) 0 1px, transparent 1px 44px),
+                  repeating-linear-gradient(0deg, rgba(255,255,255,0.016) 0 1px, transparent 1px 44px),
+                  radial-gradient(circle at 15% 8%, rgba(0,240,255,0.06), transparent 28%),
+                  radial-gradient(circle at 85% 4%, rgba(255,45,123,0.05), transparent 22%);
+    }
+    #rain-canvas { position: fixed; inset: 0; pointer-events: none; z-index: 1; }
+
+    /* Header */
+    .dash-header {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 16px 24px;
+      border-bottom: 1px solid var(--border);
+      background: rgba(0,0,0,0.3);
+    }
+    .dash-back {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 38px;
+      height: 38px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--panel);
+      color: var(--neon);
+      cursor: pointer;
+      transition: all 0.2s;
+      text-decoration: none;
+      font-size: 18px;
+    }
+    .dash-back:hover { border-color: var(--neon); box-shadow: 0 0 10px rgba(var(--neon-rgb),0.3); transform: translateX(-2px); }
+    .dash-title {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 13px;
+      color: var(--neon);
+      text-shadow: 0 0 8px rgba(var(--neon-rgb),0.5), 0 0 20px rgba(var(--neon-rgb),0.2);
+      letter-spacing: 1px;
+    }
+    .dash-tabs {
+      display: flex;
+      gap: 6px;
+      margin-left: auto;
+      flex-wrap: wrap;
+    }
+    .dash-tab {
+      padding: 8px 16px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--panel);
+      color: var(--text);
+      font-size: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+    .dash-tab:hover { border-color: var(--neon); color: var(--neon); }
+    .dash-tab.active { border-color: var(--neon); color: var(--neon); box-shadow: 0 0 10px rgba(var(--neon-rgb),0.25); background: rgba(var(--neon-rgb),0.08); }
+
+    /* Content */
+    .dash-content { position: relative; z-index: 2; max-width: 1200px; margin: 0 auto; padding: 24px; }
+    .dash-panel { display: none; }
+    .dash-panel.active { display: block; }
+
+    /* Section card */
+    .section-card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    .section-title {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 10px;
+      color: var(--neon);
+      text-shadow: 0 0 6px rgba(var(--neon-rgb),0.4);
+      margin-bottom: 16px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Form */
+    .form-group { margin-bottom: 14px; }
+    .form-label { display: block; font-size: 11px; font-weight: 600; color: var(--text-bright); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .form-input, .form-textarea, .form-select {
+      width: 100%;
+      padding: 10px 12px;
+      background: rgba(0,0,0,0.3);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-family: inherit;
+      font-size: 13px;
+      transition: all 0.2s;
+    }
+    .form-input:focus, .form-textarea:focus, .form-select:focus { outline: none; border-color: var(--neon); box-shadow: 0 0 8px rgba(var(--neon-rgb),0.2); }
+    .form-textarea { min-height: 100px; resize: vertical; }
+    .form-btn {
+      padding: 10px 20px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: rgba(var(--neon-rgb),0.1);
+      color: var(--neon);
+      font-family: inherit;
+      font-size: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .form-btn:hover { border-color: var(--neon); box-shadow: 0 0 12px rgba(var(--neon-rgb),0.3); }
+    .form-btn.danger { background: rgba(var(--neon-pink-rgb),0.1); color: var(--neon-pink); border-color: rgba(var(--neon-pink-rgb),0.3); }
+    .form-btn.danger:hover { border-color: var(--neon-pink); box-shadow: 0 0 12px rgba(var(--neon-pink-rgb),0.3); }
+    .form-btn.success { background: rgba(var(--neon-rgb),0.15); color: var(--neon); border-color: rgba(var(--neon-rgb),0.4); }
+    .form-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
+
+    /* Toggle switch */
+    .toggle-switch { position: relative; width: 44px; height: 24px; display: inline-block; }
+    .toggle-switch input { opacity: 0; width: 0; height: 0; }
+    .toggle-slider { position: absolute; inset: 0; background: rgba(255,255,255,0.08); border: 1px solid var(--border); border-radius: 12px; cursor: pointer; transition: all 0.2s; }
+    .toggle-slider::before { content: ''; position: absolute; width: 18px; height: 18px; left: 2px; top: 2px; background: var(--muted); border-radius: 50%; transition: all 0.2s; }
+    .toggle-switch input:checked + .toggle-slider { background: rgba(var(--neon-rgb),0.2); border-color: var(--neon); }
+    .toggle-switch input:checked + .toggle-slider::before { transform: translateX(20px); background: var(--neon); box-shadow: 0 0 8px rgba(var(--neon-rgb),0.5); }
+
+    /* Box list */
+    .box-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
+    .box-item {
+      padding: 14px;
+      background: rgba(0,0,0,0.2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: grab;
+      transition: all 0.2s;
+    }
+    .box-item:hover { border-color: var(--border-glow); background: rgba(0,0,0,0.35); }
+    .box-item.dragging { opacity: 0.5; border-color: var(--neon); cursor: grabbing; }
+    .box-item.dragover { border-color: var(--neon-cyan); background: rgba(var(--neon-cyan-rgb),0.05); }
+    .box-handle { color: var(--muted); font-size: 18px; cursor: grab; flex-shrink: 0; }
+    .box-info { flex: 1; min-width: 0; }
+    .box-name { font-size: 13px; font-weight: 600; color: var(--text-bright); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .box-id { font-size: 11px; color: var(--muted); }
+    .box-actions { display: flex; gap: 6px; }
+    .box-btn-sm {
+      width: 28px;
+      height: 28px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: transparent;
+      color: var(--text);
+      cursor: pointer;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+    .box-btn-sm:hover { border-color: var(--neon); color: var(--neon); }
+    .box-btn-sm.danger:hover { border-color: var(--neon-pink); color: var(--neon-pink); }
+
+    /* Blog list */
+    .blog-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px;
+      background: rgba(0,0,0,0.2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      margin-bottom: 10px;
+      transition: all 0.2s;
+    }
+    .blog-item:hover { border-color: var(--border-glow); }
+    .blog-icon { font-size: 24px; width: 40px; text-align: center; }
+    .blog-info { flex: 1; min-width: 0; }
+    .blog-title { font-size: 13px; font-weight: 600; color: var(--text-bright); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .blog-date { font-size: 11px; color: var(--muted); }
+    .blog-actions { display: flex; gap: 6px; }
+
+    /* Font preview */
+    .font-preview { padding: 16px; background: rgba(0,0,0,0.3); border: 1px solid var(--border); border-radius: 10px; margin-top: 12px; }
+    .font-sample { font-size: 18px; color: var(--text-bright); margin-bottom: 8px; }
+    .font-sample-sm { font-size: 12px; color: var(--muted); }
+
+    /* Range slider */
+    input[type="range"] { width: 100%; height: 6px; -webkit-appearance: none; appearance: none; background: rgba(255,255,255,0.1); border-radius: 3px; outline: none; }
+    input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 16px; height: 16px; border-radius: 50%; background: var(--neon); cursor: pointer; box-shadow: 0 0 8px rgba(var(--neon-rgb),0.5); }
+
+    /* Theme grid */
+    .theme-grid { display: grid; grid-template-columns: repeat(8, 1fr); gap: 8px; }
+    .theme-btn {
+      height: 40px;
+      border: 2px solid transparent;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .theme-btn:hover { transform: scale(1.05); }
+    .theme-btn.active { border-color: var(--neon); box-shadow: 0 0 10px rgba(var(--neon-rgb),0.3); }
+
+    /* Notification */
+    .notif {
+      position: fixed;
+      top: 80px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 12px 24px;
+      background: var(--panel);
+      border: 1px solid var(--neon);
+      border-radius: 10px;
+      color: var(--neon);
+      font-size: 13px;
+      box-shadow: 0 0 20px rgba(var(--neon-rgb),0.3);
+      z-index: 10000;
+      animation: slideDown 0.3s ease;
+    }
+    .notif.danger { border-color: var(--neon-pink); color: var(--neon-pink); box-shadow: 0 0 20px rgba(var(--neon-pink-rgb),0.3); }
+    @keyframes slideDown { from { opacity: 0; transform: translateX(-50%) translateY(-20px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
+
+    /* Settings */
+    #settingsBtn { position: fixed; top: 14px; right: 14px; z-index: 10000; width: 40px; height: 40px; border: 1px solid var(--border); border-radius: 10px; background: var(--panel); color: var(--neon); font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+    #settingsBtn:hover { border-color: var(--neon); box-shadow: 0 0 14px rgba(var(--neon-rgb),0.35); transform: rotate(30deg); }
+    #settingsMenu { display: none; position: fixed; top: 60px; right: 14px; z-index: 10001; width: 260px; background: var(--panel); border: 1px solid var(--border); border-radius: 14px; box-shadow: var(--shadow); overflow: hidden; }
+    #settingsMenu.open { display: block; }
+    .settings-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; border-bottom: 1px solid var(--border); background: rgba(var(--neon-rgb),0.04); }
+    .settings-title { font-family: 'Press Start 2P', monospace; font-size: 10px; color: var(--neon); text-shadow: 0 0 6px rgba(var(--neon-rgb),0.4); }
+    .settings-close { width: 26px; height: 26px; border: none; background: transparent; color: var(--muted); cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; border-radius: 6px; transition: all 0.2s; }
+    .settings-close:hover { color: var(--neon-pink); background: rgba(var(--neon-pink-rgb),0.1); }
+    .settings-body { padding: 8px 0; max-height: 60vh; overflow-y: auto; }
+    .settings-group { padding: 12px 16px; border-bottom: 1px solid var(--border); }
+    .settings-label { display: block; font-size: 11px; font-weight: 600; color: var(--text-bright); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .settings-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+    .settings-row:last-child { margin-bottom: 0; }
+    .settings-row-label { font-size: 12px; color: var(--text); }
+    #overlay { display: none; position: fixed; inset: 0; z-index: 9998; background: transparent; }
+    #overlay.active { display: block; }
+  </style>
+</head>
+<body>
+  <canvas id="rain-canvas"></canvas>
+
+  <!-- Settings -->
+  <button id="settingsBtn" title="Cài đặt">⚙️</button>
+  <div id="settingsMenu">
+    <div class="settings-header">
+      <span class="settings-title">SETTINGS</span>
+      <button class="settings-close" id="closeSettings">✕</button>
+    </div>
+    <div class="settings-body">
+      <div class="settings-group">
+        <span class="settings-label">Màu Theme</span>
+        <div id="themeGrid" class="theme-grid">
+          <button class="theme-btn active" data-theme="green" style="background:linear-gradient(135deg,#80ff40,#39ff14);" title="Green"></button>
+          <button class="theme-btn" data-theme="cyan" style="background:linear-gradient(135deg,#00f0ff,#0099cc);" title="Cyan"></button>
+          <button class="theme-btn" data-theme="pink" style="background:linear-gradient(135deg,#ff2d7b,#cc1155);" title="Pink"></button>
+          <button class="theme-btn" data-theme="lavender" style="background:linear-gradient(135deg,#b388ff,#7744dd);" title="Lavender"></button>
+          <button class="theme-btn" data-theme="yellow" style="background:linear-gradient(135deg,#f0e040,#ccbb00);" title="Yellow"></button>
+          <button class="theme-btn" data-theme="red" style="background:linear-gradient(135deg,#ff4444,#cc0000);" title="Red"></button>
+          <button class="theme-btn" data-theme="orange" style="background:linear-gradient(135deg,#ff8800,#cc5500);" title="Orange"></button>
+          <button class="theme-btn" data-theme="white" style="background:linear-gradient(135deg,#ffffff,#cccccc);" title="White"></button>
+        </div>
+      </div>
+      <div class="settings-group">
+        <span class="settings-label">Hiệu ứng Mưa</span>
+        <div class="settings-row">
+          <span class="settings-row-label">Bật Mưa</span>
+          <label class="toggle-switch"><input type="checkbox" id="toggleRain" checked><span class="toggle-slider"></span></label>
+        </div>
+        <div class="settings-row">
+          <span class="settings-row-label">Mưa Nặng</span>
+          <label class="toggle-switch"><input type="checkbox" id="toggleHeavyRain"><span class="toggle-slider"></span></label>
+        </div>
+      </div>
+      <div class="settings-group">
+        <span class="settings-label">Chế độ Hiển thị</span>
+        <div class="settings-row">
+          <span class="settings-row-label">Dark Mode</span>
+          <label class="toggle-switch"><input type="checkbox" id="toggleDarkMode" checked><span class="toggle-slider"></span></label>
+        </div>
+      </div>
+      <div class="settings-group">
+        <span class="settings-label">Độ Trong Suốt</span>
+        <input type="range" id="rangeTransparency" min="0" max="100" value="92">
+      </div>
+    </div>
+  </div>
+  <div id="overlay"></div>
+
+  <!-- Header -->
+  <header class="dash-header">
+    <a href="/" class="dash-back">←</a>
+    <h1 class="dash-title">ADMIN DASHBOARD</h1>
+    <div class="dash-tabs">
+      <button class="dash-tab active" data-tab="general">🏠 General</button>
+      <button class="dash-tab" data-tab="boxes">📦 Boxes</button>
+      <button class="dash-tab" data-tab="blog">📝 Blog</button>
+      <button class="dash-tab" data-tab="fonts">🔤 Fonts</button>
+      <button class="dash-tab" data-tab="style">🎨 Style</button>
+    </div>
+  </header>
+
+  <div class="dash-content">
+    <!-- General Panel -->
+    <div class="dash-panel active" id="panel-general">
+      <div class="section-card">
+        <div class="section-title">🖼️ Site Settings</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Site Title</label>
+            <input type="text" class="form-input" id="siteTitle" value="Owen Custom Repository">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Logo Text</label>
+            <input type="text" class="form-input" id="logoText" value="OWEN">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Repo URL</label>
+          <input type="text" class="form-input" id="repoUrl" value="https://github.com/NgynKhoa/3105-repo">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Description</label>
+          <textarea class="form-textarea" id="siteDesc">Repository Builder cho ứng dụng 3105 Mod Collection</textarea>
+        </div>
+        <button class="form-btn success" onclick="saveGeneral()">💾 Lưu thay đổi</button>
+      </div>
+    </div>
+
+    <!-- Boxes Panel -->
+    <div class="dash-panel" id="panel-boxes">
+      <div class="section-card">
+        <div class="section-title">📦 Box Order (Drag để sắp xếp)</div>
+        <div class="box-list" id="boxList">
+          <div class="box-item" draggable="true" data-id="search-box">
+            <span class="box-handle">☰</span>
+            <div class="box-info"><div class="box-name">Search Box</div><div class="box-id">#search-box</div></div>
+            <div class="box-actions">
+              <button class="box-btn-sm" onclick="toggleBox('search-box')" title="Toggle">👁️</button>
+              <button class="box-btn-sm danger" onclick="removeBox('search-box')" title="Xóa">🗑️</button>
+            </div>
+          </div>
+          <div class="box-item" draggable="true" data-id="categories-box">
+            <span class="box-handle">☰</span>
+            <div class="box-info"><div class="box-name">Categories</div><div class="box-id">#categories-box</div></div>
+            <div class="box-actions">
+              <button class="box-btn-sm" onclick="toggleBox('categories-box')" title="Toggle">👁️</button>
+              <button class="box-btn-sm danger" onclick="removeBox('categories-box')" title="Xóa">🗑️</button>
+            </div>
+          </div>
+          <div class="box-item" draggable="true" data-id="packages-box">
+            <span class="box-handle">☰</span>
+            <div class="box-info"><div class="box-name">Packages</div><div class="box-id">#packages-box</div></div>
+            <div class="box-actions">
+              <button class="box-btn-sm" onclick="toggleBox('packages-box')" title="Toggle">👁️</button>
+              <button class="box-btn-sm danger" onclick="removeBox('packages-box')" title="Xóa">🗑️</button>
+            </div>
+          </div>
+          <div class="box-item" draggable="true" data-id="files-box">
+            <span class="box-handle">☰</span>
+            <div class="box-info"><div class="box-name">Files</div><div class="box-id">#files-box</div></div>
+            <div class="box-actions">
+              <button class="box-btn-sm" onclick="toggleBox('files-box')" title="Toggle">👁️</button>
+              <button class="box-btn-sm danger" onclick="removeBox('files-box')" title="Xóa">🗑️</button>
+            </div>
+          </div>
+          <div class="box-item" draggable="true" data-id="blog-section">
+            <span class="box-handle">☰</span>
+            <div class="box-info"><div class="box-name">Blog Section</div><div class="box-id">#blog-section</div></div>
+            <div class="box-actions">
+              <button class="box-btn-sm" onclick="toggleBox('blog-section')" title="Toggle">👁️</button>
+              <button class="box-btn-sm danger" onclick="removeBox('blog-section')" title="Xóa">🗑️</button>
+            </div>
+          </div>
+          <div class="box-item" draggable="true" data-id="footer-box">
+            <span class="box-handle">☰</span>
+            <div class="box-info"><div class="box-name">Footer</div><div class="box-id">#footer-box</div></div>
+            <div class="box-actions">
+              <button class="box-btn-sm" onclick="toggleBox('footer-box')" title="Toggle">👁️</button>
+              <button class="box-btn-sm danger" onclick="removeBox('footer-box')" title="Xóa">🗑️</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="section-card">
+        <div class="section-title">📐 Box Sizes</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Packages Box Height (px)</label>
+            <input type="range" min="100" max="600" value="302" id="pkgHeight">
+            <span id="pkgHeightVal" style="font-size:11px;color:var(--neon);">302px</span>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Files Box Height (px)</label>
+            <input type="range" min="100" max="600" value="302" id="filesHeight">
+            <span id="filesHeightVal" style="font-size:11px;color:var(--neon);">302px</span>
+          </div>
+        </div>
+        <button class="form-btn success" onclick="saveBoxSizes()">💾 Lưu kích thước</button>
+      </div>
+    </div>
+
+    <!-- Blog Panel -->
+    <div class="dash-panel" id="panel-blog">
+      <div class="section-card">
+        <div class="section-title">📝 Quản lý Blog Posts</div>
+        <div id="blogList"></div>
+      </div>
+      <div class="section-card">
+        <div class="section-title">➕ Thêm / Sửa Bài viết</div>
+        <input type="hidden" id="editPostId">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Icon (emoji)</label>
+            <input type="text" class="form-input" id="postIcon" value="📝">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Tiêu đề</label>
+            <input type="text" class="form-input" id="postTitle" placeholder="Tiêu đề bài viết">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Mô tả ngắn</label>
+          <input type="text" class="form-input" id="postExcerpt" placeholder="Mô tả ngắn...">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Nội dung (HTML)</label>
+          <textarea class="form-textarea" id="postContent" placeholder="<h2>Tiêu đề</h2><p>Nội dung...</p>"></textarea>
+        </div>
+        <button class="form-btn success" onclick="savePost()">💾 Lưu bài viết</button>
+        <button class="form-btn" onclick="clearPostForm()" style="margin-left:8px;">🔄 Reset</button>
+      </div>
+    </div>
+
+    <!-- Fonts Panel -->
+    <div class="dash-panel" id="panel-fonts">
+      <div class="section-card">
+        <div class="section-title">🔤 Font Settings</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Primary Font</label>
+            <select class="form-select" id="primaryFont">
+              <option value="'Be Vietnam Pro'">Be Vietnam Pro</option>
+              <option value="'Roboto'">Roboto</option>
+              <option value="'Open Sans'">Open Sans</option>
+              <option value="'Poppins'">Poppins</option>
+              <option value="'Montserrat'">Montserrat</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Mono Font</label>
+            <select class="form-select" id="monoFont">
+              <option value="'Fira Code'">Fira Code</option>
+              <option value="'Roboto Mono'">Roboto Mono</option>
+              <option value="'Source Code Pro'">Source Code Pro</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Title Font</label>
+          <select class="form-select" id="titleFont">
+            <option value="'Press Start 2P'">Press Start 2P (Retro)</option>
+            <option value="'Orbitron'">Orbitron (Sci-Fi)</option>
+            <option value="'Russo One'">Russo One (Bold)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Base Font Size: <span id="fontSizeVal">14</span>px</label>
+          <input type="range" min="10" max="20" value="14" id="baseFontSize">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Title Font Size: <span id="titleSizeVal">12</span>px</label>
+          <input type="range" min="8" max="20" value="12" id="titleFontSize">
+        </div>
+        <div class="font-preview">
+          <div class="font-sample" id="fontPreview">3105 Mod Collection</div>
+          <div class="font-sample-sm">Repository Builder — Preview text</div>
+        </div>
+        <button class="form-btn success" onclick="saveFonts()">💾 Lưu Font</button>
+      </div>
+    </div>
+
+    <!-- Style Panel -->
+    <div class="dash-panel" id="panel-style">
+      <div class="section-card">
+        <div class="section-title">🎨 Global Theme</div>
+        <div id="themeGridDash" class="theme-grid">
+          <button class="theme-btn active" data-theme="green" style="background:linear-gradient(135deg,#80ff40,#39ff14);" title="Green"></button>
+          <button class="theme-btn" data-theme="cyan" style="background:linear-gradient(135deg,#00f0ff,#0099cc);" title="Cyan"></button>
+          <button class="theme-btn" data-theme="pink" style="background:linear-gradient(135deg,#ff2d7b,#cc1155);" title="Pink"></button>
+          <button class="theme-btn" data-theme="lavender" style="background:linear-gradient(135deg,#b388ff,#7744dd);" title="Lavender"></button>
+          <button class="theme-btn" data-theme="yellow" style="background:linear-gradient(135deg,#f0e040,#ccbb00);" title="Yellow"></button>
+          <button class="theme-btn" data-theme="red" style="background:linear-gradient(135deg,#ff4444,#cc0000);" title="Red"></button>
+          <button class="theme-btn" data-theme="orange" style="background:linear-gradient(135deg,#ff8800,#cc5500);" title="Orange"></button>
+          <button class="theme-btn" data-theme="white" style="background:linear-gradient(135deg,#ffffff,#cccccc);" title="White"></button>
+        </div>
+        <button class="form-btn success" onclick="saveTheme()" style="margin-top:14px;">💾 Áp dụng Theme</button>
+      </div>
+      <div class="section-card">
+        <div class="section-title">🌧️ Rain Settings</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Rain Opacity</label>
+            <input type="range" min="0" max="100" value="50" id="rainOpacity">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Rain Speed</label>
+            <input type="range" min="1" max="10" value="3" id="rainSpeed">
+          </div>
+        </div>
+        <button class="form-btn success" onclick="saveRain()">💾 Lưu</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Rain
+    const canvas = document.getElementById('rain-canvas');
+    const ctx = canvas.getContext('2d');
+    let drops = [], rainEnabled = true, heavyRain = false;
+    function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+    class Drop { constructor() { this.reset(); this.y = Math.random() * canvas.height; } reset() { this.x = Math.random() * canvas.width; this.y = heavyRain ? -20 : -10; this.len = heavyRain ? Math.random() * 30 + 20 : Math.random() * 15 + 8; this.speed = heavyRain ? Math.random() * 6 + 4 : Math.random() * 3 + 2; this.opacity = Math.random() * 0.3 + 0.2; this.thick = heavyRain ? Math.random() * 1.5 + 1 : Math.random() * 0.8 + 0.4; } update() { this.y += this.speed; if (this.y > canvas.height) this.reset(); } draw() { ctx.beginPath(); ctx.moveTo(this.x, this.y); ctx.lineTo(this.x + 1, this.y + this.len); ctx.strokeStyle = `rgba(57, 255, 20, ${this.opacity})`; ctx.lineWidth = this.thick; ctx.stroke(); } }
+    function initRain() { const count = heavyRain ? 150 : 60; drops = []; for (let i = 0; i < count; i++) drops.push(new Drop()); }
+    function animateRain() { ctx.clearRect(0, 0, canvas.width, canvas.height); if (rainEnabled) drops.forEach(d => { d.update(); d.draw(); }); requestAnimationFrame(animateRain); }
+    initRain(); animateRain();
+
+    // Settings
+    const settingsBtn = document.getElementById('settingsBtn');
+    const settingsMenu = document.getElementById('settingsMenu');
+    const closeSettings = document.getElementById('closeSettings');
+    const overlay = document.getElementById('overlay');
+    settingsBtn.addEventListener('click', () => { settingsMenu.classList.toggle('open'); overlay.classList.toggle('active'); });
+    closeSettings.addEventListener('click', () => { settingsMenu.classList.remove('open'); overlay.classList.remove('active'); });
+    overlay.addEventListener('click', () => { settingsMenu.classList.remove('open'); overlay.classList.remove('active'); });
+
+    const themes = {
+      green: { neon: '#80ff40', neonRgb: '57, 255, 20', bg: '#06060e' },
+      cyan: { neon: '#00f0ff', neonRgb: '0, 240, 255', bg: '#000e1a' },
+      pink: { neon: '#ff2d7b', neonRgb: '255, 45, 123', bg: '#0e0610' },
+      lavender: { neon: '#b388ff', neonRgb: '179, 136, 255', bg: '#08060e' },
+      yellow: { neon: '#f0e040', neonRgb: '240, 224, 64', bg: '#0e0c06' },
+      red: { neon: '#ff4444', neonRgb: '255, 68, 68', bg: '#0e0606' },
+      orange: { neon: '#ff8800', neonRgb: '255, 136, 0', bg: '#0e0a06' },
+      white: { neon: '#eeeeee', neonRgb: '238, 238, 238', bg: '#111111' }
+    };
+
+    function applyTheme(name) {
+      const t = themes[name];
+      if (!t) return;
+      const r = document.documentElement;
+      r.style.setProperty('--neon', t.neon);
+      r.style.setProperty('--neon-rgb', t.neonRgb);
+      r.style.setProperty('--bg', t.bg);
+      document.querySelectorAll('.theme-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll(`.theme-btn[data-theme="${name}"]`).forEach(b => b.classList.add('active'));
+    }
+
+    document.querySelectorAll('.theme-btn').forEach(btn => {
+      btn.addEventListener('click', () => applyTheme(btn.dataset.theme));
+    });
+
+    document.getElementById('toggleRain').addEventListener('change', e => { rainEnabled = e.target.checked; });
+    document.getElementById('toggleHeavyRain').addEventListener('change', e => { heavyRain = e.target.checked; initRain(); });
+    document.getElementById('toggleDarkMode').addEventListener('change', e => {
+      if (e.target.checked) {
+        document.documentElement.style.setProperty('--panel', 'rgba(10, 14, 26, 0.92)');
+        document.documentElement.style.setProperty('--text', '#c0d8cc');
+      } else {
+        document.documentElement.style.setProperty('--panel', 'rgba(255, 255, 255, 0.92)');
+        document.documentElement.style.setProperty('--text', '#1a1a1a');
+      }
+    });
+    document.getElementById('rangeTransparency').addEventListener('input', e => {
+      const v = e.target.value / 100;
+      document.documentElement.style.setProperty('--panel', `rgba(10, 14, 26, ${v})`);
+    });
+
+    // Tabs
+    document.querySelectorAll('.dash-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.dash-tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.dash-panel').forEach(p => p.classList.remove('active'));
+        tab.classList.add('active');
+        document.getElementById('panel-' + tab.dataset.tab).classList.add('active');
+      });
+    });
+
+    // Blog
+    let blogPosts = [];
+    async function loadBlogPosts() {
+      try {
+        const res = await fetch('/api/blog/posts');
+        const data = await res.json();
+        blogPosts = data.posts;
+        renderBlogList();
+      } catch (e) { console.error(e); }
+    }
+    loadBlogPosts();
+
+    function renderBlogList() {
+      const el = document.getElementById('blogList');
+      el.innerHTML = blogPosts.map(p => `
+        <div class="blog-item">
+          <div class="blog-icon">${p.icon}</div>
+          <div class="blog-info">
+            <div class="blog-title">${p.title}</div>
+            <div class="blog-date">${p.date}</div>
+          </div>
+          <div class="blog-actions">
+            <button class="box-btn-sm" onclick="editPost(${p.id})" title="Sửa">✏️</button>
+            <button class="box-btn-sm danger" onclick="deletePost(${p.id})" title="Xóa">🗑️</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function editPost(id) {
+      const p = blogPosts.find(b => b.id === id);
+      if (!p) return;
+      document.getElementById('editPostId').value = id;
+      document.getElementById('postIcon').value = p.icon;
+      document.getElementById('postTitle').value = p.title;
+      document.getElementById('postExcerpt').value = p.excerpt;
+      document.getElementById('postContent').value = p.content;
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    async function savePost() {
+      const id = document.getElementById('editPostId').value;
+      const post = {
+        icon: document.getElementById('postIcon').value,
+        title: document.getElementById('postTitle').value,
+        excerpt: document.getElementById('postExcerpt').value,
+        content: document.getElementById('postContent').value,
+        date: 'Vừa cập nhật'
+      };
+      if (id) {
+        post.id = parseInt(id);
+        const idx = blogPosts.findIndex(p => p.id === post.id);
+        if (idx >= 0) blogPosts[idx] = post;
+      } else {
+        post.id = blogPosts.length + 1;
+        blogPosts.push(post);
+      }
+      renderBlogList();
+      clearPostForm();
+      showNotif('Đã lưu bài viết!');
+    }
+
+    function deletePost(id) {
+      blogPosts = blogPosts.filter(p => p.id !== id);
+      renderBlogList();
+      showNotif('Đã xóa bài viết!', 'danger');
+    }
+
+    function clearPostForm() {
+      document.getElementById('editPostId').value = '';
+      document.getElementById('postIcon').value = '📝';
+      document.getElementById('postTitle').value = '';
+      document.getElementById('postExcerpt').value = '';
+      document.getElementById('postContent').value = '';
+    }
+
+    // Box drag & drop
+    const boxList = document.getElementById('boxList');
+    let draggedBox = null;
+    boxList.querySelectorAll('.box-item').forEach(item => {
+      item.addEventListener('dragstart', () => { draggedBox = item; item.classList.add('dragging'); });
+      item.addEventListener('dragend', () => { item.classList.remove('dragging'); draggedBox = null; });
+      item.addEventListener('dragover', e => { e.preventDefault(); if (item !== draggedBox) item.classList.add('dragover'); });
+      item.addEventListener('dragleave', () => item.classList.remove('dragover'));
+      item.addEventListener('drop', e => {
+        e.preventDefault();
+        item.classList.remove('dragover');
+        if (item !== draggedBox) {
+          const all = [...boxList.children];
+          const from = all.indexOf(draggedBox);
+          const to = all.indexOf(item);
+          if (from < to) boxList.insertBefore(draggedBox, item.nextSibling);
+          else boxList.insertBefore(draggedBox, item);
+        }
+      });
+    });
+
+    function toggleBox(id) { const el = document.getElementById(id); if (el) el.style.display = el.style.display === 'none' ? '' : 'none'; }
+    function removeBox(id) { const el = document.getElementById(id); if (el) el.style.display = 'none'; showNotif('Đã ẩn ' + id, 'danger'); }
+
+    // Font preview
+    document.getElementById('baseFontSize').addEventListener('input', e => {
+      document.getElementById('fontSizeVal').textContent = e.target.value;
+      document.getElementById('fontPreview').style.fontSize = e.target.value + 'px';
+    });
+
+    // Size sliders
+    document.getElementById('pkgHeight').addEventListener('input', e => { document.getElementById('pkgHeightVal').textContent = e.target.value + 'px'; });
+    document.getElementById('filesHeight').addEventListener('input', e => { document.getElementById('filesHeightVal').textContent = e.target.value + 'px'; });
+
+    // Save functions
+    function saveGeneral() {
+      localStorage.setItem('siteTitle', document.getElementById('siteTitle').value);
+      localStorage.setItem('logoText', document.getElementById('logoText').value);
+      localStorage.setItem('repoUrl', document.getElementById('repoUrl').value);
+      showNotif('Đã lưu General Settings!');
+    }
+    function saveBoxSizes() {
+      localStorage.setItem('pkgHeight', document.getElementById('pkgHeight').value);
+      localStorage.setItem('filesHeight', document.getElementById('filesHeight').value);
+      showNotif('Đã lưu kích thước boxes!');
+    }
+    function saveFonts() {
+      localStorage.setItem('primaryFont', document.getElementById('primaryFont').value);
+      localStorage.setItem('monoFont', document.getElementById('monoFont').value);
+      localStorage.setItem('titleFont', document.getElementById('titleFont').value);
+      localStorage.setItem('baseFontSize', document.getElementById('baseFontSize').value);
+      localStorage.setItem('titleFontSize', document.getElementById('titleFontSize').value);
+      showNotif('Đã lưu Font settings!');
+    }
+    function saveTheme() {
+      const active = document.querySelector('.theme-btn.active');
+      if (active) localStorage.setItem('theme', active.dataset.theme);
+      showNotif('Đã áp dụng theme!');
+    }
+    function saveRain() {
+      localStorage.setItem('rainOpacity', document.getElementById('rainOpacity').value);
+      localStorage.setItem('rainSpeed', document.getElementById('rainSpeed').value);
+      showNotif('Đã lưu rain settings!');
+    }
+
+    // Notification
+    function showNotif(msg, type = '') {
+      const n = document.createElement('div');
+      n.className = 'notif' + (type ? ' ' + type : '');
+      n.textContent = msg;
+      document.body.appendChild(n);
+      setTimeout(() => n.remove(), 2500);
+    }
+
+    // Load saved
+    if (localStorage.getItem('siteTitle')) document.getElementById('siteTitle').value = localStorage.getItem('siteTitle');
+    if (localStorage.getItem('logoText')) document.getElementById('logoText').value = localStorage.getItem('logoText');
+    if (localStorage.getItem('theme')) applyTheme(localStorage.getItem('theme'));
+    if (localStorage.getItem('pkgHeight')) { document.getElementById('pkgHeight').value = localStorage.getItem('pkgHeight'); document.getElementById('pkgHeightVal').textContent = localStorage.getItem('pkgHeight') + 'px'; }
+    if (localStorage.getItem('primaryFont')) document.getElementById('primaryFont').value = localStorage.getItem('primaryFont');
+  </script>
+</body>
+</html>

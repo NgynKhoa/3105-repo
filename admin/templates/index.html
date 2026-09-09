@@ -1569,8 +1569,8 @@
     }
 
     /* ============================ BLOG ITEMS ============================ */
-    #blog-section { height: 326px; overflow: hidden; }
-    #blogList { height: 215px; overflow: hidden; }
+    #blog-section { height: 290px; overflow: hidden; }
+    #blogList { height: 196px; overflow: hidden; }
     #blogPagination { padding: 10px 14px; display: flex; gap: 4px; align-items: center; border-top: 1px solid var(--border); }
     .blog-item {
       display: flex;
@@ -1839,6 +1839,65 @@
   <canvas id="rain-canvas"></canvas>
   <!-- Cursor trail canvas -->
   <canvas id="trail-canvas"></canvas>
+
+  <!-- Settings Button -->
+  <button id="settingsBtn" title="Cài đặt" style="position:fixed;top:14px;right:14px;z-index:10000;width:40px;height:40px;border:1px solid var(--border);border-radius:10px;background:var(--panel);color:var(--neon);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s;">⚙️</button>
+
+  <!-- Settings Menu -->
+  <div id="settingsMenu" style="display:none;position:fixed;top:60px;right:14px;z-index:10001;width:260px;background:var(--panel);border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow);overflow:hidden;">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--border);background:rgba(var(--neon-rgb),0.04);">
+      <span style="font-family:'Press Start 2P',monospace;font-size:10px;color:var(--neon);text-shadow:0 0 6px rgba(var(--neon-rgb),0.4);">SETTINGS</span>
+      <button id="closeSettings" style="width:26px;height:26px;border:none;background:transparent;color:var(--muted);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;border-radius:6px;transition:all 0.2s;">✕</button>
+    </div>
+    <div style="padding:8px 0;max-height:60vh;overflow-y:auto;">
+      <div style="padding:12px 16px;border-bottom:1px solid var(--border);">
+        <span style="display:block;font-size:11px;font-weight:600;color:var(--text-bright);margin-bottom:10px;text-transform:uppercase;letter-spacing:0.5px;">Màu Theme</span>
+        <div id="themeGrid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;">
+          <button class="theme-btn active" data-theme="green" style="height:36px;border:2px solid transparent;border-radius:8px;cursor:pointer;transition:all 0.2s;background:linear-gradient(135deg,#80ff40,#39ff14);" title="Green Neon"></button>
+          <button class="theme-btn" data-theme="cyan" style="height:36px;border:2px solid transparent;border-radius:8px;cursor:pointer;transition:all 0.2s;background:linear-gradient(135deg,#00f0ff,#0099cc);" title="Cyan Neon"></button>
+          <button class="theme-btn" data-theme="pink" style="height:36px;border:2px solid transparent;border-radius:8px;cursor:pointer;transition:all 0.2s;background:linear-gradient(135deg,#ff2d7b,#cc1155);" title="Pink Neon"></button>
+          <button class="theme-btn" data-theme="lavender" style="height:36px;border:2px solid transparent;border-radius:8px;cursor:pointer;transition:all 0.2s;background:linear-gradient(135deg,#b388ff,#7744dd);" title="Lavender"></button>
+          <button class="theme-btn" data-theme="yellow" style="height:36px;border:2px solid transparent;border-radius:8px;cursor:pointer;transition:all 0.2s;background:linear-gradient(135deg,#f0e040,#ccbb00);" title="Yellow Neon"></button>
+          <button class="theme-btn" data-theme="red" style="height:36px;border:2px solid transparent;border-radius:8px;cursor:pointer;transition:all 0.2s;background:linear-gradient(135deg,#ff4444,#cc0000);" title="Red"></button>
+          <button class="theme-btn" data-theme="orange" style="height:36px;border:2px solid transparent;border-radius:8px;cursor:pointer;transition:all 0.2s;background:linear-gradient(135deg,#ff8800,#cc5500);" title="Orange"></button>
+          <button class="theme-btn" data-theme="white" style="height:36px;border:2px solid transparent;border-radius:8px;cursor:pointer;transition:all 0.2s;background:linear-gradient(135deg,#ffffff,#cccccc);" title="White"></button>
+        </div>
+      </div>
+      <div style="padding:12px 16px;border-bottom:1px solid var(--border);">
+        <span style="display:block;font-size:11px;font-weight:600;color:var(--text-bright);margin-bottom:10px;text-transform:uppercase;letter-spacing:0.5px;">Hiệu ứng Mưa</span>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+          <span style="font-size:12px;color:var(--text);">Bật Mưa</span>
+          <label style="position:relative;width:40px;height:22px;flex-shrink:0;">
+            <input type="checkbox" id="toggleRain" checked style="opacity:0;width:0;height:0;">
+            <span class="toggle-slider" style="position:absolute;inset:0;background:rgba(255,255,255,0.08);border:1px solid var(--border);border-radius:11px;cursor:pointer;transition:all 0.2s;display:block;"></span>
+          </label>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;">
+          <span style="font-size:12px;color:var(--text);">Mưa Nặng</span>
+          <label style="position:relative;width:40px;height:22px;flex-shrink:0;">
+            <input type="checkbox" id="toggleHeavyRain" style="opacity:0;width:0;height:0;">
+            <span class="toggle-slider" style="position:absolute;inset:0;background:rgba(255,255,255,0.08);border:1px solid var(--border);border-radius:11px;cursor:pointer;transition:all 0.2s;display:block;"></span>
+          </label>
+        </div>
+      </div>
+      <div style="padding:12px 16px;border-bottom:1px solid var(--border);">
+        <span style="display:block;font-size:11px;font-weight:600;color:var(--text-bright);margin-bottom:10px;text-transform:uppercase;letter-spacing:0.5px;">Chế độ Hiển thị</span>
+        <div style="display:flex;align-items:center;justify-content:space-between;">
+          <span style="font-size:12px;color:var(--text);">Dark Mode</span>
+          <label style="position:relative;width:40px;height:22px;flex-shrink:0;">
+            <input type="checkbox" id="toggleDarkMode" checked style="opacity:0;width:0;height:0;">
+            <span class="toggle-slider" style="position:absolute;inset:0;background:rgba(255,255,255,0.08);border:1px solid var(--border);border-radius:11px;cursor:pointer;transition:all 0.2s;display:block;"></span>
+          </label>
+        </div>
+      </div>
+      <div style="padding:12px 16px;">
+        <span style="display:block;font-size:11px;font-weight:600;color:var(--text-bright);margin-bottom:10px;text-transform:uppercase;letter-spacing:0.5px;">Độ Trong Suốt</span>
+        <input type="range" id="rangeTransparency" min="0" max="100" value="92" style="width:100%;height:6px;-webkit-appearance:none;appearance:none;background:rgba(255,255,255,0.1);border-radius:3px;outline:none;">
+      </div>
+    </div>
+  </div>
+
+  <div id="settingsOverlay" style="display:none;position:fixed;inset:0;z-index:9998;background:transparent;"></div>
 
 <div id="shell">
 
@@ -2468,6 +2527,103 @@
   tick();
   setInterval(tick, 1000);
 })();
+
+// ====================== Settings ======================
+const settingsBtn = document.getElementById('settingsBtn');
+const settingsMenu = document.getElementById('settingsMenu');
+const closeSettings = document.getElementById('closeSettings');
+const settingsOverlay = document.getElementById('settingsOverlay');
+
+settingsBtn.addEventListener('click', () => {
+  settingsMenu.style.display = settingsMenu.style.display === 'block' ? 'none' : 'block';
+  settingsOverlay.style.display = settingsMenu.style.display === 'block' ? 'block' : 'none';
+});
+closeSettings.addEventListener('click', () => { settingsMenu.style.display = 'none'; settingsOverlay.style.display = 'none'; });
+settingsOverlay.addEventListener('click', () => { settingsMenu.style.display = 'none'; settingsOverlay.style.display = 'none'; });
+
+// Theme
+const themes = {
+  green: { neon: '#80ff40', neonRgb: '57, 255, 20', neonPink: '#ff2d7b', neonPinkRgb: '255, 45, 123', neonCyan: '#00f0ff', neonCyanRgb: '0, 240, 255', neonYellow: '#f0e040', neonLavender: '#b388ff', bg: '#06060e' },
+  cyan: { neon: '#00f0ff', neonRgb: '0, 240, 255', neonPink: '#ff2d7b', neonPinkRgb: '255, 45, 123', neonCyan: '#00f0ff', neonCyanRgb: '0, 240, 255', neonYellow: '#f0e040', neonLavender: '#b388ff', bg: '#000e1a' },
+  pink: { neon: '#ff2d7b', neonRgb: '255, 45, 123', neonPink: '#ff2d7b', neonPinkRgb: '255, 45, 123', neonCyan: '#00f0ff', neonCyanRgb: '0, 240, 255', neonYellow: '#f0e040', neonLavender: '#b388ff', bg: '#0e0610' },
+  lavender: { neon: '#b388ff', neonRgb: '179, 136, 255', neonPink: '#ff2d7b', neonPinkRgb: '255, 45, 123', neonCyan: '#00f0ff', neonCyanRgb: '0, 240, 255', neonYellow: '#f0e040', neonLavender: '#b388ff', bg: '#08060e' },
+  yellow: { neon: '#f0e040', neonRgb: '240, 224, 64', neonPink: '#ff2d7b', neonPinkRgb: '255, 45, 123', neonCyan: '#00f0ff', neonCyanRgb: '0, 240, 255', neonYellow: '#f0e040', neonLavender: '#b388ff', bg: '#0e0c06' },
+  red: { neon: '#ff4444', neonRgb: '255, 68, 68', neonPink: '#ff2d7b', neonPinkRgb: '255, 45, 123', neonCyan: '#00f0ff', neonCyanRgb: '0, 240, 255', neonYellow: '#f0e040', neonLavender: '#b388ff', bg: '#0e0606' },
+  orange: { neon: '#ff8800', neonRgb: '255, 136, 0', neonPink: '#ff2d7b', neonPinkRgb: '255, 45, 123', neonCyan: '#00f0ff', neonCyanRgb: '0, 240, 255', neonYellow: '#f0e040', neonLavender: '#b388ff', bg: '#0e0a06' },
+  white: { neon: '#eeeeee', neonRgb: '238, 238, 238', neonPink: '#ff2d7b', neonPinkRgb: '255, 45, 123', neonCyan: '#00f0ff', neonCyanRgb: '0, 240, 255', neonYellow: '#f0e040', neonLavender: '#b388ff', bg: '#111111' }
+};
+
+function applyTheme(name) {
+  const t = themes[name];
+  if (!t) return;
+  const r = document.documentElement;
+  r.style.setProperty('--neon', t.neon);
+  r.style.setProperty('--neon-rgb', t.neonRgb);
+  r.style.setProperty('--neon-pink', t.neonPink);
+  r.style.setProperty('--neon-pink-rgb', t.neonPinkRgb);
+  r.style.setProperty('--neon-cyan', t.neonCyan);
+  r.style.setProperty('--neon-cyan-rgb', t.neonCyanRgb);
+  r.style.setProperty('--neon-yellow', t.neonYellow);
+  r.style.setProperty('--neon-lavender', t.neonLavender);
+  r.style.setProperty('--bg', t.bg);
+  document.querySelectorAll('.theme-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector(`.theme-btn[data-theme="${name}"]`).classList.add('active');
+  localStorage.setItem('theme', name);
+  // Update toggle-slider colors
+  document.querySelectorAll('.toggle-slider').forEach(s => { s.style.setProperty('--n', t.neon); });
+}
+
+document.querySelectorAll('.theme-btn').forEach(btn => {
+  btn.addEventListener('click', () => applyTheme(btn.dataset.theme));
+});
+
+document.getElementById('toggleRain').addEventListener('change', e => {
+  window.rainEnabled = e.target.checked;
+  localStorage.setItem('rainEnabled', rainEnabled);
+});
+document.getElementById('toggleHeavyRain').addEventListener('change', e => {
+  window.heavyRain = e.target.checked;
+  if (window.initRain) window.initRain();
+  localStorage.setItem('heavyRain', heavyRain);
+});
+document.getElementById('toggleDarkMode').addEventListener('change', e => {
+  if (e.target.checked) {
+    document.documentElement.style.setProperty('--panel', 'rgba(10, 14, 26, 0.92)');
+    document.documentElement.style.setProperty('--panel-alt', 'rgba(6, 9, 18, 0.96)');
+    document.documentElement.style.setProperty('--text', '#c0d8cc');
+    document.documentElement.style.setProperty('--text-bright', '#e8fff0');
+    document.documentElement.style.setProperty('--muted', '#7a9a86');
+  } else {
+    document.documentElement.style.setProperty('--panel', 'rgba(255, 255, 255, 0.92)');
+    document.documentElement.style.setProperty('--panel-alt', 'rgba(240, 240, 240, 0.96)');
+    document.documentElement.style.setProperty('--text', '#1a1a1a');
+    document.documentElement.style.setProperty('--text-bright', '#000000');
+    document.documentElement.style.setProperty('--muted', '#666666');
+  }
+  localStorage.setItem('darkMode', e.target.checked);
+});
+document.getElementById('rangeTransparency').addEventListener('input', e => {
+  const v = e.target.value / 100;
+  document.documentElement.style.setProperty('--panel', `rgba(10, 14, 26, ${v})`);
+  document.documentElement.style.setProperty('--panel-alt', `rgba(6, 9, 18, ${Math.min(v + 0.04, 1)})`);
+  localStorage.setItem('transparency', e.target.value);
+});
+
+if (localStorage.getItem('theme')) applyTheme(localStorage.getItem('theme'));
+if (localStorage.getItem('rainEnabled') === 'false') { window.rainEnabled = false; document.getElementById('toggleRain').checked = false; }
+if (localStorage.getItem('heavyRain') === 'true') { window.heavyRain = true; document.getElementById('toggleHeavyRain').checked = true; }
+if (localStorage.getItem('darkMode') === 'false') document.getElementById('toggleDarkMode').checked = false;
+if (localStorage.getItem('transparency')) {
+  const v = localStorage.getItem('transparency') / 100;
+  document.documentElement.style.setProperty('--panel', `rgba(10, 14, 26, ${v})`);
+  document.documentElement.style.setProperty('--panel-alt', `rgba(6, 9, 18, ${Math.min(v + 0.04, 1)})`);
+  document.getElementById('rangeTransparency').value = localStorage.getItem('transparency');
+}
+
+// Blog navigation
+document.querySelectorAll('.blog-card').forEach(card => {
+  card.addEventListener('click', e => { e.preventDefault(); window.location.href = card.getAttribute('href'); });
+});
 </script>
 </body>
 </html>
