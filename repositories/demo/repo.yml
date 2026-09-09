@@ -25,11 +25,7 @@ packages:
     tags: [CUSTOM]
     icon: assets/icon/test.png
     banner: assets/banner/banner.png
-    screenshots:
-      - assets/preview/preview-first.png
-      - assets/preview/preview-second.png
-      - assets/preview/preview-third.png
-      - assets/preview/preview-fourth.png
+    screenshots: *screens
     download: packages/PATCH_FREE_V12_BY_TD.3105
     sha256: CE977931A02FA8D505E6DF202BAC4252811DB1055AE1632BCBDC1413C271FCE0
     size: 37432
@@ -80,19 +76,12 @@ packages:
     icon: assets/icon/hdr_120-ngong.png
     banner: assets/banner/banner.png
     screenshots:
-      - assets/hdr_120/before.png
       - assets/hdr_120/after.png
+      - assets/hdr_120/before.png
     download: packages/HDR_120FPS.3105
     sha256: C6A6D2A32925B1BC8F844A3736DE7E3056EE06935E49836F1C89132A25851372
     size: 8200
-    supportedOS:
-      - minimum: "17.0"
-        maximum: "18.7.1"
-      - minimum: "26.0"
-        maximum: "26.6.1"
-      - minimum: "27.0"
-        maximum: "27.0"
-        builds: ["24A5355q", "24A5370h", "24A5380h", "24A5390f"]
+    supportedOS: *os_rules
     featured: true
     isPrivate: false
     description: |
@@ -123,22 +112,11 @@ packages:
     publishedAt: "2026-08-28T10:00:00.000Z"
     icon: assets/icon/global-pubg_global.png
     banner: assets/banner/banner.png
-    screenshots:
-      - assets/preview/preview-first.png
-      - assets/preview/preview-second.png
-      - assets/preview/preview-third.png
-      - assets/preview/preview-fourth.png
+    screenshots: *screens
     download: packages/V12_GL.3105
     sha256: C8669AEDFB5BFD0AB05029B3F6D09320FBC562859B1EB22F17EF602E66F3BC04
     size: 37428
-    supportedOS:
-      - minimum: "17.0"
-        maximum: "18.7.1"
-      - minimum: "26.0"
-        maximum: "26.6.1"
-      - minimum: "27.0"
-        maximum: "27.0"
-        builds: ["24A5355q", "24A5370h", "24A5380h", "24A5390f"]
+    supportedOS: *os_rules
     featured: false
     isPrivate: false
     description: |
@@ -188,22 +166,11 @@ packages:
     tags: [CUSTOM]
     icon: assets/icon/kr-pubg_kr.png
     banner: assets/banner/banner.png
-    screenshots:
-      - assets/preview/preview-first.png
-      - assets/preview/preview-second.png
-      - assets/preview/preview-third.png
-      - assets/preview/preview-fourth.png
+    screenshots: *screens
     download: packages/PATCH_FREE_V12_KR.3105
     sha256: AB58206C6DD088D60D3471D8BA65E544D80519EAA365CC2832ED192E3F5AD503
     size: 37429
-    supportedOS:
-      - minimum: "17.0"
-        maximum: "18.7.1"
-      - minimum: "26.0"
-        maximum: "26.6.1"
-      - minimum: "27.0"
-        maximum: "27.0"
-        builds: ["24A5355q", "24A5370h", "24A5380h", "24A5390f"]
+    supportedOS: *os_rules
     featured: false
     isPrivate: false
     description: |
@@ -253,24 +220,17 @@ packages:
     icon: assets/icon/Classic_dialer.png
     banner: assets/banner/banner.png
     screenshots:
-      - assets/dialer/Classic_dialer/light.png
+      - assets/dialer/Classic_dialer/Classic_dialer.png
       - assets/dialer/Classic_dialer/dark.png
+      - assets/dialer/Classic_dialer/light.png
       - assets/dialer/Classic_dialer/pass.png
     download: packages/Classical_dialer.3105pass
     sha256: 3557A840CF720126142E7EE07AEC5AA10754AEE6F59DE7ABF66807195D1C85C3
     size: 829136
-    supportedOS:
-      - minimum: "17.0"
-        maximum: "18.7.1"
-      - minimum: "26.0"
-        maximum: "26.6.1"
-      - minimum: "27.0"
-        maximum: "27.0"
-        builds: ["24A5355q", "24A5370h", "24A5380h", "24A5390f"]
+    supportedOS: *os_rules
     featured: true
     isPrivate: false
     description: |
-      
       ✨ TÍNH NĂNG NỔI BẬT / FEATURES
       
       • Giao diện bàn phím gọi điện mang phong cách hoài cổ.
@@ -307,28 +267,20 @@ packages:
     summary: ✨ Giao diện Vòng Cơ bản • Circle Cover Dialer
     category: Customization
     tags: [Dialer]
-    publishedAt: "2026-09-02T09:00:00Z"
+    publishedAt: "2026-09-02T09:00:00.000Z"
     icon: assets/icon/Basic_Circle.png
     banner: assets/banner/banner.png
     screenshots:
-      - assets/dialer/Basic_Circle/bs_light.png
       - assets/dialer/Basic_Circle/bs_dark.png
+      - assets/dialer/Basic_Circle/bs_light.png
       - assets/dialer/Basic_Circle/bs_pass.png
     download: packages/Basic_CircleB&W.3105pass
     sha256: BA91799564D04544CFF874C897273037AA4717456A93B7A70798CBEFEE97AAF8
     size: 406950
-    supportedOS:
-      - minimum: "17.0"
-        maximum: "18.7.1"
-      - minimum: "26.0"
-        maximum: "26.6.1"
-      - minimum: "27.0"
-        maximum: "27.0"
-        builds: ["24A5355q", "24A5370h", "24A5380h", "24A5390f"]
+    supportedOS: *os_rules
     featured: true
     isPrivate: false
     description: |
-      
       ✨ TÍNH NĂNG NỔI BẬT / FEATURES
       
       • Giao diện bàn phím gọi điện mang phong Tối giản, hiện đại.
@@ -367,25 +319,14 @@ packages:
     tags: [Dialer]
     icon: assets/icon/dual_horizon.png
     banner: assets/banner/banner.png
-    screenshots:
-      - assets/dialer/Dual_Horizontal/dual_dark.png
-      - assets/dialer/Dual_Horizontal/dual_light.png
-      - assets/dialer/Dual_Horizontal/dual_pass.png
+    screenshots: *screens
     download: packages/Dual_Horizon.3105pass
     sha256: 48807D528F2CF645C6B726A911C242FE4E826295C9076E1660D9C5D4788229EB
     size: 928132
-    supportedOS:
-      - minimum: "17.0"
-        maximum: "18.7.1"
-      - minimum: "26.0"
-        maximum: "26.6.1"
-      - minimum: "27.0"
-        maximum: "27.0"
-        builds: ["24A5355q", "24A5370h", "24A5380h", "24A5390f"]
+    supportedOS: *os_rules
     featured: true
     isPrivate: false
     description: |
-      
       ✨ TÍNH NĂNG NỔI BẬT / FEATURES
       
       • Giao diện bàn phím gọi điện mang phong cách Bình minh và chiều tà.
@@ -430,14 +371,7 @@ packages:
     download: packages/GRAPHICS_POTATO_WITH_120FPS.3105
     sha256: F7A03FE347ADF7DD29E0358FCF6FAED628E519F6837C7DDC6D5EE50FE15663B3
     size: 14102893
-    supportedOS:
-      - minimum: "17.0"
-        maximum: "18.7.1"
-      - minimum: "26.0"
-        maximum: "26.6.1"
-      - minimum: "27.0"
-        maximum: "27.0"
-        builds: ["24A5355q", "24A5370h", "24A5380h", "24A5390f"]
+    supportedOS: *os_rules
     featured: true
     isPrivate: false
     description: |
@@ -470,27 +404,19 @@ packages:
     summary: ✨ Giao diện phím Hồng Pinkchilling • Pink Dialer
     category: Customization
     tags: [Dialer]
-    publishedAt: "2026-09-06T11:00:00Z"
+    publishedAt: "2026-09-06T11:00:00.000Z"
     icon: assets/icon/F&B_pink.png
     banner: assets/banner/banner.png
     screenshots:
-      - assets/dialer/B&F_Pink/B&F_light.png
       - assets/dialer/B&F_Pink/B&F_dark.png
+      - assets/dialer/B&F_Pink/B&F_light.png
     download: packages/Flower&Butterfly_Pink.3105pass
     sha256: 57EDB20E5572705C4A822F26DF41AC44EF95FAA52757DE0A6CDD836BA3BD67D1
     size: 1052199
-    supportedOS:
-      - minimum: "17.0"
-        maximum: "18.7.1"
-      - minimum: "26.0"
-        maximum: "26.6.1"
-      - minimum: "27.0"
-        maximum: "27.0"
-        builds: ["24A5355q", "24A5370h", "24A5380h", "24A5390f"]
+    supportedOS: *os_rules
     featured: true
     isPrivate: false
     description: |
-      
       ✨ TÍNH NĂNG NỔI BẬT / FEATURES
       
       • Giao diện bàn phím gọi điện mang phong cách PinkPink.
@@ -530,22 +456,11 @@ packages:
     tags: [CUSTOM]
     icon: assets/icon/allinone.png
     banner: assets/banner/banner.png
-    screenshots:
-      - assets/preview/preview-first.png
-      - assets/preview/preview-second.png
-      - assets/preview/preview-third.png
-      - assets/preview/preview-fourth.png
+    screenshots: *screens
     download: packages/ALL_IN_ONE_V12.3105
     sha256: 9BF4F7C31A97C294714FA395AA9BE1674A5A4A4D414C5109FBBE9137DAF9C9DE
     size: 38137
-    supportedOS:
-      - minimum: "17.0"
-        maximum: "18.7.1"
-      - minimum: "26.0"
-        maximum: "26.6.1"
-      - minimum: "27.0"
-        maximum: "27.0"
-        builds: ["24A5355q", "24A5370h", "24A5380h", "24A5390f"]
+    supportedOS: *os_rules
     featured: false
     isPrivate: false
     description: |
@@ -616,6 +531,7 @@ packages:
     publishedAt: "2026-09-08T13:34:24.000Z"
     icon: assets/icon/New_ver46/new_4_6.png
     banner: assets/banner/banner.png
+    screenshots: *screens
     download: packages/PATCH_NEW_VERSION_4-6_PUBG__2_.3105
     sha256: 85E90E4435DEC263F99F923082DEF04D61D45FD3F468A6521052CFFF77249ACC
     size: 1180183
@@ -678,6 +594,7 @@ packages:
     tags: [CUSTOM]
     icon: assets/icon/kr-pubg_kr.png
     banner: assets/banner/banner.png
+    screenshots: *screens
     download: packages/PATCH_PUBG_V46_FOR_KR.3105
     sha256: 1BB59B93DB2D4187F25EDD53C0BECB9EF15FB825ED7C0C479D62F48999B43930
     size: 1179331
@@ -687,31 +604,31 @@ packages:
     featured: false
     isPrivate: false
     description: |
-            💎 ADVANCED CUSTOM BUILD
-            
-            ╭──────────────────╮
-             ✨ FEATURES
-            ╰──────────────────╯
-            
-            🔥 Online Compatibility
-            🎯 Aim Assistance
-            👁️ iPad View
-            🚗 Vehicle Enhancement
-            ⚡ Additional Features
-            
-            ╭──────────────────╮
-             ⚠️ IMPORTANT
-            ╰──────────────────╯
-            
-            • Remove any previous customization package before applying.
-            • Backup your game data before installation.
-            
-            ╭──────────────────╮
-             💬 SUPPORT
-            ╰──────────────────╯
-            
-            @owenindahouse
-            @Thanhdat1690.
+      💎 ADVANCED CUSTOM BUILD
+      
+      ╭──────────────────╮
+       ✨ FEATURES
+      ╰──────────────────╯
+      
+      🔥 Online Compatibility
+      🎯 Aim Assistance
+      👁️ iPad View
+      🚗 Vehicle Enhancement
+      ⚡ Additional Features
+      
+      ╭──────────────────╮
+       ⚠️ IMPORTANT
+      ╰──────────────────╯
+      
+      • Remove any previous customization package before applying.
+      • Backup your game data before installation.
+      
+      ╭──────────────────╮
+       💬 SUPPORT
+      ╰──────────────────╯
+      
+      @owenindahouse
+      @Thanhdat1690.
     changelog: 🎉 v4.6.0 — Phát hành lần đầu
 
   # ----- owen-011 -----
@@ -726,6 +643,7 @@ packages:
     publishedAt: "2026-09-08T16:48:13.000Z"
     icon: assets/icon/test.png
     banner: assets/banner/banner.png
+    screenshots: *screens
     download: packages/PATCH_FOR_V46_PUBG_VNG.3105
     sha256: 5B7FF2AD45BE505D398A1F2A0584831BBB7B690198E79DB1B9F79F44003A98F1
     size: 1179332
@@ -735,45 +653,45 @@ packages:
     featured: true
     isPrivate: false
     description: |
-            💎 PREMIUM
-            JUST ONE PATCH FOR 3 SERVERS
-            VNG - GLOBAL - KR
-            Just apply this patch and enjoy all features for 3 servers. 
-            No need to download 3 different patches.
-            
-            ╭──────────────────╮
-             ✨ TÍNH NĂNG
-            ╰──────────────────╯
-            
-            🔥1 Patch chơi được cả 3 server VNG - GLOBAL - KR
-            🔥Chỉ việc áp dụng patch là xong, không cần tải 3 patch khác nhau.
-            🔥 Tương thích Online
-            🔥 Custom Skin 
-            🎯 Hỗ trợ ngắm tùy chỉnh
-            👁️ iPad View
-            🚗 Tùy chỉnh tốc độ xe
-            ⚡ Nhiều tính năng nâng cao khác
-            
-            ╭──────────────────╮
-             🔐 QUYỀN TRUY CẬP PREMIUM
-            ╰──────────────────╯
-            
-            👑 Gói này dành cho thành viên TD Premium.
-            
-            ╭──────────────────╮
-             ⚠️ LƯU Ý QUAN TRỌNG
-            ╰──────────────────╯
-            
-            • Hãy xóa gói tùy chỉnh cũ trước khi áp dụng.
-            • Nên sao lưu dữ liệu trước khi cài đặt.
-            
-            ╭──────────────────╮
-             💬 HỖ TRỢ
-            ╰──────────────────╯
-            
-            @owenindahouse
-            
-            ❤️ Cảm ơn bạn đã ủng hộ!
+      💎 PREMIUM
+      JUST ONE PATCH FOR 3 SERVERS
+      VNG - GLOBAL - KR
+      Just apply this patch and enjoy all features for 3 servers. 
+      No need to download 3 different patches.
+      
+      ╭──────────────────╮
+       ✨ TÍNH NĂNG
+      ╰──────────────────╯
+      
+      🔥1 Patch chơi được cả 3 server VNG - GLOBAL - KR
+      🔥Chỉ việc áp dụng patch là xong, không cần tải 3 patch khác nhau.
+      🔥 Tương thích Online
+      🔥 Custom Skin 
+      🎯 Hỗ trợ ngắm tùy chỉnh
+      👁️ iPad View
+      🚗 Tùy chỉnh tốc độ xe
+      ⚡ Nhiều tính năng nâng cao khác
+      
+      ╭──────────────────╮
+       🔐 QUYỀN TRUY CẬP PREMIUM
+      ╰──────────────────╯
+      
+      👑 Gói này dành cho thành viên TD Premium.
+      
+      ╭──────────────────╮
+       ⚠️ LƯU Ý QUAN TRỌNG
+      ╰──────────────────╯
+      
+      • Hãy xóa gói tùy chỉnh cũ trước khi áp dụng.
+      • Nên sao lưu dữ liệu trước khi cài đặt.
+      
+      ╭──────────────────╮
+       💬 HỖ TRỢ
+      ╰──────────────────╯
+      
+      @owenindahouse
+      
+      ❤️ Cảm ơn bạn đã ủng hộ!
     changelog: 🎉 v4.6.0 — Phát hành lần đầu
 
   # ----- owen-012 -----
@@ -788,6 +706,7 @@ packages:
     publishedAt: "2026-09-08T17:44:35.000Z"
     icon: assets/icon/global-pubg_global.png
     banner: assets/banner/banner.png
+    screenshots: *screens
     download: packages/PATCH_PUBG_V46_GLOBAL.3105
     sha256: D71D28CE86665C243A3540D81CEF6E19108C4AC325FA12243AA8DB8805344C8F
     size: 1179326
@@ -797,29 +716,29 @@ packages:
     featured: true
     isPrivate: false
     description: |
-            💎 ADVANCED CUSTOM BUILD
-            
-            ╭──────────────────╮
-             ✨ FEATURES
-            ╰──────────────────╯
-            
-            🔥 Online Compatibility
-            🎯 Aim Assistance
-            👁️ iPad View
-            🚗 Vehicle Enhancement
-            ⚡ Additional Features
-            
-            ╭──────────────────╮
-             ⚠️ IMPORTANT
-            ╰──────────────────╯
-            
-            • Remove any previous customization package before applying.
-            • Backup your game data before installation.
-            
-            ╭──────────────────╮
-             💬 SUPPORT
-            ╰──────────────────╯
-            
-            @owenindahouse
-            admin Mod @Thanhdat1690.
+      💎 ADVANCED CUSTOM BUILD
+      
+      ╭──────────────────╮
+       ✨ FEATURES
+      ╰──────────────────╯
+      
+      🔥 Online Compatibility
+      🎯 Aim Assistance
+      👁️ iPad View
+      🚗 Vehicle Enhancement
+      ⚡ Additional Features
+      
+      ╭──────────────────╮
+       ⚠️ IMPORTANT
+      ╰──────────────────╯
+      
+      • Remove any previous customization package before applying.
+      • Backup your game data before installation.
+      
+      ╭──────────────────╮
+       💬 SUPPORT
+      ╰──────────────────╯
+      
+      @owenindahouse
+      admin Mod @Thanhdat1690.
     changelog: 🎉 v4.6.0 — Phát hành lần đầu

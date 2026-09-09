@@ -1034,7 +1034,7 @@ async function refreshScreenGrid() {
       const isSelected = currentSelectedScreens.includes(path);
       const item = document.createElement('div');
       item.className = 'relative group aspect-video rounded-lg overflow-hidden border-2 cursor-pointer select-none ' +
-        (isSelected ? 'border-blue-500 ring-2 ring-blue-200' : 'border-slate-200 hover:border-slate-400');
+        (isSelected ? 'border-green-500 ring-2 ring-green-300' : 'border-slate-200 hover:border-slate-400');
       item.dataset.path = path;
       item.draggable = true;
       item.title = path;
@@ -1042,7 +1042,7 @@ async function refreshScreenGrid() {
       item.innerHTML = `
         <img src="/repo-asset?repo=${state.currentRepo}&path=${encodeURIComponent(path)}"
              loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block;" onerror="this.style.display='none'" />
-        ${isSelected ? '<div class="absolute inset-0 bg-blue-500/20 flex items-center justify-center check-overlay"><span class="bg-blue-500 text-white text-xs px-1 rounded">✓</span></div>' : ''}
+        ${isSelected ? '<div class="absolute inset-0 bg-green-500/30 flex items-center justify-center check-overlay"><span class="bg-green-500 text-white text-xs px-1.5 py-0.5 rounded font-bold">✓</span></div>' : ''}
         <div class="absolute bottom-0 left-0 right-0 bg-black/60 text-white text-[10px] px-1 py-0.5 truncate">${escapeHtml(fileName)}</div>
         <button type="button" class="delete-asset-btn absolute top-1 right-1 w-5 h-5 bg-red-500 hover:bg-red-600 text-white rounded-full text-[10px] leading-none flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity" data-path="${encodeURIComponent(path)}" data-kind="image" title="Xoá ảnh">✕</button>
       `;
@@ -1055,16 +1055,16 @@ async function refreshScreenGrid() {
         } else {
           currentSelectedScreens.push(path);
         }
-        item.classList.toggle('border-blue-500', currentSelectedScreens.includes(path));
-        item.classList.toggle('ring-2', currentSelectedScreens.includes(path));
-        item.classList.toggle('ring-blue-200', currentSelectedScreens.includes(path));
+        item.classList.toggle('border-green-500', currentSelectedScreens.includes(path));
+        item.classList.toggle('ring-4', currentSelectedScreens.includes(path));
+        item.classList.toggle('ring-green-400', currentSelectedScreens.includes(path));
         item.classList.toggle('border-slate-200', !currentSelectedScreens.includes(path));
         const overlay = item.querySelector('.check-overlay');
         if (currentSelectedScreens.includes(path)) {
           if (!overlay) {
             const div = document.createElement('div');
-            div.className = 'absolute inset-0 bg-blue-500/20 flex items-center justify-center check-overlay';
-            div.innerHTML = '<span class="bg-blue-500 text-white text-xs px-1 rounded">✓</span>';
+            div.className = 'absolute inset-0 bg-green-500/30 flex items-center justify-center check-overlay';
+            div.innerHTML = '<span class="bg-green-500 text-white text-xs px-1.5 py-0.5 rounded font-bold">✓</span>';
             item.appendChild(div);
           }
         } else if (overlay) {
@@ -1167,6 +1167,15 @@ function bindFormEvents() {
 
   $('#f_use_default_screens')?.addEventListener('change', e => {
     $('#screensListWrap').style.display = e.target.checked ? 'none' : 'block';
+    // Khi bỏ tick default → xóa 4 ảnh preview cũ để tránh dính ảnh thừa
+    if (!e.target.checked) {
+      currentSelectedScreens.length = 0;
+      updateScreenCount();
+      // Bỏ highlight tất cả ảnh
+      document.querySelectorAll('.screen-thumb').forEach(el => {
+        el.classList.remove('ring-2', 'ring-green-500');
+      });
+    }
   });
 
   // iOS: tick "mặc định" -> ẩn 2 ô min/max; bỏ tick -> hiện
@@ -1639,6 +1648,14 @@ function savePackageFromForm() {
   } else {
     delete pkgClean.supportedOS;
   }
+
+  // Nếu user check "dùng danh sách screenshot mặc định" → ghi đúng sharedScreens
+  // để khi load lại khớp với anchor backend.
+  if (useScreens) {
+    pkgClean.screenshots = (state.sharedScreens || []).slice();
+  } else {
+    // Giữ nguyên currentSelectedScreens như đã chuẩn hoá ở pkg object
+  }
   delete pkgClean.os_minimum;
   delete pkgClean.os_maximum;
 
@@ -1648,6 +1665,9 @@ function savePackageFromForm() {
       use_anchor_os: useOs,
       use_anchor_screens: useScreens,
     });
+    // Gắn cờ __use_default_* cho package mới để mở edit lại render đúng
+    state.packages[state.packages.length - 1].__use_default_os = useOs;
+    state.packages[state.packages.length - 1].__use_default_screens = useScreens;
     // Ghi nhận added
     state.changes.added.push({
       identifier: pkgClean.identifier,
@@ -1659,6 +1679,9 @@ function savePackageFromForm() {
       use_anchor_os: useOs,
       use_anchor_screens: useScreens,
     };
+    // Đồng bộ lại cờ __use_default_* để lần mở edit sau checkbox render đúng
+    state.packages[state.editingIndex].__use_default_os = useOs;
+    state.packages[state.editingIndex].__use_default_screens = useScreens;
     // Ghi nhận edited
     state.changes.edited.push({
       identifier: pkgClean.identifier,

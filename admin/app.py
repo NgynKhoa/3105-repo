@@ -384,11 +384,12 @@ def save_yaml(
     for idx, pkg in enumerate(packages):
         # Luôn ghi đầy đủ screenshots + supportedOS cho mỗi package
         # để JSON xuất ra không phụ thuộc anchor ở root.
+        meta = packages_meta[idx] if packages_meta and idx < len(packages_meta) else {}
         lines.extend(
             _render_package_yaml(
                 pkg,
-                use_anchor_os=False,
-                use_anchor_screens=False,
+                use_anchor_os=bool(meta.get("use_anchor_os")),
+                use_anchor_screens=bool(meta.get("use_anchor_screens")),
             )
         )
         lines.append("")
