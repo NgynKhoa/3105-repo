@@ -43,13 +43,7 @@ packages:
     download: packages/PATCH_FREE_V12_BY_TD.3105
     sha256: CE977931A02FA8D505E6DF202BAC4252811DB1055AE1632BCBDC1413C271FCE0
     size: 37432
-    supportedOS:
-      - minimum: "17.0"
-        maximum: "18.7.1"
-      - minimum: "26.0"
-        maximum: "26.6.1"
-      - minimum: "27.0"
-        maximum: "27.0"
+    supportedOS: *os_rules
     featured: false
     isPrivate: false
     description: |
@@ -93,19 +87,11 @@ packages:
     tags: [DISPLAY]
     icon: assets/icon/hdr_120-ngong.png
     banner: assets/banner/banner.png
-    screenshots:
-      - assets/hdr_120/after.png
-      - assets/hdr_120/before.png
+    screenshots: *screens
     download: packages/HDR_120FPS.3105
     sha256: C6A6D2A32925B1BC8F844A3736DE7E3056EE06935E49836F1C89132A25851372
     size: 8200
-    supportedOS:
-      - minimum: "17.0"
-        maximum: "18.7.1"
-      - minimum: "26.0"
-        maximum: "26.6.1"
-      - minimum: "27.0"
-        maximum: "27.0"
+    supportedOS: *os_rules
     featured: true
     isPrivate: false
     description: |
@@ -140,13 +126,7 @@ packages:
     download: packages/V12_GL.3105
     sha256: C8669AEDFB5BFD0AB05029B3F6D09320FBC562859B1EB22F17EF602E66F3BC04
     size: 37428
-    supportedOS:
-      - minimum: "17.0"
-        maximum: "18.7.1"
-      - minimum: "26.0"
-        maximum: "26.6.1"
-      - minimum: "27.0"
-        maximum: "27.0"
+    supportedOS: *os_rules
     featured: false
     isPrivate: false
     description: |
@@ -200,13 +180,7 @@ packages:
     download: packages/PATCH_FREE_V12_KR.3105
     sha256: AB58206C6DD088D60D3471D8BA65E544D80519EAA365CC2832ED192E3F5AD503
     size: 37429
-    supportedOS:
-      - minimum: "17.0"
-        maximum: "18.7.1"
-      - minimum: "26.0"
-        maximum: "26.6.1"
-      - minimum: "27.0"
-        maximum: "27.0"
+    supportedOS: *os_rules
     featured: false
     isPrivate: false
     description: |
@@ -255,21 +229,11 @@ packages:
     tags: [Dialer]
     icon: assets/icon/Classic_dialer.png
     banner: assets/banner/banner.png
-    screenshots:
-      - assets/dialer/Classic_dialer/Classic_dialer.png
-      - assets/dialer/Classic_dialer/dark.png
-      - assets/dialer/Classic_dialer/light.png
-      - assets/dialer/Classic_dialer/pass.png
+    screenshots: *screens
     download: packages/Classical_dialer.3105pass
     sha256: 3557A840CF720126142E7EE07AEC5AA10754AEE6F59DE7ABF66807195D1C85C3
     size: 829136
-    supportedOS:
-      - minimum: "17.0"
-        maximum: "18.7.1"
-      - minimum: "26.0"
-        maximum: "26.6.1"
-      - minimum: "27.0"
-        maximum: "27.0"
+    supportedOS: *os_rules
     featured: true
     isPrivate: false
     description: |
@@ -312,20 +276,11 @@ packages:
     publishedAt: "2026-09-02T09:00:00.000Z"
     icon: assets/icon/Basic_Circle.png
     banner: assets/banner/banner.png
-    screenshots:
-      - assets/dialer/Basic_Circle/bs_dark.png
-      - assets/dialer/Basic_Circle/bs_light.png
-      - assets/dialer/Basic_Circle/bs_pass.png
+    screenshots: *screens
     download: packages/Basic_CircleB&W.3105pass
     sha256: BA91799564D04544CFF874C897273037AA4717456A93B7A70798CBEFEE97AAF8
     size: 406950
-    supportedOS:
-      - minimum: "17.0"
-        maximum: "18.7.1"
-      - minimum: "26.0"
-        maximum: "26.6.1"
-      - minimum: "27.0"
-        maximum: "27.0"
+    supportedOS: *os_rules
     featured: true
     isPrivate: false
     description: |
@@ -371,13 +326,7 @@ packages:
     download: packages/Dual_Horizon.3105pass
     sha256: 48807D528F2CF645C6B726A911C242FE4E826295C9076E1660D9C5D4788229EB
     size: 928132
-    supportedOS:
-      - minimum: "17.0"
-        maximum: "18.7.1"
-      - minimum: "26.0"
-        maximum: "26.6.1"
-      - minimum: "27.0"
-        maximum: "27.0"
+    supportedOS: *os_rules
     featured: true
     isPrivate: false
     description: |
@@ -420,18 +369,11 @@ packages:
     tags: [DISPLAY]
     icon: assets/icon/potato.png
     banner: assets/banner/banner.png
-    screenshots:
-      - assets/potato_120fps/potato_screenshot.png
+    screenshots: *screens
     download: packages/GRAPHICS_POTATO_WITH_120FPS.3105
     sha256: F7A03FE347ADF7DD29E0358FCF6FAED628E519F6837C7DDC6D5EE50FE15663B3
     size: 14102893
-    supportedOS:
-      - minimum: "17.0"
-        maximum: "18.7.1"
-      - minimum: "26.0"
-        maximum: "26.6.1"
-      - minimum: "27.0"
-        maximum: "27.0"
+    supportedOS: *os_rules
     featured: true
     isPrivate: false
     description: |
@@ -467,19 +409,11 @@ packages:
     publishedAt: "2026-09-06T11:00:00.000Z"
     icon: assets/icon/F&B_pink.png
     banner: assets/banner/banner.png
-    screenshots:
-      - assets/dialer/B&F_Pink/B&F_dark.png
-      - assets/dialer/B&F_Pink/B&F_light.png
+    screenshots: *screens
     download: packages/Flower&Butterfly_Pink.3105pass
     sha256: 57EDB20E5572705C4A822F26DF41AC44EF95FAA52757DE0A6CDD836BA3BD67D1
     size: 1052199
-    supportedOS:
-      - minimum: "17.0"
-        maximum: "18.7.1"
-      - minimum: "26.0"
-        maximum: "26.6.1"
-      - minimum: "27.0"
-        maximum: "27.0"
+    supportedOS: *os_rules
     featured: true
     isPrivate: false
     description: |
@@ -526,13 +460,7 @@ packages:
     download: packages/ALL_IN_ONE_V12.3105
     sha256: 9BF4F7C31A97C294714FA395AA9BE1674A5A4A4D414C5109FBBE9137DAF9C9DE
     size: 38137
-    supportedOS:
-      - minimum: "17.0"
-        maximum: "18.7.1"
-      - minimum: "26.0"
-        maximum: "26.6.1"
-      - minimum: "27.0"
-        maximum: "27.0"
+    supportedOS: *os_rules
     featured: false
     isPrivate: false
     description: |
@@ -607,13 +535,7 @@ packages:
     download: packages/PATCH_NEW_VERSION_4-6_PUBG__2_.3105
     sha256: 85E90E4435DEC263F99F923082DEF04D61D45FD3F468A6521052CFFF77249ACC
     size: 1180183
-    supportedOS:
-      - minimum: "17.0"
-        maximum: "18.7.1"
-      - minimum: "26.0"
-        maximum: "26.6.1"
-      - minimum: "27.0"
-        maximum: "27.0"
+    supportedOS: *os_rules
     featured: true
     isPrivate: false
     description: |
@@ -662,13 +584,7 @@ packages:
     download: packages/PATCH_PUBG_V46_FOR_KR.3105
     sha256: 1BB59B93DB2D4187F25EDD53C0BECB9EF15FB825ED7C0C479D62F48999B43930
     size: 1179331
-    supportedOS:
-      - minimum: "17.0"
-        maximum: "18.7.1"
-      - minimum: "26.0"
-        maximum: "26.6.1"
-      - minimum: "27.0"
-        maximum: "27.0"
+    supportedOS: *os_rules
     featured: false
     isPrivate: false
     description: |
@@ -715,13 +631,7 @@ packages:
     download: packages/PATCH_FOR_V46_PUBG_VNG.3105
     sha256: 5B7FF2AD45BE505D398A1F2A0584831BBB7B690198E79DB1B9F79F44003A98F1
     size: 1179332
-    supportedOS:
-      - minimum: "17.0"
-        maximum: "18.7.1"
-      - minimum: "26.0"
-        maximum: "26.6.1"
-      - minimum: "27.0"
-        maximum: "27.0"
+    supportedOS: *os_rules
     featured: true
     isPrivate: false
     description: |
@@ -782,13 +692,7 @@ packages:
     download: packages/PATCH_PUBG_V46_GLOBAL.3105
     sha256: D71D28CE86665C243A3540D81CEF6E19108C4AC325FA12243AA8DB8805344C8F
     size: 1179326
-    supportedOS:
-      - minimum: "17.0"
-        maximum: "18.7.1"
-      - minimum: "26.0"
-        maximum: "26.6.1"
-      - minimum: "27.0"
-        maximum: "27.0"
+    supportedOS: *os_rules
     featured: true
     isPrivate: false
     description: |
@@ -818,24 +722,3 @@ packages:
       @owenindahouse
       admin Mod @Thanhdat1690.
     changelog: 🎉 v4.6.0 — Phát hành lần đầu
-
-  # ----- owen-013 -----
-  - identifier: owen-013
-    name: Test Package EndToEnd
-    author: "@owenindahouse"
-    version: 1.0.0
-    summary: Test thêm package end-to-end
-    password: "testpass"
-    category: Customization
-    tags: [CUSTOM]
-    screenshots: *screens
-    download: packages/ALL_IN_ONE_V12.3105
-    sha256: FDC6EC1F47DC9C8D4BAA78FC2AC1957F4C1B486B34A886DB9F8221D13C6BFE0B
-    size: 38137
-    supportedOS: *os_rules
-    featured: false
-    isPrivate: false
-    description: |
-      Mô tả test
-      Nhiều dòng
-    changelog: v1.0.0 - Test changelog
