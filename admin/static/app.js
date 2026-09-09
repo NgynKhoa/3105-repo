@@ -1901,6 +1901,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
+  // Click vào overlay (nền mờ bên ngoài modal-content) để đóng modal
+  $('#modal').addEventListener('click', e => {
+    if (e.target === e.currentTarget) closeModal();
+  });
+
   loadRepositories();
 
   // Package search + pagination
