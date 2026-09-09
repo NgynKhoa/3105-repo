@@ -1208,11 +1208,11 @@ function bindFormEvents() {
   };
   $('#f_icon_search')?.addEventListener('input', function () {
     if (this.value.trim()) { autoShow('#iconPickerGrid', '#btnIconToggle'); refreshIconPicker(); }
-    else { autoHide('#iconPickerGrid', '#btnIconToggle'); }
+    else { refreshIconPicker(); /* reload đầy đủ khi clear search */ }
   });
   $('#f_banner_search')?.addEventListener('input', function () {
     if (this.value.trim()) { autoShow('#bannerPickerGrid', '#btnBannerToggle'); refreshBannerPicker(); }
-    else { autoHide('#bannerPickerGrid', '#btnBannerToggle'); }
+    else { refreshBannerPicker(); }
   });
   $('#f_screen_search')?.addEventListener('input', function () {
     if (this.value.trim()) { refreshScreenGrid(); }
