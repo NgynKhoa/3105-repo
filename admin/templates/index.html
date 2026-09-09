@@ -1003,11 +1003,13 @@
     }
 
     .modal-header h3 {
-      /* Dùng Be Vietnam Pro để hiển thị tiếng Việt tốt, vẫn giữ neon style */
-      font-family: 'Be Vietnam Pro', 'Press Start 2P', monospace;
-      font-size: 0.9rem;
-      font-weight: 600;
-      letter-spacing: 0.3px;
+      /* Be Vietnam Pro: hiển thị tiếng Việt tốt, vẫn giữ neon style */
+      font-family: 'Be Vietnam Pro', monospace !important;
+      font-size: 0.9rem !important;
+      font-weight: 600 !important;
+      letter-spacing: 0.3px !important;
+      color: var(--neon) !important;
+      text-shadow: 0 0 8px var(--neon), 0 0 18px rgba(var(--neon-rgb), 0.4) !important;
       margin: 0;
     }
 
