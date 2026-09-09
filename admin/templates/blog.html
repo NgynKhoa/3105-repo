@@ -4,31 +4,10 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0" />
-  <meta http-equiv="Pragma" content="no-cache" />
-  <meta http-equiv="Expires" content="0" />
   <title>Blog — 3105 Mod Collection</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Fira+Code:wght@400;500&family=Be+Vietnam+Pro:wght@300;400;500;600&family=VT323&display=swap" rel="stylesheet" />
   <style>
-    /* === FPS overlay widget === */
-    #fps-box {
-      position: fixed;
-      top: 6px;
-      left: 6px;
-      z-index: 999999;
-      padding: 0;
-      font-family: 'VT323', 'Fira Code', monospace;
-      font-size: 14px;
-      line-height: 1;
-      color: #39ff14;
-      background: transparent;
-      border: none;
-      pointer-events: none;
-      text-shadow: 0 0 4px currentColor;
-      letter-spacing: 1px;
-      user-select: none;
-    }
-
     /* ============================ CSS VARIABLES ============================ */
     :root {
       --neon: #80ff40;
@@ -42,14 +21,13 @@
       --bg: #06060e;
       --panel: rgba(10, 14, 26, 0.92);
       --panel-alt: rgba(6, 9, 18, 0.96);
-      --panel-soft: rgba(10, 14, 26, 0.06);
+      --panel-alpha: 0.92;
       --text: #c0d8cc;
       --text-bright: #e8fff0;
       --muted: #7a9a86;
       --border: rgba(57, 255, 20, 0.15);
       --border-glow: rgba(57, 255, 20, 0.38);
       --shadow: 0 0 14px rgba(0,0,0,0.4), 0 0 28px rgba(var(--neon-rgb),0.08);
-      --inset: inset 0 1px 0 rgba(255,255,255,0.04);
     }
 
     /* ============================ RESET & BASE ============================ */
@@ -72,13 +50,7 @@
       inset: 0;
       pointer-events: none;
       z-index: 9999;
-      background: repeating-linear-gradient(
-        0deg,
-        transparent,
-        transparent 2px,
-        rgba(0, 0, 0, 0.04) 2px,
-        rgba(0, 0, 0, 0.04) 4px
-      );
+      background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0, 0, 0, 0.04) 2px, rgba(0, 0, 0, 0.04) 4px);
     }
 
     /* Background grid */
@@ -91,7 +63,6 @@
       background:
         repeating-linear-gradient(90deg, rgba(255,255,255,0.025) 0 1px, transparent 1px 44px),
         repeating-linear-gradient(0deg, rgba(255,255,255,0.016) 0 1px, transparent 1px 44px),
-        repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(255,255,255,0.016) 3px, rgba(255,255,255,0.016) 4px),
         radial-gradient(circle at 15% 8%, rgba(0,240,255,0.06), transparent 28%),
         radial-gradient(circle at 85% 4%, rgba(255,45,123,0.05), transparent 22%);
     }
@@ -108,7 +79,7 @@
     .page-wrapper {
       position: relative;
       z-index: 2;
-      max-width: 1000px;
+      max-width: 900px;
       margin: 0 auto;
       padding: 0 16px 80px;
     }
@@ -158,13 +129,13 @@
     .blog-list {
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 10px;
     }
     .blog-card {
       display: flex;
       align-items: center;
-      gap: 16px;
-      padding: 16px 20px;
+      gap: 14px;
+      padding: 14px 18px;
       background: var(--panel);
       border: 1px solid var(--border);
       border-radius: 12px;
@@ -180,10 +151,10 @@
       background: rgba(10, 14, 26, 0.98);
     }
     .blog-card-icon {
-      font-size: 28px;
+      font-size: 26px;
       flex-shrink: 0;
-      width: 48px;
-      height: 48px;
+      width: 46px;
+      height: 46px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -196,10 +167,10 @@
       min-width: 0;
     }
     .blog-card-title {
-      font-size: 15px;
+      font-size: 14px;
       font-weight: 600;
       color: var(--text-bright);
-      margin-bottom: 6px;
+      margin-bottom: 5px;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -208,13 +179,13 @@
       display: flex;
       align-items: center;
       gap: 12px;
-      font-size: 12px;
+      font-size: 11px;
       color: var(--muted);
     }
     .blog-card-excerpt {
-      font-size: 13px;
+      font-size: 12px;
       color: var(--text);
-      margin-top: 4px;
+      margin-top: 3px;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -238,7 +209,7 @@
       overflow: hidden;
     }
     .post-header {
-      padding: 28px 28px 20px;
+      padding: 26px 26px 18px;
       border-bottom: 1px solid var(--border);
       background: linear-gradient(180deg, rgba(var(--neon-rgb),0.04) 0%, transparent 100%);
     }
@@ -249,81 +220,73 @@
       font-size: 12px;
       color: var(--neon);
       text-decoration: none;
-      margin-bottom: 16px;
+      margin-bottom: 14px;
       transition: all 0.2s;
     }
     .post-back-link:hover {
       text-shadow: 0 0 8px rgba(var(--neon-rgb),0.5);
     }
     .post-icon-big {
-      font-size: 48px;
-      margin-bottom: 16px;
+      font-size: 46px;
+      margin-bottom: 14px;
     }
     .post-title {
       font-family: 'Press Start 2P', monospace;
-      font-size: 13px;
+      font-size: 12px;
       color: var(--text-bright);
       line-height: 1.6;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
       text-shadow: 0 0 12px rgba(var(--neon-rgb),0.3);
     }
     .post-meta {
       display: flex;
       align-items: center;
-      gap: 16px;
+      gap: 14px;
       font-size: 12px;
       color: var(--muted);
     }
-    .post-meta-item {
-      display: flex;
-      align-items: center;
-      gap: 5px;
-    }
     .post-body {
-      padding: 28px;
+      padding: 26px;
       line-height: 1.8;
       font-size: 14px;
     }
     .post-body h2 {
       color: var(--neon);
-      font-size: 16px;
-      margin: 24px 0 12px;
+      font-size: 15px;
+      margin: 22px 0 10px;
       text-shadow: 0 0 8px rgba(var(--neon-rgb),0.4);
     }
     .post-body h2:first-child { margin-top: 0; }
     .post-body h3 {
       color: var(--neon-cyan);
-      font-size: 14px;
-      margin: 20px 0 10px;
+      font-size: 13px;
+      margin: 18px 0 8px;
     }
     .post-body p {
-      margin-bottom: 14px;
+      margin-bottom: 12px;
       color: var(--text);
     }
     .post-body ul, .post-body ol {
-      margin: 12px 0 16px 20px;
+      margin: 10px 0 14px 20px;
     }
     .post-body li {
-      margin-bottom: 8px;
+      margin-bottom: 7px;
       color: var(--text);
     }
     .post-body table {
       width: 100%;
       border-collapse: collapse;
-      margin: 16px 0;
+      margin: 14px 0;
       font-size: 13px;
     }
     .post-body th, .post-body td {
-      padding: 10px 14px;
+      padding: 9px 12px;
       border: 1px solid var(--border);
       text-align: left;
     }
     .post-body th {
       background: rgba(var(--neon-rgb),0.06);
       color: var(--neon);
-    }
-    .post-body tr:hover td {
-      background: rgba(var(--neon-rgb),0.03);
     }
     .post-body strong {
       color: var(--neon-yellow);
@@ -338,23 +301,23 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
-      margin-top: 28px;
-      padding: 16px;
+      gap: 6px;
+      margin-top: 24px;
+      padding: 14px;
       border-top: 1px solid var(--border);
     }
     .page-btn {
-      min-width: 36px;
-      height: 36px;
+      min-width: 34px;
+      height: 34px;
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 0 12px;
+      padding: 0 10px;
       border: 1px solid var(--border);
       border-radius: 8px;
       background: var(--panel);
       color: var(--text);
-      font-size: 13px;
+      font-size: 12px;
       cursor: pointer;
       transition: all 0.2s;
       text-decoration: none;
@@ -401,7 +364,7 @@
       top: 60px;
       right: 14px;
       z-index: 10001;
-      width: 260px;
+      width: 250px;
       background: var(--panel);
       border: 1px solid var(--border);
       border-radius: 14px;
@@ -413,24 +376,24 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 14px 16px;
+      padding: 12px 14px;
       border-bottom: 1px solid var(--border);
       background: rgba(var(--neon-rgb),0.04);
     }
     .settings-title {
       font-family: 'Press Start 2P', monospace;
-      font-size: 10px;
+      font-size: 9px;
       color: var(--neon);
       text-shadow: 0 0 6px rgba(var(--neon-rgb),0.4);
     }
     .settings-close {
-      width: 26px;
-      height: 26px;
+      width: 24px;
+      height: 24px;
       border: none;
       background: transparent;
       color: var(--muted);
       cursor: pointer;
-      font-size: 16px;
+      font-size: 14px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -441,22 +404,15 @@
       color: var(--neon-pink);
       background: rgba(var(--neon-pink-rgb),0.1);
     }
-    .settings-body {
-      padding: 8px 0;
-      max-height: 60vh;
-      overflow-y: auto;
-    }
-    .settings-group {
-      padding: 12px 16px;
-      border-bottom: 1px solid var(--border);
-    }
+    .settings-body { padding: 6px 0; max-height: 65vh; overflow-y: auto; }
+    .settings-group { padding: 10px 14px; border-bottom: 1px solid var(--border); }
     .settings-group:last-child { border-bottom: none; }
     .settings-label {
       display: block;
-      font-size: 11px;
+      font-size: 10px;
       font-weight: 600;
       color: var(--text-bright);
-      margin-bottom: 10px;
+      margin-bottom: 8px;
       text-transform: uppercase;
       letter-spacing: 0.5px;
     }
@@ -464,24 +420,40 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 10px;
+      margin-bottom: 8px;
     }
     .settings-row:last-child { margin-bottom: 0; }
-    .settings-row-label {
-      font-size: 12px;
-      color: var(--text);
+    .settings-row-label { font-size: 11px; color: var(--text); }
+    .theme-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 7px; }
+    .theme-btn {
+      height: 34px;
+      border: 2px solid transparent;
+      border-radius: 7px;
+      cursor: pointer;
+      transition: all 0.2s;
     }
-    .toggle-switch {
-      position: relative;
-      width: 40px;
-      height: 22px;
-      flex-shrink: 0;
+    .theme-btn:hover { transform: scale(1.05); }
+    .theme-btn.active { border-color: var(--neon); box-shadow: 0 0 10px rgba(var(--neon-rgb),0.3); }
+    input[type="range"] {
+      width: 100%;
+      height: 5px;
+      -webkit-appearance: none;
+      appearance: none;
+      background: rgba(255,255,255,0.1);
+      border-radius: 3px;
+      outline: none;
     }
-    .toggle-switch input {
-      opacity: 0;
-      width: 0;
-      height: 0;
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 15px;
+      height: 15px;
+      border-radius: 50%;
+      background: var(--neon);
+      cursor: pointer;
+      box-shadow: 0 0 8px rgba(var(--neon-rgb),0.5);
     }
+    .toggle-switch { position: relative; width: 42px; height: 22px; flex-shrink: 0; }
+    .toggle-switch input { opacity: 0; width: 0; height: 0; }
     .toggle-slider {
       position: absolute;
       inset: 0;
@@ -507,51 +479,11 @@
       border-color: var(--neon);
     }
     .toggle-switch input:checked + .toggle-slider::before {
-      transform: translateX(18px);
+      transform: translateX(20px);
       background: var(--neon);
       box-shadow: 0 0 8px rgba(var(--neon-rgb),0.5);
     }
-    .theme-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 8px;
-    }
-    .theme-btn {
-      height: 36px;
-      border: 2px solid transparent;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    .theme-btn:hover { transform: scale(1.05); }
-    .theme-btn.active { border-color: var(--neon); box-shadow: 0 0 10px rgba(var(--neon-rgb),0.3); }
-    input[type="range"] {
-      width: 100%;
-      height: 6px;
-      -webkit-appearance: none;
-      appearance: none;
-      background: rgba(255,255,255,0.1);
-      border-radius: 3px;
-      outline: none;
-    }
-    input[type="range"]::-webkit-slider-thumb {
-      -webkit-appearance: none;
-      width: 16px;
-      height: 16px;
-      border-radius: 50%;
-      background: var(--neon);
-      cursor: pointer;
-      box-shadow: 0 0 8px rgba(var(--neon-rgb),0.5);
-    }
-
-    /* ============================ OVERLAY ============================ */
-    #overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      z-index: 9998;
-      background: transparent;
-    }
+    #overlay { display: none; position: fixed; inset: 0; z-index: 9998; background: transparent; }
     #overlay.active { display: block; }
   </style>
 </head>
@@ -560,64 +492,48 @@
   <div id="fps-box">FPS: --</div>
 
   <!-- Settings Button -->
-  <button id="settingsBtn" title="Cài đặt">⚙️</button>
+  <button id="settingsBtn" title="Cai dat">&#9881;</button>
 
   <!-- Settings Menu -->
   <div id="settingsMenu">
     <div class="settings-header">
       <span class="settings-title">SETTINGS</span>
-      <button class="settings-close" id="closeSettings">✕</button>
+      <button class="settings-close" id="closeSettings">&#10005;</button>
     </div>
     <div class="settings-body">
-      <!-- Theme Color -->
       <div class="settings-group">
-        <span class="settings-label">Màu Theme</span>
+        <span class="settings-label">Mau Theme</span>
         <div class="theme-grid" id="themeGrid">
-          <button class="theme-btn active" data-theme="green" style="background: linear-gradient(135deg,#80ff40,#39ff14);" title="Green Neon"></button>
-          <button class="theme-btn" data-theme="cyan" style="background: linear-gradient(135deg,#00f0ff,#0099cc);" title="Cyan Neon"></button>
-          <button class="theme-btn" data-theme="pink" style="background: linear-gradient(135deg,#ff2d7b,#cc1155);" title="Pink Neon"></button>
-          <button class="theme-btn" data-theme="lavender" style="background: linear-gradient(135deg,#b388ff,#7744dd);" title="Lavender"></button>
-          <button class="theme-btn" data-theme="yellow" style="background: linear-gradient(135deg,#f0e040,#ccbb00);" title="Yellow Neon"></button>
-          <button class="theme-btn" data-theme="red" style="background: linear-gradient(135deg,#ff4444,#cc0000);" title="Red"></button>
-          <button class="theme-btn" data-theme="orange" style="background: linear-gradient(135deg,#ff8800,#cc5500);" title="Orange"></button>
-          <button class="theme-btn" data-theme="white" style="background: linear-gradient(135deg,#ffffff,#cccccc);" title="White"></button>
+          <button class="theme-btn active" data-theme="green" style="background:linear-gradient(135deg,#80ff40,#39ff14);" title="Green"></button>
+          <button class="theme-btn" data-theme="cyan" style="background:linear-gradient(135deg,#00f0ff,#0099cc);" title="Cyan"></button>
+          <button class="theme-btn" data-theme="pink" style="background:linear-gradient(135deg,#ff2d7b,#cc1155);" title="Pink"></button>
+          <button class="theme-btn" data-theme="lavender" style="background:linear-gradient(135deg,#b388ff,#7744dd);" title="Lavender"></button>
+          <button class="theme-btn" data-theme="yellow" style="background:linear-gradient(135deg,#f0e040,#ccbb00);" title="Yellow"></button>
+          <button class="theme-btn" data-theme="red" style="background:linear-gradient(135deg,#ff4444,#cc0000);" title="Red"></button>
+          <button class="theme-btn" data-theme="orange" style="background:linear-gradient(135deg,#ff8800,#cc5500);" title="Orange"></button>
+          <button class="theme-btn" data-theme="white" style="background:linear-gradient(135deg,#ffffff,#cccccc);" title="White"></button>
         </div>
       </div>
-
-      <!-- Rain Effects -->
       <div class="settings-group">
-        <span class="settings-label">Hiệu ứng Mưa</span>
+        <span class="settings-label">Hieu ung Mua</span>
         <div class="settings-row">
-          <span class="settings-row-label">Bật Mưa</span>
-          <label class="toggle-switch">
-            <input type="checkbox" id="toggleRain" checked>
-            <span class="toggle-slider"></span>
-          </label>
+          <span class="settings-row-label">Bat Mua</span>
+          <label class="toggle-switch"><input type="checkbox" id="toggleRain" checked><span class="toggle-slider"></span></label>
         </div>
         <div class="settings-row">
-          <span class="settings-row-label">Mưa Nặng</span>
-          <label class="toggle-switch">
-            <input type="checkbox" id="toggleHeavyRain">
-            <span class="toggle-slider"></span>
-          </label>
+          <span class="settings-row-label">Mua Nang</span>
+          <label class="toggle-switch"><input type="checkbox" id="toggleHeavyRain"><span class="toggle-slider"></span></label>
         </div>
       </div>
-
-      <!-- Dark Mode -->
       <div class="settings-group">
-        <span class="settings-label">Chế độ Hiển thị</span>
+        <span class="settings-label">Che do Hien thi</span>
         <div class="settings-row">
           <span class="settings-row-label">Dark Mode</span>
-          <label class="toggle-switch">
-            <input type="checkbox" id="toggleDarkMode" checked>
-            <span class="toggle-slider"></span>
-          </label>
+          <label class="toggle-switch"><input type="checkbox" id="toggleDarkMode" checked><span class="toggle-slider"></span></label>
         </div>
       </div>
-
-      <!-- Transparency -->
       <div class="settings-group">
-        <span class="settings-label">Độ Trong Suốt</span>
+        <span class="settings-label">Do Trong Suot</span>
         <input type="range" id="rangeTransparency" min="0" max="100" value="92">
       </div>
     </div>
@@ -627,8 +543,8 @@
 
   <div class="page-wrapper">
     <header class="page-header">
-      <a href="/" class="back-btn" title="Quay lại">←</a>
-      <span class="page-icon">📝</span>
+      <a href="/" class="back-btn" title="Quay lai">&#8592;</a>
+      <span class="page-icon">&#128221;</span>
       <h1 class="page-title">BLOG</h1>
     </header>
 
@@ -641,17 +557,19 @@
       let last = performance.now();
       let frames = 0;
       const fpsBox = document.getElementById('fps-box');
-      function loop() {
-        frames++;
-        const now = performance.now();
-        if (now - last >= 1000) {
-          fpsBox.textContent = 'FPS: ' + frames;
-          frames = 0;
-          last = now;
+      if (fpsBox) {
+        function loop() {
+          frames++;
+          const now = performance.now();
+          if (now - last >= 1000) {
+            fpsBox.textContent = 'FPS: ' + frames;
+            frames = 0;
+            last = now;
+          }
+          requestAnimationFrame(loop);
         }
         requestAnimationFrame(loop);
       }
-      requestAnimationFrame(loop);
     })();
 
     // ====================== Rain Effect ======================
@@ -660,6 +578,7 @@
     let drops = [];
     let rainEnabled = true;
     let heavyRain = false;
+    let rainOpacity = 0.5;
 
     function resizeCanvas() {
       canvas.width = window.innerWidth;
@@ -678,7 +597,7 @@
         this.y = heavyRain ? -20 : -10;
         this.len = heavyRain ? Math.random() * 30 + 20 : Math.random() * 15 + 8;
         this.speed = heavyRain ? Math.random() * 6 + 4 : Math.random() * 3 + 2;
-        this.opacity = Math.random() * 0.3 + 0.2;
+        this.opacity = (Math.random() * 0.3 + 0.2) * rainOpacity;
         this.thick = heavyRain ? Math.random() * 1.5 + 1 : Math.random() * 0.8 + 0.4;
       }
       update() {
@@ -702,9 +621,7 @@
     }
     function animateRain() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      if (rainEnabled) {
-        drops.forEach(d => { d.update(); d.draw(); });
-      }
+      if (rainEnabled) drops.forEach(d => { d.update(); d.draw(); });
       requestAnimationFrame(animateRain);
     }
     initRain();
@@ -754,9 +671,14 @@
       r.style.setProperty('--neon-yellow', t.neonYellow);
       r.style.setProperty('--neon-lavender', t.neonLavender);
       r.style.setProperty('--bg', t.bg);
+      r.style.setProperty('--border', `rgba(${t.neonRgb}, 0.15)`);
+      r.style.setProperty('--border-glow', `rgba(${t.neonRgb}, 0.38)`);
       document.querySelectorAll('.theme-btn').forEach(b => b.classList.remove('active'));
       document.querySelector(`.theme-btn[data-theme="${name}"]`).classList.add('active');
-      localStorage.setItem('theme', name);
+      localStorage.setItem('blog_theme', name);
+      // Sync to repo/dashboard too
+      localStorage.setItem('repo_theme', name);
+      localStorage.setItem('dash_theme', name);
     }
 
     document.querySelectorAll('.theme-btn').forEach(btn => {
@@ -766,46 +688,89 @@
     // Rain toggle
     document.getElementById('toggleRain').addEventListener('change', e => {
       rainEnabled = e.target.checked;
-      localStorage.setItem('rainEnabled', rainEnabled);
+      localStorage.setItem('blog_rainEnabled', rainEnabled);
     });
     document.getElementById('toggleHeavyRain').addEventListener('change', e => {
       heavyRain = e.target.checked;
       initRain();
-      localStorage.setItem('heavyRain', heavyRain);
+      localStorage.setItem('blog_heavyRain', heavyRain);
     });
 
-    // Dark mode toggle
+    // Dark mode toggle - FIX
     document.getElementById('toggleDarkMode').addEventListener('change', e => {
-      if (e.target.checked) {
-        document.documentElement.style.setProperty('--panel', 'rgba(10, 14, 26, 0.92)');
+      const isDark = e.target.checked;
+      if (isDark) {
+        document.documentElement.style.setProperty('--panel', `rgba(10, 14, 26, var(--panel-alpha, 0.92))`);
         document.documentElement.style.setProperty('--panel-alt', 'rgba(6, 9, 18, 0.96)');
+        document.documentElement.style.setProperty('--text', '#c0d8cc');
+        document.documentElement.style.setProperty('--text-bright', '#e8fff0');
+        document.documentElement.style.setProperty('--muted', '#7a9a86');
       } else {
-        document.documentElement.style.setProperty('--panel', 'rgba(255, 255, 255, 0.92)');
-        document.documentElement.style.setProperty('--panel-alt', 'rgba(240, 240, 240, 0.96)');
-        document.documentElement.style.setProperty('--text', '#1a1a1a');
-        document.documentElement.style.setProperty('--text-bright', '#000000');
-        document.documentElement.style.setProperty('--muted', '#666666');
+        document.documentElement.style.setProperty('--panel', `rgba(240, 240, 245, var(--panel-alpha, 0.92))`);
+        document.documentElement.style.setProperty('--panel-alt', 'rgba(255, 255, 255, 0.96)');
+        document.documentElement.style.setProperty('--text', '#2a2a3a');
+        document.documentElement.style.setProperty('--text-bright', '#0a0a1a');
+        document.documentElement.style.setProperty('--muted', '#888899');
       }
-      localStorage.setItem('darkMode', e.target.checked);
+      localStorage.setItem('blog_darkMode', isDark);
     });
 
-    // Transparency
+    // Transparency - FIX: updates panel-alpha so ALL panel usages update
     document.getElementById('rangeTransparency').addEventListener('input', e => {
       const v = e.target.value / 100;
-      document.documentElement.style.setProperty('--panel', `rgba(10, 14, 26, ${v})`);
-      localStorage.setItem('transparency', e.target.value);
+      document.documentElement.style.setProperty('--panel-alpha', v.toFixed(2));
+      const isDark = localStorage.getItem('blog_darkMode') !== 'false';
+      if (isDark) {
+        document.documentElement.style.setProperty('--panel', `rgba(10, 14, 26, ${v})`);
+        document.documentElement.style.setProperty('--panel-alt', `rgba(6, 9, 18, ${Math.min(v + 0.04, 1).toFixed(2)})`);
+      } else {
+        document.documentElement.style.setProperty('--panel', `rgba(240, 240, 245, ${v})`);
+        document.documentElement.style.setProperty('--panel-alt', `rgba(255, 255, 255, ${Math.min(v + 0.04, 1).toFixed(2)})`);
+      }
+      localStorage.setItem('blog_transparency', e.target.value);
     });
 
     // Load saved settings
-    if (localStorage.getItem('theme')) applyTheme(localStorage.getItem('theme'));
-    if (localStorage.getItem('rainEnabled') === 'false') { rainEnabled = false; document.getElementById('toggleRain').checked = false; }
-    if (localStorage.getItem('heavyRain') === 'true') { heavyRain = true; document.getElementById('toggleHeavyRain').checked = true; initRain(); }
-    if (localStorage.getItem('darkMode') === 'false') document.getElementById('toggleDarkMode').checked = false;
-    if (localStorage.getItem('transparency')) {
-      const v = localStorage.getItem('transparency') / 100;
-      document.documentElement.style.setProperty('--panel', `rgba(10, 14, 26, ${v})`);
-      document.getElementById('rangeTransparency').value = localStorage.getItem('transparency');
+    function loadSavedSettings() {
+      // Theme
+      const savedTheme = localStorage.getItem('blog_theme') || localStorage.getItem('repo_theme') || 'green';
+      applyTheme(savedTheme);
+
+      // Dark mode
+      const savedDark = localStorage.getItem('blog_darkMode');
+      if (savedDark === 'false') {
+        document.getElementById('toggleDarkMode').checked = false;
+        document.documentElement.style.setProperty('--panel', `rgba(240, 240, 245, var(--panel-alpha, 0.92))`);
+        document.documentElement.style.setProperty('--panel-alt', 'rgba(255, 255, 255, 0.96)');
+        document.documentElement.style.setProperty('--text', '#2a2a3a');
+        document.documentElement.style.setProperty('--text-bright', '#0a0a1a');
+        document.documentElement.style.setProperty('--muted', '#888899');
+      }
+
+      // Transparency
+      const savedTrans = localStorage.getItem('blog_transparency') || '92';
+      document.getElementById('rangeTransparency').value = savedTrans;
+      const v = parseInt(savedTrans) / 100;
+      document.documentElement.style.setProperty('--panel-alpha', v.toFixed(2));
+      const isDark = localStorage.getItem('blog_darkMode') !== 'false';
+      if (isDark) {
+        document.documentElement.style.setProperty('--panel', `rgba(10, 14, 26, ${v})`);
+      } else {
+        document.documentElement.style.setProperty('--panel', `rgba(240, 240, 245, ${v})`);
+      }
+
+      // Rain
+      if (localStorage.getItem('blog_rainEnabled') === 'false') {
+        rainEnabled = false;
+        document.getElementById('toggleRain').checked = false;
+      }
+      if (localStorage.getItem('blog_heavyRain') === 'true') {
+        heavyRain = true;
+        document.getElementById('toggleHeavyRain').checked = true;
+        initRain();
+      }
     }
+    loadSavedSettings();
 
     // ====================== Blog Logic ======================
     let allPosts = [];
@@ -814,12 +779,18 @@
 
     async function loadPosts() {
       try {
-        const res = await fetch('/api/blog/posts');
-        const data = await res.json();
-        allPosts = data.posts;
+        // Try localStorage first (from dashboard edits), then API
+        const savedPosts = localStorage.getItem('repo_blogPosts');
+        if (savedPosts) {
+          allPosts = JSON.parse(savedPosts);
+        } else {
+          const res = await fetch('/api/blog/posts');
+          const data = await res.json();
+          allPosts = data.posts;
+        }
         renderBlog();
       } catch (e) {
-        document.getElementById('blogContent').innerHTML = '<p style="color:var(--neon-pink);padding:20px;">Lỗi tải bài viết</p>';
+        document.getElementById('blogContent').innerHTML = '<p style="color:var(--neon-pink);padding:20px;">Loi tai bai viet</p>';
       }
     }
 
@@ -845,17 +816,18 @@
 
       let html = '<div class="blog-list">';
       for (const p of pagePosts) {
+        // FIX: Open in NEW TAB instead of same page navigation
         html += `
-          <a href="/blog/${p.id}" class="blog-card">
+          <a href="/blog-post/${p.id}" target="_blank" class="blog-card">
             <div class="blog-card-icon">${p.icon}</div>
             <div class="blog-card-content">
               <div class="blog-card-title">${p.title}</div>
               <div class="blog-card-meta">
-                <span>📅 ${p.date}</span>
+                <span>&#128197; ${p.date}</span>
               </div>
-              <div class="blog-card-excerpt">${p.excerpt}</div>
+              <div class="blog-card-excerpt">${p.excerpt || ''}</div>
             </div>
-            <div class="blog-card-arrow">→</div>
+            <div class="blog-card-arrow">&#8594;</div>
           </a>`;
       }
       html += '</div>';
@@ -863,37 +835,41 @@
       // Pagination
       if (totalPages > 1) {
         html += '<div class="blog-pagination">';
-        html += `<a href="#" class="page-btn" onclick="goPage(${currentPage - 1});return false;" ${currentPage === 1 ? 'disabled' : ''}>←</a>`;
+        html += `<a href="#" class="page-btn" onclick="goPage(${currentPage - 1});return false;" ${currentPage === 1 ? 'disabled' : ''}>&#8592;</a>`;
         for (let i = 1; i <= totalPages; i++) {
           html += `<a href="#" class="page-btn ${i === currentPage ? 'active' : ''}" onclick="goPage(${i});return false;">${i}</a>`;
         }
-        html += `<a href="#" class="page-btn" onclick="goPage(${currentPage + 1});return false;" ${currentPage === totalPages ? 'disabled' : ''}>→</a>`;
+        html += `<a href="#" class="page-btn" onclick="goPage(${currentPage + 1});return false;" ${currentPage === totalPages ? 'disabled' : ''}>&#8594;</a>`;
         html += '</div>';
       }
 
       document.getElementById('blogContent').innerHTML = html;
     }
 
-    async function renderPost(postId) {
+    function renderPost(postId) {
       const post = allPosts.find(p => p.id === postId);
       if (!post) {
-        document.getElementById('blogContent').innerHTML = '<p style="color:var(--neon-pink);padding:20px;">Bài viết không tồn tại</p><a href="/blog" style="color:var(--neon);padding:20px;">← Quay lại danh sách</a>';
+        document.getElementById('blogContent').innerHTML = `
+          <div style="background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:40px;text-align:center;">
+            <div style="font-size:48px;margin-bottom:16px;">&#128533;</div>
+            <p style="color:var(--neon-pink);font-size:16px;margin-bottom:12px;">Bai viet khong ton tai</p>
+            <a href="/blog" class="back-btn" style="display:inline-flex;text-decoration:none;">&#8592; Quay lai danh sach</a>
+          </div>`;
         return;
       }
       document.getElementById('blogContent').innerHTML = `
         <div class="post-detail">
           <div class="post-header">
-            <a href="/blog" class="post-back-link">← Quay lại danh sách bài viết</a>
+            <a href="/blog" class="post-back-link">&#8592; Quay lai danh sach bai viet</a>
             <div class="post-icon-big">${post.icon}</div>
             <h1 class="post-title">${post.title}</h1>
             <div class="post-meta">
-              <span class="post-meta-item">📅 ${post.date}</span>
-              <span class="post-meta-item">📝 ${allPosts.length} bài viết</span>
+              <span>&#128197; ${post.date}</span>
+              <span>&#128221; ${allPosts.length} bai viet</span>
             </div>
           </div>
-          <div class="post-body">${post.content}</div>
-        </div>
-      `;
+          <div class="post-body">${post.content || '<p>Noi dung dang duoc cap nhat...</p>'}</div>
+        </div>`;
     }
 
     function goPage(page) {

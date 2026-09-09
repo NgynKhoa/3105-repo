@@ -491,6 +491,12 @@ def blog_page(post_id: int = None):
     return render_template("blog.html", post_id=post_id)
 
 
+@app.route("/blog-post/<int:post_id>")
+def blog_post_page(post_id: int = None):
+    """Trang Blog post riêng - mở trong tab mới."""
+    return render_template("blog.html", post_id=post_id, standalone=True)
+
+
 @app.route("/dashboard")
 def dashboard():
     """Trang Admin Dashboard."""
