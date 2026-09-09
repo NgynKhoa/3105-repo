@@ -19,13 +19,15 @@ const state = {
   pkgPageSize: 5,
   // Blog pagination
   blogPage: 1,
-  blogPageSize: 3,
+  blogPageSize: 5,
   blogPosts: [
     { icon: '📦', title: 'Cách cài đặt Repository trên ứng dụng 3105', date: '2 ngày trước' },
     { icon: '🛡️', title: 'Bảo mật khi sử dụng Mod - Những lưu ý quan trọng', date: '5 ngày trước' },
     { icon: '⚡', title: 'Cập nhật v1.2 - Tính năng mới & cải tiến', date: '1 tuần trước' },
     { icon: '🎨', title: 'Hướng dẫn tạo Custom Dialer cho riêng bạn', date: '2 tuần trước' },
     { icon: '🎮', title: 'So sánh các gói Custom: VNG vs Global vs KR', date: '3 tuần trước' },
+    { icon: '🔧', title: 'Khắc phục lỗi thường gặp khi cập nhật Repository', date: '1 tháng trước' },
+    { icon: '💎', title: 'Premium Features có gì mới trong bản cập nhật', date: '1 tháng trước' },
     { icon: '🔧', title: 'Sửa lỗi thường gặp khi sử dụng 3105', date: '1 tháng trước' },
     { icon: '🚀', title: 'Tối ưu hiệu suất thiết bị với các mẹo nhỏ', date: '1 tháng trước' },
     { icon: '📱', title: 'Hỗ trợ iOS 17 - Danh sách tính năng tương thích', date: '2 tháng trước' },
