@@ -806,27 +806,25 @@
     #blog-section .box-header-wrap {
       padding: 10px 16px;
       border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
     }
     #packagesBox .box-header-wrap .pkg-header,
     #blog-section .box-header-wrap .pkg-header {
       margin: 0;
       display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-    #blog-section .box-header-wrap .pkg-header {
-      flex-direction: row;
-      flex-wrap: wrap;
       align-items: center;
-    }
-    #blog-section .box-header-wrap .pkg-header .section-title {
-      margin-bottom: 0;
+      gap: 10px;
+      flex-wrap: wrap;
     }
     #packagesBox .box-header-wrap .pkg-search-wrap,
     #blog-section .box-header-wrap .pkg-search-wrap {
       display: flex;
       align-items: center;
       gap: 8px;
+      flex-shrink: 0;
     }
 
     #pkgSearchInput {
