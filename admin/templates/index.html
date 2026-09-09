@@ -806,25 +806,23 @@
     #blog-section .box-header-wrap {
       padding: 10px 16px;
       border-bottom: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
+      position: relative;
+      min-height: 38px;
     }
     #packagesBox .box-header-wrap .pkg-header,
     #blog-section .box-header-wrap .pkg-header {
       margin: 0;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      flex-shrink: 0;
+      position: relative;
     }
     #packagesBox .box-header-wrap .pkg-search-wrap,
     #blog-section .box-header-wrap .pkg-search-wrap {
+      position: absolute;
+      right: 16px;
+      top: 50%;
+      transform: translateY(-50%);
       display: flex;
       align-items: center;
-      gap: 8px;
-      flex-shrink: 0;
+      gap: 6px;
     }
 
     #pkgSearchInput {
