@@ -573,7 +573,7 @@ function buildFormHtml(pkg) {
             <div id="f_download_menu" class="hidden absolute z-50 left-0 right-0 mt-1 max-h-60 overflow-y-auto bg-white border border-slate-300 rounded-md shadow-lg text-sm"></div>
           </div>
           <button id="btnAutoFill" type="button" class="btn btn-sm neon-edit whitespace-nowrap">⚡ Lấy hash</button>
-          <button id="btnDeletePackageFile" type="button" class="btn btn-sm neon-delete" title="Xoá file .3105 đã chọn">🗑</button>
+          <button id="btnDeletePackageFile" type="button" class="btn btn-sm neon-delete" title="Xoá file .3105 đã chọn"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path><path d="M10 11v6"></path><path d="M14 11v6"></path><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"></path></svg></button>
         </div>
         <div id="pkgUploadZone" class="mt-2 border-2 border-dashed border-slate-300 rounded-md p-3 text-center text-xs text-slate-500 cursor-pointer hover:border-slate-400">
           📂 Kéo thả file <code>.3105</code> vào đây, hoặc bấm để chọn file → file sẽ tự upload vào <code>packages/</code>
@@ -635,11 +635,11 @@ function buildFormHtml(pkg) {
         </span>
         <div class="flex flex-wrap items-center gap-2 mb-2 mt-1">
           <span class="text-xs text-slate-500">Thư mục ảnh:</span>
-          <select id="f_icon_folder" class="border border-slate-300 rounded-md px-2 py-1 text-sm bg-white flex-1 min-w-0">
+          <select id="f_icon_folder" class="border border-slate-300 rounded-md px-2 py-1 text-sm flex-1 min-w-0">
             <option value="">— root (assets/) —</option>
           </select>
           <button type="button" id="btnIconRefreshFolders" class="btn btn-xs neon-edit">↻</button>
-          <button type="button" id="btnDeleteIconFolder" class="btn btn-xs neon-delete" title="Xoá thư mục hiện tại">🗑</button>
+          <button type="button" id="btnDeleteIconFolder" class="btn btn-xs neon-delete" title="Xoá thư mục hiện tại"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path><path d="M10 11v6"></path><path d="M14 11v6"></path><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"></path></svg></button>
           <div class="relative" id="iconAddDropdown">
             <button type="button" id="btnIconAdd" class="btn btn-xs neon-edit">+</button>
             <div id="iconAddMenu" class="hidden absolute top-full left-0 mt-1 bg-white border border-slate-200 rounded-md shadow-lg z-10 min-w-[140px]">
@@ -648,7 +648,7 @@ function buildFormHtml(pkg) {
             </div>
           </div>
           <input type="file" id="f_icon_upload" accept="image/*" multiple class="hidden" />
-          <input type="search" id="f_icon_search" placeholder="🔍 tìm ảnh..." class="text-xs px-2 py-1 rounded border border-slate-300 bg-white" />
+          <input type="search" id="f_icon_search" placeholder="🔍 tìm ảnh..." class="text-xs px-2 py-1 rounded border border-slate-300" />
           <button type="button" id="btnIconToggle" class="btn btn-xs neon-edit ml-auto">Hiện ảnh</button>
         </div>
         <div id="iconPickerGrid" class="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-2 hidden"></div>
@@ -663,11 +663,11 @@ function buildFormHtml(pkg) {
         </span>
         <div class="flex flex-wrap items-center gap-2 mb-2 mt-1">
           <span class="text-xs text-slate-500">Thư mục ảnh:</span>
-          <select id="f_banner_folder" class="border border-slate-300 rounded-md px-2 py-1 text-sm bg-white flex-1 min-w-0">
+          <select id="f_banner_folder" class="border border-slate-300 rounded-md px-2 py-1 text-sm flex-1 min-w-0">
             <option value="">— root (assets/) —</option>
           </select>
           <button type="button" id="btnBannerRefreshFolders" class="btn btn-xs neon-edit">↻</button>
-          <button type="button" id="btnDeleteBannerFolder" class="btn btn-xs neon-delete" title="Xoá thư mục hiện tại">🗑</button>
+          <button type="button" id="btnDeleteBannerFolder" class="btn btn-xs neon-delete" title="Xoá thư mục hiện tại"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path><path d="M10 11v6"></path><path d="M14 11v6"></path><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"></path></svg></button>
           <div class="relative" id="bannerAddDropdown">
             <button type="button" id="btnBannerAdd" class="btn btn-xs neon-edit">+</button>
             <div id="bannerAddMenu" class="hidden absolute top-full left-0 mt-1 bg-white border border-slate-200 rounded-md shadow-lg z-10 min-w-[140px]">
@@ -676,7 +676,7 @@ function buildFormHtml(pkg) {
             </div>
           </div>
           <input type="file" id="f_banner_upload" accept="image/*" multiple class="hidden" />
-          <input type="search" id="f_banner_search" placeholder="🔍 tìm ảnh..." class="text-xs px-2 py-1 rounded border border-slate-300 bg-white" />
+          <input type="search" id="f_banner_search" placeholder="🔍 tìm ảnh..." class="text-xs px-2 py-1 rounded border border-slate-300" />
           <button type="button" id="btnBannerToggle" class="btn btn-xs neon-edit ml-auto">Hiện ảnh</button>
         </div>
         <div id="bannerPickerGrid" class="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-2 hidden"></div>
@@ -694,11 +694,11 @@ function buildFormHtml(pkg) {
       <div class="block md:col-span-2" id="screensListWrap" style="${pkg.__use_default_screens ? 'display:none' : ''}">
         <div class="flex flex-wrap items-center gap-2 mb-2">
           <span class="text-xs text-slate-500">Thư mục ảnh:</span>
-          <select id="f_screen_folder" class="border border-slate-300 rounded-md px-2 py-1 text-sm bg-white flex-1 min-w-0">
+          <select id="f_screen_folder" class="border border-slate-300 rounded-md px-2 py-1 text-sm flex-1 min-w-0">
             <option value="">— root (assets/) —</option>
           </select>
           <button type="button" id="btnRefreshFolders" class="btn btn-xs neon-edit">↻</button>
-          <button type="button" id="btnDeleteScreenFolder" class="btn btn-xs neon-delete" title="Xoá thư mục hiện tại">🗑</button>
+          <button type="button" id="btnDeleteScreenFolder" class="btn btn-xs neon-delete" title="Xoá thư mục hiện tại"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path><path d="M10 11v6"></path><path d="M14 11v6"></path><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"></path></svg></button>
           <div class="relative" id="screenAddDropdown">
             <button type="button" id="btnScreenAdd" class="btn btn-xs neon-edit">+</button>
             <div id="screenAddMenu" class="hidden absolute top-full left-0 mt-1 bg-white border border-slate-200 rounded-md shadow-lg z-10 min-w-[140px]">
@@ -707,7 +707,7 @@ function buildFormHtml(pkg) {
             </div>
           </div>
           <input type="file" id="f_image_upload" accept="image/*" multiple class="hidden" />
-          <input type="search" id="f_screen_search" placeholder="🔍 tìm ảnh..." class="text-xs px-2 py-1 rounded border border-slate-300 bg-white" />
+          <input type="search" id="f_screen_search" placeholder="🔍 tìm ảnh..." class="text-xs px-2 py-1 rounded border border-slate-300" />
           <span id="screenCount" class="text-xs text-slate-400 ml-auto"></span>
         </div>
         <div id="screensGrid" class="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-2"></div>

@@ -16,10 +16,6 @@
       --neon-cyan-rgb: 0, 240, 255;
       --neon-yellow: #f0e040;
       --neon-lavender: #b388ff;
-      /* Shadow theme variables (shared with front repo via localStorage) */
-      --logo-shadow-color: #39ff14;
-      --logo-shadow-rgb: 57, 255, 20;
-      --logo-holo-color: #39ff14;
       /* --bg = màu nền trang web (đổi theo dark/light mode) */
       --bg: #06060e;
       --bg-color: #06060e;
@@ -137,18 +133,17 @@
       margin-bottom: 16px;
     }
     .section-title {
-      font-family: 'Be Vietnam Pro', sans-serif;
-      font-size: 13px;
-      font-weight: 600;
+      font-family: 'Press Start 2P', monospace;
+      font-size: 9px;
       color: var(--neon);
-      text-shadow: 0 0 8px rgba(var(--neon-rgb), 0.5);
-      letter-spacing: 0.3px;
-      margin-bottom: 12px;
+      text-shadow: 0 0 6px rgba(var(--neon-rgb),0.4);
+      margin-bottom: 14px;
       padding-bottom: 10px;
       border-bottom: 1px solid var(--border);
       display: flex;
       align-items: center;
       gap: 8px;
+      line-height: 1.4;
     }
 
     /* ====================== FORM ====================== */
@@ -157,27 +152,22 @@
       display: block;
       font-size: 10px;
       font-weight: 600;
-      color: var(--neon);
+      color: var(--text-bright);
       margin-bottom: 5px;
       text-transform: uppercase;
       letter-spacing: 0.5px;
-      text-shadow: 0 0 4px rgba(var(--neon-rgb),0.3);
     }
     .form-input, .form-textarea, .form-select {
       width: 100%;
       padding: 9px 11px;
-      background: var(--input-bg, rgba(0,0,0,0.3));
+      background: rgba(0,0,0,0.3);
       border: 1px solid var(--border);
       border-radius: 8px;
-      color: var(--input-color, #e8fff0);
+      color: #e8fff0;
       font-family: inherit;
       font-size: 12px;
       transition: all 0.2s;
       caret-color: var(--neon);
-    }
-    .form-select option {
-      background: var(--option-bg, #1a1a1a);
-      color: var(--option-color, #e8fff0);
     }
     .form-input::placeholder, .form-textarea::placeholder, .form-select::placeholder {
       color: rgba(232,255,240,0.5);
@@ -189,85 +179,6 @@
       box-shadow: 0 0 8px rgba(var(--neon-rgb),0.2);
     }
     .form-textarea { min-height: 90px; resize: vertical; }
-    .form-range {
-      width: 100%;
-      height: 20px;
-      padding: 0;
-      -webkit-appearance: none;
-      appearance: none;
-      background: transparent;
-      border: none;
-      box-shadow: none;
-      outline: none;
-    }
-    .form-range::-webkit-slider-runnable-track {
-      height: 8px;
-      background: var(--slider-bg, rgba(255,255,255,0.1));
-      border-radius: 4px;
-    }
-    .form-range::-moz-range-track {
-      height: 8px;
-      background: var(--slider-bg, rgba(255,255,255,0.1));
-      border-radius: 4px;
-    }
-    .form-range::-webkit-slider-thumb {
-      -webkit-appearance: none;
-      width: 20px; height: 20px;
-      border-radius: 50%;
-      background: var(--neon);
-      cursor: pointer;
-      box-shadow: 0 0 8px rgba(var(--neon-rgb),0.5);
-      border: none;
-      margin-top: -5px;
-    }
-    .form-range::-moz-range-thumb {
-      width: 20px; height: 20px;
-      border-radius: 50%;
-      background: var(--neon);
-      cursor: pointer;
-      border: none;
-      box-shadow: 0 0 8px rgba(var(--neon-rgb),0.5);
-    }
-    .range-val { display: inline-block; font-size: 11px; color: var(--neon); margin-top: 4px; }
-    .logo-preview-wrap {
-      padding: 18px;
-      margin-bottom: 16px;
-      background: rgba(0,0,0,0.3);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      text-align: center;
-      overflow: hidden;
-    }
-    .dash-logo-text {
-      font-family: 'Press Start 2P', monospace;
-      font-size: 42px;
-      font-weight: 700;
-      color: var(--neon);
-      -webkit-text-stroke: 0.5px rgba(var(--logo-shadow-rgb), 0.9);
-      animation: dashLogoBlink 6s infinite steps(60);
-      display: inline-block;
-      /* Depth shadow dùng CSS vars — cập nhật khi slider thay đổi */
-      text-shadow:
-        1px 1px 0 rgba(var(--logo-shadow-rgb), 0.95),
-        2px 2px 0 rgba(var(--logo-shadow-rgb), 0.9),
-        3px 3px 0 rgba(var(--logo-shadow-rgb), 1),
-        4px 4px 0 rgba(var(--logo-shadow-rgb), 1),
-        0 0 4px rgba(var(--logo-shadow-rgb), 0.95),
-        0 0 10px rgba(var(--logo-shadow-rgb), 0.8),
-        0 0 20px rgba(var(--logo-shadow-rgb), 0.65),
-        0 0 40px rgba(var(--logo-shadow-rgb), 0.5),
-        0 0 70px rgba(var(--logo-shadow-rgb), 0.3);
-    }
-    .dash-logo-sub {
-      font-size: 12px;
-      color: var(--muted);
-      letter-spacing: 1px;
-      margin-top: 8px;
-    }
-    @keyframes dashLogoBlink {
-      0%, 90%, 100% { opacity: 1; }
-      92%, 95% { opacity: 0.4; }
-    }
     .form-btn {
       display: inline-flex;
       align-items: center;
@@ -326,43 +237,21 @@
     /* ====================== RANGE SLIDER ====================== */
     input[type="range"] {
       width: 100%;
-      height: 20px;
-      padding: 0;
+      height: 5px;
       -webkit-appearance: none;
       appearance: none;
-      background: transparent;
-      border-radius: 4px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 3px;
       outline: none;
-    }
-    input[type="range"]::-webkit-slider-runnable-track {
-      height: 8px;
-      background: var(--slider-bg, rgba(255,255,255,0.1));
-      border-radius: 4px;
-    }
-    input[type="range"]::-moz-range-track {
-      height: 8px;
-      background: var(--slider-bg, rgba(255,255,255,0.1));
-      border-radius: 4px;
     }
     input[type="range"]::-webkit-slider-thumb {
       -webkit-appearance: none;
-      width: 20px;
-      height: 20px;
+      width: 15px;
+      height: 15px;
       border-radius: 50%;
       background: var(--neon);
       cursor: pointer;
-      box-shadow: 0 0 8px rgba(var(--neon-rgb), 0.5);
-      border: none;
-      margin-top: -5px;
-    }
-    input[type="range"]::-moz-range-thumb {
-      width: 20px;
-      height: 20px;
-      border-radius: 50%;
-      background: var(--neon);
-      cursor: pointer;
-      box-shadow: 0 0 8px rgba(var(--neon-rgb), 0.5);
-      border: none;
+      box-shadow: 0 0 8px rgba(var(--neon-rgb),0.5);
     }
 
     /* ====================== THEME GRID ====================== */
@@ -426,7 +315,6 @@
       border-radius: 10px;
       margin-bottom: 8px;
       transition: all 0.2s;
-      color: var(--text);
     }
     .blog-item:hover { border-color: var(--border-glow); }
     .blog-icon { font-size: 22px; width: 38px; text-align: center; flex-shrink: 0; }
@@ -516,7 +404,7 @@
     }
     .settings-close:hover { color: var(--neon-pink); background: rgba(var(--neon-pink-rgb),0.1); }
     .settings-body { padding: 6px 0; max-height: 65vh; overflow-y: auto; }
-    .settings-group { padding: 12px 16px; border-bottom: 1px solid var(--border); }
+    .settings-group { padding: 10px 14px; border-bottom: 1px solid var(--border); }
     .settings-group:last-child { border-bottom: none; }
     .settings-label {
       display: block;
@@ -637,87 +525,27 @@
     <!-- ===================== GENERAL PANEL ===================== -->
     <div class="dash-panel active" id="panel-general">
       <div class="section-card">
-        <div class="section-title">🎨 Logo Preview &amp; Tùy chỉnh (Áp dụng cho trang Repo)</div>
-        <div class="info-note">Bên dưới là <b>Preview LOGO</b> của repo với các tùy chỉnh font, shadow, holo, ánh sáng. Thay đổi sẽ áp dụng cho trang Front Repo. Màu logo được chỉnh ở <b>Settings → Màu Theme</b>.</div>
-
-        <!-- Live preview -->
-        <div class="logo-preview-wrap">
-          <div id="dashLogoPreview" class="logo-preview">
-            <div id="dashLogoText" class="dash-logo-text">OWEN</div>
-            <div class="dash-logo-sub">// portfolio / neon</div>
-          </div>
-        </div>
-
+        <div class="section-title">&#128444; Site Settings (Áp dụng cho trang Repo)</div>
+        <div class="info-note">Các thay đổi bên dưới sẽ áp dụng cho trang Repo, không phải trang Dashboard này.</div>
         <div class="form-row">
           <div class="form-group">
-            <label class="form-label">Tên Logo (Repo Name)</label>
-            <input type="text" class="form-input" id="logoText" placeholder="OWEN" oninput="updateDashLogoPreview()">
+            <label class="form-label">Site Title</label>
+            <input type="text" class="form-input" id="siteTitle" placeholder="Tiêu đề trang">
           </div>
           <div class="form-group">
-            <label class="form-label">Font Logo</label>
-            <select class="form-select" id="logoFont" onchange="updateDashLogoPreview()">
-              <option value="'Press Start 2P', monospace">Press Start 2P (Pixel)</option>
-              <option value="'VT323', monospace">VT323 (Retro)</option>
-              <option value="'Be Vietnam Pro', sans-serif">Be Vietnam Pro (Modern)</option>
-              <option value="'Fira Code', monospace">Fira Code (Mono)</option>
-              <option value="'Courier New', monospace">Courier New</option>
-            </select>
+            <label class="form-label">Logo Text</label>
+            <input type="text" class="form-input" id="logoText" placeholder="OWEN">
           </div>
         </div>
-
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label">Cỡ chữ Logo (Font Size)</label>
-            <input type="range" class="form-range" id="logoFontSize" min="20" max="80" value="42" oninput="updateDashLogoPreview()">
-            <span class="range-val" id="logoFontSizeVal">42px</span>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Độ đậm chữ (Font Weight)</label>
-            <input type="range" class="form-range" id="logoFontWeight" min="100" max="900" step="100" value="700" oninput="updateDashLogoPreview()">
-            <span class="range-val" id="logoFontWeightVal">700</span>
-          </div>
+        <div class="form-group">
+          <label class="form-label">Repo URL</label>
+          <input type="text" class="form-input" id="repoUrl" placeholder="https://github.com/...">
         </div>
-
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label">Độ sâu 3D (Depth Offset - bóng đổ nhiều lớp)</label>
-            <input type="range" class="form-range" id="logoDepth" min="0" max="8" value="4" oninput="updateDashLogoPreview()">
-            <span class="range-val" id="logoDepthVal">4</span>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Độ rõ của viền chữ (Stroke Width)</label>
-            <input type="range" class="form-range" id="logoStroke" min="0" max="3" step="0.25" value="0.5" oninput="updateDashLogoPreview()">
-            <span class="range-val" id="logoStrokeVal">0.5px</span>
-          </div>
+        <div class="form-group">
+          <label class="form-label">Description</label>
+          <textarea class="form-textarea" id="siteDesc" placeholder="Mô tả ngắn gọn..."></textarea>
         </div>
-
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label">Cường độ Holo (halo cận chữ)</label>
-            <input type="range" class="form-range" id="logoHoloIntensity" min="0" max="100" value="80" oninput="updateDashLogoPreview()">
-            <span class="range-val" id="logoHoloIntensityVal">80%</span>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Bán kính ánh sáng tỏa ra (Glow Radius)</label>
-            <input type="range" class="form-range" id="logoGlowRadius" min="0" max="100" value="70" oninput="updateDashLogoPreview()">
-            <span class="range-val" id="logoGlowRadiusVal">70px</span>
-          </div>
-        </div>
-
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label">Độ trong suốt của ánh sáng (Glow Alpha)</label>
-            <input type="range" class="form-range" id="logoGlowAlpha" min="0" max="100" value="65" oninput="updateDashLogoPreview()">
-            <span class="range-val" id="logoGlowAlphaVal">65%</span>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Tốc độ nhấp nháy (Blink Speed - giây/vòng)</label>
-            <input type="range" class="form-range" id="logoBlink" min="0" max="20" step="1" value="6" oninput="updateDashLogoPreview()">
-            <span class="range-val" id="logoBlinkVal">6s</span>
-          </div>
-        </div>
-
-        <button class="form-btn success" onclick="saveGeneral()">&#128190; Lưu thay đổi LOGO</button>
+        <button class="form-btn success" onclick="saveGeneral()">&#128190; Lưu thay đổi</button>
       </div>
     </div>
 
@@ -939,110 +767,73 @@
   </div>
 
   <script>
-    /* ========================================
-       RAIN EFFECT (from front repo)
-    ======================================== */
-    (function() {
-      var canvas = document.getElementById('rain-canvas');
-      var ctx = canvas.getContext('2d');
-      var W, H, drops = [], splashes = [];
-      var WIND_ANGLE = 0.35;
-      var WIND_SPEED = 2.8;
-
-      function resize() {
-        W = canvas.width = window.innerWidth;
-        H = canvas.height = window.innerHeight;
+    // ====================== RAIN EFFECT (giống Front Repo: theme-aware + heavy effects) ======================
+    const canvas = document.getElementById('rain-canvas');
+    const ctx = canvas.getContext('2d');
+    let drops = [], splashes = [];
+    let rainEnabled = true, heavyRain = false, rainOpacity = 0.5, rainSpeed = 3;
+    function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+    function getRainColor(opacity) {
+      const rgb = getComputedStyle(document.documentElement).getPropertyValue('--neon-rgb').trim() || '57, 255, 20';
+      return `rgba(${rgb}, ${opacity})`;
+    }
+    class Drop {
+      constructor() { this.reset(); this.y = Math.random() * canvas.height; }
+      reset() {
+        this.x = Math.random() * canvas.width;
+        this.y = heavyRain ? -20 : -10;
+        this.len = heavyRain ? Math.random() * 30 + 20 : Math.random() * 15 + 8;
+        this.speed = (heavyRain ? Math.random() * 6 + 4 : Math.random() * 3 + 2) * (rainSpeed / 3);
+        this.opacity = (Math.random() * 0.3 + 0.2) * rainOpacity;
+        this.thick = heavyRain ? Math.random() * 1.5 + 1 : Math.random() * 0.8 + 0.4;
       }
-      window.addEventListener('resize', resize);
-      resize();
-
-      function Drop(init, heavy) {
-        this.heavy = heavy;
-        this.reset(init);
-      }
-      Drop.prototype.reset = function(init) {
-        var op = (typeof window.rainOpacity === 'number') ? window.rainOpacity : 0.5;
-        var sp = (typeof window.rainSpeed === 'number') ? window.rainSpeed : 3;
-        this.x = Math.random() * (W + 300) - 150;
-        this.y = init ? Math.random() * H : -20 - Math.random() * 100;
-        if (this.heavy) {
-          this.len = 18 + Math.random() * 28;
-          this.speed = (12 + Math.random() * 18) * (sp / 3);
-          this.opacity = (0.15 + Math.random() * 0.3) * op;
-          this.thickness = 0.7 + Math.random() * 1.3;
-        } else {
-          this.len = 12 + Math.random() * 22;
-          this.speed = (6 + Math.random() * 10) * (sp / 3);
-          this.opacity = (0.08 + Math.random() * 0.18) * op;
-          this.thickness = 0.4 + Math.random() * 0.8;
-        }
-      };
-      Drop.prototype.update = function() {
+      update() {
         this.y += this.speed;
-        this.x += WIND_SPEED * (this.speed / 10);
-        if (this.y > H + 30 || this.x > W + 150) {
-          if (this.y > H - 5 && this.heavy) spawnSplash(this.x, H);
-          this.reset(false);
+        if (this.y > canvas.height) {
+          if (heavyRain && Math.random() < 0.3) {
+            splashes.push({ x: this.x, y: canvas.height, r: this.thick * 2, life: 1 });
+          }
+          this.reset();
         }
-      };
-      Drop.prototype.draw = function() {
-        var dx = Math.sin(WIND_ANGLE) * this.len;
-        var dy = Math.cos(WIND_ANGLE) * this.len;
+      }
+      draw() {
         ctx.beginPath();
         ctx.moveTo(this.x, this.y);
-        ctx.lineTo(this.x + dx, this.y + dy);
-        var rgb = getComputedStyle(document.documentElement).getPropertyValue('--neon-rgb').trim() || '57, 255, 20';
-        ctx.strokeStyle = 'rgba(' + rgb + ',' + this.opacity + ')';
-        ctx.lineWidth = this.thickness;
+        ctx.lineTo(this.x + 1, this.y + this.len);
+        ctx.strokeStyle = getRainColor(this.opacity);
+        ctx.lineWidth = this.thick;
         ctx.stroke();
-      };
-
-      function spawnSplash(x, y) {
-        var c = 2 + Math.floor(Math.random() * 2);
-        for (var i = 0; i < c; i++) {
-          splashes.push({
-            x: x, y: y,
-            vx: (Math.random() - 0.5) * 2.5,
-            vy: -1 - Math.random() * 2.5,
-            life: 1,
-            size: 0.4 + Math.random() * 0.8
-          });
+      }
+    }
+    function initRain() {
+      const count = heavyRain ? 180 : 60;
+      drops = [];
+      for (let i = 0; i < count; i++) drops.push(new Drop());
+    }
+    function animateRain() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      if (rainEnabled) {
+        drops.forEach(d => { d.update(); d.draw(); });
+        // Draw splashes
+        splashes.forEach(s => {
+          ctx.beginPath();
+          ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+          ctx.strokeStyle = getRainColor(s.life * 0.4);
+          ctx.lineWidth = 1;
+          ctx.stroke();
+        });
+        for (let i = splashes.length - 1; i >= 0; i--) {
+          splashes[i].life -= 0.05;
+          splashes[i].r += 0.5;
+          if (splashes[i].life <= 0) splashes.splice(i, 1);
         }
       }
-
-      function rebuildDrops() {
-        var heavy = window.heavyRain === true;
-        var count = heavy ? 280 : 180;
-        drops = [];
-        for (var i = 0; i < count; i++) drops.push(new Drop(true, heavy));
-      }
-      window.initRain = rebuildDrops;
-
-      function animateRain() {
-        ctx.clearRect(0, 0, W, H);
-        if (window.rainEnabled !== false) {
-          for (var i = 0; i < drops.length; i++) {
-            drops[i].update();
-            drops[i].draw();
-          }
-          for (var j = splashes.length - 1; j >= 0; j--) {
-            var s = splashes[j];
-            s.x += s.vx; s.y += s.vy; s.vy += 0.12; s.life -= 0.04;
-            if (s.life <= 0) { splashes.splice(j, 1); continue; }
-            ctx.beginPath();
-            ctx.arc(s.x, s.y, Math.max(0.1, s.size), 0, Math.PI * 2);
-            var rgb2 = getComputedStyle(document.documentElement).getPropertyValue('--neon-rgb').trim() || '57, 255, 20';
-            ctx.fillStyle = 'rgba(' + rgb2 + ',' + (s.life * 0.4) + ')';
-            ctx.fill();
-          }
-        }
-        requestAnimationFrame(animateRain);
-      }
-      if (typeof window.rainEnabled === 'undefined') window.rainEnabled = true;
-      if (typeof window.heavyRain === 'undefined') window.heavyRain = false;
-      rebuildDrops();
-      animateRain();
-    })();
+      requestAnimationFrame(animateRain);
+    }
+    initRain();
+    animateRain();
 
     // ====================== SETTINGS MENU ======================
     const settingsBtn = document.getElementById('settingsBtn');
@@ -1105,58 +896,43 @@
 
     // Rain toggles
     document.getElementById('toggleRain').addEventListener('change', e => {
-      window.rainEnabled = e.target.checked;
-      localStorage.setItem('repo_rainEnabled', e.target.checked);
+      rainEnabled = e.target.checked;
+      localStorage.setItem('repo_rainEnabled', rainEnabled);
     });
     document.getElementById('toggleHeavyRain').addEventListener('change', e => {
-      window.heavyRain = e.target.checked;
-      localStorage.setItem('repo_heavyRain', e.target.checked);
-      window.initRain();
+      heavyRain = e.target.checked;
+      localStorage.setItem('repo_heavyRain', heavyRain);
+      initRain();
     });
 
     // Dark mode toggle - FIX: đổi MÀU NỀN WEB (--bg-color) thay vì đổi màu các khung
     document.getElementById('toggleDarkMode').addEventListener('change', e => {
       const isDark = e.target.checked;
-      const root = document.documentElement.style;
       if (isDark) {
-        root.setProperty('--bg-color', '#06060e');
-        root.setProperty('--text', '#e8fff0');
-        root.setProperty('--text-bright', '#ffffff');
-        root.setProperty('--muted', '#9abfa6');
-        root.setProperty('--panel', 'rgba(10, 14, 26, 0.92)');
-        root.setProperty('--panel-alt', 'rgba(6, 9, 18, 0.96)');
-        root.setProperty('--border', 'rgba(57, 255, 20, 0.15)');
-        root.setProperty('--border-glow', 'rgba(57, 255, 20, 0.38)');
-        root.setProperty('--input-bg', 'rgba(0, 0, 0, 0.3)');
-        root.setProperty('--input-color', '#e8fff0');
-        root.setProperty('--option-bg', '#1a1a1a');
-        root.setProperty('--option-color', '#e8fff0');
-        root.setProperty('--slider-bg', 'rgba(255,255,255,0.1)');
+        document.documentElement.style.setProperty('--bg-color', '#06060e');
+        document.documentElement.style.setProperty('--text', '#e8fff0');
+        document.documentElement.style.setProperty('--text-bright', '#ffffff');
+        document.documentElement.style.setProperty('--muted', '#9abfa6');
       } else {
-        root.setProperty('--bg-color', '#ffffff');
-        root.setProperty('--text', '#1a1a1a');
-        root.setProperty('--text-bright', '#000000');
-        root.setProperty('--muted', '#555555');
-        root.setProperty('--panel', 'rgba(245, 245, 250, 0.92)');
-        root.setProperty('--panel-alt', 'rgba(230, 230, 240, 0.96)');
-        root.setProperty('--border', 'rgba(57, 255, 20, 0.25)');
-        root.setProperty('--border-glow', 'rgba(57, 255, 20, 0.5)');
-        root.setProperty('--input-bg', 'rgba(255, 255, 255, 0.6)');
-        root.setProperty('--input-color', '#000000');
-        root.setProperty('--option-bg', '#ffffff');
-        root.setProperty('--option-color', '#1a1a1a');
-        root.setProperty('--slider-bg', 'rgba(0,0,0,0.1)');
+        document.documentElement.style.setProperty('--bg-color', '#ffffff');
+        document.documentElement.style.setProperty('--text', '#1a1a1a');
+        document.documentElement.style.setProperty('--text-bright', '#000000');
+        document.documentElement.style.setProperty('--muted', '#555555');
       }
-      localStorage.setItem('dash_darkMode', isDark ? 'true' : 'false');
+      localStorage.setItem('repo_darkMode', isDark);
+      localStorage.setItem('dash_darkMode', isDark);
     });
 
     // Transparency - FIX: chỉ tác động lên panel (var(--panel)), không đổi bg
     document.getElementById('rangeTransparency').addEventListener('input', e => {
       const v = e.target.value / 100;
       document.documentElement.style.setProperty('--panel-alpha', v.toFixed(2));
-      const isDark = document.getElementById('toggleDarkMode').checked;
-      const panelBase = isDark ? '10, 14, 26' : '245, 245, 250';
-      document.documentElement.style.setProperty('--panel', `rgba(${panelBase}, ${v.toFixed(2)})`);
+      if (e.target.value === '100') {
+        // Khi alpha=1, set đúng 100% - không cho overflow
+        document.documentElement.style.setProperty('--panel', `rgba(10, 14, 26, ${v.toFixed(2)})`);
+      } else {
+        document.documentElement.style.setProperty('--panel', `rgba(10, 14, 26, ${v.toFixed(2)})`);
+      }
       localStorage.setItem('repo_transparency', e.target.value);
       localStorage.setItem('dash_transparency', e.target.value);
     });
@@ -1264,7 +1040,7 @@
     // ====================== BOX DRAG & DROP ======================
     const boxList = document.getElementById('boxList');
     let draggedBox = null;
-    if (boxList) boxList.querySelectorAll('.box-item').forEach(item => {
+    boxList.querySelectorAll('.box-item').forEach(item => {
       item.addEventListener('dragstart', () => {
         draggedBox = item;
         item.classList.add('dragging');
@@ -1293,7 +1069,6 @@
     });
 
     function toggleBoxPreview(id) {
-      if (!boxList) return;
       const items = boxList.querySelectorAll('.box-item');
       const item = [...items].find(i => i.dataset.id === id);
       if (!item) return;
@@ -1311,7 +1086,6 @@
     }
 
     function removeBox(id) {
-      if (!boxList) return;
       const items = boxList.querySelectorAll('.box-item');
       const item = [...items].find(i => i.dataset.id === id);
       if (!item) return;
@@ -1322,96 +1096,40 @@
     }
 
     // ====================== FONT PREVIEW ======================
-    const baseFontSizeEl = document.getElementById('baseFontSize');
-    if (baseFontSizeEl) baseFontSizeEl.addEventListener('input', e => {
+    document.getElementById('baseFontSize').addEventListener('input', e => {
       document.getElementById('fontSizeVal').textContent = e.target.value + 'px';
     });
-    const titleFontSizeEl = document.getElementById('titleFontSize');
-    if (titleFontSizeEl) titleFontSizeEl.addEventListener('input', e => {
+    document.getElementById('titleFontSize').addEventListener('input', e => {
       document.getElementById('titleSizeVal').textContent = e.target.value + 'px';
     });
 
     // ====================== SIZE SLIDERS ======================
-    function bindRange(elId, valId, unit) {
-      const el = document.getElementById(elId);
-      const val = document.getElementById(valId);
-      if (el && val) el.addEventListener('input', e => {
-        val.textContent = e.target.value + unit;
-      });
-    }
-    bindRange('pkgHeight', 'pkgHeightVal', 'px');
-    bindRange('filesHeight', 'filesHeightVal', 'px');
-    bindRange('blogHeight', 'blogHeightVal', 'px');
-    const rainOpacityEl = document.getElementById('rainOpacity');
-    if (rainOpacityEl) rainOpacityEl.addEventListener('input', e => {
-      document.getElementById('rainOpacityVal').textContent = e.target.value + '%';
-      window.rainOpacity = e.target.value / 100;
+    document.getElementById('pkgHeight').addEventListener('input', e => {
+      document.getElementById('pkgHeightVal').textContent = e.target.value + 'px';
     });
-    const rainSpeedEl = document.getElementById('rainSpeed');
-    if (rainSpeedEl) rainSpeedEl.addEventListener('input', e => {
+    document.getElementById('filesHeight').addEventListener('input', e => {
+      document.getElementById('filesHeightVal').textContent = e.target.value + 'px';
+    });
+    document.getElementById('blogHeight').addEventListener('input', e => {
+      document.getElementById('blogHeightVal').textContent = e.target.value + 'px';
+    });
+    document.getElementById('rainOpacity').addEventListener('input', e => {
+      document.getElementById('rainOpacityVal').textContent = e.target.value + '%';
+      rainOpacity = e.target.value / 100;
+    });
+    document.getElementById('rainSpeed').addEventListener('input', e => {
       document.getElementById('rainSpeedVal').textContent = e.target.value;
-      window.rainSpeed = parseInt(e.target.value);
-      window.initRain();
+      rainSpeed = parseInt(e.target.value);
+      initRain();
     });
 
     // ====================== SAVE FUNCTIONS ======================
-    // Logo preview live update
-    function updateDashLogoPreview() {
-      var t = document.getElementById('logoText').value || 'OWEN';
-      var fs = parseInt(document.getElementById('logoFontSize').value);
-      var fw = parseInt(document.getElementById('logoFontWeight').value);
-      var ff = document.getElementById('logoFont').value;
-      var depth = parseInt(document.getElementById('logoDepth').value);
-      var stroke = parseFloat(document.getElementById('logoStroke').value);
-      var holo = parseInt(document.getElementById('logoHoloIntensity').value);
-      var glowRadius = parseInt(document.getElementById('logoGlowRadius').value);
-      var glowAlpha = parseInt(document.getElementById('logoGlowAlpha').value);
-      var blink = parseInt(document.getElementById('logoBlink').value);
-
-      document.getElementById('logoFontSizeVal').textContent = fs + 'px';
-      document.getElementById('logoFontWeightVal').textContent = fw;
-      document.getElementById('logoDepthVal').textContent = depth;
-      document.getElementById('logoStrokeVal').textContent = stroke + 'px';
-      document.getElementById('logoHoloIntensityVal').textContent = holo + '%';
-      document.getElementById('logoGlowRadiusVal').textContent = glowRadius + 'px';
-      document.getElementById('logoGlowAlphaVal').textContent = glowAlpha + '%';
-      document.getElementById('logoBlinkVal').textContent = blink + 's';
-
-      var el = document.getElementById('dashLogoText');
-      if (!el) return;
-      el.textContent = t;
-      el.style.fontFamily = ff;
-      el.style.fontSize = fs + 'px';
-      el.style.fontWeight = fw;
-      el.style.animationDuration = blink + 's';
-
-      // Read CURRENT shadow theme color from CSS var (live, updates when applyShadowTheme runs)
-      var rgb = getComputedStyle(document.documentElement).getPropertyValue('--logo-shadow-rgb').trim() || '57,255,20';
-      var hFrac = holo / 100;
-      var aFrac = glowAlpha / 100;
-      var layers = '';
-      for (var i = 1; i <= depth; i++) layers += (i) + 'px ' + (i) + 'px 0 rgba(' + rgb + ', 1), ';
-      var glow = '0 0 4px rgba(' + rgb + ',' + (0.95 * hFrac) + '),'
-               + '0 0 ' + Math.round(glowRadius * 0.15) + 'px rgba(' + rgb + ',' + (0.8 * hFrac) + '),'
-               + '0 0 ' + Math.round(glowRadius * 0.3) + 'px rgba(' + rgb + ',' + (0.65 * aFrac) + '),'
-               + '0 0 ' + Math.round(glowRadius * 0.5) + 'px rgba(' + rgb + ',' + (0.5 * aFrac) + '),'
-               + '0 0 ' + glowRadius + 'px rgba(' + rgb + ',' + (0.3 * aFrac) + ')';
-      el.style.textShadow = layers + glow;
-      el.style.webkitTextStroke = stroke + 'px rgba(' + rgb + ', 0.9)';
-    }
-
     function saveGeneral() {
+      localStorage.setItem('repo_siteTitle', document.getElementById('siteTitle').value);
       localStorage.setItem('repo_logoText', document.getElementById('logoText').value);
-      localStorage.setItem('repo_logoFont', document.getElementById('logoFont').value);
-      localStorage.setItem('repo_logoFontSize', document.getElementById('logoFontSize').value);
-      localStorage.setItem('repo_logoFontWeight', document.getElementById('logoFontWeight').value);
-      localStorage.setItem('repo_logoDepth', document.getElementById('logoDepth').value);
-      localStorage.setItem('repo_logoStroke', document.getElementById('logoStroke').value);
-      localStorage.setItem('repo_logoHoloIntensity', document.getElementById('logoHoloIntensity').value);
-      localStorage.setItem('repo_logoGlowRadius', document.getElementById('logoGlowRadius').value);
-      localStorage.setItem('repo_logoGlowAlpha', document.getElementById('logoGlowAlpha').value);
-      localStorage.setItem('repo_logoBlink', document.getElementById('logoBlink').value);
-      showNotif('Đã lưu cấu hình LOGO!');
+      localStorage.setItem('repo_repoUrl', document.getElementById('repoUrl').value);
+      localStorage.setItem('repo_siteDesc', document.getElementById('siteDesc').value);
+      showNotif('Đã lưu General Settings!');
     }
 
     function saveBoxSizes() {
@@ -1481,20 +1199,10 @@
       const savedDark = localStorage.getItem('dash_darkMode');
       if (savedDark === 'false') {
         document.getElementById('toggleDarkMode').checked = false;
-        const root = document.documentElement.style;
-        root.setProperty('--bg-color', '#ffffff');
-        root.setProperty('--text', '#1a1a1a');
-        root.setProperty('--text-bright', '#000000');
-        root.setProperty('--muted', '#555555');
-        root.setProperty('--panel', 'rgba(245, 245, 250, 0.92)');
-        root.setProperty('--panel-alt', 'rgba(230, 230, 240, 0.96)');
-        root.setProperty('--border', 'rgba(57, 255, 20, 0.25)');
-        root.setProperty('--border-glow', 'rgba(57, 255, 20, 0.5)');
-        root.setProperty('--input-bg', 'rgba(255, 255, 255, 0.6)');
-        root.setProperty('--input-color', '#000000');
-        root.setProperty('--option-bg', '#ffffff');
-        root.setProperty('--option-color', '#1a1a1a');
-        root.setProperty('--slider-bg', 'rgba(0,0,0,0.1)');
+        document.documentElement.style.setProperty('--bg-color', '#ffffff');
+        document.documentElement.style.setProperty('--text', '#1a1a1a');
+        document.documentElement.style.setProperty('--text-bright', '#000000');
+        document.documentElement.style.setProperty('--muted', '#555555');
       }
 
       // Transparency
@@ -1502,73 +1210,24 @@
       document.getElementById('rangeTransparency').value = savedTrans;
       const v = parseInt(savedTrans) / 100;
       document.documentElement.style.setProperty('--panel-alpha', v.toFixed(2));
-      const isDarkLoad = document.getElementById('toggleDarkMode').checked;
-      const panelBaseLoad = isDarkLoad ? '10, 14, 26' : '245, 245, 250';
-      document.documentElement.style.setProperty('--panel', `rgba(${panelBaseLoad}, ${v.toFixed(2)})`);
+      document.documentElement.style.setProperty('--panel', `rgba(10, 14, 26, ${v.toFixed(2)})`);
 
       // Rain
       if (localStorage.getItem('repo_rainEnabled') === 'false') {
-        window.rainEnabled = false;
+        rainEnabled = false;
         document.getElementById('toggleRain').checked = false;
       }
       if (localStorage.getItem('repo_heavyRain') === 'true') {
-        window.heavyRain = true;
+        heavyRain = true;
         document.getElementById('toggleHeavyRain').checked = true;
-        window.initRain();
+        initRain();
       }
 
-      // General (Logo editor)
-      var logoFields = ['logoText', 'logoFont', 'logoFontSize', 'logoFontWeight', 'logoDepth', 'logoStroke', 'logoHoloIntensity', 'logoGlowRadius', 'logoGlowAlpha', 'logoBlink'];
-      logoFields.forEach(function(f) {
-        var key = 'repo_' + f;
-        var saved = localStorage.getItem(key);
-        var el = document.getElementById(f);
-        if (el && saved != null && saved !== '') {
-          el.value = saved;
-        }
-      });
-
-      // Load shadow theme from localStorage and apply to CSS vars (realtime sync from front repo)
-      var shadowThemes = {
-        green: { hex: '#39ff14', rgb: '57, 255, 20' },
-        cyan: { hex: '#00f0ff', rgb: '0, 240, 255' },
-        pink: { hex: '#ff2d7b', rgb: '255, 45, 123' },
-        lavender: { hex: '#b388ff', rgb: '179, 136, 255' },
-        yellow: { hex: '#f0e040', rgb: '240, 224, 64' },
-        red: { hex: '#ff4444', rgb: '255, 68, 68' },
-        orange: { hex: '#ff8800', rgb: '255, 136, 0' },
-        white: { hex: '#eeeeee', rgb: '238, 238, 238' }
-      };
-      var savedShadow = localStorage.getItem('shadowTheme') || localStorage.getItem('repo_shadowTheme') || 'green';
-      var st = shadowThemes[savedShadow] || shadowThemes.green;
-      document.documentElement.style.setProperty('--logo-shadow-color', st.hex);
-      document.documentElement.style.setProperty('--logo-shadow-rgb', st.rgb);
-      document.documentElement.style.setProperty('--logo-holo-color', st.hex);
-
-      // Highlight active shadow btn if exists
-      document.querySelectorAll('.shadow-btn').forEach(function(b) {
-        b.classList.toggle('active', b.dataset.shadow === savedShadow);
-      });
-
-      // Expose applyShadowTheme for runtime updates; re-render preview when color changes
-      window.applyShadowTheme = function(name) {
-        var t = shadowThemes[name] || shadowThemes.green;
-        var root = document.documentElement.style;
-        root.setProperty('--logo-shadow-color', t.hex);
-        root.setProperty('--logo-shadow-rgb', t.rgb);
-        root.setProperty('--logo-holo-color', t.hex);
-        localStorage.setItem('shadowTheme', name);
-        localStorage.setItem('repo_shadowTheme', name);
-        document.querySelectorAll('.shadow-btn').forEach(function(b) {
-          b.classList.toggle('active', b.dataset.shadow === name);
-        });
-        if (typeof updateDashLogoPreview === 'function') updateDashLogoPreview();
-      };
-      document.querySelectorAll('.shadow-btn').forEach(function(btn) {
-        btn.addEventListener('click', function() { window.applyShadowTheme(btn.dataset.shadow); });
-      });
-
-      if (typeof updateDashLogoPreview === 'function') updateDashLogoPreview();
+      // General
+      if (localStorage.getItem('repo_siteTitle')) document.getElementById('siteTitle').value = localStorage.getItem('repo_siteTitle');
+      if (localStorage.getItem('repo_logoText')) document.getElementById('logoText').value = localStorage.getItem('repo_logoText');
+      if (localStorage.getItem('repo_repoUrl')) document.getElementById('repoUrl').value = localStorage.getItem('repo_repoUrl');
+      if (localStorage.getItem('repo_siteDesc')) document.getElementById('siteDesc').value = localStorage.getItem('repo_siteDesc');
 
       // Box sizes
       if (localStorage.getItem('repo_pkgHeight')) {
@@ -1601,12 +1260,11 @@
       if (localStorage.getItem('repo_rainOpacity')) {
         document.getElementById('rainOpacity').value = localStorage.getItem('repo_rainOpacity');
         document.getElementById('rainOpacityVal').textContent = localStorage.getItem('repo_rainOpacity') + '%';
-        window.rainOpacity = parseInt(localStorage.getItem('repo_rainOpacity')) / 100;
+        rainOpacity = parseInt(localStorage.getItem('repo_rainOpacity')) / 100;
       }
       if (localStorage.getItem('repo_rainSpeed')) {
         document.getElementById('rainSpeed').value = localStorage.getItem('repo_rainSpeed');
         document.getElementById('rainSpeedVal').textContent = localStorage.getItem('repo_rainSpeed');
-        window.rainSpeed = parseInt(localStorage.getItem('repo_rainSpeed'));
       }
 
       // Blog posts from localStorage

@@ -38,10 +38,13 @@
       --neon-pink: #ff2d7b;
       --neon-pink-rgb: 255, 45, 123;
       --neon-cyan: #00f0ff;
+      --logo-shadow-color: #39ff14;
+      --logo-shadow-rgb: 57, 255, 20;
+      --logo-holo-color: #39ff14;
       --neon-cyan-rgb: 0, 240, 255;
       --neon-yellow: #f0e040;
       --neon-lavender: #b388ff;
-      --bg: #06060e;
+      --bg: var(--bg-color, #06060e);
       --panel: rgba(10, 14, 26, var(--panel-alpha, 0.92));
       --panel-alt: rgba(6, 9, 18, var(--panel-alpha-alt, 0.96));
       --panel-soft: rgba(10, 14, 26, 0.06);
@@ -62,7 +65,7 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
     body {
-      background: var(--bg);
+      background: var(--bg-color);
       color: var(--text);
       font-family: 'Be Vietnam Pro', 'Fira Code', 'Courier New', monospace;
       min-height: 100vh;
@@ -117,12 +120,13 @@
       pointer-events: none;
     }
 
-    /* ============================ SCROLLBAR ============================ */
+    /* ============================ SCROLLBAR (theme-aware) ============================ */
+    html { scrollbar-width: thin; scrollbar-color: rgba(var(--neon-rgb),0.3) rgba(var(--neon-rgb),0.06); }
     ::-webkit-scrollbar { width: 6px; height: 6px; }
     ::-webkit-scrollbar-track { box-shadow: inset 0 0 6px rgba(var(--neon-rgb),0.06); }
-    ::-webkit-scrollbar-thumb { background: rgba(57,255,20,0.28); border-radius: 3px; }
-    ::-webkit-scrollbar-thumb:hover { background: rgba(57,255,20,0.5); }
-    ::selection { background: rgba(57,255,20,0.28); color: var(--neon); }
+    ::-webkit-scrollbar-thumb { background: rgba(var(--neon-rgb),0.28); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(var(--neon-rgb),0.5); }
+    ::selection { background: rgba(var(--neon-rgb),0.28); color: var(--text-bright); }
 
     /* ============================ LAYOUT ============================ */
     #shell {
@@ -144,7 +148,7 @@
       border: 1px solid var(--border);
       border-left: 3px solid var(--neon);
       background: linear-gradient(180deg, rgba(255,255,255,0.035), transparent),
-                  rgba(8, 12, 22, 0.88);
+                  var(--panel);
       box-shadow: var(--shadow), var(--inset);
       border-radius: 4px;
       position: relative;
@@ -198,7 +202,7 @@
       transform-style: preserve-3d;
       text-shadow:
         0 0 10px var(--neon),
-        0 0 20px var(--neon);
+        0 0 20px var(--neon),
         0 0 50px rgba(var(--neon-rgb), 0.4),
         0 0 90px rgba(var(--neon-rgb), 0.18);
       letter-spacing: 1px;
@@ -243,14 +247,14 @@
       display: inline-block;
       transform-origin: center bottom;
       will-change: opacity;
-      /* Depth + glow rất nhẹ — chỉ phát sáng depth chữ, không halo rộng */
+      /* Depth + glow — dùng CSS var để shadow theme đổi ngay lập tức */
       text-shadow:
-        1px 1px 0 rgba(57,255,20,0.7),
-        2px 2px 0 rgba(57,255,20,0.65),
-        3px 3px 0 rgba(0,240,255,0.55),
-        4px 4px 0 rgba(0,240,255,0.50),
-        5px 5px 0 rgba(0,255,170,0.55),
-        6px 6px 0 rgba(0,255,170,0.50),
+        1px 1px 0 rgba(var(--logo-shadow-rgb), 0.7),
+        2px 2px 0 rgba(var(--logo-shadow-rgb), 0.65),
+        3px 3px 0 rgba(var(--logo-shadow-rgb), 0.55),
+        4px 4px 0 rgba(var(--logo-shadow-rgb), 0.50),
+        5px 5px 0 rgba(var(--logo-shadow-rgb), 0.55),
+        6px 6px 0 rgba(var(--logo-shadow-rgb), 0.50),
         7px 7px 0 rgba(0,0,0,0.7);
     }
 
@@ -261,6 +265,12 @@
     }
     #logo-text .word.space {
       width: 0.4em;
+    }
+    /* Space separator between logo words */
+    #logo-text .space-sep {
+      display: inline-block;
+      width: 0.35em;
+      font-family: inherit;
     }
 
     /* === Từ nguyên — ĐỨNG IM hoàn toàn, không animation === */
@@ -282,18 +292,18 @@
       animation-timing-function: steps(40);
       animation-delay: var(--bd, 0s);
       filter: blur(0.4px);
-      /* Viền + depth + halo xanh lá sáng cho chữ broken */
-      -webkit-text-stroke: 0.7px rgba(0,150,20,0.95);
+      /* Viền + depth + halo dùng CSS var */
+      -webkit-text-stroke: 0.7px rgba(var(--logo-shadow-rgb), 0.95);
       text-shadow:
-        1px 1px 0 rgba(0,200,30,1),
-        2px 2px 0 rgba(0,200,30,0.95),
-        3px 3px 0 rgba(0,180,30,1),
-        4px 4px 0 rgba(0,150,20,1),
-        0 0 4px rgba(120,255,40,1),
-        0 0 10px rgba(100,255,30,0.9),
-        0 0 20px rgba(80,255,20,0.75),
-        0 0 40px rgba(60,255,15,0.6),
-        0 0 70px rgba(57,255,14,0.35);
+        1px 1px 0 rgba(var(--logo-shadow-rgb), 1),
+        2px 2px 0 rgba(var(--logo-shadow-rgb), 0.95),
+        3px 3px 0 rgba(var(--logo-shadow-rgb), 1),
+        4px 4px 0 rgba(var(--logo-shadow-rgb), 1),
+        0 0 4px rgba(var(--logo-shadow-rgb), 1),
+        0 0 10px rgba(var(--logo-shadow-rgb), 0.9),
+        0 0 20px rgba(var(--logo-shadow-rgb), 0.75),
+        0 0 40px rgba(var(--logo-shadow-rgb), 0.6),
+        0 0 70px rgba(var(--logo-shadow-rgb), 0.35);
     }
     #logo-text .lt.broken-right { animation-name: neonBrokenRight; }
     #logo-text .lt.broken-left  { animation-name: neonBrokenLeft; }
@@ -365,27 +375,24 @@
       100% { opacity: 1;    transform: rotateX(0deg) translateY(0); }
     }
 
-            /* Glow depth mặc định cho từ nguyên — viền đen + depth + halo glow xanh lá sáng */
+    /* (logo-text .lt main rule đã ở trên với CSS vars — giữ rule này cho các .lt chưa override) */
     #logo-text .lt {
-      /* Viền chữ (text-stroke) đen tối */
-      -webkit-text-stroke: 0.5px rgba(0,150,20,0.9);
+      /* Dùng CSS var --logo-shadow-rgb để shadow đổi theo theme ngay */
+      -webkit-text-stroke: 0.5px rgba(var(--logo-shadow-rgb), 0.9);
       text-shadow:
-        1px 1px 0 rgba(0,200,30,0.95),
-        2px 2px 0 rgba(0,200,30,0.9),
-        3px 3px 0 rgba(0,180,30,1),
-        4px 4px 0 rgba(0,150,20,1),
-        0 0 4px rgba(120,255,40,0.95),
-        0 0 10px rgba(100,255,30,0.8),
-        0 0 20px rgba(80,255,20,0.65),
-        0 0 40px rgba(60,255,15,0.5),
-        0 0 70px rgba(57,255,14,0.3);
+        1px 1px 0 rgba(var(--logo-shadow-rgb), 0.95),
+        2px 2px 0 rgba(var(--logo-shadow-rgb), 0.9),
+        3px 3px 0 rgba(var(--logo-shadow-rgb), 1),
+        4px 4px 0 rgba(var(--logo-shadow-rgb), 1),
+        0 0 4px rgba(var(--logo-shadow-rgb), 0.95),
+        0 0 10px rgba(var(--logo-shadow-rgb), 0.8),
+        0 0 20px rgba(var(--logo-shadow-rgb), 0.65),
+        0 0 40px rgba(var(--logo-shadow-rgb), 0.5),
+        0 0 70px rgba(var(--logo-shadow-rgb), 0.3);
     }
 
     /* === 3 từ broken — DEPTH GLOW đậm hơn (không skew, không flicker) === */
-    /* Rule đã được đặt ở trên cùng (.lt.broken) — giữ chỗ này để dễ tìm */
-    #logo-text .lt.broken {
-      /* Inherited từ rule trên: animation: none, opacity: 1, filter: none, glow depth đậm */
-    }
+    /* (Rule .lt.broken đã ở trên với CSS vars — giữ đây cho dễ tìm) */
 
     /* === Box depth effect === */
     /* BỎ khung viền quanh logo — chỉ giữ chữ 3D depth bằng text-shadow */
@@ -406,18 +413,18 @@
       transform-origin: center bottom;
       animation: neonFlickerLetter 6s infinite steps(60);
       will-change: opacity, transform;
-      /* Hiệu ứng chữ 3D: viền đen + depth + halo glow xanh lá sáng */
-      -webkit-text-stroke: 0.5px rgba(0,150,20,0.9);
+      /* Hiệu ứng chữ 3D: viền đen + depth + halo glow theo --logo-shadow-color */
+      -webkit-text-stroke: 0.5px rgba(var(--logo-shadow-rgb), 0.9);
       text-shadow:
-        1px 1px 0 rgba(0,200,30,0.95),
-        2px 2px 0 rgba(0,200,30,0.9),
-        3px 3px 0 rgba(0,180,30,1),
-        4px 4px 0 rgba(0,150,20,1),
-        0 0 4px rgba(120,255,40,0.95),
-        0 0 10px rgba(100,255,30,0.8),
-        0 0 20px rgba(80,255,20,0.65),
-        0 0 40px rgba(60,255,15,0.5),
-        0 0 70px rgba(57,255,14,0.3);
+        1px 1px 0 rgba(var(--logo-shadow-rgb), 0.95),
+        2px 2px 0 rgba(var(--logo-shadow-rgb), 0.9),
+        3px 3px 0 rgba(var(--logo-shadow-rgb), 1),
+        4px 4px 0 rgba(var(--logo-shadow-rgb), 1),
+        0 0 4px var(--logo-shadow-color),
+        0 0 10px rgba(var(--logo-shadow-rgb), 0.8),
+        0 0 20px rgba(var(--logo-shadow-rgb), 0.65),
+        0 0 40px rgba(var(--logo-shadow-rgb), 0.5),
+        0 0 70px rgba(var(--logo-shadow-rgb), 0.3);
     }
 
     #logo-sub {
@@ -551,15 +558,15 @@
     input, textarea, select {
       width: 100%;
       background: linear-gradient(180deg, rgba(255,255,255,0.025), transparent),
-                  rgba(3, 7, 14, 0.92);
-      color: var(--text);
+                  var(--input-bg, rgba(3, 7, 14, 0.92));
+      color: var(--input-color, var(--text));
       border: 1px solid var(--border);
       padding: 9px 11px;
       border-radius: 3px;
       font-family: inherit;
       font-size: 0.82rem;
-      text-shadow: 0 0 4px rgba(232,255,240,0.3), 0 0 8px rgba(var(--neon-rgb),0.1);
-      box-shadow: inset 0 0 0 1px rgba(0,0,0,0.3);
+      text-shadow: none;
+      box-shadow: var(--input-shadow, inset 0 0 0 1px rgba(0,0,0,0.3));
       transition: border-color 0.18s, box-shadow 0.18s;
       outline: none;
     }
@@ -593,8 +600,8 @@
     }
 
     select option {
-      background: #06060e;
-      color: var(--text-bright);
+      background: var(--option-bg, #06060e);
+      color: var(--option-color, var(--text-bright));
     }
 
     textarea {
@@ -613,7 +620,7 @@
     .btn {
       background: linear-gradient(180deg, rgba(var(--neon-rgb),0.1), rgba(var(--neon-rgb),0.025));
       color: var(--neon);
-      border: 1px solid rgba(var(--neon-rgb),0.5);
+      border: 1.5px solid rgba(var(--neon-rgb),0.7);
       padding: 8px 13px;
       font-size: 0.78rem;
       align-self: center; /* tránh button trong flex row bị stretch bất thường */
@@ -646,12 +653,12 @@
     /* Neon variants — GIỮ gradient nền của .btn, chỉ thay đổi màu chữ/viền */
     .neon-edit {
       color: var(--neon);
-      border-color: rgba(var(--neon-rgb), 0.5);
+      border-color: rgba(var(--neon-rgb), 0.75);
       border-radius: 3px;
     }
     .neon-delete {
       color: var(--neon-pink, #ff3ea5);
-      border-color: rgba(255, 62, 165, 0.5);
+      border-color: rgba(255, 62, 165, 0.85);
       border-radius: 3px;
     }
 
@@ -812,6 +819,7 @@
       border-bottom: 1px solid var(--border);
       position: relative;
       min-height: 38px;
+      padding-left: 20px;
     }
     #packagesBox .box-header-wrap .pkg-header,
     #blog-section .box-header-wrap .pkg-header {
@@ -851,7 +859,7 @@
       font-family: 'Press Start 2P', 'VT323', monospace;
       font-size: 0.85rem;
       letter-spacing: 3px;
-      color: #5cff5c;
+      color: var(--neon);
       line-height: 1;
       text-align: right;
       padding: 10px 6px;
@@ -859,10 +867,10 @@
       cursor: default;
       user-select: none;
       text-shadow:
-        0 0 4px #39ff14,
-        0 0 10px #39ff14,
-        0 0 18px rgba(57,255,20,0.85),
-        0 0 32px rgba(57,255,20,0.5);
+        0 0 4px var(--neon),
+        0 0 10px var(--neon),
+        0 0 18px rgba(var(--neon-rgb),0.85),
+        0 0 32px rgba(var(--neon-rgb),0.5);
       animation: helloBlink 1.4s steps(2, jump-none) infinite;
     }
     #helloBanner:hover { animation-play-state: paused; }
@@ -964,21 +972,41 @@
 
     /* ============================ HINT BOX ============================ */
     .hint-box {
-      background: rgba(240,224,64,0.05);
-      border: 1px solid rgba(240,224,64,0.2);
+      background: rgba(0, 0, 0, 0.2);
+      border: 1px solid var(--border);
       border-left: 3px solid var(--neon-yellow);
       border-radius: 3px;
       padding: 14px 16px;
       font-size: 0.78rem;
-      color: var(--neon-yellow);
+      color: var(--text);
       line-height: 1.65;
+    }
+    .hint-box .hint-title {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--neon-yellow);
+      margin-bottom: 8px;
     }
     .hint-box b { color: var(--text-bright); }
     .hint-box code {
-      background: rgba(240,224,64,0.1);
+      background: rgba(0, 0, 0, 0.3);
       padding: 1px 5px;
       border-radius: 2px;
       font-size: 0.75rem;
+    }
+    .hint-box .btn-hint {
+      color: var(--neon);
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .hint-box .btn-hint:hover {
+      text-shadow: 0 0 8px var(--neon);
+    }
+    .hint-box .tip {
+      opacity: 0.6;
+      font-size: 0.72rem;
     }
 
     /* ============================ MODAL ============================ */
@@ -999,7 +1027,7 @@
     .modal-content {
       background: linear-gradient(180deg, rgba(255,255,255,0.04), transparent 30%),
                   linear-gradient(135deg, rgba(var(--neon-rgb),0.04), transparent 40%),
-                  rgba(8, 12, 22, 0.96);
+                  var(--modal-bg, rgba(8, 12, 22, 0.96));
       border: 1px solid var(--border);
       border-left: 3px solid var(--neon);
       border-radius: 4px;
@@ -1090,6 +1118,27 @@
     /* ============================ COMBOBOX (.3105 file) ============================ */
     .combobox-wrap { position: relative; }
     .combobox-wrap input { padding-right: 28px; }
+
+    /* ============================ IMAGE PICKER ITEMS ============================ */
+    /* Selected icon item */
+    #iconPickerGrid .aspect-square.ring-2 {
+      border-color: var(--neon) !important;
+      box-shadow: 0 0 0 2px var(--neon), 0 0 8px rgba(var(--neon-rgb), 0.4);
+    }
+    /* Selected banner item */
+    #bannerPickerGrid .aspect-square.ring-2 {
+      border-color: var(--neon) !important;
+      box-shadow: 0 0 0 2px var(--neon), 0 0 8px rgba(var(--neon-rgb), 0.4);
+    }
+    /* Screens grid selected */
+    #screensGrid .border-2.border-green-500 {
+      border-color: var(--neon) !important;
+      box-shadow: 0 0 0 2px var(--neon), 0 0 8px rgba(var(--neon-rgb), 0.4);
+    }
+    /* Screens grid unselected - adapts to light/dark */
+    #screensGrid .border-slate-200 {
+      border-color: var(--border) !important;
+    }
 
     #f_download_clear {
       position: absolute;
@@ -1501,7 +1550,7 @@
       gap: 4px;
       padding: 14px 14px 14px 13px;
       background: linear-gradient(180deg, rgba(255,255,255,0.04), transparent 30%),
-                  rgba(8, 12, 22, 0.92);
+                  var(--panel);
       border: 1px solid var(--border);
       border-left: 3px solid var(--neon);
       border-radius: 4px;
@@ -1662,18 +1711,18 @@
     .mp-cover-inner {
       width: 68px; height: 68px;
       border-radius: 4px;
-      background: rgba(8,12,22,0.8);
-      border: 2px solid var(--neon);
+      background: var(--panel-alt);
+      border: 1px solid var(--border);
       display: flex;
       align-items: center;
       justify-content: center;
       position: relative;
-      box-shadow: 0 0 10px rgba(57,255,20,0.25), inset 0 0 6px rgba(0,0,0,0.6);
+      box-shadow: 0 0 10px rgba(var(--neon-rgb), 0.25), inset 0 0 6px rgba(0,0,0,0.4);
       image-rendering: pixelated;
     }
     #music-player.playing .mp-cover-inner {
       animation: mpSpin 6s linear infinite;
-      box-shadow: 0 0 16px rgba(57,255,20,0.5), inset 0 0 6px rgba(0,0,0,0.6);
+      box-shadow: 0 0 16px rgba(var(--neon-rgb), 0.5), inset 0 0 6px rgba(0,0,0,0.4);
     }
     @keyframes mpSpin { from { transform: rotate(0); } to { transform: rotate(360deg); } }
     /* pixel neon disc */
@@ -1689,15 +1738,15 @@
       display: block;
     }
     .mp-disc-grid .d0  { background: transparent; }
-    .mp-disc-grid .d1  { background: rgba(57,255,20,0.9); }
-    .mp-disc-grid .d2  { background: rgba(57,255,20,0.5); box-shadow: 0 0 4px var(--neon); }
-    .mp-disc-grid .dn  { background: #06060e; }
+    .mp-disc-grid .d1  { background: rgba(var(--neon-rgb), 0.9); }
+    .mp-disc-grid .d2  { background: rgba(var(--neon-rgb), 0.5); box-shadow: 0 0 4px var(--neon); }
+    .mp-disc-grid .dn  { background: var(--bg-color); }
     .mp-disc-grid .dc  { background: var(--neon); box-shadow: 0 0 6px var(--neon); }
     .mp-cover-inner::after {
       content: '';
       position: absolute;
       width: 10px; height: 10px;
-      background: var(--bg);
+      background: var(--bg-color);
       border-radius: 50%;
       border: 1px solid var(--border);
     }
@@ -1723,7 +1772,7 @@
     .mp-progress { margin-bottom: 10px; }
     .mp-bar {
       height: 3px;
-      background: rgba(57,255,20,0.12);
+      background: rgba(var(--neon-rgb), 0.12);
       border-radius: 2px;
       overflow: hidden;
     }
@@ -1751,7 +1800,7 @@
     .mp-btn {
       width: 28px; height: 28px;
       border: 1px solid var(--border);
-      background: rgba(8,12,22,0.5);
+      background: var(--panel-alt);
       color: var(--neon);
       border-radius: 50%;
       cursor: pointer;
@@ -1765,15 +1814,15 @@
     .mp-btn-main svg { width: 12px; height: 12px; }
     .mp-btn:hover {
       border-color: var(--neon);
-      box-shadow: 0 0 8px rgba(57,255,20,0.5);
-      background: rgba(57,255,20,0.08);
+      box-shadow: 0 0 8px rgba(var(--neon-rgb), 0.5);
+      background: rgba(var(--neon-rgb), 0.08);
     }
     .mp-btn-main {
       width: 36px; height: 36px;
       font-size: 13px;
-      background: rgba(57,255,20,0.1);
+      background: rgba(var(--neon-rgb), 0.1);
       border-color: var(--neon);
-      box-shadow: 0 0 8px rgba(57,255,20,0.4);
+      box-shadow: 0 0 8px rgba(var(--neon-rgb), 0.4);
     }
 
     /* ============================ MOON WIDGET ============================ */
@@ -1835,6 +1884,246 @@
       text-shadow: 0 0 6px var(--neon);
       letter-spacing: 2px;
     }
+
+    /* ============================ SETTINGS (Front Repo - shared w/ dashboard) ============================ */
+    .settings-btn {
+      position: fixed;
+      top: 14px;
+      right: 14px;
+      z-index: 10000;
+      width: 40px;
+      height: 40px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: var(--panel);
+      color: var(--neon);
+      font-size: 18px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+    .settings-btn:hover {
+      border-color: var(--neon);
+      box-shadow: 0 0 14px rgba(var(--neon-rgb), 0.35);
+      transform: rotate(30deg);
+    }
+    .settings-menu {
+      display: none;
+      position: fixed;
+      top: 60px;
+      right: 14px;
+      z-index: 10001;
+      width: 260px;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+    .settings-menu.open { display: block; }
+    .settings-overlay { display: none; position: fixed; inset: 0; z-index: 9998; background: transparent; }
+    .settings-overlay.active { display: block; }
+    .settings-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border);
+      background: rgba(var(--neon-rgb), 0.04);
+    }
+    .settings-title {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 10px;
+      color: var(--neon);
+      text-shadow: 0 0 6px rgba(var(--neon-rgb), 0.4);
+    }
+    .settings-close {
+      width: 26px;
+      height: 26px;
+      border: none;
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 6px;
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+    .settings-close:hover { color: var(--neon-pink); background: rgba(var(--neon-pink-rgb), 0.1); }
+    .settings-body { padding: 6px 0; max-height: 65vh; overflow-y: auto; }
+    .settings-group { padding: 12px 16px; border-bottom: 1px solid var(--border); }
+    .settings-group:last-child { border-bottom: none; }
+    .settings-label {
+      display: block;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-bright);
+      margin-bottom: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .settings-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+    .settings-row:last-child { margin-bottom: 0; }
+    .settings-row-label { font-size: 11px; color: var(--text); }
+    .settings-nav-link {
+      display: block;
+      padding: 8px 12px;
+      margin-bottom: 6px;
+      font-size: 12px;
+      color: var(--text);
+      text-decoration: none;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      transition: all 0.2s;
+    }
+    .settings-nav-link:last-child { margin-bottom: 0; }
+    .settings-nav-link:hover {
+      border-color: var(--neon);
+      color: var(--neon);
+      background: rgba(var(--neon-rgb), 0.06);
+    }
+    /* Tab buttons for settings panel */
+    .settings-tab-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+    .settings-tab-btn {
+      flex: 1;
+      padding: 7px 8px;
+      font-size: 11px;
+      color: var(--muted);
+      background: rgba(0,0,0,0.2);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-align: center;
+    }
+    .settings-tab-btn:hover {
+      border-color: var(--neon);
+      color: var(--neon);
+    }
+    .settings-tab-btn.active {
+      border-color: var(--neon);
+      color: var(--neon);
+      background: rgba(var(--neon-rgb), 0.08);
+      box-shadow: 0 0 8px rgba(var(--neon-rgb), 0.3);
+    }
+    .settings-tab-panel { display: none; }
+    .settings-tab-panel.active { display: block; }
+    .theme-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+    .theme-grid .theme-btn {
+      height: 36px;
+      border: 2px solid transparent;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+      padding: 0;
+    }
+    .theme-grid .theme-btn:hover { transform: scale(1.05); }
+    .theme-grid .theme-btn.active {
+      border-color: var(--neon);
+      box-shadow: 0 0 10px rgba(var(--neon-rgb), 0.3);
+    }
+    .toggle-switch {
+      position: relative;
+      width: 42px;
+      height: 22px;
+      display: inline-block;
+      flex-shrink: 0;
+      cursor: pointer;
+    }
+    .toggle-switch input { opacity: 0; width: 0; height: 0; }
+    .toggle-slider {
+      position: absolute;
+      inset: 0;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid var(--border);
+      border-radius: 11px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .toggle-slider::before {
+      content: '';
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      left: 2px;
+      top: 2px;
+      background: var(--muted);
+      border-radius: 50%;
+      transition: all 0.2s;
+    }
+    .toggle-switch input:checked + .toggle-slider {
+      background: rgba(var(--neon-rgb), 0.2);
+      border-color: var(--neon);
+    }
+    .toggle-switch input:checked + .toggle-slider::before {
+      transform: translateX(20px);
+      background: var(--neon);
+      box-shadow: 0 0 8px rgba(var(--neon-rgb), 0.5);
+    }
+    .settings-range,
+    input[type="range"] {
+      width: 100%;
+      height: 20px;
+      padding: 0;
+      -webkit-appearance: none;
+      appearance: none;
+      background: transparent;
+      border-radius: 4px;
+      outline: none;
+      border: none;
+      box-shadow: none;
+    }
+    .settings-range:focus,
+    input[type="range"]:focus {
+      border: none;
+      box-shadow: none;
+    }
+    .settings-range::-webkit-slider-runnable-track,
+    input[type="range"]::-webkit-slider-runnable-track {
+      height: 8px;
+      background: var(--slider-bg, rgba(255,255,255,0.1));
+      border-radius: 4px;
+      border: none;
+    }
+    .settings-range::-moz-range-track,
+    input[type="range"]::-moz-range-track {
+      height: 8px;
+      background: var(--slider-bg, rgba(255,255,255,0.1));
+      border-radius: 4px;
+      border: none;
+    }
+    .settings-range::-webkit-slider-thumb,
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--neon);
+      cursor: pointer;
+      box-shadow: 0 0 8px rgba(var(--neon-rgb), 0.5);
+      border: none;
+      margin-top: -5px;
+    }
+    .settings-range::-moz-range-thumb,
+    input[type="range"]::-moz-range-thumb {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--neon);
+      cursor: pointer;
+      border: none;
+      box-shadow: 0 0 8px rgba(var(--neon-rgb), 0.5);
+    }
   </style>
 </head>
 
@@ -1845,63 +2134,84 @@
   <canvas id="trail-canvas"></canvas>
 
   <!-- Settings Button -->
-  <button id="settingsBtn" title="Cài đặt" style="position:fixed;top:14px;right:14px;z-index:10000;width:40px;height:40px;border:1px solid var(--border);border-radius:10px;background:var(--panel);color:var(--neon);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s;">⚙️</button>
+  <button id="settingsBtn" class="settings-btn" title="Cài đặt">⚙️</button>
 
   <!-- Settings Menu -->
-  <div id="settingsMenu" style="display:none;position:fixed;top:60px;right:14px;z-index:10001;width:260px;background:var(--panel);border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow);overflow:hidden;">
-    <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--border);background:rgba(var(--neon-rgb),0.04);">
-      <span style="font-family:'Press Start 2P',monospace;font-size:10px;color:var(--neon);text-shadow:0 0 6px rgba(var(--neon-rgb),0.4);">SETTINGS</span>
-      <button id="closeSettings" style="width:26px;height:26px;border:none;background:transparent;color:var(--muted);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;border-radius:6px;transition:all 0.2s;">✕</button>
+  <div id="settingsMenu" class="settings-menu">
+    <div class="settings-header">
+      <span class="settings-title">SETTINGS</span>
+      <button class="settings-close" id="closeSettings">✕</button>
     </div>
-    <div style="padding:8px 0;max-height:60vh;overflow-y:auto;">
-      <div style="padding:12px 16px;border-bottom:1px solid var(--border);">
-        <span style="display:block;font-size:11px;font-weight:600;color:var(--text-bright);margin-bottom:10px;text-transform:uppercase;letter-spacing:0.5px;">Màu Theme</span>
-        <div id="themeGrid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;">
-          <button class="theme-btn active" data-theme="green" style="height:36px;border:2px solid transparent;border-radius:8px;cursor:pointer;transition:all 0.2s;background:linear-gradient(135deg,#80ff40,#39ff14);" title="Green Neon"></button>
-          <button class="theme-btn" data-theme="cyan" style="height:36px;border:2px solid transparent;border-radius:8px;cursor:pointer;transition:all 0.2s;background:linear-gradient(135deg,#00f0ff,#0099cc);" title="Cyan Neon"></button>
-          <button class="theme-btn" data-theme="pink" style="height:36px;border:2px solid transparent;border-radius:8px;cursor:pointer;transition:all 0.2s;background:linear-gradient(135deg,#ff2d7b,#cc1155);" title="Pink Neon"></button>
-          <button class="theme-btn" data-theme="lavender" style="height:36px;border:2px solid transparent;border-radius:8px;cursor:pointer;transition:all 0.2s;background:linear-gradient(135deg,#b388ff,#7744dd);" title="Lavender"></button>
-          <button class="theme-btn" data-theme="yellow" style="height:36px;border:2px solid transparent;border-radius:8px;cursor:pointer;transition:all 0.2s;background:linear-gradient(135deg,#f0e040,#ccbb00);" title="Yellow Neon"></button>
-          <button class="theme-btn" data-theme="red" style="height:36px;border:2px solid transparent;border-radius:8px;cursor:pointer;transition:all 0.2s;background:linear-gradient(135deg,#ff4444,#cc0000);" title="Red"></button>
-          <button class="theme-btn" data-theme="orange" style="height:36px;border:2px solid transparent;border-radius:8px;cursor:pointer;transition:all 0.2s;background:linear-gradient(135deg,#ff8800,#cc5500);" title="Orange"></button>
-          <button class="theme-btn" data-theme="white" style="height:36px;border:2px solid transparent;border-radius:8px;cursor:pointer;transition:all 0.2s;background:linear-gradient(135deg,#ffffff,#cccccc);" title="White"></button>
+    <div class="settings-body">
+      <!-- Tab buttons -->
+      <div class="settings-tab-row">
+        <button class="settings-tab-btn active" id="tabTheme" onclick="switchSettingsTab('theme')">🎨 Màu Theme</button>
+        <button class="settings-tab-btn" id="tabShadow" onclick="switchSettingsTab('shadow')">✨ Màu Shadow</button>
+      </div>
+
+      <!-- Màu Theme tab -->
+      <div class="settings-tab-panel active" id="panelTheme">
+        <div class="settings-group">
+          <div id="themeGrid" class="theme-grid">
+            <button class="theme-btn active" data-theme="green" style="background:linear-gradient(135deg,#80ff40,#39ff14);" title="Green"></button>
+            <button class="theme-btn" data-theme="cyan" style="background:linear-gradient(135deg,#00f0ff,#0099cc);" title="Cyan"></button>
+            <button class="theme-btn" data-theme="pink" style="background:linear-gradient(135deg,#ff2d7b,#cc1155);" title="Pink"></button>
+            <button class="theme-btn" data-theme="lavender" style="background:linear-gradient(135deg,#b388ff,#7744dd);" title="Lavender"></button>
+            <button class="theme-btn" data-theme="yellow" style="background:linear-gradient(135deg,#f0e040,#ccbb00);" title="Yellow"></button>
+            <button class="theme-btn" data-theme="red" style="background:linear-gradient(135deg,#ff4444,#cc0000);" title="Red"></button>
+            <button class="theme-btn" data-theme="orange" style="background:linear-gradient(135deg,#ff8800,#cc5500);" title="Orange"></button>
+            <button class="theme-btn" data-theme="white" style="background:linear-gradient(135deg,#ffffff,#cccccc);" title="White"></button>
+          </div>
         </div>
       </div>
-      <div style="padding:12px 16px;border-bottom:1px solid var(--border);">
-        <span style="display:block;font-size:11px;font-weight:600;color:var(--text-bright);margin-bottom:10px;text-transform:uppercase;letter-spacing:0.5px;">Hiệu ứng Mưa</span>
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
-          <span style="font-size:12px;color:var(--text);">Bật Mưa</span>
-          <label style="position:relative;width:40px;height:22px;flex-shrink:0;">
-            <input type="checkbox" id="toggleRain" checked style="opacity:0;width:0;height:0;">
-            <span class="toggle-slider" style="position:absolute;inset:0;background:rgba(255,255,255,0.08);border:1px solid var(--border);border-radius:11px;cursor:pointer;transition:all 0.2s;display:block;"></span>
-          </label>
-        </div>
-        <div style="display:flex;align-items:center;justify-content:space-between;">
-          <span style="font-size:12px;color:var(--text);">Mưa Nặng</span>
-          <label style="position:relative;width:40px;height:22px;flex-shrink:0;">
-            <input type="checkbox" id="toggleHeavyRain" style="opacity:0;width:0;height:0;">
-            <span class="toggle-slider" style="position:absolute;inset:0;background:rgba(255,255,255,0.08);border:1px solid var(--border);border-radius:11px;cursor:pointer;transition:all 0.2s;display:block;"></span>
-          </label>
-        </div>
-      </div>
-      <div style="padding:12px 16px;border-bottom:1px solid var(--border);">
-        <span style="display:block;font-size:11px;font-weight:600;color:var(--text-bright);margin-bottom:10px;text-transform:uppercase;letter-spacing:0.5px;">Chế độ Hiển thị</span>
-        <div style="display:flex;align-items:center;justify-content:space-between;">
-          <span style="font-size:12px;color:var(--text);">Dark Mode</span>
-          <label style="position:relative;width:40px;height:22px;flex-shrink:0;">
-            <input type="checkbox" id="toggleDarkMode" checked style="opacity:0;width:0;height:0;">
-            <span class="toggle-slider" style="position:absolute;inset:0;background:rgba(255,255,255,0.08);border:1px solid var(--border);border-radius:11px;cursor:pointer;transition:all 0.2s;display:block;"></span>
-          </label>
+
+      <!-- Màu Shadow tab -->
+      <div class="settings-tab-panel" id="panelShadow">
+        <div class="settings-group">
+          <div id="shadowGrid" class="theme-grid">
+            <button class="theme-btn shadow-btn active" data-shadow="green" style="background:linear-gradient(135deg,#80ff40,#39ff14);" title="Green"></button>
+            <button class="theme-btn shadow-btn" data-shadow="cyan" style="background:linear-gradient(135deg,#00f0ff,#0099cc);" title="Cyan"></button>
+            <button class="theme-btn shadow-btn" data-shadow="pink" style="background:linear-gradient(135deg,#ff2d7b,#cc1155);" title="Pink"></button>
+            <button class="theme-btn shadow-btn" data-shadow="lavender" style="background:linear-gradient(135deg,#b388ff,#7744dd);" title="Lavender"></button>
+            <button class="theme-btn shadow-btn" data-shadow="yellow" style="background:linear-gradient(135deg,#f0e040,#ccbb00);" title="Yellow"></button>
+            <button class="theme-btn shadow-btn" data-shadow="red" style="background:linear-gradient(135deg,#ff4444,#cc0000);" title="Red"></button>
+            <button class="theme-btn shadow-btn" data-shadow="orange" style="background:linear-gradient(135deg,#ff8800,#cc5500);" title="Orange"></button>
+            <button class="theme-btn shadow-btn" data-shadow="white" style="background:linear-gradient(135deg,#ffffff,#cccccc);" title="White"></button>
+          </div>
         </div>
       </div>
-      <div style="padding:12px 16px;">
-        <span style="display:block;font-size:11px;font-weight:600;color:var(--text-bright);margin-bottom:10px;text-transform:uppercase;letter-spacing:0.5px;">Độ Trong Suốt</span>
-        <input type="range" id="rangeTransparency" min="0" max="100" value="92" style="width:100%;height:6px;-webkit-appearance:none;appearance:none;background:rgba(255,255,255,0.1);border-radius:3px;outline:none;">
+
+      <div class="settings-group">
+        <span class="settings-label">Hiệu ứng Mưa</span>
+        <div class="settings-row">
+          <span class="settings-row-label">Bật Mưa</span>
+          <label class="toggle-switch"><input type="checkbox" id="toggleRain" checked><span class="toggle-slider"></span></label>
+        </div>
+        <div class="settings-row">
+          <span class="settings-row-label">Mưa Nặng</span>
+          <label class="toggle-switch"><input type="checkbox" id="toggleHeavyRain"><span class="toggle-slider"></span></label>
+        </div>
+      </div>
+      <div class="settings-group">
+        <span class="settings-label">Chế độ Hiển thị</span>
+        <div class="settings-row">
+          <span class="settings-row-label">Dark Mode</span>
+          <label class="toggle-switch"><input type="checkbox" id="toggleDarkMode" checked><span class="toggle-slider"></span></label>
+        </div>
+      </div>
+      <div class="settings-group">
+        <span class="settings-label">Độ Trong Suốt</span>
+        <input type="range" id="rangeTransparency" class="settings-range" min="0" max="100" value="92">
+      </div>
+      <div class="settings-group">
+        <span class="settings-label">Điều hướng nhanh</span>
+        <a href="/dashboard" class="settings-nav-link">⚙️ Admin Dashboard</a>
+        <a href="/blog" class="settings-nav-link">📝 Blog</a>
       </div>
     </div>
   </div>
 
-  <div id="settingsOverlay" style="display:none;position:fixed;inset:0;z-index:9998;background:transparent;"></div>
+  <div id="settingsOverlay" class="settings-overlay"></div>
 
 <div id="shell">
 
@@ -2125,10 +2435,10 @@
 
       <!-- ============================ HINT ============================ -->
       <section class="hint-box mt-4">
-        <div class="mb-2" style="font-size:0.7rem; text-transform:uppercase; letter-spacing:1px;">// Hướng dẫn sử dụng</div>
-        Bấm <b>🚀 Lưu &amp; Push Git</b> để ghi file <code>repositories/&lt;repo&gt;/repo.yml</code> và push lên GitHub tự động.<br/>
+        <div class="hint-title">// Hướng dẫn sử dụng</div>
+        Bấm <span class="btn-hint">🚀 [>]</span> để ghi file <code>repositories/&lt;repo&gt;/repo.yml</code> và push lên GitHub tự động.<br/>
         GitHub Action <code>build.yml</code> sẽ tự convert YAML → JSON. App 3105 sẽ refresh trong vài giây.<br/>
-        <span style="opacity:0.6; font-size:0.72rem;">Mẹo: tick "Dùng screenshot mặc định" và "Dùng iOS rule mặc định" để giữ file YAML gọn.</span>
+        <span class="tip">Mẹo: tick "Dùng screenshot mặc định" và "Dùng iOS rule mặc định" để giữ file YAML gọn.</span>
       </section>
 
     </main>
@@ -2162,16 +2472,14 @@
 
   <script>
     /* ========================================
-       RAIN EFFECT (from portfolio)
+       RAIN EFFECT (from portfolio) - FIX: bật/tắt qua toggle, heavy rain support
     ======================================== */
     (function() {
       var canvas = document.getElementById('rain-canvas');
       var ctx = canvas.getContext('2d');
       var W, H, drops = [], splashes = [];
-      var DROP_COUNT = 180;
       var WIND_ANGLE = 0.35;
       var WIND_SPEED = 2.8;
-      var NEON_RGB = '57, 255, 20';
 
       function resize() {
         W = canvas.width = window.innerWidth;
@@ -2180,20 +2488,30 @@
       window.addEventListener('resize', resize);
       resize();
 
-      function Drop(init) { this.reset(init); }
+      function Drop(init, heavy) {
+        this.heavy = heavy;
+        this.reset(init);
+      }
       Drop.prototype.reset = function(init) {
         this.x = Math.random() * (W + 300) - 150;
         this.y = init ? Math.random() * H : -20 - Math.random() * 100;
-        this.len = 12 + Math.random() * 22;
-        this.speed = 6 + Math.random() * 10;
-        this.opacity = 0.08 + Math.random() * 0.18;
-        this.thickness = 0.4 + Math.random() * 0.8;
+        if (this.heavy) {
+          this.len = 18 + Math.random() * 28;
+          this.speed = 12 + Math.random() * 18;
+          this.opacity = 0.15 + Math.random() * 0.3;
+          this.thickness = 0.7 + Math.random() * 1.3;
+        } else {
+          this.len = 12 + Math.random() * 22;
+          this.speed = 6 + Math.random() * 10;
+          this.opacity = 0.08 + Math.random() * 0.18;
+          this.thickness = 0.4 + Math.random() * 0.8;
+        }
       };
       Drop.prototype.update = function() {
         this.y += this.speed;
         this.x += WIND_SPEED * (this.speed / 10);
         if (this.y > H + 30 || this.x > W + 150) {
-          if (this.y > H - 5) spawnSplash(this.x, H);
+          if (this.y > H - 5 && this.heavy) spawnSplash(this.x, H);
           this.reset(false);
         }
       };
@@ -2203,7 +2521,8 @@
         ctx.beginPath();
         ctx.moveTo(this.x, this.y);
         ctx.lineTo(this.x + dx, this.y + dy);
-        ctx.strokeStyle = 'rgba(' + NEON_RGB + ',' + this.opacity + ')';
+        var rgb = getComputedStyle(document.documentElement).getPropertyValue('--neon-rgb').trim() || '57, 255, 20';
+        ctx.strokeStyle = 'rgba(' + rgb + ',' + this.opacity + ')';
         ctx.lineWidth = this.thickness;
         ctx.stroke();
       };
@@ -2221,36 +2540,55 @@
         }
       }
 
-      for (var i = 0; i < DROP_COUNT; i++) drops.push(new Drop(true));
+      function rebuildDrops() {
+        var heavy = window.heavyRain === true;
+        var count = heavy ? 280 : 180;
+        drops = [];
+        for (var i = 0; i < count; i++) drops.push(new Drop(true, heavy));
+      }
+      // Expose init function
+      window.initRain = rebuildDrops;
 
       function animateRain() {
         ctx.clearRect(0, 0, W, H);
-        for (var i = 0; i < drops.length; i++) {
-          drops[i].update();
-          drops[i].draw();
-        }
-        for (var i = splashes.length - 1; i >= 0; i--) {
-          var s = splashes[i];
-          s.x += s.vx; s.y += s.vy; s.vy += 0.12; s.life -= 0.04;
-          if (s.life <= 0) { splashes.splice(i, 1); continue; }
-          ctx.beginPath();
-          ctx.arc(s.x, s.y, Math.max(0.1, s.size), 0, Math.PI * 2);
-          ctx.fillStyle = 'rgba(' + NEON_RGB + ',' + (s.life * 0.4) + ')';
-          ctx.fill();
+        if (window.rainEnabled !== false) {
+          for (var i = 0; i < drops.length; i++) {
+            drops[i].update();
+            drops[i].draw();
+          }
+          for (var j = splashes.length - 1; j >= 0; j--) {
+            var s = splashes[j];
+            s.x += s.vx; s.y += s.vy; s.vy += 0.12; s.life -= 0.04;
+            if (s.life <= 0) { splashes.splice(j, 1); continue; }
+            ctx.beginPath();
+            ctx.arc(s.x, s.y, Math.max(0.1, s.size), 0, Math.PI * 2);
+            var rgb2 = getComputedStyle(document.documentElement).getPropertyValue('--neon-rgb').trim() || '57, 255, 20';
+            ctx.fillStyle = 'rgba(' + rgb2 + ',' + (s.life * 0.4) + ')';
+            ctx.fill();
+          }
         }
         requestAnimationFrame(animateRain);
       }
+      // Default: rain bật
+      if (typeof window.rainEnabled === 'undefined') window.rainEnabled = true;
+      if (typeof window.heavyRain === 'undefined') window.heavyRain = false;
+      rebuildDrops();
       animateRain();
     })();
 
     /* ========================================
-       CURSOR TRAIL (from portfolio)
+       CURSOR TRAIL (luxury theme-aware)
     ======================================== */
     (function() {
       var tc = document.getElementById('trail-canvas');
       var tctx = tc.getContext('2d');
       var trail = [], mx = -100, my = -100, lmx = -100, lmy = -100;
-      var NEON_RGB = '57, 255, 20';
+
+      function getThemeColor() {
+        var rgb = getComputedStyle(document.documentElement).getPropertyValue('--neon-rgb').trim() || '57, 255, 20';
+        var hex = getComputedStyle(document.documentElement).getPropertyValue('--neon').trim() || '#39ff14';
+        return { rgb: rgb, hex: hex };
+      }
 
       function resizeT() {
         tc.width = window.innerWidth;
@@ -2263,27 +2601,59 @@
       function trailLoop() {
         tctx.clearRect(0, 0, tc.width, tc.height);
         var dx = mx - lmx, dy = my - lmy;
+        var c = getThemeColor();
+
         if (Math.abs(dx) + Math.abs(dy) > 2) {
-          trail.push({
-            x: mx, y: my,
-            vx: (Math.random() - 0.5) * 0.7,
-            vy: (Math.random() - 0.5) * 0.7,
-            life: 1,
-            size: 1.5 + Math.random() * 1.8
-          });
+          // Spawn 1-2 bubbles per move for richness
+          var count = Math.random() > 0.6 ? 2 : 1;
+          for (var k = 0; k < count; k++) {
+            trail.push({
+              x: mx + (Math.random() - 0.5) * 6,
+              y: my + (Math.random() - 0.5) * 6,
+              vx: (Math.random() - 0.5) * 1.2,
+              vy: (Math.random() - 0.5) * 1.2,
+              life: 1,
+              size: 1.2 + Math.random() * 2.5,
+              glow: 0.5 + Math.random() * 0.8,
+              hue: Math.random()
+            });
+          }
         }
         lmx = mx; lmy = my;
+
         for (var i = trail.length - 1; i >= 0; i--) {
           var p = trail[i];
           p.x += p.vx; p.y += p.vy;
-          p.life -= 0.022; p.size *= 0.97;
+          p.life -= 0.018; p.size *= 0.965;
+          p.vx *= 0.98; p.vy *= 0.98;
           if (p.life <= 0) { trail.splice(i, 1); continue; }
+
+          var r = p.life * p.glow;
+
+          // Core bubble
+          var grad = tctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, Math.max(0.1, p.size * 2));
+          grad.addColorStop(0, 'rgba(' + c.rgb + ',' + (r * 0.9) + ')');
+          grad.addColorStop(0.4, 'rgba(' + c.rgb + ',' + (r * 0.5) + ')');
+          grad.addColorStop(1, 'rgba(' + c.rgb + ',0)');
           tctx.beginPath();
-          tctx.arc(p.x, p.y, Math.max(0.1, p.size), 0, Math.PI * 2);
-          tctx.fillStyle = 'rgba(' + NEON_RGB + ',' + (p.life * 0.3) + ')';
+          tctx.arc(p.x, p.y, Math.max(0.1, p.size * 2), 0, Math.PI * 2);
+          tctx.fillStyle = grad;
           tctx.fill();
+
+          // Bright center dot
+          tctx.beginPath();
+          tctx.arc(p.x, p.y, Math.max(0.1, p.size * 0.4), 0, Math.PI * 2);
+          tctx.fillStyle = 'rgba(255,255,255,' + (r * 0.6) + ')';
+          tctx.fill();
+
+          // Outer glow ring
+          tctx.beginPath();
+          tctx.arc(p.x, p.y, Math.max(0.1, p.size * 2.5), 0, Math.PI * 2);
+          tctx.strokeStyle = 'rgba(' + c.rgb + ',' + (r * 0.25) + ')';
+          tctx.lineWidth = 0.5;
+          tctx.stroke();
         }
-        if (trail.length > 70) trail.splice(0, trail.length - 70);
+        if (trail.length > 90) trail.splice(0, trail.length - 90);
         requestAnimationFrame(trailLoop);
       }
       trailLoop();
@@ -2541,9 +2911,14 @@
 
   function toggleMenu() {
     if (!settingsMenu) return;
-    const isOpen = settingsMenu.style.display === 'block';
-    settingsMenu.style.display = isOpen ? 'none' : 'block';
-    if (settingsOverlay) settingsOverlay.style.display = isOpen ? 'none' : 'block';
+    const isOpen = settingsMenu.classList.contains('open');
+    if (isOpen) {
+      settingsMenu.classList.remove('open');
+      if (settingsOverlay) settingsOverlay.classList.remove('active');
+    } else {
+      settingsMenu.classList.add('open');
+      if (settingsOverlay) settingsOverlay.classList.add('active');
+    }
   }
 
   if (settingsBtn) settingsBtn.addEventListener('click', toggleMenu);
@@ -2586,8 +2961,38 @@
     localStorage.setItem('blog_theme', name);
   };
 
+  // Tab switching for settings
+  window.switchSettingsTab = function(tab) {
+    document.querySelectorAll('.settings-tab-btn').forEach(function(b) { b.classList.remove('active'); });
+    document.querySelectorAll('.settings-tab-panel').forEach(function(p) { p.classList.remove('active'); });
+    var btn = document.getElementById('tab' + tab.charAt(0).toUpperCase() + tab.slice(1));
+    if (btn) btn.classList.add('active');
+    var panel = document.getElementById('panel' + tab.charAt(0).toUpperCase() + tab.slice(1));
+    if (panel) panel.classList.add('active');
+  };
+
+  // Shadow theme - separate from main theme
+  window.applyShadowTheme = function(name) {
+    var shadowHex = themes[name] ? themes[name].neon : '#39ff14';
+    var shadowRgb = themes[name] ? themes[name].neonRgb : '57, 255, 20';
+    document.documentElement.style.setProperty('--logo-shadow-color', shadowHex);
+    document.documentElement.style.setProperty('--logo-shadow-rgb', shadowRgb);
+    document.documentElement.style.setProperty('--logo-holo-color', shadowHex);
+    document.querySelectorAll('.shadow-btn').forEach(function(b) { b.classList.remove('active'); });
+    var activeShadow = document.querySelector('.shadow-btn[data-shadow="' + name + '"]');
+    if (activeShadow) activeShadow.classList.add('active');
+    localStorage.setItem('shadowTheme', name);
+    localStorage.setItem('repo_shadowTheme', name);
+    // Re-apply logo shadow styles immediately so logo updates without reload
+    if (typeof window.reapplyLogoShadow === 'function') window.reapplyLogoShadow();
+  };
+
   document.querySelectorAll('.theme-btn').forEach(function(btn) {
     btn.addEventListener('click', function() { window.applyTheme(btn.dataset.theme); });
+  });
+
+  document.querySelectorAll('.shadow-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() { window.applyShadowTheme(btn.dataset.shadow); });
   });
 
   // Rain toggles
@@ -2616,21 +3021,37 @@
       var alpha = parseFloat(alphaStr);
       if (isNaN(alpha)) alpha = 0.92;
       if (isDark) {
+        document.documentElement.style.setProperty('--bg-color', '#06060e');
         document.documentElement.style.setProperty('--panel', 'rgba(10, 14, 26, ' + alpha + ')');
         document.documentElement.style.setProperty('--panel-alt', 'rgba(6, 9, 18, ' + Math.min(alpha + 0.04, 1) + ')');
         document.documentElement.style.setProperty('--sidebar-panel', 'rgba(10, 14, 26, ' + alpha + ')');
         document.documentElement.style.setProperty('--sidebar-panel-alt', 'rgba(6, 9, 18, ' + Math.min(alpha + 0.04, 1) + ')');
-        document.documentElement.style.setProperty('--text', '#c0d8cc');
-        document.documentElement.style.setProperty('--text-bright', '#e8fff0');
-        document.documentElement.style.setProperty('--muted', '#7a9a86');
+        document.documentElement.style.setProperty('--text', '#e8fff0');
+        document.documentElement.style.setProperty('--text-bright', '#ffffff');
+        document.documentElement.style.setProperty('--muted', '#9abfa6');
+        document.documentElement.style.setProperty('--input-bg', 'rgba(3, 7, 14, 0.92)');
+        document.documentElement.style.setProperty('--modal-bg', 'rgba(8, 12, 22, 0.96)');
+        document.documentElement.style.setProperty('--input-color', '#e8fff0');
+        document.documentElement.style.setProperty('--option-bg', '#0a0e1a');
+        document.documentElement.style.setProperty('--option-color', '#e8fff0');
+        document.documentElement.style.setProperty('--input-shadow', 'inset 0 0 0 1px rgba(0,0,0,0.3)');
+        document.documentElement.style.setProperty('--slider-bg', 'rgba(255,255,255,0.1)');
       } else {
-        document.documentElement.style.setProperty('--panel', 'rgba(240, 240, 245, ' + alpha + ')');
+        document.documentElement.style.setProperty('--bg-color', '#ffffff');
+        document.documentElement.style.setProperty('--panel', 'rgba(245, 245, 250, ' + alpha + ')');
         document.documentElement.style.setProperty('--panel-alt', 'rgba(255, 255, 255, ' + Math.min(alpha + 0.04, 1) + ')');
-        document.documentElement.style.setProperty('--sidebar-panel', 'rgba(240, 240, 245, ' + alpha + ')');
+        document.documentElement.style.setProperty('--sidebar-panel', 'rgba(245, 245, 250, ' + alpha + ')');
         document.documentElement.style.setProperty('--sidebar-panel-alt', 'rgba(255, 255, 255, ' + Math.min(alpha + 0.04, 1) + ')');
-        document.documentElement.style.setProperty('--text', '#2a2a3a');
-        document.documentElement.style.setProperty('--text-bright', '#0a0a1a');
-        document.documentElement.style.setProperty('--muted', '#888899');
+        document.documentElement.style.setProperty('--text', '#1a1a1a');
+        document.documentElement.style.setProperty('--text-bright', '#000000');
+        document.documentElement.style.setProperty('--muted', '#555555');
+        document.documentElement.style.setProperty('--input-bg', 'rgba(255, 255, 255, 0.6)');
+        document.documentElement.style.setProperty('--modal-bg', 'rgba(255, 255, 255, 0.96)');
+        document.documentElement.style.setProperty('--input-color', '#000000');
+        document.documentElement.style.setProperty('--option-bg', '#ffffff');
+        document.documentElement.style.setProperty('--option-color', '#1a1a1a');
+        document.documentElement.style.setProperty('--input-shadow', 'inset 0 0 0 1px rgba(0,0,0,0.1)');
+        document.documentElement.style.setProperty('--slider-bg', 'rgba(0,0,0,0.1)');
       }
       localStorage.setItem('darkMode', isDark);
     });
@@ -2656,19 +3077,194 @@
   // Load saved settings
   var savedTheme = localStorage.getItem('theme');
   if (savedTheme) window.applyTheme(savedTheme);
+
+  // Apply saved logo settings (define first so applyShadowTheme can call it)
+  function applyLogoSettings() {
+    var logoText = localStorage.getItem('repo_logoText');
+    var logoFont = localStorage.getItem('repo_logoFont');
+    var logoFontSize = localStorage.getItem('repo_logoFontSize');
+    var logoFontWeight = localStorage.getItem('repo_logoFontWeight');
+    var logoDepth = localStorage.getItem('repo_logoDepth');
+    var logoStroke = localStorage.getItem('repo_logoStroke');
+    var logoHolo = localStorage.getItem('repo_logoHoloIntensity');
+    var logoGlowRadius = localStorage.getItem('repo_logoGlowRadius');
+    var logoGlowAlpha = localStorage.getItem('repo_logoGlowAlpha');
+    var logoBlink = localStorage.getItem('repo_logoBlink');
+
+    var el = document.getElementById('logo-text');
+    if (!el) return;
+
+    if (logoText) {
+      el.innerHTML = '';
+      for (var i = 0; i < logoText.length; i++) {
+        var ch = logoText[i];
+        if (ch === ' ') {
+          // Space: create a span with width for spacing
+          var sp = document.createElement('span');
+          sp.className = 'lt space-sep';
+          sp.style.display = 'inline-block';
+          sp.style.width = '0.35em';
+          sp.textContent = '\u00A0'; // non-breaking space
+          el.appendChild(sp);
+        } else {
+          var s = document.createElement('span');
+          s.className = 'lt';
+          s.textContent = ch;
+          el.appendChild(s);
+        }
+      }
+    }
+
+    // Read ALL saved logo settings + current shadow color from CSS var
+    var logoText = localStorage.getItem('repo_logoText');
+    var logoFont = localStorage.getItem('repo_logoFont');
+    var logoFontSize = localStorage.getItem('repo_logoFontSize');
+    var logoFontWeight = localStorage.getItem('repo_logoFontWeight');
+    var logoDepth = localStorage.getItem('repo_logoDepth');
+    var logoStroke = localStorage.getItem('repo_logoStroke');
+    var logoHolo = localStorage.getItem('repo_logoHoloIntensity');
+    var logoGlowRadius = localStorage.getItem('repo_logoGlowRadius');
+    var logoGlowAlpha = localStorage.getItem('repo_logoGlowAlpha');
+    var logoBlink = localStorage.getItem('repo_logoBlink');
+
+    var el = document.getElementById('logo-text');
+    if (!el) return;
+
+    // Build shadow string using CURRENT CSS var (live, not saved)
+    var rgb = getComputedStyle(document.documentElement).getPropertyValue('--logo-shadow-rgb').trim() || '57,255,20';
+    var depth = parseInt(logoDepth || 4);
+    var stroke = parseFloat(logoStroke || 0.5);
+    var holo = parseInt(logoHolo || 80) / 100;
+    var gR = parseInt(logoGlowRadius || 70);
+    var gA = parseInt(logoGlowAlpha || 65) / 100;
+    var fs = parseInt(logoFontSize || 42);
+
+    var layers = '';
+    for (var k = 1; k <= depth; k++) layers += k + 'px ' + k + 'px 0 rgba(' + rgb + ', 1), ';
+    var glow = '0 0 4px rgba(' + rgb + ',' + (0.95 * holo) + '),'
+             + '0 0 ' + Math.round(gR * 0.15) + 'px rgba(' + rgb + ',' + (0.8 * holo) + '),'
+             + '0 0 ' + Math.round(gR * 0.3) + 'px rgba(' + rgb + ',' + (0.65 * gA) + '),'
+             + '0 0 ' + Math.round(gR * 0.5) + 'px rgba(' + rgb + ',' + (0.5 * gA) + '),'
+             + '0 0 ' + gR + 'px rgba(' + rgb + ',' + (0.3 * gA) + ')';
+
+    if (logoText) {
+      el.innerHTML = '';
+      for (var i = 0; i < logoText.length; i++) {
+        var ch = logoText[i];
+        if (ch === ' ') {
+          var sp = document.createElement('span');
+          sp.className = 'lt space-sep';
+          sp.style.display = 'inline-block';
+          sp.style.width = '0.35em';
+          sp.textContent = '\u00A0';
+          el.appendChild(sp);
+        } else {
+          var s = document.createElement('span');
+          s.className = 'lt';
+          s.textContent = ch;
+          el.appendChild(s);
+        }
+      }
+    }
+
+    // Apply all styles to .lt spans (shadow uses CURRENT CSS var = live)
+    var lts = el.querySelectorAll('.lt:not(.space-sep)');
+    lts.forEach(function(lt) {
+      if (logoFont) lt.style.fontFamily = logoFont;
+      if (logoFontSize) lt.style.fontSize = fs + 'px';
+      if (logoFontWeight) lt.style.fontWeight = logoFontWeight;
+      lt.style.textShadow = layers + glow;
+      lt.style.webkitTextStroke = stroke + 'px rgba(' + rgb + ', 0.9)';
+      if (logoBlink) lt.style.animationDuration = logoBlink + 's';
+    });
+  }
+
+  // Re-apply shadow ONLY (called when shadow theme changes — no text re-render)
+  window.reapplyLogoShadow = function() {
+    var el = document.getElementById('logo-text');
+    if (!el) return;
+    var logoDepth = localStorage.getItem('repo_logoDepth');
+    var logoStroke = localStorage.getItem('repo_logoStroke');
+    var logoHolo = localStorage.getItem('repo_logoHoloIntensity');
+    var logoGlowRadius = localStorage.getItem('repo_logoGlowRadius');
+    var logoGlowAlpha = localStorage.getItem('repo_logoGlowAlpha');
+    var rgb = getComputedStyle(document.documentElement).getPropertyValue('--logo-shadow-rgb').trim() || '57,255,20';
+    var depth = parseInt(logoDepth || 4);
+    var stroke = parseFloat(logoStroke || 0.5);
+    var holo = parseInt(logoHolo || 80) / 100;
+    var gR = parseInt(logoGlowRadius || 70);
+    var gA = parseInt(logoGlowAlpha || 65) / 100;
+    var layers = '';
+    for (var k = 1; k <= depth; k++) layers += k + 'px ' + k + 'px 0 rgba(' + rgb + ', 1), ';
+    var glow = '0 0 4px rgba(' + rgb + ',' + (0.95 * holo) + '),'
+             + '0 0 ' + Math.round(gR * 0.15) + 'px rgba(' + rgb + ',' + (0.8 * holo) + '),'
+             + '0 0 ' + Math.round(gR * 0.3) + 'px rgba(' + rgb + ',' + (0.65 * gA) + '),'
+             + '0 0 ' + Math.round(gR * 0.5) + 'px rgba(' + rgb + ',' + (0.5 * gA) + '),'
+             + '0 0 ' + gR + 'px rgba(' + rgb + ',' + (0.3 * gA) + ')';
+    var lts = el.querySelectorAll('.lt:not(.space-sep)');
+    lts.forEach(function(lt) {
+      lt.style.textShadow = layers + glow;
+      lt.style.webkitTextStroke = stroke + 'px rgba(' + rgb + ', 0.9)';
+    });
+  };
+
+  // Defer to let other init scripts run first
+  setTimeout(applyLogoSettings, 100);
+  // Load shadow after logo settings defined so reapplyLogoShadow is available
+  var savedShadow = localStorage.getItem('shadowTheme') || localStorage.getItem('repo_shadowTheme');
+  if (savedShadow) window.applyShadowTheme(savedShadow);
   if (localStorage.getItem('rainEnabled') === 'false') { window.rainEnabled = false; if (toggleRain) toggleRain.checked = false; }
   if (localStorage.getItem('heavyRain') === 'true') { window.heavyRain = true; if (toggleHeavyRain) toggleHeavyRain.checked = true; }
-  if (localStorage.getItem('darkMode') === 'false') { if (toggleDark) toggleDark.checked = false; }
+  if (localStorage.getItem('heavyRain') === 'true') { window.heavyRain = true; if (toggleHeavyRain) toggleHeavyRain.checked = true; if (window.initRain) window.initRain(); }
+  if (localStorage.getItem('darkMode') === 'false') {
+    if (toggleDark) toggleDark.checked = false;
+    // Trigger dark mode handler manually
+    var alphaStr = getComputedStyle(document.documentElement).getPropertyValue('--panel-alpha') || '0.92';
+    var alpha = parseFloat(alphaStr);
+    if (isNaN(alpha)) alpha = 0.92;
+    document.documentElement.style.setProperty('--bg-color', '#ffffff');
+    document.documentElement.style.setProperty('--panel', 'rgba(245, 245, 250, ' + alpha + ')');
+    document.documentElement.style.setProperty('--panel-alt', 'rgba(255, 255, 255, ' + Math.min(alpha + 0.04, 1) + ')');
+    document.documentElement.style.setProperty('--sidebar-panel', 'rgba(245, 245, 250, ' + alpha + ')');
+    document.documentElement.style.setProperty('--sidebar-panel-alt', 'rgba(255, 255, 255, ' + Math.min(alpha + 0.04, 1) + ')');
+    document.documentElement.style.setProperty('--text', '#1a1a1a');
+    document.documentElement.style.setProperty('--text-bright', '#000000');
+    document.documentElement.style.setProperty('--muted', '#555555');
+    document.documentElement.style.setProperty('--input-bg', 'rgba(255, 255, 255, 0.6)');
+    document.documentElement.style.setProperty('--modal-bg', 'rgba(255, 255, 255, 0.96)');
+  }
   var savedTrans = localStorage.getItem('transparency');
   if (savedTrans) {
     var v = savedTrans / 100;
     var va = Math.min(v + 0.04, 1);
     document.documentElement.style.setProperty('--panel-alpha', v);
     document.documentElement.style.setProperty('--panel-alpha-alt', va);
-    document.documentElement.style.setProperty('--panel', 'rgba(10, 14, 26, ' + v + ')');
-    document.documentElement.style.setProperty('--panel-alt', 'rgba(6, 9, 18, ' + va + ')');
-    document.documentElement.style.setProperty('--sidebar-panel', 'rgba(10, 14, 26, ' + v + ')');
-    document.documentElement.style.setProperty('--sidebar-panel-alt', 'rgba(6, 9, 18, ' + va + ')');
+    var isLightMode = localStorage.getItem('darkMode') === 'false';
+    if (isLightMode) {
+      document.documentElement.style.setProperty('--panel', 'rgba(245, 245, 250, ' + v + ')');
+      document.documentElement.style.setProperty('--panel-alt', 'rgba(255, 255, 255, ' + va + ')');
+      document.documentElement.style.setProperty('--sidebar-panel', 'rgba(245, 245, 250, ' + v + ')');
+      document.documentElement.style.setProperty('--sidebar-panel-alt', 'rgba(255, 255, 255, ' + va + ')');
+      document.documentElement.style.setProperty('--input-bg', 'rgba(255, 255, 255, 0.6)');
+      document.documentElement.style.setProperty('--modal-bg', 'rgba(255, 255, 255, 0.96)');
+      document.documentElement.style.setProperty('--input-color', '#000000');
+      document.documentElement.style.setProperty('--option-bg', '#ffffff');
+      document.documentElement.style.setProperty('--option-color', '#1a1a1a');
+      document.documentElement.style.setProperty('--input-shadow', 'inset 0 0 0 1px rgba(0,0,0,0.1)');
+      document.documentElement.style.setProperty('--slider-bg', 'rgba(0,0,0,0.1)');
+    } else {
+      document.documentElement.style.setProperty('--panel', 'rgba(10, 14, 26, ' + v + ')');
+      document.documentElement.style.setProperty('--panel-alt', 'rgba(6, 9, 18, ' + va + ')');
+      document.documentElement.style.setProperty('--sidebar-panel', 'rgba(10, 14, 26, ' + v + ')');
+      document.documentElement.style.setProperty('--sidebar-panel-alt', 'rgba(6, 9, 18, ' + va + ')');
+      document.documentElement.style.setProperty('--input-bg', 'rgba(0, 0, 0, 0.3)');
+      document.documentElement.style.setProperty('--modal-bg', 'rgba(8, 12, 22, 0.96)');
+      document.documentElement.style.setProperty('--input-color', '#e8fff0');
+      document.documentElement.style.setProperty('--option-bg', '#0a0e1a');
+      document.documentElement.style.setProperty('--option-color', '#e8fff0');
+      document.documentElement.style.setProperty('--input-shadow', 'inset 0 0 0 1px rgba(0,0,0,0.3)');
+      document.documentElement.style.setProperty('--slider-bg', 'rgba(255,255,255,0.1)');
+    }
     if (rangeTrans) rangeTrans.value = savedTrans;
   }
 })();
@@ -2677,6 +3273,31 @@
 document.querySelectorAll('.blog-card, .blog-item a, .blog-link').forEach(card => {
   card.addEventListener('click', e => { e.preventDefault(); window.open(card.getAttribute('href'), '_blank'); });
 });
+
+// Load and render blog posts in sidebar
+(async function loadFrontRepoBlog() {
+  const list = document.getElementById('blogList');
+  if (!list) return;
+  try {
+    const res = await fetch('/api/blog/posts');
+    const data = await res.json();
+    const posts = (data.posts || []).slice(0, 5);
+    list.innerHTML = posts.map(p => `
+      <a href="/blog-post/${p.id}" class="blog-item" style="cursor:pointer;text-decoration:none;color:inherit;display:flex;">
+        <span class="blog-icon">${p.icon || '📝'}</span>
+        <div class="blog-link" style="flex:1;">
+          <div class="blog-title" style="font-size:0.78rem;">${p.title}</div>
+          <div class="blog-date">${p.date || ''}</div>
+        </div>
+      </a>
+    `).join('');
+    // Hide pagination if fewer posts
+    const pag = document.getElementById('blogPagination');
+    if (pag && data.posts.length <= 5) pag.classList.add('hidden');
+  } catch (err) {
+    list.innerHTML = '<div style="padding:14px;color:var(--muted);font-size:11px;">Blog chưa sẵn sàng.</div>';
+  }
+})();
 
 // Blog items in the home page - open in new tab
 document.querySelectorAll('#blogList .blog-item').forEach(item => {

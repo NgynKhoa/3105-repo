@@ -795,7 +795,8 @@
     }
 
     function getUrlPostId() {
-      const m = location.pathname.match(/\/blog\/(\d+)/);
+      // Accept both /blog/<id> and /blog-post/<id>
+      const m = location.pathname.match(/\/blog(?:-post)?\/(\d+)/);
       return m ? parseInt(m[1]) : null;
     }
 
