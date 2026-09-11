@@ -14,7 +14,7 @@
   "packages": [
     {
       "identifier": "owen-trial",
-      "name": "PUBG Custom Miễn Phí Version 4.5",
+      "name": "ĐỢII / Wait new updated",
       "author": "@owenindahouse",
       "version": "1.0.0",
       "summary": "✨ Pubg • Bản dùng thử • Trải nghiệm tính năng nâng cao",
@@ -36,16 +36,8 @@
       "size": 37432,
       "supportedOS": [
         {
-          "minimum": "17.0",
-          "maximum": "18.7.1"
-        },
-        {
-          "minimum": "26.0",
-          "maximum": "26.6.1"
-        },
-        {
-          "minimum": "27.0",
-          "maximum": "27.0"
+          "minimum": "17",
+          "maximum": "0"
         }
       ],
       "featured": false,
@@ -94,7 +86,7 @@
     },
     {
       "identifier": "owen-003",
-      "name": "PUBG Custom For GL Version 4.5",
+      "name": "ĐỢI ĐỢI/ Wait for update file",
       "author": "@owenindahouse",
       "version": "1.0.0",
       "summary": "✨ ADVANCED CUSTOM 4 GLOBAL",
@@ -117,16 +109,8 @@
       "size": 37428,
       "supportedOS": [
         {
-          "minimum": "17.0",
-          "maximum": "18.7.1"
-        },
-        {
-          "minimum": "26.0",
-          "maximum": "26.6.1"
-        },
-        {
-          "minimum": "27.0",
-          "maximum": "27.0"
+          "minimum": "17",
+          "maximum": "0"
         }
       ],
       "featured": false,
@@ -136,7 +120,7 @@
     },
     {
       "identifier": "owen-004",
-      "name": "💫 PUBG Custom For KR Version 4.5",
+      "name": "💫 Đợiiii file mới chưa có file mới đâu",
       "author": "@owenindahouse",
       "version": "1.0.0",
       "summary": "✨ ADVANCED CUSTOM 4 KR",
@@ -158,16 +142,8 @@
       "size": 37429,
       "supportedOS": [
         {
-          "minimum": "17.0",
-          "maximum": "18.7.1"
-        },
-        {
-          "minimum": "26.0",
-          "maximum": "26.6.1"
-        },
-        {
-          "minimum": "27.0",
-          "maximum": "27.0"
+          "minimum": "17",
+          "maximum": "0"
         }
       ],
       "featured": false,
@@ -297,7 +273,7 @@
     },
     {
       "identifier": "owen-008",
-      "name": "GRAPHICS POTATO WITH 120FPS PUBG Ver 4.5",
+      "name": "Chưa có file mới",
       "author": "@owenindahouse",
       "version": "1.0.0",
       "summary": "✨chỉ dành cho người dùng VIỆT NAM - Only for VNG",
@@ -316,16 +292,8 @@
       "size": 14102893,
       "supportedOS": [
         {
-          "minimum": "17.0",
-          "maximum": "18.7.1"
-        },
-        {
-          "minimum": "26.0",
-          "maximum": "26.6.1"
-        },
-        {
-          "minimum": "27.0",
-          "maximum": "27.0"
+          "minimum": "17",
+          "maximum": "0"
         }
       ],
       "featured": true,
@@ -374,7 +342,7 @@
     },
     {
       "identifier": "owen-010",
-      "name": "👑 PUBG ALL IN ONE Ver 4.5",
+      "name": "Chưa có file mớiii",
       "author": "@owenindahouse",
       "version": "1.0.0",
       "summary": "✨ 1 PATCH FOR 3 SERVERS",
@@ -396,16 +364,8 @@
       "size": 38137,
       "supportedOS": [
         {
-          "minimum": "17.0",
-          "maximum": "18.7.1"
-        },
-        {
-          "minimum": "26.0",
-          "maximum": "26.6.1"
-        },
-        {
-          "minimum": "27.0",
-          "maximum": "27.0"
+          "minimum": "17",
+          "maximum": "0"
         }
       ],
       "featured": false,
@@ -415,7 +375,7 @@
     },
     {
       "identifier": "owen-001",
-      "name": "PUBG Version 4.6 For VNG,KR,GLOBAL UPDATED",
+      "name": "Wait for update new file ok",
       "author": "@owenindahouse",
       "version": "4.6.0",
       "summary": "1 Patch dùng được cho 3 server",
@@ -438,16 +398,8 @@
       "size": 1180183,
       "supportedOS": [
         {
-          "minimum": "17.0",
-          "maximum": "18.7.1"
-        },
-        {
-          "minimum": "26.0",
-          "maximum": "26.6.1"
-        },
-        {
-          "minimum": "27.0",
-          "maximum": "27.0"
+          "minimum": "17",
+          "maximum": "0"
         }
       ],
       "featured": true,
@@ -457,7 +409,7 @@
     },
     {
       "identifier": "owen-000",
-      "name": "PUBG Custom Version 4.6 For KR",
+      "name": "Chưa có file mới đâuu ạ",
       "author": "@owenindahouse",
       "version": "4.6.0",
       "summary": "PUBG for Server Korean",
@@ -479,16 +431,8 @@
       "size": 1179331,
       "supportedOS": [
         {
-          "minimum": "17.0",
-          "maximum": "18.7.1"
-        },
-        {
-          "minimum": "26.0",
-          "maximum": "26.6.1"
-        },
-        {
-          "minimum": "27.0",
-          "maximum": "27.0"
+          "minimum": "17",
+          "maximum": "0"
         }
       ],
       "featured": false,
@@ -498,7 +442,7 @@
     },
     {
       "identifier": "owen-011",
-      "name": "PUBG Custom Version 4.6 For VNG",
+      "name": "ĐỢI BẢN MỚI NHÉ  CHƯA CÓ ĐÂUU",
       "author": "@owenindahouse",
       "version": "4.6.0",
       "summary": "PUBG for Server VNG",
@@ -521,16 +465,8 @@
       "size": 1179332,
       "supportedOS": [
         {
-          "minimum": "17.0",
-          "maximum": "18.7.1"
-        },
-        {
-          "minimum": "26.0",
-          "maximum": "26.6.1"
-        },
-        {
-          "minimum": "27.0",
-          "maximum": "27.0"
+          "minimum": "17",
+          "maximum": "0"
         }
       ],
       "featured": true,
@@ -540,7 +476,7 @@
     },
     {
       "identifier": "owen-012",
-      "name": "PUBG Custom Version 4.6 For Global",
+      "name": "ĐỢIIIIIIIIIIIIIIIIIII",
       "author": "@owenindahouse",
       "version": "4.6.0",
       "summary": "PUBG for Server Global",
@@ -563,16 +499,8 @@
       "size": 1179326,
       "supportedOS": [
         {
-          "minimum": "17.0",
-          "maximum": "18.7.1"
-        },
-        {
-          "minimum": "26.0",
-          "maximum": "26.6.1"
-        },
-        {
-          "minimum": "27.0",
-          "maximum": "27.0"
+          "minimum": "17",
+          "maximum": "0"
         }
       ],
       "featured": true,
