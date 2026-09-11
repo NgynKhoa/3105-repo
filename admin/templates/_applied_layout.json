@@ -1,0 +1,122 @@
+{
+  "boxes": [
+    {
+      "key": "masthead",
+      "selector": "[data-box=\"masthead\"]",
+      "title": "OWEN CUSTOM REPOSITORY Package Builder & Repo Manager REPO: demo",
+      "titlePos": "top-left",
+      "x": 168,
+      "y": 0,
+      "w": 944,
+      "h": 90,
+      "type": "content",
+      "children": [],
+      "css": {}
+    },
+    {
+      "key": "meta",
+      "selector": "[data-box=\"meta\"]",
+      "title": "Thông tin chung Sửa trực tiếp — sẽ ghi vào repo.yml khi bấm Lưu. IDENTIFIER (COM",
+      "titlePos": "top-left",
+      "x": 168,
+      "y": 110,
+      "w": 944,
+      "h": 276,
+      "type": "content",
+      "children": [],
+      "css": {}
+    },
+    {
+      "key": "packages",
+      "selector": "[data-box=\"packages\"]",
+      "title": "Danh sách packages 14 / 14 package PUBG Custom Miễn Phí Version 4.5 owen-trial ·",
+      "titlePos": "top-left",
+      "x": 168,
+      "y": 402,
+      "w": 730,
+      "h": 378,
+      "type": "content",
+      "children": [],
+      "css": {}
+    },
+    {
+      "key": "blog-section",
+      "selector": "[data-box=\"blog-section\"]",
+      "title": "Blog 10 bài viết 📦 Cách cài đặt Repository trên ứng dụng 3105 2 ngày trước 🛡️ Bả",
+      "titlePos": "top-left",
+      "x": 168,
+      "y": 794,
+      "w": 730,
+      "h": 290,
+      "type": "content",
+      "children": [],
+      "css": {}
+    },
+    {
+      "key": "stars",
+      "selector": "[data-box=\"stars\"]",
+      "title": "✩ Links ✩ Home ✩ Admin ✩ GitHub ✩ E-mail — online",
+      "titlePos": "top-left",
+      "x": 912,
+      "y": 402,
+      "w": 200,
+      "h": 269,
+      "type": "content",
+      "children": [],
+      "css": {}
+    },
+    {
+      "key": "music-player",
+      "selector": "[data-box=\"music-player\"]",
+      "title": "♫ Now Playing Synthwave Drift — Owen · 80s Mix 0:00 3:21",
+      "titlePos": "top-left",
+      "x": 912,
+      "y": 685,
+      "w": 200,
+      "h": 251,
+      "type": "content",
+      "children": [],
+      "css": {}
+    },
+    {
+      "key": "moon-widget",
+      "selector": "[data-box=\"moon-widget\"]",
+      "title": "☾ Moon New Moon 0% illuminated AZIMUTH 245°00' ALTITUDE 51°17' ▾ // UTC+7 (VN) 1",
+      "titlePos": "top-left",
+      "x": 912,
+      "y": 950,
+      "w": 200,
+      "h": 237,
+      "type": "content",
+      "children": [],
+      "css": {}
+    },
+    {
+      "key": "hint-box",
+      "selector": "[data-box=\"hint-box\"]",
+      "title": "// HƯỚNG DẪN SỬ DỤNG Bấm 🚀 [>] để ghi file repositories/<repo>/repo.yml và push",
+      "titlePos": "top-left",
+      "x": 168,
+      "y": 1205,
+      "w": 944,
+      "h": 119,
+      "type": "content",
+      "children": [],
+      "css": {}
+    },
+    {
+      "key": "custom-test",
+      "selector": "[data-box=\"custom-test\"]",
+      "title": "TEST",
+      "titlePos": "top-left",
+      "x": 168,
+      "y": 1096,
+      "w": 730,
+      "h": 101,
+      "type": "content",
+      "children": [],
+      "css": {}
+    }
+  ],
+  "applied_at": "2026-09-11 16:43:17.095448"
+}

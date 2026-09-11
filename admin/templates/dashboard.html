@@ -855,6 +855,35 @@
     }
     .snap-guide.h-line { height: 1px; left: 0; right: 0; }
     .snap-guide.v-line { width: 1px; top: 0; bottom: 0; }
+
+    /* Children inside box */
+    .prev-child { user-select: none; }
+    .prev-child img { display: block; }
+    .prev-child .tab-btn:hover { background: var(--border); }
+    .prev-child .tab-btn.active { background: rgba(var(--neon-rgb),0.15); }
+
+    /* Inspector tab */
+    .insp-tab-btn.active { background: rgba(var(--neon-rgb), 0.05); }
+
+    /* Color swatches */
+    .swatch { transition: transform 0.1s; }
+    .swatch:hover { transform: scale(1.2); }
+    .swatch-active { outline: 2px solid var(--neon); outline-offset: 1px; }
+    .color-swatch { background: transparent; }
+
+    /* Inspector row layout */
+    .inspector-row-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; }
+    .inspector-row-4 > div > label { display: block; font-size: 9px; color: var(--muted); margin-bottom: 1px; }
+
+    /* Animations */
+    @keyframes anim-float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-6px); } }
+    @keyframes anim-pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.04); } }
+    @keyframes anim-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+    @keyframes anim-blink { 0%, 50%, 100% { opacity: 1; } 25%, 75% { opacity: 0.3; } }
+    @keyframes anim-slide-in { from { transform: translateX(-20px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+    @keyframes anim-glow { 0%, 100% { box-shadow: 0 0 5px var(--neon), 0 0 10px rgba(57,255,20,0.3); } 50% { box-shadow: 0 0 15px var(--neon), 0 0 30px rgba(57,255,20,0.5); } }
+    @keyframes anim-shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-2px); } 75% { transform: translateX(2px); } }
+    @keyframes anim-bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
   </style>
 </head>
 <body>
@@ -2174,7 +2203,9 @@
       _stage.appendChild(box);
 
       previewTitles[b.key] = { title: b.title || '', pos: 'top-left' };
-      previewBoxesData[b.key] = { x: b.x, y: b.y, w: b.w, h: b.h, type: b.type || 'content', locked: false, hidden: false };
+      previewBoxesData[b.key] = Object.assign(previewBoxesData[b.key] || {}, {
+        x: b.x, y: b.y, w: b.w, h: b.h, type: b.type || 'content', locked: false, hidden: false
+      });
 
       // Bind events
       box.addEventListener('mousedown', onBoxMouseDown);
@@ -2185,6 +2216,7 @@
       });
 
       applyTitleToBox(b.key);
+      applyBoxStyle(b.key);
       renderLayers();
       autoExpandCanvas();
       updateCanvasHint();
@@ -2224,123 +2256,777 @@
       return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
     }
 
-    // ============ INSPECTOR PANEL ============
+    // ============================================================
+    // COMPREHENSIVE INSPECTOR PANEL
+    // ============================================================
     function renderInspector() {
       if (!_inspectorBody) return;
       const key = previewSelectedKey;
       if (!key) {
-        _inspectorBody.innerHTML = '<div style="color:var(--muted);font-size:11px;text-align:center;padding:20px 0;">Chọn 1 khung trên canvas<br>hoặc trong <b>Layers</b> để chỉnh.</div>';
+        _inspectorBody.innerHTML = '<div style="text-align:center;padding:24px 0;"><div style="font-size:36px;margin-bottom:12px;">📦</div><div style="color:var(--muted);font-size:11px;line-height:1.6;">Chọn 1 khung trên canvas<br>hoặc trong <b>Layers</b><br>để chỉnh sửa.</div><div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border);"><div style="font-size:10px;color:var(--muted);margin-bottom:8px;">Phím tắt:</div><div style="font-size:10px;color:var(--text);text-align:left;line-height:1.8;"><kbd style="background:var(--panel-alt);padding:1px 5px;border-radius:3px;font-size:9px;">Del</kbd> Xóa khung<br><kbd style="background:var(--panel-alt);padding:1px 5px;border-radius:3px;font-size:9px;">Ctrl+D</kbd> Nhân đôi<br><kbd style="background:var(--panel-alt);padding:1px 5px;border-radius:3px;font-size:9px;">Ctrl+C</kbd> Copy<br><kbd style="background:var(--panel-alt);padding:1px 5px;border-radius:3px;font-size:9px;">Ctrl+V</kbd> Paste<br><kbd style="background:var(--panel-alt);padding:1px 5px;border-radius:3px;font-size:9px;">Ctrl+Z</kbd> Undo<br><kbd style="background:var(--panel-alt);padding:1px 5px;border-radius:3px;font-size:9px;">↑↓←→</kbd> Di chuyển 1px<br><kbd style="background:var(--panel-alt);padding:1px 5px;border-radius:3px;font-size:9px;">Shift+↑</kbd> Di chuyển 10px</div></div></div>';
         return;
       }
       const d = previewBoxesData[key] || {};
       const t = previewTitles[key] || { title: '', pos: 'top-left' };
-      const boxEl = _stage.querySelector(`[data-box="${key}"]`);
+      const children = d.children || [];
+      const activeTab = window._inspTab || 'transform';
+      const lockIcon = d.locked ? '🔒' : '🔓';
+      const hideIcon = d.hidden ? '👁‍🗨' : '👁';
 
-      _inspectorBody.innerHTML = `
-        <div class="inspector-section">
-          <div class="inspector-label">📦 Khung: <span style="color:var(--neon);font-family:'Press Start 2P',monospace;font-size:9px;">${key}</span></div>
-        </div>
+      _inspectorBody.innerHTML = '\
+        <div style="padding:10px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;flex-shrink:0;">\
+          <div style="font-size:11px;color:var(--neon);font-weight:700;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">📦 ' + escapeHtml(key) + '</div>\
+          <div style="display:flex;gap:4px;">\
+            <button class="form-btn" style="padding:2px 6px;font-size:10px;" onclick="toggleBoxLock(\'' + key + '\')" title="Khóa/Mở khóa">' + lockIcon + '</button>\
+            <button class="form-btn" style="padding:2px 6px;font-size:10px;" onclick="toggleBoxHide(\'' + key + '\')" title="Ẩn/Hiện">' + hideIcon + '</button>\
+            <button class="form-btn" style="padding:2px 6px;font-size:10px;" onclick="duplicateSelectedBox()" title="Nhân đôi">⎘</button>\
+            <button class="form-btn" style="padding:2px 6px;font-size:10px;color:var(--neon-pink);border-color:var(--neon-pink);" onclick="deleteSelectedBox()" title="Xóa">🗑</button>\
+          </div>\
+        </div>\
+        <div style="display:flex;border-bottom:1px solid var(--border);flex-shrink:0;overflow-x:auto;" id="inspTabBar">\
+          <button class="insp-tab-btn ' + (activeTab==='transform'?'active':'') + '" data-tab="transform" style="flex:1;min-width:0;padding:6px 2px;background:none;border:none;border-bottom:2px solid ' + (activeTab==='transform'?'var(--neon)':'transparent') + ';color:' + (activeTab==='transform'?'var(--neon)':'var(--muted)') + ';cursor:pointer;font-size:10px;" onclick="switchInspTab(\'transform\')"><span>📐</span><span style="font-size:8px;">Transform</span></button>\
+          <button class="insp-tab-btn ' + (activeTab==='style'?'active':'') + '" data-tab="style" style="flex:1;min-width:0;padding:6px 2px;background:none;border:none;border-bottom:2px solid ' + (activeTab==='style'?'var(--neon)':'transparent') + ';color:' + (activeTab==='style'?'var(--neon)':'var(--muted)') + ';cursor:pointer;font-size:10px;" onclick="switchInspTab(\'style\')"><span>🎨</span><span style="font-size:8px;">Style</span></button>\
+          <button class="insp-tab-btn ' + (activeTab==='bg'?'active':'') + '" data-tab="bg" style="flex:1;min-width:0;padding:6px 2px;background:none;border:none;border-bottom:2px solid ' + (activeTab==='bg'?'var(--neon)':'transparent') + ';color:' + (activeTab==='bg'?'var(--neon)':'var(--muted)') + ';cursor:pointer;font-size:10px;" onclick="switchInspTab(\'bg\')"><span>🖼</span><span style="font-size:8px;">Bg</span></button>\
+          <button class="insp-tab-btn ' + (activeTab==='typography'?'active':'') + '" data-tab="typography" style="flex:1;min-width:0;padding:6px 2px;background:none;border:none;border-bottom:2px solid ' + (activeTab==='typography'?'var(--neon)':'transparent') + ';color:' + (activeTab==='typography'?'var(--neon)':'var(--muted)') + ';cursor:pointer;font-size:10px;" onclick="switchInspTab(\'typography\')"><span>✏️</span><span style="font-size:8px;">Text</span></button>\
+          <button class="insp-tab-btn ' + (activeTab==='effects'?'active':'') + '" data-tab="effects" style="flex:1;min-width:0;padding:6px 2px;background:none;border:none;border-bottom:2px solid ' + (activeTab==='effects'?'var(--neon)':'transparent') + ';color:' + (activeTab==='effects'?'var(--neon)':'var(--muted)') + ';cursor:pointer;font-size:10px;" onclick="switchInspTab(\'effects\')"><span>✨</span><span style="font-size:8px;">Effects</span></button>\
+          <button class="insp-tab-btn ' + (activeTab==='children'?'active':'') + '" data-tab="children" style="flex:1;min-width:0;padding:6px 2px;background:none;border:none;border-bottom:2px solid ' + (activeTab==='children'?'var(--neon)':'transparent') + ';color:' + (activeTab==='children'?'var(--neon)':'var(--muted)') + ';cursor:pointer;font-size:10px;" onclick="switchInspTab(\'children\')"><span>🧩</span><span style="font-size:8px;">Content</span></button>\
+          <button class="insp-tab-btn ' + (activeTab==='css'?'active':'') + '" data-tab="css" style="flex:1;min-width:0;padding:6px 2px;background:none;border:none;border-bottom:2px solid ' + (activeTab==='css'?'var(--neon)':'transparent') + ';color:' + (activeTab==='css'?'var(--neon)':'var(--muted)') + ';cursor:pointer;font-size:10px;" onclick="switchInspTab(\'css\')"><span>&lt;/&gt;</span><span style="font-size:8px;">CSS</span></button>\
+        </div>\
+        <div style="flex:1;overflow-y:auto;padding:8px;" id="inspTabContent">\
+          ' + renderInspTab(activeTab, key, d, t, children) + '\
+        </div>';
 
-        <div class="inspector-section">
-          <span class="inspector-label">✏️ Tiêu đề & Vị trí tiêu đề</span>
-          <input class="inspector-input" id="insp-title" value="${escapeHtml(t.title || '')}" placeholder="Tiêu đề khung">
-          <div class="inspector-pos-grid" style="margin-top:8px;">
-            ${['top-left','top-center','top-right','center-left','center','center-right','bottom-left','bottom-center','bottom-right'].map(p => `
-              <button data-pos="${p}" class="${(t.pos||'top-left')===p?'active':''}" title="${p}">${pPosIcon(p)}</button>
-            `).join('')}
-          </div>
-        </div>
+      bindInspectorEvents(key);
+    }
 
-        <div class="inspector-section">
-          <span class="inspector-label">📐 Vị trí & Kích thước (px)</span>
-          <div class="inspector-row-4">
-            <div><label>X</label><input class="inspector-input insp-pos" type="number" data-k="x" value="${d.x||0}"></div>
-            <div><label>Y</label><input class="inspector-input insp-pos" type="number" data-k="y" value="${d.y||0}"></div>
-            <div><label>W</label><input class="inspector-input insp-size" type="number" data-k="w" value="${d.w||100}"></div>
-            <div><label>H</label><input class="inspector-input insp-size" type="number" data-k="h" value="${d.h||100}"></div>
-          </div>
-          <div style="display:flex;gap:4px;margin-top:4px;">
-            <button class="form-btn" style="flex:1;padding:4px;font-size:10px;" onclick="alignSelected('left')">⬅ Trái</button>
-            <button class="form-btn" style="flex:1;padding:4px;font-size:10px;" onclick="alignSelected('center-h')">↔ Giữa</button>
-            <button class="form-btn" style="flex:1;padding:4px;font-size:10px;" onclick="alignSelected('right')">Phải ➡</button>
-          </div>
-          <div style="display:flex;gap:4px;margin-top:4px;">
-            <button class="form-btn" style="flex:1;padding:4px;font-size:10px;" onclick="alignSelected('top')">⬆ Trên</button>
-            <button class="form-btn" style="flex:1;padding:4px;font-size:10px;" onclick="alignSelected('center-v')">↕ Giữa</button>
-            <button class="form-btn" style="flex:1;padding:4px;font-size:10px;" onclick="alignSelected('bottom')">⬇ Dưới</button>
-          </div>
-        </div>
+    function switchInspTab(tab) {
+      window._inspTab = tab;
+      renderInspector();
+    }
 
-        <div class="inspector-section">
-          <span class="inspector-label">🎨 Loại</span>
-          <select class="inspector-input" id="insp-type">
-            <option value="content" ${d.type==='content'?'selected':''}>Content (có border + bg)</option>
-            <option value="side" ${d.type==='side'?'selected':''}>Side (trong suốt)</option>
-          </select>
-        </div>
+    function renderInspTab(tab, key, d, t, children) {
+      if (tab === 'transform') return '\
+        <div class="inspector-section">\
+          <div class="inspector-label">📐 Vị trí & Kích thước</div>\
+          <div class="inspector-row-4">\
+            <div><label>X</label><input class="inspector-input insp-num" data-key="' + key + '" data-prop="x" type="number" value="' + (d.x||0) + '"></div>\
+            <div><label>Y</label><input class="inspector-input insp-num" data-key="' + key + '" data-prop="y" type="number" value="' + (d.y||0) + '"></div>\
+            <div><label>W</label><input class="inspector-input insp-num" data-key="' + key + '" data-prop="w" type="number" value="' + (d.w||100) + '" min="10"></div>\
+            <div><label>H</label><input class="inspector-input insp-num" data-key="' + key + '" data-prop="h" type="number" value="' + (d.h||100) + '" min="10"></div>\
+          </div>\
+          <div style="display:flex;gap:4px;margin-top:6px;">\
+            <button class="form-btn" style="flex:1;padding:4px 2px;font-size:10px;" onclick="alignBoxes(\'' + key + '\',\'left\')">⬅</button>\
+            <button class="form-btn" style="flex:1;padding:4px 2px;font-size:10px;" onclick="alignBoxes(\'' + key + '\',\'center-h\')">↔</button>\
+            <button class="form-btn" style="flex:1;padding:4px 2px;font-size:10px;" onclick="alignBoxes(\'' + key + '\',\'right\')">➡</button>\
+            <button class="form-btn" style="flex:1;padding:4px 2px;font-size:10px;" onclick="alignBoxes(\'' + key + '\',\'top\')">⬆</button>\
+            <button class="form-btn" style="flex:1;padding:4px 2px;font-size:10px;" onclick="alignBoxes(\'' + key + '\',\'center-v\')">↕</button>\
+            <button class="form-btn" style="flex:1;padding:4px 2px;font-size:10px;" onclick="alignBoxes(\'' + key + '\',\'bottom\')">⬇</button>\
+          </div>\
+        </div>\
+        <div class="inspector-section">\
+          <div class="inspector-label">📏 Padding & Margin</div>\
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">\
+            <div>\
+              <div style="font-size:9px;color:var(--muted);margin-bottom:4px;">Padding (khoảng cách trong)</div>\
+              <div class="inspector-row-4">\
+                <div><label>T</label><input class="inspector-input insp-num" data-key="' + key + '" data-prop="paddingT" type="number" value="' + (d.paddingT||0) + '" min="0"></div>\
+                <div><label>R</label><input class="inspector-input insp-num" data-key="' + key + '" data-prop="paddingR" type="number" value="' + (d.paddingR||0) + '" min="0"></div>\
+                <div><label>B</label><input class="inspector-input insp-num" data-key="' + key + '" data-prop="paddingB" type="number" value="' + (d.paddingB||0) + '" min="0"></div>\
+                <div><label>L</label><input class="inspector-input insp-num" data-key="' + key + '" data-prop="paddingL" type="number" value="' + (d.paddingL||0) + '" min="0"></div>\
+              </div>\
+            </div>\
+            <div>\
+              <div style="font-size:9px;color:var(--muted);margin-bottom:4px;">Margin (khoảng cách ngoài)</div>\
+              <div class="inspector-row-4">\
+                <div><label>T</label><input class="inspector-input insp-num" data-key="' + key + '" data-prop="marginT" type="number" value="' + (d.marginT||0) + '"></div>\
+                <div><label>R</label><input class="inspector-input insp-num" data-key="' + key + '" data-prop="marginR" type="number" value="' + (d.marginR||0) + '"></div>\
+                <div><label>B</label><input class="inspector-input insp-num" data-key="' + key + '" data-prop="marginB" type="number" value="' + (d.marginB||0) + '"></div>\
+                <div><label>L</label><input class="inspector-input insp-num" data-key="' + key + '" data-prop="marginL" type="number" value="' + (d.marginL||0) + '"></div>\
+              </div>\
+            </div>\
+          </div>\
+        </div>\
+        <div class="inspector-section">\
+          <div class="inspector-label">🔄 Transform</div>\
+          <div class="inspector-row-4">\
+            <div><label>Rot</label><input class="inspector-input insp-num" data-key="' + key + '" data-prop="rotation" type="number" value="' + (d.rotation||0) + '" min="-360" max="360"></div>\
+            <div><label>Scale</label><input class="inspector-input insp-num" data-key="' + key + '" data-prop="scale" type="number" value="' + (d.scale||1) + '" min="0.1" max="5" step="0.1"></div>\
+            <div><label>Opacity</label><input class="inspector-input insp-num" data-key="' + key + '" data-prop="opacity" type="number" value="' + (d.opacity||100) + '" min="0" max="100"></div>\
+            <div><label>Z-idx</label><input class="inspector-input insp-num" data-key="' + key + '" data-prop="zIndex" type="number" value="' + (d.zIndex||0) + '"></div>\
+          </div>\
+        </div>\
+        <div class="inspector-section">\
+          <div class="inspector-label">✏️ Tiêu đề</div>\
+          <input class="inspector-input" id="insp-title" value="' + escapeHtml(t.title || '') + '" placeholder="Tiêu đề khung..." style="width:100%;margin-bottom:6px;">\
+          <div class="inspector-pos-grid">\
+            ' + ['top-left','top-center','top-right','center-left','center','center-right','bottom-left','bottom-center','bottom-right'].map(p => '<button data-pos="' + p + '" class="' + ((t.pos||'top-left')===p?'active':'') + '" title="' + p + '">' + pPosIcon(p) + '</button>').join('') + '\
+          </div>\
+        </div>\
+        <div class="inspector-section">\
+          <div class="inspector-label">🎭 Loại khung</div>\
+          <select class="inspector-input" id="insp-type" style="width:100%;">\
+            <option value="content" ' + ((d.type||'content')==='content'?'selected':'') + '>Content (border + bg)</option>\
+            <option value="side" ' + (d.type==='side'?'selected':'') + '>Side (trong suốt)</option>\
+            <option value="overlay" ' + (d.type==='overlay'?'selected':'') + '>Overlay (không border)</option>\
+            <option value="glass" ' + (d.type==='glass'?'selected':'') + '>Glass morphism</option>\
+            <option value="card" ' + (d.type==='card'?'selected':'') + '>Card (bo tròn)</option>\
+          </select>\
+        </div>';
 
-        <div class="inspector-section">
-          <span class="inspector-label">⚙ Hành động</span>
-          <div style="display:flex;gap:6px;flex-wrap:wrap;">
-            <button class="form-btn" onclick="duplicateSelectedBox()">⎘ Nhân đôi</button>
-            <button class="form-btn" style="border-color:var(--neon-pink);color:var(--neon-pink);" onclick="deleteSelectedBox()">🗑 Xóa</button>
-          </div>
-        </div>
-      `;
+      if (tab === 'style') return '\
+        <div class="inspector-section">\
+          <div class="inspector-label">⬜ Border</div>\
+          <div class="inspector-row-4" style="margin-bottom:4px;">\
+            <div><label>W</label><input class="inspector-input insp-num" data-key="' + key + '" data-prop="borderWidth" type="number" value="' + (d.borderWidth||1) + '" min="0"></div>\
+            <div>\
+              <label>Style</label>\
+              <select class="inspector-input" data-key="' + key + '" data-prop="borderStyle" style="padding:3px;font-size:10px;">\
+                <option value="solid" ' + ((d.borderStyle||'solid')==='solid'?'selected':'') + '>solid</option>\
+                <option value="dashed" ' + (d.borderStyle==='dashed'?'selected':'') + '>dashed</option>\
+                <option value="dotted" ' + (d.borderStyle==='dotted'?'selected':'') + '>dotted</option>\
+                <option value="double" ' + (d.borderStyle==='double'?'selected':'') + '>double</option>\
+                <option value="groove" ' + (d.borderStyle==='groove'?'selected':'') + '>groove</option>\
+                <option value="none" ' + (d.borderStyle==='none'?'selected':'') + '>none</option>\
+              </select>\
+            </div>\
+            <div><label>Radius</label><input class="inspector-input insp-num" data-key="' + key + '" data-prop="borderRadius" type="number" value="' + (d.borderRadius||0) + '" min="0"></div>\
+            <div>\
+              <label>Accent</label>\
+              <select class="inspector-input" data-key="' + key + '" data-prop="accentSide" style="padding:3px;font-size:10px;">\
+                <option value="none" ' + ((d.accentSide||'left')==='none'?'selected':'') + '>none</option>\
+                <option value="left" ' + ((d.accentSide||'left')==='left'?'selected':'') + '>left</option>\
+                <option value="right" ' + (d.accentSide==='right'?'selected':'') + '>right</option>\
+                <option value="top" ' + (d.accentSide==='top'?'selected':'') + '>top</option>\
+                <option value="bottom" ' + (d.accentSide==='bottom'?'selected':'') + '>bottom</option>\
+              </select>\
+            </div>\
+          </div>\
+          <div style="display:flex;align-items:center;gap:6px;margin-top:4px;">\
+            <label style="font-size:9px;color:var(--muted);flex-shrink:0;">Màu:</label>\
+            <input type="color" value="' + (d.borderColor||'#39ff14') + '" data-key="' + key + '" data-prop="borderColor" class="color-swatch" style="width:28px;height:24px;border:none;cursor:pointer;padding:0;">\
+            <div style="flex:1;display:flex;gap:4px;">\
+              ' + ['#39ff14','#00f0ff','#ff006e','#ffbe0b','#ffffff','#000000'].map(c => '<div class="swatch' + (d.borderColor===c?' swatch-active':'') + '" data-color="' + c + '" data-key="' + key + '" data-prop="borderColor" style="width:18px;height:18px;background:' + c + ';border-radius:3px;cursor:pointer;border:1px solid rgba(255,255,255,0.2);"></div>').join('') + '\
+            </div>\
+          </div>\
+        </div>\
+        <div class="inspector-section">\
+          <div class="inspector-label">🌑 Box Shadow</div>\
+          <div class="inspector-row-4" style="margin-bottom:4px;">\
+            <div><label>X</label><input class="inspector-input insp-num" data-key="' + key + '" data-prop="shadowX" type="number" value="' + (d.shadowX||0) + '"></div>\
+            <div><label>Y</label><input class="inspector-input insp-num" data-key="' + key + '" data-prop="shadowY" type="number" value="' + (d.shadowY||4) + '"></div>\
+            <div><label>Blur</label><input class="inspector-input insp-num" data-key="' + key + '" data-prop="shadowBlur" type="number" value="' + (d.shadowBlur||8) + '" min="0"></div>\
+            <div><label>Spread</label><input class="inspector-input insp-num" data-key="' + key + '" data-prop="shadowSpread" type="number" value="' + (d.shadowSpread||0) + '"></div>\
+          </div>\
+          <div style="display:flex;align-items:center;gap:6px;">\
+            <label style="font-size:9px;color:var(--muted);flex-shrink:0;">Màu:</label>\
+            <input type="color" value="' + (d.shadowColor||'#000000') + '" data-key="' + key + '" data-prop="shadowColor" class="color-swatch" style="width:28px;height:24px;border:none;cursor:pointer;padding:0;">\
+            <label style="font-size:9px;margin-left:auto;"><input type="checkbox" ' + (d.shadowInset?'checked':'') + ' data-key="' + key + '" data-prop="shadowInset" class="insp-check"> Inset</label>\
+          </div>\
+          <div style="display:flex;gap:4px;margin-top:4px;">\
+            <button class="form-btn" style="flex:1;padding:3px;font-size:9px;" onclick="applyPresetShadow(\'' + key + '\',\'none\')">Tắt</button>\
+            <button class="form-btn" style="flex:1;padding:3px;font-size:9px;" onclick="applyPresetShadow(\'' + key + '\',\'neon\')">Neon</button>\
+            <button class="form-btn" style="flex:1;padding:3px;font-size:9px;" onclick="applyPresetShadow(\'' + key + '\',\'subtle\')">Subtle</button>\
+            <button class="form-btn" style="flex:1;padding:3px;font-size:9px;" onclick="applyPresetShadow(\'' + key + '\',\'hard\')">Hard</button>\
+          </div>\
+        </div>\
+        <div class="inspector-section">\
+          <div class="inspector-label">🌈 Gradient Border</div>\
+          <div style="display:flex;gap:4px;margin-bottom:4px;">\
+            <button class="form-btn ' + (d.borderGradient&&d.borderGradient.dir==='tb'?'active':'') + '" style="flex:1;padding:3px;font-size:9px;" onclick="setBorderGradient(\'' + key + '\',\'tb\')">⬇ TB</button>\
+            <button class="form-btn ' + (d.borderGradient&&d.borderGradient.dir==='lr'?'active':'') + '" style="flex:1;padding:3px;font-size:9px;" onclick="setBorderGradient(\'' + key + '\',\'lr\')">➡ LR</button>\
+            <button class="form-btn ' + (d.borderGradient&&d.borderGradient.dir==='tlbr'?'active':'') + '" style="flex:1;padding:3px;font-size:9px;" onclick="setBorderGradient(\'' + key + '\',\'tlbr\')">↘</button>\
+            <button class="form-btn" style="flex:1;padding:3px;font-size:9px;" onclick="clearBorderGradient(\'' + key + '\')">✕</button>\
+          </div>\
+          ' + (d.borderGradient ? '<div style="display:flex;gap:4px;"><input type="color" value="' + (d.borderGradient.from||'#39ff14') + '" data-key="' + key + '" data-prop="borderGradientFrom" class="color-swatch" style="width:28px;height:24px;border:none;cursor:pointer;padding:0;"><input type="color" value="' + (d.borderGradient.to||'#00f0ff') + '" data-key="' + key + '" data-prop="borderGradientTo" class="color-swatch" style="width:28px;height:24px;border:none;cursor:pointer;padding:0;"></div>' : '') + '\
+        </div>';
 
-      // Bind inspector events
-      const titleInput = _inspectorBody.querySelector('#insp-title');
-      if (titleInput) titleInput.addEventListener('input', e => {
-        previewTitles[key].title = e.target.value;
-        applyTitleToBox(key);
-        renderLayers();
-      });
-      _inspectorBody.querySelectorAll('.inspector-pos-grid button').forEach(btn => {
-        btn.addEventListener('click', () => {
+      if (tab === 'bg') return '\
+        <div class="inspector-section">\
+          <div class="inspector-label">🎨 Background</div>\
+          <div style="margin-bottom:8px;">\
+            <div style="font-size:9px;color:var(--muted);margin-bottom:4px;">Màu nền</div>\
+            <div style="display:flex;align-items:center;gap:6px;">\
+              <input type="color" value="' + (d.bgColor||'#0a0f1a') + '" data-key="' + key + '" data-prop="bgColor" class="color-swatch" style="width:28px;height:24px;border:none;cursor:pointer;padding:0;">\
+              <input class="inspector-input" data-key="' + key + '" data-prop="bgColor" value="' + (d.bgColor||'#0a0f1a') + '" style="flex:1;">\
+            </div>\
+            <div style="display:flex;gap:3px;margin-top:4px;flex-wrap:wrap;">\
+              ' + ['#0a0f1a','#1a0f2e','#0f1a2e','#1a1a0f','#0f2e1a','#2e0f1a','#1a2e0f','#2e1a0f'].map(c => '<div class="swatch' + (d.bgColor===c?' swatch-active':'') + '" data-color="' + c + '" data-key="' + key + '" data-prop="bgColor" style="width:20px;height:20px;background:' + c + ';border-radius:3px;cursor:pointer;border:1px solid rgba(255,255,255,0.15);"></div>').join('') + '\
+            </div>\
+          </div>\
+        </div>\
+        <div class="inspector-section">\
+          <div class="inspector-label">🌈 Gradient</div>\
+          <div style="display:flex;gap:3px;margin-bottom:4px;flex-wrap:wrap;">\
+            <button class="form-btn ' + (!d.bgGradient?'active':'') + '" style="padding:2px 6px;font-size:9px;" onclick="clearBgGradient(\'' + key + '\')">Tắt</button>\
+            <button class="form-btn ' + (d.bgGradient?.dir==='tb'?'active':'') + '" style="padding:2px 6px;font-size:9px;" onclick="setBgGradient(\'' + key + '\',\'tb\')">⬇</button>\
+            <button class="form-btn ' + (d.bgGradient?.dir==='lr'?'active':'') + '" style="padding:2px 6px;font-size:9px;" onclick="setBgGradient(\'' + key + '\',\'lr\')">➡</button>\
+            <button class="form-btn ' + (d.bgGradient?.dir==='radial'?'active':'') + '" style="padding:2px 6px;font-size:9px;" onclick="setBgGradient(\'' + key + '\',\'radial\')">◉</button>\
+            <button class="form-btn ' + (d.bgGradient?.dir==='diag'?'active':'') + '" style="padding:2px 6px;font-size:9px;" onclick="setBgGradient(\'' + key + '\',\'diag\')">↘</button>\
+          </div>\
+          ' + (d.bgGradient ? '\
+          <div style="display:flex;gap:4px;margin-bottom:4px;">\
+            <input type="color" value="' + (d.bgGradient.from||'#39ff14') + '" data-key="' + key + '" data-prop="bgGradientFrom" class="color-swatch" style="width:28px;height:24px;border:none;cursor:pointer;padding:0;">\
+            <input type="color" value="' + (d.bgGradient.to||'#000000') + '" data-key="' + key + '" data-prop="bgGradientTo" class="color-swatch" style="width:28px;height:24px;border:none;cursor:pointer;padding:0;">\
+          </div>\
+          <div><label style="font-size:9px;color:var(--muted);">Độ:</label><input type="range" min="0" max="360" value="' + (d.bgGradient.deg||90) + '" data-key="' + key + '" data-prop="bgGradientDeg" style="width:100%;accent-color:var(--neon);"></div>' : '') + '\
+        </div>\
+        <div class="inspector-section">\
+          <div class="inspector-label">🖼 Ảnh nền</div>\
+          <input class="inspector-input" data-key="' + key + '" data-prop="bgImage" value="' + (d.bgImage||'') + '" placeholder="URL ảnh nền..." style="width:100%;">\
+          ' + (d.bgImage ? '\
+          <div style="margin-top:6px;display:flex;gap:4px;flex-wrap:wrap;">\
+            <div><label style="font-size:9px;color:var(--muted);">Size:</label><select class="inspector-input" data-key="' + key + '" data-prop="bgSize" style="padding:2px;font-size:10px;width:80px;"><option value="cover" ' + ((d.bgSize||'cover')==='cover'?'selected':'') + '>cover</option><option value="contain" ' + (d.bgSize==='contain'?'selected':'') + '>contain</option><option value="100% 100%" ' + (d.bgSize==='100% 100%'?'selected':'') + '>stretch</option></select></div>\
+            <div><label style="font-size:9px;color:var(--muted);">Pos:</label><select class="inspector-input" data-key="' + key + '" data-prop="bgPosition" style="padding:2px;font-size:10px;width:80px;"><option value="center center" ' + ((d.bgPosition||'center center')==='center center'?'selected':'') + '>center</option><option value="top center" ' + (d.bgPosition==='top center'?'selected':'') + '>top</option><option value="bottom center" ' + (d.bgPosition==='bottom center'?'selected':'') + '>bottom</option></select></div>\
+            <div><label style="font-size:9px;color:var(--muted);">Repeat:</label><select class="inspector-input" data-key="' + key + '" data-prop="bgRepeat" style="padding:2px;font-size:10px;width:80px;"><option value="no-repeat" ' + ((d.bgRepeat||'no-repeat')==='no-repeat'?'selected':'') + '>no</option><option value="repeat" ' + (d.bgRepeat==='repeat'?'selected':'') + '>repeat</option></select></div>\
+          </div>\
+          <div><label style="font-size:9px;color:var(--muted);">Opacity:</label><input type="range" min="0" max="100" value="' + (d.bgImageOpacity||100) + '" data-key="' + key + '" data-prop="bgImageOpacity" style="width:100%;accent-color:var(--neon);"></div>' : '') + '\
+        </div>';
+
+      if (tab === 'typography') return '\
+        <div class="inspector-section">\
+          <div class="inspector-label">✏️ Tiêu đề khung</div>\
+          <input class="inspector-input" id="insp-title" value="' + escapeHtml(t.title || '') + '" placeholder="Tiêu đề..." style="width:100%;margin-bottom:6px;">\
+          <div class="inspector-pos-grid">\
+            ' + ['top-left','top-center','top-right','center-left','center','center-right','bottom-left','bottom-center','bottom-right'].map(p => '<button data-pos="' + p + '" class="' + ((t.pos||'top-left')===p?'active':'') + '" title="' + p + '">' + pPosIcon(p) + '</button>').join('') + '\
+          </div>\
+        </div>\
+        <div class="inspector-section">\
+          <div class="inspector-label">🔤 Font</div>\
+          <select class="inspector-input" data-key="' + key + '" data-prop="fontFamily" style="width:100%;padding:3px;">\
+            <option value="monospace" ' + (d.fontFamily==='monospace'?'selected':'') + '>Monospace</option>\
+            <option value="sans-serif" ' + (d.fontFamily==='sans-serif'?'selected':'') + '>Sans Serif</option>\
+            <option value="serif" ' + (d.fontFamily==='serif'?'selected':'') + '>Serif</option>\
+            <option value="Georgia" ' + (d.fontFamily==='Georgia'?'selected':'') + '>Georgia</option>\
+            <option value="Verdana" ' + (d.fontFamily==='Verdana'?'selected':'') + '>Verdana</option>\
+            <option value="Impact" ' + (d.fontFamily==='Impact'?'selected':'') + '>Impact</option>\
+            <option value="system-ui" ' + (d.fontFamily==='system-ui'?'selected':'') + '>System UI</option>\
+          </select>\
+        </div>\
+        <div class="inspector-section">\
+          <div class="inspector-label">📏 Font Size & Weight</div>\
+          <div class="inspector-row-4">\
+            <div><label>Size</label><input class="inspector-input insp-num" data-key="' + key + '" data-prop="fontSize" type="number" value="' + (d.fontSize||9) + '" min="4" max="72"></div>\
+            <div><label>Weight</label><select class="inspector-input" data-key="' + key + '" data-prop="fontWeight" style="padding:3px;font-size:10px;">\
+              ' + [300,400,500,600,700,900].map(w => '<option value="' + w + '" ' + ((d.fontWeight||400)==w?'selected':'') + '>' + w + '</option>').join('') + '\
+            </select></div>\
+            <div><label>Transform</label><select class="inspector-input" data-key="' + key + '" data-prop="textTransform" style="padding:3px;font-size:10px;"><option value="none" ' + ((d.textTransform||'none')==='none'?'selected':'') + '>none</option><option value="uppercase" ' + (d.textTransform==='uppercase'?'selected':'') + '>UPPER</option><option value="lowercase" ' + (d.textTransform==='lowercase'?'selected':'') + '>lower</option><option value="capitalize" ' + (d.textTransform==='capitalize'?'selected':'') + '>Capitalize</option></select></div>\
+            <div><label>Style</label><select class="inspector-input" data-key="' + key + '" data-prop="fontStyle" style="padding:3px;font-size:10px;"><option value="normal" ' + ((d.fontStyle||'normal')==='normal'?'selected':'') + '>normal</option><option value="italic" ' + (d.fontStyle==='italic'?'selected':'') + '>italic</option></select></div>\
+          </div>\
+        </div>\
+        <div class="inspector-section">\
+          <div class="inspector-label">🎨 Màu chữ</div>\
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">\
+            <input type="color" value="' + (d.fontColor||'#39ff14') + '" data-key="' + key + '" data-prop="fontColor" class="color-swatch" style="width:28px;height:24px;border:none;cursor:pointer;padding:0;">\
+            <input class="inspector-input" data-key="' + key + '" data-prop="fontColor" value="' + (d.fontColor||'#39ff14') + '" style="flex:1;">\
+          </div>\
+          <div style="display:flex;gap:3px;flex-wrap:wrap;">\
+            ' + ['#39ff14','#00f0ff','#ff006e','#ffbe0b','#ffffff','#cccccc','#888888','#000000'].map(c => '<div class="swatch' + (d.fontColor===c?' swatch-active':'') + '" data-color="' + c + '" data-key="' + key + '" data-prop="fontColor" style="width:20px;height:20px;background:' + c + ';border-radius:3px;cursor:pointer;border:1px solid rgba(255,255,255,0.2);"></div>').join('') + '\
+          </div>\
+        </div>\
+        <div class="inspector-section">\
+          <div class="inspector-label">↔ Căn chỉnh & Line Height</div>\
+          <div style="display:flex;gap:4px;margin-bottom:4px;">\
+            <button class="form-btn ' + ((d.textAlign||'left')==='left'?'active':'') + '" style="flex:1;padding:4px 2px;font-size:10px;" onclick="setTextProp(\'' + key + '\',\'textAlign\',\'left\')">⬅</button>\
+            <button class="form-btn ' + (d.textAlign==='center'?'active':'') + '" style="flex:1;padding:4px 2px;font-size:10px;" onclick="setTextProp(\'' + key + '\',\'textAlign\',\'center\')">↔</button>\
+            <button class="form-btn ' + (d.textAlign==='right'?'active':'') + '" style="flex:1;padding:4px 2px;font-size:10px;" onclick="setTextProp(\'' + key + '\',\'textAlign\',\'right\')">➡</button>\
+            <button class="form-btn ' + (d.textAlign==='justify'?'active':'') + '" style="flex:1;padding:4px 2px;font-size:10px;" onclick="setTextProp(\'' + key + '\',\'textAlign\',\'justify\')">≣</button>\
+          </div>\
+          <div><label style="font-size:9px;color:var(--muted);">Line Height: ' + (d.lineHeight||1.2) + '</label><input type="range" min="0.8" max="3" step="0.1" value="' + (d.lineHeight||1.2) + '" data-key="' + key + '" data-prop="lineHeight" style="width:100%;accent-color:var(--neon);"></div>\
+          <div class="inspector-row-4" style="margin-top:4px;">\
+            <div><label style="font-size:9px;color:var(--muted);">Letter:</label><input class="inspector-input insp-num" data-key="' + key + '" data-prop="letterSpacing" type="number" value="' + (d.letterSpacing||0) + '" step="0.5"></div>\
+            <div><label style="font-size:9px;color:var(--muted);">Word:</label><input class="inspector-input insp-num" data-key="' + key + '" data-prop="wordSpacing" type="number" value="' + (d.wordSpacing||0) + '"></div>\
+            <div><label style="font-size:9px;color:var(--muted);">Deco</label><select class="inspector-input" data-key="' + key + '" data-prop="textDecoration" style="padding:3px;font-size:10px;"><option value="none" ' + ((d.textDecoration||'none')==='none'?'selected':'') + '>—</option><option value="underline" ' + (d.textDecoration==='underline'?'selected':'') + '>underline</option><option value="line-through" ' + (d.textDecoration==='line-through'?'selected':'') + '>line-through</option></select></div>\
+          </div>\
+        </div>\
+        <div class="inspector-section">\
+          <div class="inspector-label">🌑 Text Shadow</div>\
+          <div class="inspector-row-4" style="margin-bottom:4px;">\
+            <div><label>X</label><input class="inspector-input insp-num" data-key="' + key + '" data-prop="textShadowX" type="number" value="' + (d.textShadowX||0) + '" min="-20" max="20"></div>\
+            <div><label>Y</label><input class="inspector-input insp-num" data-key="' + key + '" data-prop="textShadowY" type="number" value="' + (d.textShadowY||2) + '" min="-20" max="20"></div>\
+            <div><label>Blur</label><input class="inspector-input insp-num" data-key="' + key + '" data-prop="textShadowBlur" type="number" value="' + (d.textShadowBlur||4) + '" min="0" max="30"></div>\
+            <div><label>Màu</label><input type="color" value="' + (d.textShadowColor||'#000000') + '" data-key="' + key + '" data-prop="textShadowColor" class="color-swatch" style="width:28px;height:20px;border:none;cursor:pointer;padding:0;"></div>\
+          </div>\
+          <div style="display:flex;gap:4px;margin-top:4px;">\
+            <button class="form-btn" style="flex:1;padding:3px;font-size:9px;" onclick="applyPresetTextShadow(\'' + key + '\',\'none\')">Tắt</button>\
+            <button class="form-btn" style="flex:1;padding:3px;font-size:9px;" onclick="applyPresetTextShadow(\'' + key + '\',\'glow\')">Glow</button>\
+            <button class="form-btn" style="flex:1;padding:3px;font-size:9px;" onclick="applyPresetTextShadow(\'' + key + '\',\'hard\')">Hard</button>\
+            <button class="form-btn" style="flex:1;padding:3px;font-size:9px;" onclick="applyPresetTextShadow(\'' + key + '\',\'neon\')">Neon</button>\
+          </div>\
+        </div>';
+
+      if (tab === 'effects') return '\
+        <div class="inspector-section">\
+          <div class="inspector-label">🎬 Animation</div>\
+          <select class="inspector-input" data-key="' + key + '" data-prop="animClass" style="width:100%;padding:3px;margin-bottom:4px;">\
+            <option value="">— Không có —</option>\
+            <option value="anim-float" ' + (d.animClass==='anim-float'?'selected':'') + '>🌊 Float</option>\
+            <option value="anim-pulse" ' + (d.animClass==='anim-pulse'?'selected':'') + '>💓 Pulse</option>\
+            <option value="anim-spin" ' + (d.animClass==='anim-spin'?'selected':'') + '>🔄 Spin</option>\
+            <option value="anim-blink" ' + (d.animClass==='anim-blink'?'selected':'') + '>💡 Blink</option>\
+            <option value="anim-slide-in" ' + (d.animClass==='anim-slide-in'?'selected':'') + '>➡ Slide In</option>\
+            <option value="anim-glow" ' + (d.animClass==='anim-glow'?'selected':'') + '>✨ Glow</option>\
+            <option value="anim-shake" ' + (d.animClass==='anim-shake'?'selected':'') + '>⚡ Shake</option>\
+            <option value="anim-bounce" ' + (d.animClass==='anim-bounce'?'selected':'') + '>🏀 Bounce</option>\
+          </select>\
+          <div><label style="font-size:9px;color:var(--muted);">Duration: ' + (d.animDuration||2) + 's</label><input type="range" min="0.5" max="5" step="0.5" value="' + (d.animDuration||2) + '" data-key="' + key + '" data-prop="animDuration" style="width:100%;accent-color:var(--neon);"></div>\
+          <div><label style="font-size:9px;color:var(--muted);">Delay: ' + (d.animDelay||0) + 's</label><input type="range" min="0" max="5" step="0.5" value="' + (d.animDelay||0) + '" data-key="' + key + '" data-prop="animDelay" style="width:100%;accent-color:var(--neon);"></div>\
+        </div>\
+        <div class="inspector-section">\
+          <div class="inspector-label">🔍 CSS Filters</div>\
+          <div><label style="font-size:9px;color:var(--muted);">Blur: ' + (d.filterBlur||0) + 'px</label><input type="range" min="0" max="20" value="' + (d.filterBlur||0) + '" data-key="' + key + '" data-prop="filterBlur" style="width:100%;accent-color:var(--neon);"></div>\
+          <div><label style="font-size:9px;color:var(--muted);">Brightness: ' + (d.filterBrightness||100) + '%</label><input type="range" min="0" max="300" value="' + (d.filterBrightness||100) + '" data-key="' + key + '" data-prop="filterBrightness" style="width:100%;accent-color:var(--neon);"></div>\
+          <div><label style="font-size:9px;color:var(--muted);">Contrast: ' + (d.filterContrast||100) + '%</label><input type="range" min="0" max="300" value="' + (d.filterContrast||100) + '" data-key="' + key + '" data-prop="filterContrast" style="width:100%;accent-color:var(--neon);"></div>\
+          <div><label style="font-size:9px;color:var(--muted);">Saturate: ' + (d.filterSaturate||100) + '%</label><input type="range" min="0" max="300" value="' + (d.filterSaturate||100) + '" data-key="' + key + '" data-prop="filterSaturate" style="width:100%;accent-color:var(--neon);"></div>\
+          <div><label style="font-size:9px;color:var(--muted);">Hue Rotate: ' + (d.filterHueRotate||0) + '°</label><input type="range" min="0" max="360" value="' + (d.filterHueRotate||0) + '" data-key="' + key + '" data-prop="filterHueRotate" style="width:100%;accent-color:var(--neon);"></div>\
+        </div>\
+        <div class="inspector-section">\
+          <div class="inspector-label">✂️ Clip Path</div>\
+          <select class="inspector-input" data-key="' + key + '" data-prop="clipPath" style="width:100%;padding:3px;">\
+            <option value="none" ' + ((d.clipPath||'none')==='none'?'selected':'') + '>none</option>\
+            <option value="circle(50%)" ' + (d.clipPath==='circle(50%)'?'selected':'') + '>Circle</option>\
+            <option value="ellipse(50% 40%)" ' + (d.clipPath==='ellipse(50% 40%)'?'selected':'') + '>Ellipse</option>\
+            <option value="polygon(50% 0%, 100% 100%, 0% 100%)" ' + (d.clipPath==='polygon(50% 0%, 100% 100%, 0% 100%)'?'selected':'') + '>Triangle</option>\
+            <option value="polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%)" ' + (d.clipPath==='polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%)'?'selected':'') + '>Hexagon</option>\
+          </select>\
+        </div>';
+
+      if (tab === 'children') return '\
+        <div class="inspector-section">\
+          <div class="inspector-label">🧩 Nội dung trong khung (' + children.length + ')</div>\
+          <div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:8px;">\
+            <button class="form-btn" style="padding:3px 6px;font-size:10px;" onclick="addChildToSelected(\'image\')">🖼 Ảnh</button>\
+            <button class="form-btn" style="padding:3px 6px;font-size:10px;" onclick="addChildToSelected(\'text\')">📝 Text</button>\
+            <button class="form-btn" style="padding:3px 6px;font-size:10px;" onclick="addChildToSelected(\'tabs\')">📑 Tabs</button>\
+            <button class="form-btn" style="padding:3px 6px;font-size:10px;" onclick="addChildToSelected(\'nested\')">▭ Nested</button>\
+          </div>\
+          <div id="childrenList">' + children.map((c, idx) => renderChildInspector(c, idx)).join('') + '</div>\
+        </div>';
+
+      if (tab === 'css') return '\
+        <div class="inspector-section">\
+          <div class="inspector-label">&lt;/&gt; Custom CSS</div>\
+          <div style="font-size:9px;color:var(--muted);margin-bottom:6px;">Viết CSS thuần túy, áp dụng vào khung này</div>\
+          <textarea class="inspector-input" id="insp-css" rows="8" style="width:100%;font-family:monospace;font-size:10px;resize:vertical;background:var(--panel-alt);" placeholder="/* Ví dụ: */\ncolor: #fff;\nbackdrop-filter: blur(10px);\ntransition: all 0.3s ease;">' + (d.customCSS||'') + '</textarea>\
+          <div style="display:flex;gap:4px;margin-top:4px;">\
+            <button class="form-btn" style="flex:1;padding:4px;font-size:10px;" onclick="applyCustomCSS(\'' + key + '\')">✅ Áp dụng CSS</button>\
+            <button class="form-btn" style="flex:1;padding:4px;font-size:10px;" onclick="clearCustomCSS(\'' + key + '\')">✕ Xóa</button>\
+          </div>\
+          <div style="margin-top:8px;">\
+            <div style="font-size:9px;color:var(--muted);margin-bottom:4px;">Presets:</div>\
+            <div style="display:flex;gap:4px;flex-wrap:wrap;">\
+              <button class="form-btn" style="padding:3px 6px;font-size:9px;" onclick="applyCSSPreset(\'' + key + '\',\'backdrop\')">🔲 Backdrop</button>\
+              <button class="form-btn" style="padding:3px 6px;font-size:9px;" onclick="applyCSSPreset(\'' + key + '\',\'scanline\')">📺 Scanline</button>\
+              <button class="form-btn" style="padding:3px 6px;font-size:9px;" onclick="applyCSSPreset(\'' + key + '\',\'noise\')">🌀 Noise</button>\
+              <button class="form-btn" style="padding:3px 6px;font-size:9px;" onclick="applyCSSPreset(\'' + key + '\',\'cyber\')">💠 Cyber</button>\
+            </div>\
+          </div>\
+        </div>';
+
+      return '<div style="color:var(--muted);font-size:11px;text-align:center;padding:20px;">Tab not found</div>';
+    }
+
+    // ============================================================
+    // INSPECTOR EVENT BINDINGS
+    // ============================================================
+    function bindInspectorEvents(key) {
+      const titleInput = document.getElementById('insp-title');
+      if (titleInput) {
+        titleInput.addEventListener('input', function() {
+          if (!previewTitles[key]) previewTitles[key] = { title: '', pos: 'top-left' };
+          previewTitles[key].title = this.value;
+          applyTitleToBox(key);
+          renderLayers();
+        });
+      }
+      document.querySelectorAll('.inspector-pos-grid button').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          if (!previewTitles[key]) previewTitles[key] = { title: '', pos: 'top-left' };
           previewTitles[key].pos = btn.dataset.pos;
           applyTitleToBox(key);
           renderInspector();
         });
       });
-      _inspectorBody.querySelectorAll('.insp-pos').forEach(inp => {
-        inp.addEventListener('input', e => {
-          const v = parseInt(e.target.value) || 0;
-          const k = inp.dataset.k;
-          previewBoxesData[key][k] = v;
-          const el = _stage.querySelector(`[data-box="${key}"]`);
-          if (el) el.style[k] = v + 'px';
-          autoExpandCanvas();
-          updateXYDisplay();
-        });
-      });
-      _inspectorBody.querySelectorAll('.insp-size').forEach(inp => {
-        inp.addEventListener('input', e => {
-          const v = parseInt(e.target.value) || 50;
-          const k = inp.dataset.k;
-          previewBoxesData[key][k] = Math.max(20, v);
-          const el = _stage.querySelector(`[data-box="${key}"]`);
-          if (el) el.style[k] = previewBoxesData[key][k] + 'px';
+      const typeSel = document.getElementById('insp-type');
+      if (typeSel) {
+        typeSel.addEventListener('change', function() {
+          previewBoxesData[key].type = this.value;
+          applyBoxStyle(key);
           renderLayers();
         });
+      }
+      document.querySelectorAll('.swatch').forEach(function(sw) {
+        sw.addEventListener('click', function() {
+          const k = sw.dataset.key, p = sw.dataset.prop, c = sw.dataset.color;
+          if (!previewBoxesData[k]) previewBoxesData[k] = {};
+          previewBoxesData[k][p] = c;
+          applyBoxStyle(k);
+          renderInspector();
+        });
       });
-      const typeSel = _inspectorBody.querySelector('#insp-type');
-      if (typeSel) typeSel.addEventListener('change', e => {
-        previewBoxesData[key].type = e.target.value;
-        const el = _stage.querySelector(`[data-box="${key}"]`);
-        if (el) {
-          el.classList.toggle('prev-side', e.target.value === 'side');
-          if (e.target.value === 'side') {
-            el.style.background = 'transparent';
-            el.style.border = 'none';
-          } else {
-            el.style.background = 'var(--panel)';
-            el.style.border = '1px solid var(--border)';
-            el.style.borderLeft = '3px solid var(--neon)';
-          }
-        }
-        renderLayers();
+      document.querySelectorAll('.color-swatch').forEach(function(inp) {
+        inp.addEventListener('input', function() {
+          const k = inp.dataset.key, p = inp.dataset.prop;
+          if (!previewBoxesData[k]) previewBoxesData[k] = {};
+          previewBoxesData[k][p] = this.value;
+          applyBoxStyle(k);
+          renderInspector();
+        });
+      });
+      document.querySelectorAll('.insp-num').forEach(function(inp) {
+        inp.addEventListener('input', function() {
+          const k = inp.dataset.key, p = inp.dataset.prop;
+          const v = parseFloat(this.value);
+          if (!previewBoxesData[k]) previewBoxesData[k] = {};
+          previewBoxesData[k][p] = isNaN(v) ? 0 : v;
+          applyBoxStyle(k);
+          if (['x','y'].indexOf(p) !== -1) { autoExpandCanvas(); updateXYDisplay(); }
+          if (['x','y','w','h'].indexOf(p) !== -1) renderLayers();
+        });
+      });
+      document.querySelectorAll('select[data-key]').forEach(function(sel) {
+        sel.addEventListener('change', function() {
+          const k = sel.dataset.key, p = sel.dataset.prop;
+          if (!previewBoxesData[k]) previewBoxesData[k] = {};
+          previewBoxesData[k][p] = this.value;
+          applyBoxStyle(k);
+          renderInspector();
+        });
+      });
+      document.querySelectorAll('input[type="range"][data-key]').forEach(function(slider) {
+        slider.addEventListener('input', function() {
+          const k = slider.dataset.key, p = slider.dataset.prop;
+          if (!previewBoxesData[k]) previewBoxesData[k] = {};
+          previewBoxesData[k][p] = parseFloat(this.value);
+          applyBoxStyle(k);
+        });
+        slider.addEventListener('change', function() { renderInspector(); });
+      });
+      document.querySelectorAll('input[type="checkbox"][data-key]').forEach(function(cb) {
+        cb.addEventListener('change', function() {
+          const k = cb.dataset.key, p = cb.dataset.prop;
+          if (!previewBoxesData[k]) previewBoxesData[k] = {};
+          previewBoxesData[k][p] = this.checked;
+          applyBoxStyle(k);
+        });
       });
     }
+
+    // ============================================================
+    // APPLY BOX STYLE FROM DATA
+    // ============================================================
+    function applyBoxStyle(key) {
+      const d = previewBoxesData[key];
+      const el = _stage ? _stage.querySelector('[data-box="' + key + '"]') : null;
+      if (!el || !d) return;
+
+      // Position & size
+      el.style.left = (d.x||0) + 'px';
+      el.style.top = (d.y||0) + 'px';
+      el.style.width = Math.max(20, d.w||100) + 'px';
+      el.style.height = Math.max(20, d.h||100) + 'px';
+
+      // Padding & margin
+      el.style.padding = (d.paddingT||0) + 'px ' + (d.paddingR||0) + 'px ' + (d.paddingB||0) + 'px ' + (d.paddingL||0) + 'px';
+      el.style.margin = (d.marginT||0) + 'px ' + (d.marginR||0) + 'px ' + (d.marginB||0) + 'px ' + (d.marginL||0) + 'px';
+
+      // Transform
+      var transforms = [];
+      if (d.rotation) transforms.push('rotate(' + d.rotation + 'deg)');
+      if (d.scale && d.scale !== 1) transforms.push('scale(' + d.scale + ')');
+      el.style.transform = transforms.join(' ');
+
+      // Z-index
+      if (d.zIndex !== undefined) el.style.zIndex = d.zIndex;
+
+      // Type-specific base styles
+      var btype = d.type || 'content';
+      el.style.background = buildBgStyle(d);
+      el.style.borderRadius = (d.borderRadius||0) + 'px';
+      el.style.boxShadow = buildBoxShadow(d);
+      applyBorderStyle(el, d);
+
+      if (btype === 'side') {
+        el.style.background = 'transparent';
+        el.style.border = 'none';
+        el.style.borderRadius = '0';
+        el.style.boxShadow = 'none';
+      } else if (btype === 'glass') {
+        el.style.backdropFilter = 'blur(12px) saturate(180%)';
+      } else if (btype === 'overlay') {
+        el.style.border = 'none';
+      } else if (btype === 'card') {
+        el.style.borderRadius = (d.borderRadius||8) + 'px';
+      }
+
+      // Opacity
+      el.style.opacity = d.opacity !== undefined ? (d.opacity / 100) : 1;
+
+      // Filters
+      var filters = [];
+      if (d.filterBlur) filters.push('blur(' + d.filterBlur + 'px)');
+      if (d.filterBrightness && d.filterBrightness !== 100) filters.push('brightness(' + d.filterBrightness + '%)');
+      if (d.filterContrast && d.filterContrast !== 100) filters.push('contrast(' + d.filterContrast + '%)');
+      if (d.filterSaturate && d.filterSaturate !== 100) filters.push('saturate(' + d.filterSaturate + '%)');
+      if (d.filterHueRotate) filters.push('hue-rotate(' + d.filterHueRotate + 'deg)');
+      el.style.filter = filters.join(' ');
+
+      // Clip path
+      el.style.clipPath = (d.clipPath && d.clipPath !== 'none') ? d.clipPath : '';
+
+      // Blend mode
+      if (d.mixBlendMode) el.style.mixBlendMode = d.mixBlendMode;
+
+      // Animation
+      if (d.animClass) {
+        el.style.animationName = d.animClass;
+        el.style.animationDuration = (d.animDuration||2) + 's';
+        el.style.animationDelay = (d.animDelay||0) + 's';
+        el.style.animationIterationCount = 'infinite';
+        el.style.animationTimingFunction = 'ease-in-out';
+      } else {
+        el.style.animationName = '';
+        el.style.animation = '';
+      }
+
+      // Custom CSS
+      if (d.customCSS) {
+        el.setAttribute('data-custom-css', d.customCSS);
+        try {
+          d.customCSS.split(';').filter(function(l) { return l.trim(); }).forEach(function(line) {
+            var parts = line.split(':');
+            if (parts.length >= 2) {
+              var prop = parts[0].trim().replace(/([A-Z])/g, function(m) { return '-' + m.toLowerCase(); });
+              var val = parts.slice(1).join(':').trim();
+              try { el.style[prop] = val; } catch(e) {}
+            }
+          });
+        } catch(e) {}
+      } else {
+        el.removeAttribute('data-custom-css');
+      }
+
+      // Title font
+      var titleEl = el.querySelector('.prev-title');
+      if (titleEl) {
+        if (d.titleFontSize) titleEl.style.fontSize = d.titleFontSize + 'px';
+        if (d.titleColor) titleEl.style.color = d.titleColor;
+        if (d.titleFontWeight) titleEl.style.fontWeight = d.titleFontWeight;
+        if (d.titleShadowBlur) {
+          titleEl.style.textShadow = '0 0 ' + d.titleShadowBlur + 'px ' + (d.titleColor||'var(--neon)');
+        }
+      }
+
+      // Inner text
+      var innerText = el.querySelector('[style*="font-family"]');
+      if (innerText) {
+        if (d.fontColor) innerText.style.color = d.fontColor;
+        if (d.fontFamily) innerText.style.fontFamily = d.fontFamily;
+        if (d.fontSize) innerText.style.fontSize = d.fontSize + 'px';
+        if (d.fontWeight) innerText.style.fontWeight = d.fontWeight;
+        if (d.fontStyle) innerText.style.fontStyle = d.fontStyle;
+        if (d.textTransform) innerText.style.textTransform = d.textTransform;
+        if (d.textAlign) innerText.style.textAlign = d.textAlign;
+        if (d.lineHeight) innerText.style.lineHeight = d.lineHeight;
+        if (d.letterSpacing) innerText.style.letterSpacing = d.letterSpacing + 'px';
+        if (d.wordSpacing) innerText.style.wordSpacing = d.wordSpacing + 'px';
+        if (d.textIndent) innerText.style.textIndent = d.textIndent + 'px';
+        if (d.textDecoration && d.textDecoration !== 'none') innerText.style.textDecoration = d.textDecoration;
+        // Text shadow
+        if (d.textShadowX !== undefined || d.textShadowY !== undefined || d.textShadowBlur !== undefined) {
+          innerText.style.textShadow = (d.textShadowX||0) + 'px ' + (d.textShadowY||0) + 'px ' + (d.textShadowBlur||0) + 'px ' + (d.textShadowColor||'#000000');
+        }
+      }
+    }
+
+    function applyBorderStyle(el, d) {
+      var w = d.borderWidth || 1;
+      var s = d.borderStyle || 'solid';
+      var c = d.borderColor || '#39ff14';
+      if (d.borderStyle === 'none') {
+        el.style.border = 'none';
+        return;
+      }
+      if (d.accentSide && d.accentSide !== 'none') {
+        var sideMap = { left: 'Left', right: 'Right', top: 'Top', bottom: 'Bottom' };
+        var activeSide = sideMap[d.accentSide] || 'Left';
+        el.style['border' + activeSide] = w + 'px ' + s + ' ' + c;
+        el.style.borderTop = '0px solid transparent';
+        el.style.borderRight = '0px solid transparent';
+        el.style.borderBottom = '0px solid transparent';
+        el.style.borderLeft = w + 'px ' + s + ' ' + c;
+        return;
+      }
+      if (d.borderGradient && d.borderGradient.dir) {
+        var g = d.borderGradient;
+        var angles = { tb: '0deg', lr: '90deg', tlbr: '135deg' };
+        var grad = 'linear-gradient(' + (angles[g.dir]||'180deg') + ', ' + (g.from||'#39ff14') + ', ' + (g.to||'#00f0ff') + ')';
+        el.style.borderImage = '1 solid ' + grad + ' 1';
+        el.style.borderImageSlice = '1';
+        return;
+      }
+      el.style.border = w + 'px ' + s + ' ' + c;
+    }
+
+    function buildBgStyle(d) {
+      if (d.bgImage) {
+        var opacity = d.bgImageOpacity !== undefined ? d.bgImageOpacity / 100 : 1;
+        var baseColor = hexToRgba(d.bgColor||'#000000', opacity);
+        return 'linear-gradient(' + baseColor + ',' + baseColor + '),url(\'' + d.bgImage + '\') ' + (d.bgPosition||'center center') + ' / ' + (d.bgSize||'cover') + ' ' + (d.bgRepeat||'no-repeat');
+      }
+      if (d.bgGradient) {
+        var g = d.bgGradient;
+        if (g.dir === 'radial') return 'radial-gradient(circle, ' + (g.from||'#39ff14') + ' 0%, ' + (g.to||'#000000') + ' 100%)';
+        if (g.dir === 'diag') return 'linear-gradient(' + (g.deg||135) + 'deg, ' + (g.from||'#39ff14') + ' 0%, ' + (g.to||'#000000') + ' 100%)';
+        var angles = { tb: '180deg', lr: '90deg' };
+        return 'linear-gradient(' + (angles[g.dir]||(g.deg||180)+'deg') + ', ' + (g.from||'#39ff14') + ' 0%, ' + (g.to||'#000000') + ' 100%)';
+      }
+      return d.bgColor || 'var(--panel)';
+    }
+
+    function buildBoxShadow(d) {
+      var x = d.shadowX||0, y = d.shadowY||4, blur = d.shadowBlur||8, spread = d.shadowSpread||0, col = d.shadowColor||'#000000';
+      if (d.shadowInset) return 'inset ' + x + 'px ' + y + 'px ' + blur + 'px ' + spread + 'px ' + col;
+      return x + 'px ' + y + 'px ' + blur + 'px ' + spread + 'px ' + col;
+    }
+
+    function hexToRgba(hex, alpha) {
+      var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+      if (!result) return 'rgba(0,0,0,' + alpha + ')';
+      return 'rgba(' + parseInt(result[1],16) + ',' + parseInt(result[2],16) + ',' + parseInt(result[3],16) + ',' + alpha + ')';
+    }
+
+    // ============================================================
+    // STYLE HELPER FUNCTIONS
+    // ============================================================
+    function setBgGradient(key, dir) {
+      if (!previewBoxesData[key]) previewBoxesData[key] = {};
+      previewBoxesData[key].bgGradient = { dir: dir, from: '#39ff14', to: '#000000', deg: 90 };
+      applyBoxStyle(key);
+      renderInspector();
+    }
+    function clearBgGradient(key) {
+      if (!previewBoxesData[key]) previewBoxesData[key] = {};
+      previewBoxesData[key].bgGradient = null;
+      applyBoxStyle(key);
+      renderInspector();
+    }
+    function setBorderGradient(key, dir) {
+      if (!previewBoxesData[key]) previewBoxesData[key] = {};
+      previewBoxesData[key].borderGradient = { dir: dir, from: '#39ff14', to: '#00f0ff' };
+      applyBoxStyle(key);
+      renderInspector();
+    }
+    function clearBorderGradient(key) {
+      if (!previewBoxesData[key]) previewBoxesData[key] = {};
+      previewBoxesData[key].borderGradient = null;
+      applyBoxStyle(key);
+      renderInspector();
+    }
+    function applyPresetShadow(key, preset) {
+      if (!previewBoxesData[key]) previewBoxesData[key] = {};
+      var presets = {
+        none: { shadowX:0, shadowY:0, shadowBlur:0, shadowSpread:0, shadowColor:'transparent' },
+        neon: { shadowX:0, shadowY:0, shadowBlur:20, shadowSpread:-5, shadowColor:'#39ff14' },
+        subtle: { shadowX:0, shadowY:2, shadowBlur:8, shadowSpread:0, shadowColor:'rgba(0,0,0,0.3)' },
+        hard: { shadowX:4, shadowY:4, shadowBlur:0, shadowSpread:0, shadowColor:'#000000' },
+        colored: { shadowX:0, shadowY:4, shadowBlur:15, shadowSpread:-3, shadowColor:'#00f0ff' },
+      };
+      if (presets[preset]) Object.keys(presets[preset]).forEach(function(k) { previewBoxesData[key][k] = presets[preset][k]; });
+      applyBoxStyle(key);
+      renderInspector();
+    }
+    function applyPresetTextShadow(key, preset) {
+      if (!previewBoxesData[key]) previewBoxesData[key] = {};
+      var presets = {
+        none: { textShadowX:0, textShadowY:0, textShadowBlur:0, textShadowColor:'transparent' },
+        glow: { textShadowX:0, textShadowY:0, textShadowBlur:10, textShadowColor:'#39ff14' },
+        hard: { textShadowX:2, textShadowY:2, textShadowBlur:0, textShadowColor:'#000000' },
+        neon: { textShadowX:0, textShadowY:0, textShadowBlur:15, textShadowColor:'#00f0ff' },
+      };
+      if (presets[preset]) Object.keys(presets[preset]).forEach(function(k) { previewBoxesData[key][k] = presets[preset][k]; });
+      applyBoxStyle(key);
+      renderInspector();
+    }
+    function setTextProp(key, prop, val) {
+      if (!previewBoxesData[key]) previewBoxesData[key] = {};
+      previewBoxesData[key][prop] = val;
+      applyBoxStyle(key);
+      renderInspector();
+    }
+    function toggleBoxLock(key) {
+      if (!previewBoxesData[key]) previewBoxesData[key] = {};
+      previewBoxesData[key].locked = !previewBoxesData[key].locked;
+      var el = _stage && _stage.querySelector('[data-box="' + key + '"]');
+      if (el) el.style.pointerEvents = previewBoxesData[key].locked ? 'none' : '';
+      renderInspector();
+    }
+    function toggleBoxHide(key) {
+      if (!previewBoxesData[key]) previewBoxesData[key] = {};
+      previewBoxesData[key].hidden = !previewBoxesData[key].hidden;
+      var el = _stage && _stage.querySelector('[data-box="' + key + '"]');
+      if (el) el.style.display = previewBoxesData[key].hidden ? 'none' : '';
+      renderInspector();
+    }
+    function applyCustomCSS(key) {
+      var ta = document.getElementById('insp-css');
+      if (!ta || !previewBoxesData[key]) return;
+      previewBoxesData[key].customCSS = ta.value;
+      applyBoxStyle(key);
+      showNotif('CSS đã áp dụng!');
+    }
+    function clearCustomCSS(key) {
+      if (!previewBoxesData[key]) previewBoxesData[key] = {};
+      previewBoxesData[key].customCSS = '';
+      applyBoxStyle(key);
+      renderInspector();
+    }
+    function applyCSSPreset(key, preset) {
+      if (!previewBoxesData[key]) previewBoxesData[key] = {};
+      var presets = {
+        backdrop: 'backdrop-filter: blur(12px) saturate(180%);\nborder: 1px solid rgba(255,255,255,0.15);',
+        scanline: 'background: repeating-linear-gradient(0deg, transparent 0 2px, rgba(0,0,0,0.1) 2px 4px);',
+        noise: 'background-image: url("data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 200 200\'><filter id=\'n\'><feTurbulence type=\'fractalNoise\' baseFrequency=\'0.9\' numOctaves=\'3\' stitchTiles=\'stitch\'/></filter><rect width=\'100%25\' height=\'100%25\' filter=\'url(%23n)\' opacity=\'0.08\'/></svg>");',
+        cyber: 'border: 1px solid var(--neon);\nbox-shadow: 0 0 10px rgba(57,255,20,0.3), inset 0 0 10px rgba(57,255,20,0.05);',
+      };
+      if (presets[preset]) {
+        previewBoxesData[key].customCSS = presets[preset];
+        applyBoxStyle(key);
+        renderInspector();
+        showNotif('Preset "' + preset + '" đã áp dụng!');
+      }
+    }
+    // ============================================================
+    // UNDO HELPERS
+    // ============================================================
+    function saveUndoSnapshot() {
+      if (!window._undoStack) window._undoStack = [];
+      window._undoStack.push({
+        data: JSON.parse(JSON.stringify(previewBoxesData)),
+        titles: JSON.parse(JSON.stringify(previewTitles)),
+      });
+      if (window._undoStack.length > 30) window._undoStack.shift();
+    }
+
+    function alignBoxes(key, direction) {
+      if (!_stage) return;
+      var d = previewBoxesData[key];
+      if (!d) return;
+      var canvasW = previewCanvasW, canvasH = previewCanvasH;
+      var myW = d.w||100, myH = d.h||100;
+      switch(direction) {
+        case 'left': d.x = 0; break;
+        case 'right': d.x = canvasW - myW; break;
+        case 'center-h': d.x = Math.round((canvasW - myW) / 2); break;
+        case 'top': d.y = 0; break;
+        case 'bottom': d.y = canvasH - myH; break;
+        case 'center-v': d.y = Math.round((canvasH - myH) / 2); break;
+      }
+      applyBoxStyle(key);
+      autoExpandCanvas();
+      updateXYDisplay();
+      renderLayers();
+    }
+
 
     function alignSelected(mode) {
       if (!previewSelectedKey) return;
@@ -2757,17 +3443,83 @@
         }
         // Keyboard
         document.addEventListener('keydown', (e) => {
-          if (e.key === ' ' && !previewSpaceDown && document.activeElement.tagName !== 'INPUT') {
+          const inField = document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA';
+          if (e.key === ' ' && !previewSpaceDown && !inField) {
             previewSpaceDown = true;
             document.body.classList.add('canvas-pan-mode');
           }
           // Delete selected
-          if ((e.key === 'Delete' || e.key === 'Backspace') && previewSelectedKey && document.activeElement.tagName !== 'INPUT') {
+          if ((e.key === 'Delete' || e.key === 'Backspace') && previewSelectedKey && !inField) {
             e.preventDefault();
             deleteSelectedBox();
           }
           // Ctrl+S
           if ((e.ctrlKey || e.metaKey) && e.key === 's') { e.preventDefault(); savePreviewLayout(); }
+          // Ctrl+D = duplicate
+          if ((e.ctrlKey || e.metaKey) && e.key === 'd' && previewSelectedKey && !inField) { e.preventDefault(); duplicateSelectedBox(); }
+          // Ctrl+C = copy
+          if ((e.ctrlKey || e.metaKey) && e.key === 'c' && previewSelectedKey && !inField) {
+            e.preventDefault();
+            window._copyBox = JSON.parse(JSON.stringify(previewBoxesData[previewSelectedKey]));
+            if (previewTitles[previewSelectedKey]) window._copyTitle = JSON.parse(JSON.stringify(previewTitles[previewSelectedKey]));
+            showNotif('Đã copy khung vào clipboard');
+          }
+          // Ctrl+V = paste
+          if ((e.ctrlKey || e.metaKey) && e.key === 'v' && window._copyBox && !inField) {
+            e.preventDefault();
+            const newKey = previewSelectedKey + '-copy-' + Date.now().toString(36);
+            const d = JSON.parse(JSON.stringify(window._copyBox));
+            d.x = (d.x||0) + 20;
+            d.y = (d.y||0) + 20;
+            createBoxOnCanvas({
+              key: newKey,
+              title: window._copyTitle?.title || newKey,
+              x: d.x, y: d.y, w: d.w||100, h: d.h||100,
+              type: d.type || 'content',
+              children: d.children || [],
+            });
+            Object.assign(previewBoxesData[newKey], d);
+            selectBox(newKey);
+            renderLayers();
+            showNotif('Đã paste khung');
+          }
+          // Ctrl+Z = undo (basic, single step)
+          if ((e.ctrlKey || e.metaKey) && e.key === 'z' && !inField) {
+            e.preventDefault();
+            if (window._undoStack && window._undoStack.length) {
+              const snap = window._undoStack.pop();
+              previewBoxesData = snap.data;
+              previewTitles = snap.titles;
+              // Re-render
+              if (_stage) {
+                _stage.querySelectorAll('.prev-box').forEach(b => b.remove());
+                Object.keys(previewBoxesData).forEach(k => {
+                  const dd = previewBoxesData[k];
+                  createBoxOnCanvas({ key: k, title: previewTitles[k]?.title || k, x: dd.x, y: dd.y, w: dd.w, h: dd.h, type: dd.type || 'content' });
+                  if (previewTitles[k]) applyTitleToBox(k);
+                  applyBoxStyle(k);
+                });
+              }
+              renderLayers();
+              renderInspector();
+              showNotif('Đã undo');
+            }
+          }
+          // Arrow keys = move 1px, Shift+Arrow = 10px
+          if (previewSelectedKey && !inField && ['ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].indexOf(e.key) !== -1) {
+            e.preventDefault();
+            saveUndoSnapshot();
+            const d = previewBoxesData[previewSelectedKey];
+            const step = e.shiftKey ? 10 : 1;
+            if (e.key === 'ArrowUp') d.y = (d.y||0) - step;
+            if (e.key === 'ArrowDown') d.y = (d.y||0) + step;
+            if (e.key === 'ArrowLeft') d.x = (d.x||0) - step;
+            if (e.key === 'ArrowRight') d.x = (d.x||0) + step;
+            applyBoxStyle(previewSelectedKey);
+            updateXYDisplay();
+            renderLayers();
+            renderInspector();
+          }
           // Esc = bỏ chọn
           if (e.key === 'Escape') selectBox(null);
         });

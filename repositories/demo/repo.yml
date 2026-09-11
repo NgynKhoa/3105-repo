@@ -22,7 +22,7 @@ _shared_screens: &screens
 packages:
   # ----- owen-trial -----
   - identifier: owen-trial
-    name: ĐỢI BẢN MỚI NHÉ, CHƯA CÓ ĐÂU
+    name: IM ĐỢI NGƯỜI ANH THƯƠNG
     author: "@owenindahouse"
     version: 1.0.0
     summary: ✨ Pubg • Bản dùng thử • Trải nghiệm tính năng nâng cao
@@ -36,8 +36,12 @@ packages:
     sha256: CE977931A02FA8D505E6DF202BAC4252811DB1055AE1632BCBDC1413C271FCE0
     size: 37432
     supportedOS:
-      - minimum: "17"
-        maximum: "0"
+      - minimum: "17.0"
+        maximum: "18.7.1"
+      - minimum: "26.0"
+        maximum: "26.6.1"
+      - minimum: "27.0"
+        maximum: "27.0"
     featured: false
     isPrivate: false
     description: |
@@ -114,7 +118,7 @@ packages:
 
   # ----- owen-003 -----
   - identifier: owen-003
-    name: ĐỢI BẢN MỚI NHÉ, CHƯA CÓ ĐÂU
+    name: ĐỢIIIIIII
     author: "@owenindahouse"
     version: 1.0.0
     summary: ✨ ADVANCED CUSTOM 4 GLOBAL
@@ -129,8 +133,12 @@ packages:
     sha256: C8669AEDFB5BFD0AB05029B3F6D09320FBC562859B1EB22F17EF602E66F3BC04
     size: 37428
     supportedOS:
-      - minimum: "17"
-        maximum: "0"
+      - minimum: "17.0"
+        maximum: "18.7.1"
+      - minimum: "26.0"
+        maximum: "26.6.1"
+      - minimum: "27.0"
+        maximum: "27.0"
     featured: false
     isPrivate: false
     description: |
@@ -171,7 +179,7 @@ packages:
 
   # ----- owen-004 -----
   - identifier: owen-004
-    name: ĐỢI BẢN MỚI NHÉ, CHƯA CÓ ĐÂU
+    name: 💫 ĐỢIIII
     author: "@owenindahouse"
     version: 1.0.0
     summary: ✨ ADVANCED CUSTOM 4 KR
@@ -185,8 +193,12 @@ packages:
     sha256: AB58206C6DD088D60D3471D8BA65E544D80519EAA365CC2832ED192E3F5AD503
     size: 37429
     supportedOS:
-      - minimum: "17"
-        maximum: "0"
+      - minimum: "17.0"
+        maximum: "18.7.1"
+      - minimum: "26.0"
+        maximum: "26.6.1"
+      - minimum: "27.0"
+        maximum: "27.0"
     featured: false
     isPrivate: false
     description: |

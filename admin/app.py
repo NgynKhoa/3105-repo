@@ -24,6 +24,7 @@ import sys
 import threading
 import uuid
 import webbrowser
+import datetime
 from typing import Any
 
 import yaml
@@ -522,6 +523,7 @@ def api_scan_front_repo():
     SELECTORS = [
         # (key hint, selector)
         ("masthead", "#masthead"),
+        ("hello-banner", "#helloBanner"),
         ("meta", "section.box:first-of-type"),
         ("packages", "#packagesBox"),
         ("blog-section", "#blog-section"),
@@ -542,7 +544,43 @@ def api_scan_front_repo():
             ctx = browser.new_context(viewport={"width": viewport_w, "height": viewport_h})
             page = ctx.new_page()
             page.goto(url, wait_until="networkidle", timeout=15000)
-            page.wait_for_timeout(800)
+            page.wait_for_timeout(1200)
+
+            # Trích xuất title + content text cho từng phần tử
+            EXTRACT_SCRIPT = '''
+                (sel) => {
+                    const el = document.querySelector(sel);
+                    if (!el) return null;
+                    // Tìm tiêu đề: h1/h2/h3 đầu tiên, hoặc class section-title, hoặc text ngắn nhất
+                    let title = '';
+                    const titleEl = el.querySelector('h1, h2, h3, .section-title, .pkg-header .section-title, .star-title');
+                    if (titleEl) title = titleEl.textContent.trim();
+                    // Lấy text content (skip script/style)
+                    const clone = el.cloneNode(true);
+                    clone.querySelectorAll('script, style, svg, button').forEach(n => n.remove());
+                    let text = clone.textContent || '';
+                    text = text.replace(/\\s+/g, ' ').trim().substring(0, 300);
+                    // Lấy ảnh
+                    const imgs = Array.from(el.querySelectorAll('img')).map(i => ({
+                        src: i.src,
+                        alt: i.alt || '',
+                        w: i.naturalWidth || i.width,
+                        h: i.naturalHeight || i.height,
+                    }));
+                    // Lấy icon/emoji đầu tiên
+                    const firstIcon = (titleEl?.textContent || '').match(/[\\u{1F300}-\\u{1FAFF}\\u{2600}-\\u{27BF}]/u)?.[0] || '';
+                    return {
+                        title: title || '',
+                        text: text,
+                        imgs: imgs,
+                        icon: firstIcon,
+                        childCount: el.children.length,
+                        tag: el.tagName.toLowerCase(),
+                        id: el.id || '',
+                        className: el.className || '',
+                    };
+                }
+            '''
 
             # Lấy vị trí các selector ưu tiên
             for hint, sel in SELECTORS:
@@ -553,11 +591,22 @@ def api_scan_front_repo():
                     box = el.bounding_box()
                     if not box:
                         continue
-                    txt = el.inner_text()[:80].replace("\n", " ").strip()
+                    info = page.evaluate(EXTRACT_SCRIPT, sel) or {}
+                    # Title từ inner text hoặc từ heading
+                    inner_text = el.inner_text()[:80].replace("\n", " ").strip()
+                    title = info.get('title') or inner_text or hint
+                    text_content = info.get('text', '')[:200]
                     boxes.append({
                         "key": hint,
                         "selector": sel,
-                        "title": txt or hint,
+                        "title": title,
+                        "text": text_content,
+                        "icon": info.get('icon', ''),
+                        "imgs": info.get('imgs', []),
+                        "childCount": info.get('childCount', 0),
+                        "tag": info.get('tag', ''),
+                        "elemId": info.get('id', ''),
+                        "className": info.get('className', ''),
                         "x": round(box["x"]),
                         "y": round(box["y"]),
                         "w": round(box["width"]),
@@ -569,7 +618,7 @@ def api_scan_front_repo():
                 except Exception:
                     continue
 
-            # Bổ sung các box generic chưa có trong danh sách (tính theo viewport coords)
+            # Bổ sung các box generic chưa có trong danh sách
             try:
                 gen = page.locator(GENERIC_BOX_SELECTOR).all()
                 idx = 1
@@ -578,19 +627,41 @@ def api_scan_front_repo():
                         bb = el.bounding_box()
                         if not bb:
                             continue
-                        # Skip nếu đã có trong danh sách (cùng x,y,w,h)
+                        # Skip nếu đã có trong danh sách (cùng x,y)
                         already = any(abs(b["x"] - round(bb["x"])) < 2 and abs(b["y"] - round(bb["y"])) < 2 and abs(b["w"] - round(bb["width"])) < 2 for b in boxes)
                         if already:
                             continue
-                        # Bỏ các box ẩn hoặc quá nhỏ
                         if bb["width"] < 40 or bb["height"] < 30:
                             continue
-                        txt = el.inner_text()[:60].replace("\n", " ").strip() or f"box-{idx}"
+                        # Bỏ các box nằm ngoài viewport
+                        if bb["y"] > viewport_h + 200:
+                            continue
+                        # Lấy selector cho element này
+                        elem_id = el.evaluate("e => e.id")
+                        elem_class = el.evaluate("e => e.className")
+                        if elem_id:
+                            sel_for_box = '#' + elem_id
+                        elif elem_class:
+                            # Lấy class đầu tiên
+                            first_cls = elem_class.split()[0]
+                            sel_for_box = '.' + first_cls
+                        else:
+                            sel_for_box = GENERIC_BOX_SELECTOR
+                        info = page.evaluate(EXTRACT_SCRIPT, sel_for_box) or {}
+                        inner_text = el.inner_text()[:60].replace("\n", " ").strip() or f"box-{idx}"
+                        title = info.get('title') or inner_text
                         bkey = f"auto-box-{idx}"
                         boxes.append({
                             "key": bkey,
-                            "selector": GENERIC_BOX_SELECTOR,
-                            "title": txt,
+                            "selector": sel_for_box,
+                            "title": title,
+                            "text": info.get('text', '')[:200],
+                            "icon": info.get('icon', ''),
+                            "imgs": info.get('imgs', []),
+                            "childCount": info.get('childCount', 0),
+                            "tag": info.get('tag', ''),
+                            "elemId": elem_id or '',
+                            "className": elem_class or '',
                             "x": round(bb["x"]),
                             "y": round(bb["y"]),
                             "w": round(bb["width"]),
@@ -609,6 +680,76 @@ def api_scan_front_repo():
         return jsonify({"ok": False, "error": str(e)}), 500
 
     return jsonify({"ok": True, "url": url, "viewport": {"w": viewport_w, "h": viewport_h}, "boxes": boxes})
+
+
+# ===================== GET FRONT REPO HTML (for iframe clone) =====================
+@app.route("/api/get-front-repo-html")
+def api_get_front_repo_html():
+    """Trả về HTML của index.html để inject vào iframe clone mode."""
+    template_path = os.path.join(os.path.dirname(__file__), "templates", "index.html")
+    if not os.path.exists(template_path):
+        return ("index.html not found", 404)
+    with open(template_path, "r", encoding="utf-8") as f:
+        html = f.read()
+    # Loại bỏ external <script> nặng gây chậm khi clone (giữ inline scripts để preview hoạt động)
+    html = html.replace('<script src="/admin/static/app.js?v=16"></script>', '')
+    # Loại bỏ link preload không cần thiết
+    return html
+
+# ===================== APPLY LAYOUT TO FRONT REPO =====================
+@app.route("/api/apply-layout", methods=["POST"])
+def api_apply_layout():
+    """Nhận JSON layout từ Boxes editor, lưu vào localStorage key để index.html đọc và áp dụng.
+    Mỗi box: { key, selector, title, titlePos, x, y, w, h, type, children, css }
+    Response: { ok, boxes_applied, message }
+    """
+    try:
+        # Lấy raw body nếu có
+        raw = request.get_data(as_text=True) or ""
+        if not raw:
+            return jsonify({"ok": False, "error": "Empty body"}), 400
+        try:
+            data = json.loads(raw)
+        except Exception as je:
+            return jsonify({"ok": False, "error": f"Invalid JSON: {je}"}), 400
+    except Exception as e:
+        return jsonify({"ok": False, "error": str(e)}), 400
+
+    if not data or not data.get("boxes"):
+        return jsonify({"ok": False, "error": "No boxes provided"}), 400
+
+    boxes = data.get("boxes", [])
+
+    layout_dir = os.path.join(os.path.dirname(__file__), "templates")
+    layout_file = os.path.join(layout_dir, "_applied_layout.json")
+    layout_data = {"boxes": boxes, "applied_at": str(datetime.datetime.now())}
+
+    try:
+        with open(layout_file, "w", encoding="utf-8") as f:
+            json.dump(layout_data, f, ensure_ascii=False, indent=2)
+    except Exception as e:
+        return jsonify({"ok": False, "error": f"Cannot write layout file: {e}"}), 500
+
+    return jsonify({
+        "ok": True,
+        "boxes_applied": len(boxes),
+        "message": f"Applied layout to {len(boxes)} boxes. Refresh Front Repo page to see changes.",
+        "layout_file": "_applied_layout.json"
+    })
+
+
+# ===================== GET APPLIED LAYOUT (for index.html) =====================
+@app.route("/api/get-applied-layout")
+def api_get_applied_layout():
+    """Trả về layout đã được áp dụng để index.html có thể đọc và apply."""
+    layout_file = os.path.join(os.path.dirname(__file__), "templates", "_applied_layout.json")
+    if not os.path.exists(layout_file):
+        return jsonify({"ok": True, "boxes": []})
+    try:
+        with open(layout_file, "r", encoding="utf-8") as f:
+            return jsonify(json.load(f))
+    except Exception as e:
+        return jsonify({"ok": False, "error": str(e), "boxes": []}), 500
 
 
 # ===================== BLOG DATA =====================
