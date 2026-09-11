@@ -836,6 +836,81 @@ def repo_asset():
 
 
 # ---------------------------------------------------------------------------
+# Background Image API
+# ---------------------------------------------------------------------------
+BG_UPLOAD_DIR = pathlib.Path(__file__).parent / "backgrounds"
+
+
+@app.post("/api/backgrounds/upload")
+def api_upload_background():
+    """Upload ảnh nền. Chấp nhận .jpg, .jpeg, .png, .gif, .webp. Max 10MB."""
+    BG_UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
+    file = request.files.get("image")
+    if not file or not file.filename:
+        abort(400, description="No image file provided")
+    import magic
+    ALLOWED = {"image/jpeg", "image/png", "image/gif", "image/webp"}
+    mime = magic.from_buffer(file.read(2048), mime=True)
+    file.seek(0)
+    if mime not in ALLOWED:
+        abort(400, description=f"Unsupported file type: {mime}")
+    # Sanitize filename: keep only safe chars
+    import re, secrets
+    orig = pathlib.Path(file.filename).name
+    safe = re.sub(r"[^a-zA-Z0-9._-]", "_", orig)
+    ext = pathlib.Path(safe).suffix.lower()
+    if ext not in (".jpg", ".jpeg", ".png", ".gif", ".webp"):
+        abort(400, description="Unsupported extension")
+    # Generate unique filename to avoid collisions
+    name = f"{secrets.token_hex(6)}{ext}"
+    path = BG_UPLOAD_DIR / name
+    file.save(str(path))
+    # Return URL for the image
+    return jsonify({
+        "ok": True,
+        "filename": name,
+        "url": f"/api/backgrounds/{name}",
+        "size": path.stat().st_size,
+    })
+
+
+@app.get("/api/backgrounds")
+def api_list_backgrounds():
+    """Liệt kê tất cả ảnh nền đã upload."""
+    BG_UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
+    files = sorted(BG_UPLOAD_DIR.iterdir(), key=lambda p: p.stat().st_mtime, reverse=True)
+    result = []
+    for f in files:
+        if f.is_file():
+            result.append({
+                "filename": f.name,
+                "url": f"/api/backgrounds/{f.name}",
+                "size": f.stat().st_size,
+                "mtime": f.stat().st_mtime,
+            })
+    return jsonify(result)
+
+
+@app.get("/api/backgrounds/<filename>")
+def api_serve_background(filename: str):
+    """Phục vụ ảnh nền đã upload."""
+    path = BG_UPLOAD_DIR / filename
+    if not path.is_file():
+        abort(404, description="Background not found")
+    return send_from_directory(str(BG_UPLOAD_DIR), filename)
+
+
+@app.delete("/api/backgrounds/<filename>")
+def api_delete_background(filename: str):
+    """Xóa ảnh nền."""
+    path = BG_UPLOAD_DIR / filename
+    if not path.is_file():
+        abort(404, description="Background not found")
+    path.unlink()
+    return jsonify({"ok": True, "deleted": filename})
+
+
+# ---------------------------------------------------------------------------
 # API
 # ---------------------------------------------------------------------------
 

@@ -2124,6 +2124,88 @@
       border: none;
       box-shadow: 0 0 8px rgba(var(--neon-rgb), 0.5);
     }
+    /* Background settings */
+    .bg-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+    .bg-thumb {
+      aspect-ratio: 16/9;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 2px solid var(--border);
+      cursor: pointer;
+      position: relative;
+      background: var(--bg-color);
+      transition: all 0.2s;
+    }
+    .bg-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .bg-thumb:hover { border-color: var(--neon); transform: scale(1.03); }
+    .bg-thumb.active {
+      border-color: var(--neon);
+      box-shadow: 0 0 12px rgba(var(--neon-rgb), 0.4);
+    }
+    .bg-thumb .bg-delete-btn {
+      position: absolute;
+      top: 3px;
+      right: 3px;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: rgba(0,0,0,0.7);
+      border: none;
+      color: #ff5555;
+      font-size: 11px;
+      cursor: pointer;
+      opacity: 0;
+      transition: opacity 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .bg-thumb:hover .bg-delete-btn { opacity: 1; }
+    .bg-thumb .bg-delete-btn:hover { background: rgba(255,50,50,0.8); color: white; }
+    .bg-upload-area {
+      border: 2px dashed var(--border);
+      border-radius: 8px;
+      padding: 16px 8px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      color: var(--muted);
+      font-size: 12px;
+      grid-column: span 3;
+    }
+    .bg-upload-area:hover, .bg-upload-area.dragover {
+      border-color: var(--neon);
+      color: var(--neon);
+      background: rgba(var(--neon-rgb), 0.06);
+    }
+    .bg-upload-area input[type="file"] { display: none; }
+    .bg-upload-icon { font-size: 24px; margin-bottom: 4px; }
+    .bg-none-btn {
+      aspect-ratio: 16/9;
+      border-radius: 8px;
+      border: 2px solid var(--border);
+      background: var(--bg-color);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      color: var(--muted);
+      transition: all 0.2s;
+    }
+    .bg-none-btn:hover { border-color: var(--neon); color: var(--neon); }
+    .bg-none-btn.active { border-color: var(--neon); box-shadow: 0 0 12px rgba(var(--neon-rgb), 0.4); }
+    .bg-loading { grid-column: span 3; text-align: center; padding: 8px; font-size: 11px; color: var(--muted); }
+    .bg-error-msg { grid-column: span 3; text-align: center; padding: 6px 8px; font-size: 11px; color: #ff5555; background: rgba(255,50,50,0.1); border-radius: 6px; }
   </style>
 </head>
 
@@ -2147,6 +2229,7 @@
       <div class="settings-tab-row">
         <button class="settings-tab-btn active" id="tabTheme" onclick="switchSettingsTab('theme')">🎨 Màu Theme</button>
         <button class="settings-tab-btn" id="tabShadow" onclick="switchSettingsTab('shadow')">✨ Màu Shadow</button>
+        <button class="settings-tab-btn" id="tabBg" onclick="switchSettingsTab('bg')">🖼️ Hình nền</button>
       </div>
 
       <!-- Màu Theme tab -->
@@ -2178,6 +2261,22 @@
             <button class="theme-btn shadow-btn" data-shadow="orange" style="background:linear-gradient(135deg,#ff8800,#cc5500);" title="Orange"></button>
             <button class="theme-btn shadow-btn" data-shadow="white" style="background:linear-gradient(135deg,#ffffff,#cccccc);" title="White"></button>
           </div>
+        </div>
+      </div>
+
+      <!-- Hình nền tab -->
+      <div class="settings-tab-panel" id="panelBg">
+        <div class="settings-group">
+          <div id="bgGrid" class="bg-grid">
+            <div id="bgLoading" class="bg-loading">⏳ Đang tải ảnh nền...</div>
+          </div>
+          <div id="bgUploadArea" class="bg-upload-area" style="margin-top:8px;">
+            <div class="bg-upload-icon">📤</div>
+            <div>Nhấn hoặc kéo ảnh vào đây để upload</div>
+            <div style="font-size:10px;margin-top:2px;color:var(--muted)">JPG, PNG, GIF, WebP · Tối đa 10MB</div>
+            <input type="file" id="bgFileInput" accept="image/jpeg,image/png,image/gif,image/webp">
+          </div>
+          <div id="bgErrorMsg" class="bg-error-msg" style="display:none;margin-top:6px;"></div>
         </div>
       </div>
 
@@ -2466,7 +2565,7 @@
   <div id="toast"></div>
 
   <!-- App JS -->
-  <script src="/admin/static/app.js?v=18"></script>
+  <script src="/admin/static/app.js?v=19"></script>
   <!-- Bootstrap data -->
   <script>{{ bootstrap_js | safe }}</script>
 
@@ -3266,6 +3365,192 @@
     }
     if (rangeTrans) rangeTrans.value = savedTrans;
   }
+
+  // ====================== Background Image Settings ======================
+  var _bgState = { files: [], activeFilename: localStorage.getItem('bgImage') || '' };
+
+  window._loadBgImages = function() {
+    var grid = document.getElementById('bgGrid');
+    if (!grid) return;
+    var loading = document.getElementById('bgLoading');
+    // Fetch list from server
+    fetch('/api/backgrounds')
+      .then(function(r) { return r.json(); })
+      .then(function(files) {
+        _bgState.files = Array.isArray(files) ? files : [];
+        _renderBgGrid();
+      })
+      .catch(function() { _renderBgGrid(); });
+  };
+
+  function _renderBgGrid() {
+    var grid = document.getElementById('bgGrid');
+    if (!grid) return;
+    grid.innerHTML = '';
+
+    // "Không có nền" button
+    var noneBtn = document.createElement('button');
+    noneBtn.className = 'bg-none-btn' + (_bgState.activeFilename === '' ? ' active' : '');
+    noneBtn.title = 'Không có nền';
+    noneBtn.innerHTML = '🚫';
+    noneBtn.addEventListener('click', function() {
+      _bgState.activeFilename = '';
+      localStorage.removeItem('bgImage');
+      window._applyBackground('');
+      _renderBgGrid();
+    });
+    grid.appendChild(noneBtn);
+
+    // Image thumbnails
+    _bgState.files.forEach(function(f) {
+      var thumb = document.createElement('div');
+      thumb.className = 'bg-thumb' + (_bgState.activeFilename === f.filename ? ' active' : '');
+      thumb.title = f.filename;
+
+      var img = document.createElement('img');
+      img.src = f.url;
+      img.alt = f.filename;
+      img.loading = 'lazy';
+      thumb.appendChild(img);
+
+      thumb.addEventListener('click', function() {
+        _bgState.activeFilename = f.filename;
+        localStorage.setItem('bgImage', f.url);
+        window._applyBackground(f.url);
+        _renderBgGrid();
+      });
+
+      var delBtn = document.createElement('button');
+      delBtn.className = 'bg-delete-btn';
+      delBtn.innerHTML = '✕';
+      delBtn.title = 'Xóa';
+      delBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        if (!confirm('Xóa ảnh nền "' + f.filename + '"?')) return;
+        fetch('/api/backgrounds/' + encodeURIComponent(f.filename), { method: 'DELETE' })
+          .then(function() {
+            if (_bgState.activeFilename === f.filename) {
+              _bgState.activeFilename = '';
+              localStorage.removeItem('bgImage');
+              window._applyBackground('');
+            }
+            _bgState.files = _bgState.files.filter(function(x) { return x.filename !== f.filename; });
+            _renderBgGrid();
+          })
+          .catch(function(err) { alert('Xóa thất bại: ' + err); });
+      });
+      thumb.appendChild(delBtn);
+      grid.appendChild(thumb);
+    });
+
+    if (_bgState.files.length === 0) {
+      var empty = document.createElement('div');
+      empty.className = 'bg-loading';
+      empty.style.gridColumn = 'span 3';
+      empty.textContent = 'Chưa có ảnh nền nào. Upload ảnh bên dưới.';
+      grid.appendChild(empty);
+    }
+  }
+
+  window._applyBackground = function(url) {
+    var body = document.body;
+    if (!url) {
+      body.style.backgroundImage = '';
+      body.style.backgroundSize = '';
+      body.style.backgroundPosition = '';
+      body.style.backgroundRepeat = '';
+      body.style.backgroundAttachment = '';
+    } else {
+      body.style.backgroundImage = 'url(' + url + ')';
+      body.style.backgroundSize = 'cover';
+      body.style.backgroundPosition = 'center center';
+      body.style.backgroundRepeat = 'no-repeat';
+      body.style.backgroundAttachment = 'fixed';
+    }
+  };
+
+  // Upload handling
+  var uploadArea = document.getElementById('bgUploadArea');
+  var fileInput = document.getElementById('bgFileInput');
+  if (uploadArea && fileInput) {
+    uploadArea.addEventListener('click', function() { fileInput.click(); });
+    uploadArea.addEventListener('dragover', function(e) {
+      e.preventDefault();
+      uploadArea.classList.add('dragover');
+    });
+    uploadArea.addEventListener('dragleave', function() { uploadArea.classList.remove('dragover'); });
+    uploadArea.addEventListener('drop', function(e) {
+      e.preventDefault();
+      uploadArea.classList.remove('dragover');
+      var file = e.dataTransfer && e.dataTransfer.files[0];
+      if (file) _uploadBgFile(file);
+    });
+    fileInput.addEventListener('change', function() {
+      if (fileInput.files[0]) _uploadBgFile(fileInput.files[0]);
+      fileInput.value = '';
+    });
+  }
+
+  function _uploadBgFile(file) {
+    var errEl = document.getElementById('bgErrorMsg');
+    if (errEl) { errEl.style.display = 'none'; errEl.textContent = ''; }
+    var validTypes = ['image/jpeg','image/png','image/gif','image/webp'];
+    if (!validTypes.includes(file.type)) {
+      _showBgError('Chỉ chấp nhận JPG, PNG, GIF, WebP');
+      return;
+    }
+    if (file.size > 10 * 1024 * 1024) {
+      _showBgError('File quá lớn. Tối đa 10MB.');
+      return;
+    }
+    var form = new FormData();
+    form.append('image', file);
+    fetch('/api/backgrounds/upload', { method: 'POST', body: form })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (data.ok) {
+          _bgState.files.unshift({ filename: data.filename, url: data.url, size: data.size });
+          _renderBgGrid();
+          // Auto-select newly uploaded image
+          _bgState.activeFilename = data.filename;
+          localStorage.setItem('bgImage', data.url);
+          window._applyBackground(data.url);
+          _renderBgGrid();
+        } else {
+          _showBgError(data.description || 'Upload thất bại');
+        }
+      })
+      .catch(function(err) { _showBgError('Lỗi kết nối: ' + err); });
+  }
+
+  function _showBgError(msg) {
+    var el = document.getElementById('bgErrorMsg');
+    if (el) { el.style.display = 'block'; el.textContent = msg; }
+  }
+
+  // Load saved background on startup
+  var savedBgUrl = localStorage.getItem('bgImage');
+  if (savedBgUrl) window._applyBackground(savedBgUrl);
+  // Load image list when settings opens (lazy load)
+  var bgTabBtn = document.getElementById('tabBg');
+  if (bgTabBtn) {
+    bgTabBtn.addEventListener('click', function() {
+      if (!_bgState._loaded) {
+        _bgState._loaded = true;
+        window._loadBgImages();
+      }
+    });
+  }
+
+  // Patch switchSettingsTab to also load backgrounds when tab switches to 'bg'
+  var _origSwitchTab = window.switchSettingsTab;
+  window.switchSettingsTab = function(tab) {
+    if (_origSwitchTab) _origSwitchTab(tab);
+    if (tab === 'bg' && !_bgState._loaded) {
+      _bgState._loaded = true;
+      window._loadBgImages();
+    }
+  };
 })();
 
 // Blog navigation - open in new tab
