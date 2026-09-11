@@ -57,6 +57,85 @@ function toast(msg, type = 'info') {
   toast._t = setTimeout(() => el.classList.add('hidden'), 3500);
 }
 
+// ============================================================
+// PUSH PROGRESS MODAL - Hiển thị 4 bước git với kết quả chi tiết
+// ============================================================
+function showPushProgressModal(steps) {
+  // Xoá modal cũ nếu có
+  const old = document.getElementById('pushProgressModal');
+  if (old) old.remove();
+
+  const overlay = document.createElement('div');
+  overlay.id = 'pushProgressModal';
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:9999;display:flex;align-items:center;justify-content:center;';
+
+  const html = steps.map(s => `
+    <div id="step-${s.id}" style="display:flex;align-items:flex-start;gap:10px;padding:10px 14px;background:rgba(255,255,255,0.05);border-radius:6px;margin-bottom:6px;border:1px solid rgba(255,255,255,0.08);">
+      <div id="step-${s.id}-icon" style="font-size:18px;line-height:1;flex-shrink:0;width:24px;text-align:center;color:#888;">◯</div>
+      <div style="flex:1;min-width:0;">
+        <div style="font-family:'Press Start 2P',monospace;font-size:11px;color:#fff;font-weight:700;">${s.label}</div>
+        <div id="step-${s.id}-detail" style="font-family:monospace;font-size:10px;color:#888;margin-top:4px;max-height:60px;overflow:auto;white-space:pre-wrap;word-break:break-all;display:none;"></div>
+      </div>
+    </div>
+  `).join('');
+
+  overlay.innerHTML = `
+    <div style="background:#0f1626;border:1px solid #39ff14;border-radius:10px;padding:20px;max-width:520px;width:90%;box-shadow:0 8px 32px rgba(57,255,20,0.2);">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+        <div style="font-family:'Press Start 2P',monospace;font-size:13px;color:#39ff14;">🚀 ĐANG PUSH</div>
+        <button id="pushProgressClose" style="background:none;border:none;color:#888;font-size:18px;cursor:pointer;">✕</button>
+      </div>
+      <div id="pushProgressSteps">${html}</div>
+      <div style="margin-top:16px;display:flex;gap:8px;justify-content:flex-end;">
+        <button id="pushProgressDismiss" class="btn neon-delete" style="display:none;">Đóng</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+
+  document.getElementById('pushProgressClose').onclick = () => dismissProgressModal();
+  document.getElementById('pushProgressDismiss').onclick = () => dismissProgressModal();
+}
+
+function setStepStatus(stepId, status, detail) {
+  const iconEl = document.getElementById('step-' + stepId + '-icon');
+  const detailEl = document.getElementById('step-' + stepId + '-detail');
+  if (!iconEl) return;
+
+  const icons = { running: '⏳', done: '✅', skipped: '⏭', error: '❌', pending: '◯' };
+  const colors = { running: '#39ff14', done: '#39ff14', skipped: '#888', error: '#ff006e', pending: '#888' };
+
+  iconEl.textContent = icons[status] || '◯';
+  iconEl.style.color = colors[status] || '#888';
+
+  if (detail && status !== 'pending') {
+    detailEl.textContent = detail;
+    detailEl.style.display = 'block';
+    detailEl.style.color = status === 'error' ? '#ff006e' : '#aaa';
+  } else {
+    detailEl.style.display = 'none';
+  }
+
+  // Khi tất cả steps xong → hiện nút Đóng
+  if (status === 'done' || status === 'error' || status === 'skipped') {
+    const allSteps = ['save', 'pull', 'add', 'status', 'commit', 'push'];
+    const allDone = allSteps.every(s => {
+      const el = document.getElementById('step-' + s + '-icon');
+      if (!el) return false;
+      return ['✅', '❌', '⏭'].some(i => el.textContent.indexOf(i) !== -1);
+    });
+    if (allDone) {
+      const dismiss = document.getElementById('pushProgressDismiss');
+      if (dismiss) dismiss.style.display = 'inline-block';
+    }
+  }
+}
+
+function dismissProgressModal() {
+  const m = document.getElementById('pushProgressModal');
+  if (m) m.remove();
+}
+
 async function api(path, options = {}) {
   // Không set Content-Type khi dùng FormData (upload), browser tự điền boundary
   const isFormData = options.body instanceof FormData;
@@ -1763,9 +1842,6 @@ function buildCommitMessage() {
 
 async function saveAll() {
   if (!state.currentRepo) return toast('Chưa chọn repo.', 'error');
-  if (state.packages.length === 0 && state.changes.deleted.length === 0) {
-    if (!confirm('Repo không có package nào. Vẫn ghi file?')) return;
-  }
 
   // Đồng bộ meta packagesMeta cho khớp số lượng
   while (state.packagesMeta.length < state.packages.length) {
@@ -1785,17 +1861,26 @@ async function saveAll() {
     accentColor: $('#meta_accentColor').value.trim() || '#FF3B30',
   };
 
-  const commitMsg = buildCommitMessage();
-
-  // Disable nút để tránh double-click
+  // Bước 1: Ghi file YAML
   const btn = $('#btnSave');
   btn.disabled = true;
-  // Lưu text gốc để restore sau; dùng ::before pseudo qua CSS
   btn.dataset.loading = '1';
   btn.textContent = '';
 
+  // Hiển thị modal tiến trình 4 bước: pull → add → status → commit → push
+  const steps = [
+    { id: 'save', label: 'Ghi file YAML', status: 'pending' },
+    { id: 'pull', label: 'git pull origin main', status: 'pending' },
+    { id: 'add',  label: 'git add -A',           status: 'pending' },
+    { id: 'status', label: 'git status (kiểm tra)', status: 'pending' },
+    { id: 'commit', label: 'git commit',           status: 'pending' },
+    { id: 'push',   label: 'git push origin main', status: 'pending' },
+  ];
+  showPushProgressModal(steps);
+
   try {
-    // Bước 1: Ghi file YAML
+    // Bước 1: Ghi YAML
+    setStepStatus('save', 'running');
     const r = await api(`/api/repo/${state.currentRepo}/save`, {
       method: 'POST',
       body: JSON.stringify({
@@ -1806,23 +1891,67 @@ async function saveAll() {
     });
     const anchors = r.anchors || {};
     const anchorInfo = (anchors.os || anchors.screens) ? ` (anchor: ${[anchors.os && 'os', anchors.screens && 'screens'].filter(Boolean).join('+')})` : '';
-    toast(`✓ Đã ghi file ${r.saved} (${r.count} package)${anchorInfo}. Đang push...`, 'info');
+    setStepStatus('save', 'done', `Đã ghi ${r.saved} (${r.count} package)${anchorInfo}`);
 
-    // Bước 2: Push lên GitHub
+    // Bước 2-5: Push từng bước
+    const commitsAdded = state.changes.added.length;
+    const commitsEdited = state.changes.edited.length;
+    const commitsDeleted = state.changes.deleted.length;
+    const totalChanges = commitsAdded + commitsEdited + commitsDeleted;
+    let commitMsg;
+    if (totalChanges === 0) {
+      commitMsg = `Update ${state.currentRepo}`;
+    } else {
+      const parts = [];
+      if (commitsAdded)   parts.push(`Add ${commitsAdded} pkg`);
+      if (commitsEdited)  parts.push(`Update ${commitsEdited} pkg`);
+      if (commitsDeleted) parts.push(`Remove ${commitsDeleted} pkg`);
+      commitMsg = parts.join('; ');
+    }
+
+    setStepStatus('pull', 'running');
+    setStepStatus('add', 'pending');
+    setStepStatus('status', 'pending');
+    setStepStatus('commit', 'pending');
+    setStepStatus('push', 'pending');
+
     const push = await api(`/api/repo/${state.currentRepo}/push`, {
       method: 'POST',
       body: JSON.stringify({ commit_msg: commitMsg }),
     });
 
-    if (push.step === 'nothing-to-commit') {
-      toast('✓ Không có thay đổi nào. Git đã sạch.', 'success');
-    } else {
-      toast(`🚀 Push thành công! Commit: "${commitMsg}"`, 'success');
+    // Cập nhật các bước dựa trên response
+    if (push.pull !== undefined) setStepStatus('pull', 'done', push.pull);
+    else setStepStatus('pull', 'done');
+
+    if (push.status !== undefined) {
+      setStepStatus('add', 'done');
+      if (!push.status) {
+        setStepStatus('status', 'done', 'Không có thay đổi');
+      } else {
+        setStepStatus('status', 'done', push.status.split('\n').slice(0, 8).join('\n'));
+      }
     }
-    // Reset changes sau khi push thành công
-    state.changes = { added: [], edited: [], deleted: [] };
+    if (push.step === 'nothing-to-commit') {
+      setStepStatus('commit', 'skipped', 'Không có thay đổi');
+      setStepStatus('push', 'skipped', 'Không có thay đổi');
+      toast('✓ Không có thay đổi nào để push.', 'success');
+    } else if (push.step === 'done') {
+      setStepStatus('commit', 'done', push.commit);
+      setStepStatus('push', 'done', push.push);
+      toast(`🚀 Push thành công! Commit: "${commitMsg}"`, 'success');
+      state.changes = { added: [], edited: [], deleted: [] };
+    } else {
+      // Lỗi
+      const failedStep = push.step;
+      const order = ['pull', 'add', 'status', 'commit', 'push'];
+      const failedIdx = order.indexOf(failedStep);
+      for (let i = 0; i < failedIdx; i++) setStepStatus(order[i], 'done');
+      setStepStatus(failedStep, 'error', push.detail || push.message);
+      toast(`❌ Lỗi ở bước ${failedStep}: ${push.message}`, 'error');
+    }
   } catch (err) {
-    toast(`Lỗi: ${err.message}`, 'error');
+    toast(`❌ Lỗi: ${err.message}`, 'error');
   } finally {
     btn.disabled = false;
     btn.textContent = '';

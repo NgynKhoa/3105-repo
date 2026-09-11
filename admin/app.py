@@ -1212,13 +1212,20 @@ def api_push(repo: str):
             "detail": (out or "").strip()[:500],
         })
 
-    # 3. Kiểm tra có thay đổi không
-    code, out = _run("git", "status", "--porcelain")
-    if code == 0 and not (out or "").strip():
+    # 3. git status (báo cáo trạng thái, KHÔNG return ngay - cho phép empty commit để lưu message)
+    code, out = _run("git", "status")
+    status_out = (out or "").strip()
+    has_changes = bool(status_out)
+
+    # 3.5. Nếu không có thay đổi nào → báo về luôn
+    if not has_changes:
         return jsonify({
             "ok": True,
             "step": "nothing-to-commit",
-            "message": "Không có thay đổi nào để commit.",
+            "message": "Không có thay đổi nào để commit/push.",
+            "pull": pull_out[:200],
+            "status": status_out[:500],
+            "commit": commit_msg,
         })
 
     # 4. git commit
@@ -1248,7 +1255,9 @@ def api_push(repo: str):
         "step": "done",
         "message": f"Đã push thành công. Commit: {commit_msg}",
         "pull": pull_out[:200],
-        "commit": commit_msg,
+        "status": status_out[:500],
+        "commit": commit_out[:200],
+        "push": push_out[:200],
     })
 
 
