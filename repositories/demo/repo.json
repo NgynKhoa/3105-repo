@@ -6,10 +6,24 @@
   "icon": "assets/icon/repo-icon.png",
   "accentColor": "#FF3B30",
   "_shared_screens": [
-    "assets/preview-first.png",
-    "assets/preview-second.png",
-    "assets/preview-third.png",
-    "assets/preview-four.png"
+    "assets/preview/preview-first.png",
+    "assets/preview/preview-second.png",
+    "assets/preview/preview-third.png",
+    "assets/preview/preview-fourth.png"
+  ],
+  "_shared_os_rules": [
+    {
+      "minimum": "17.0",
+      "maximum": "18.7.1"
+    },
+    {
+      "minimum": "26.0",
+      "maximum": "26.6.1"
+    },
+    {
+      "minimum": "27.0",
+      "maximum": "27.0"
+    }
   ],
   "packages": [
     {
@@ -26,10 +40,10 @@
       "icon": "assets/icon/test.png",
       "banner": "assets/banner/banner.png",
       "screenshots": [
-        "assets/preview-first.png",
-        "assets/preview-second.png",
-        "assets/preview-third.png",
-        "assets/preview-four.png"
+        "assets/preview/preview-first.png",
+        "assets/preview/preview-second.png",
+        "assets/preview/preview-third.png",
+        "assets/preview/preview-fourth.png"
       ],
       "download": "packages/PATCH_FREE_V12_BY_TD.3105",
       "sha256": "CE977931A02FA8D505E6DF202BAC4252811DB1055AE1632BCBDC1413C271FCE0",
@@ -45,13 +59,7 @@
         },
         {
           "minimum": "27.0",
-          "maximum": "27.0",
-          "builds": [
-            "24A5355q",
-            "24A5370h",
-            "24A5380h",
-            "24A5390f"
-          ]
+          "maximum": "27.0"
         }
       ],
       "featured": false,
@@ -113,10 +121,10 @@
       "icon": "assets/icon/global-pubg_global.png",
       "banner": "assets/banner/banner.png",
       "screenshots": [
-        "assets/preview-first.png",
-        "assets/preview-second.png",
-        "assets/preview-third.png",
-        "assets/preview-four.png"
+        "assets/preview/preview-first.png",
+        "assets/preview/preview-second.png",
+        "assets/preview/preview-third.png",
+        "assets/preview/preview-fourth.png"
       ],
       "download": "packages/V12_GL.3105",
       "sha256": "C8669AEDFB5BFD0AB05029B3F6D09320FBC562859B1EB22F17EF602E66F3BC04",
@@ -132,13 +140,7 @@
         },
         {
           "minimum": "27.0",
-          "maximum": "27.0",
-          "builds": [
-            "24A5355q",
-            "24A5370h",
-            "24A5380h",
-            "24A5390f"
-          ]
+          "maximum": "27.0"
         }
       ],
       "featured": false,
@@ -160,10 +162,10 @@
       "icon": "assets/icon/kr-pubg_kr.png",
       "banner": "assets/banner/banner.png",
       "screenshots": [
-        "assets/preview-first.png",
-        "assets/preview-second.png",
-        "assets/preview-third.png",
-        "assets/preview-four.png"
+        "assets/preview/preview-first.png",
+        "assets/preview/preview-second.png",
+        "assets/preview/preview-third.png",
+        "assets/preview/preview-fourth.png"
       ],
       "download": "packages/PATCH_FREE_V12_KR.3105",
       "sha256": "AB58206C6DD088D60D3471D8BA65E544D80519EAA365CC2832ED192E3F5AD503",
@@ -179,13 +181,7 @@
         },
         {
           "minimum": "27.0",
-          "maximum": "27.0",
-          "builds": [
-            "24A5355q",
-            "24A5370h",
-            "24A5380h",
-            "24A5390f"
-          ]
+          "maximum": "27.0"
         }
       ],
       "featured": false,
@@ -286,10 +282,10 @@
       "icon": "assets/icon/dual_horizon.png",
       "banner": "assets/banner/banner.png",
       "screenshots": [
-        "assets/preview-first.png",
-        "assets/preview-second.png",
-        "assets/preview-third.png",
-        "assets/preview-four.png"
+        "assets/preview/preview-first.png",
+        "assets/preview/preview-second.png",
+        "assets/preview/preview-third.png",
+        "assets/preview/preview-fourth.png"
       ],
       "download": "packages/Dual_Horizon.3105pass",
       "sha256": "48807D528F2CF645C6B726A911C242FE4E826295C9076E1660D9C5D4788229EB",
@@ -343,13 +339,7 @@
         },
         {
           "minimum": "27.0",
-          "maximum": "27.0",
-          "builds": [
-            "24A5355q",
-            "24A5370h",
-            "24A5380h",
-            "24A5390f"
-          ]
+          "maximum": "27.0"
         }
       ],
       "featured": true,
@@ -410,10 +400,10 @@
       "icon": "assets/icon/allinone.png",
       "banner": "assets/banner/banner.png",
       "screenshots": [
-        "assets/preview-first.png",
-        "assets/preview-second.png",
-        "assets/preview-third.png",
-        "assets/preview-four.png"
+        "assets/preview/preview-first.png",
+        "assets/preview/preview-second.png",
+        "assets/preview/preview-third.png",
+        "assets/preview/preview-fourth.png"
       ],
       "download": "packages/ALL_IN_ONE_V12.3105",
       "sha256": "9BF4F7C31A97C294714FA395AA9BE1674A5A4A4D414C5109FBBE9137DAF9C9DE",
@@ -429,13 +419,7 @@
         },
         {
           "minimum": "27.0",
-          "maximum": "27.0",
-          "builds": [
-            "24A5355q",
-            "24A5370h",
-            "24A5380h",
-            "24A5390f"
-          ]
+          "maximum": "27.0"
         }
       ],
       "featured": false,
@@ -458,10 +442,10 @@
       "icon": "assets/icon/New_ver46/new_4_6.png",
       "banner": "assets/banner/banner.png",
       "screenshots": [
-        "assets/preview-first.png",
-        "assets/preview-second.png",
-        "assets/preview-third.png",
-        "assets/preview-four.png"
+        "assets/preview/preview-first.png",
+        "assets/preview/preview-second.png",
+        "assets/preview/preview-third.png",
+        "assets/preview/preview-fourth.png"
       ],
       "download": "packages/PATCH_NEW_VERSION_4-6_PUBG__2_.3105",
       "sha256": "85E90E4435DEC263F99F923082DEF04D61D45FD3F468A6521052CFFF77249ACC",
@@ -477,13 +461,7 @@
         },
         {
           "minimum": "27.0",
-          "maximum": "27.0",
-          "builds": [
-            "24A5355q",
-            "24A5370h",
-            "24A5380h",
-            "24A5390f"
-          ]
+          "maximum": "27.0"
         }
       ],
       "featured": true,
@@ -505,10 +483,10 @@
       "icon": "assets/icon/kr-pubg_kr.png",
       "banner": "assets/banner/banner.png",
       "screenshots": [
-        "assets/preview-first.png",
-        "assets/preview-second.png",
-        "assets/preview-third.png",
-        "assets/preview-four.png"
+        "assets/preview/preview-first.png",
+        "assets/preview/preview-second.png",
+        "assets/preview/preview-third.png",
+        "assets/preview/preview-fourth.png"
       ],
       "download": "packages/PATCH_PUBG_V46_FOR_KR.3105",
       "sha256": "1BB59B93DB2D4187F25EDD53C0BECB9EF15FB825ED7C0C479D62F48999B43930",
@@ -524,13 +502,7 @@
         },
         {
           "minimum": "27.0",
-          "maximum": "27.0",
-          "builds": [
-            "24A5355q",
-            "24A5370h",
-            "24A5380h",
-            "24A5390f"
-          ]
+          "maximum": "27.0"
         }
       ],
       "featured": false,
@@ -553,10 +525,10 @@
       "icon": "assets/icon/test.png",
       "banner": "assets/banner/banner.png",
       "screenshots": [
-        "assets/preview-first.png",
-        "assets/preview-second.png",
-        "assets/preview-third.png",
-        "assets/preview-four.png"
+        "assets/preview/preview-first.png",
+        "assets/preview/preview-second.png",
+        "assets/preview/preview-third.png",
+        "assets/preview/preview-fourth.png"
       ],
       "download": "packages/PATCH_FOR_V46_PUBG_VNG.3105",
       "sha256": "5B7FF2AD45BE505D398A1F2A0584831BBB7B690198E79DB1B9F79F44003A98F1",
@@ -572,13 +544,7 @@
         },
         {
           "minimum": "27.0",
-          "maximum": "27.0",
-          "builds": [
-            "24A5355q",
-            "24A5370h",
-            "24A5380h",
-            "24A5390f"
-          ]
+          "maximum": "27.0"
         }
       ],
       "featured": true,
@@ -601,10 +567,10 @@
       "icon": "assets/icon/global-pubg_global.png",
       "banner": "assets/banner/banner.png",
       "screenshots": [
-        "assets/preview-first.png",
-        "assets/preview-second.png",
-        "assets/preview-third.png",
-        "assets/preview-four.png"
+        "assets/preview/preview-first.png",
+        "assets/preview/preview-second.png",
+        "assets/preview/preview-third.png",
+        "assets/preview/preview-fourth.png"
       ],
       "download": "packages/PATCH_PUBG_V46_GLOBAL.3105",
       "sha256": "D71D28CE86665C243A3540D81CEF6E19108C4AC325FA12243AA8DB8805344C8F",
@@ -620,13 +586,7 @@
         },
         {
           "minimum": "27.0",
-          "maximum": "27.0",
-          "builds": [
-            "24A5355q",
-            "24A5370h",
-            "24A5380h",
-            "24A5390f"
-          ]
+          "maximum": "27.0"
         }
       ],
       "featured": true,
@@ -647,10 +607,10 @@
       "icon": "assets/preview/preview-third.png",
       "banner": "assets/banner/banner_new.png",
       "screenshots": [
-        "assets/preview-first.png",
-        "assets/preview-second.png",
-        "assets/preview-third.png",
-        "assets/preview-four.png"
+        "assets/preview/preview-first.png",
+        "assets/preview/preview-second.png",
+        "assets/preview/preview-third.png",
+        "assets/preview/preview-fourth.png"
       ],
       "download": "packages/Classical_dialer.3105pass",
       "sha256": "3557A840CF720126142E7EE07AEC5AA10754AEE6F59DE7ABF66807195D1C85C3",
