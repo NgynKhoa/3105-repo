@@ -14,7 +14,7 @@
   "packages": [
     {
       "identifier": "owen-trial",
-      "name": "ĐỢI BẢN MỚI NHÉ, CHƯA CÓ ĐÂU",
+      "name": "IM ĐỢI NGƯỜI ANH THƯƠNG",
       "author": "@owenindahouse",
       "version": "1.0.0",
       "summary": "✨ Pubg • Bản dùng thử • Trải nghiệm tính năng nâng cao",
@@ -36,8 +36,16 @@
       "size": 37432,
       "supportedOS": [
         {
-          "minimum": "17",
-          "maximum": "0"
+          "minimum": "17.0",
+          "maximum": "18.7.1"
+        },
+        {
+          "minimum": "26.0",
+          "maximum": "26.6.1"
+        },
+        {
+          "minimum": "27.0",
+          "maximum": "27.0"
         }
       ],
       "featured": false,
@@ -86,7 +94,7 @@
     },
     {
       "identifier": "owen-003",
-      "name": "ĐỢI BẢN MỚI NHÉ, CHƯA CÓ ĐÂU",
+      "name": "ĐỢIIIIIII",
       "author": "@owenindahouse",
       "version": "1.0.0",
       "summary": "✨ ADVANCED CUSTOM 4 GLOBAL",
@@ -109,8 +117,16 @@
       "size": 37428,
       "supportedOS": [
         {
-          "minimum": "17",
-          "maximum": "0"
+          "minimum": "17.0",
+          "maximum": "18.7.1"
+        },
+        {
+          "minimum": "26.0",
+          "maximum": "26.6.1"
+        },
+        {
+          "minimum": "27.0",
+          "maximum": "27.0"
         }
       ],
       "featured": false,
@@ -120,7 +136,7 @@
     },
     {
       "identifier": "owen-004",
-      "name": "ĐỢI BẢN MỚI NHÉ, CHƯA CÓ ĐÂU",
+      "name": "💫 ĐỢIIII",
       "author": "@owenindahouse",
       "version": "1.0.0",
       "summary": "✨ ADVANCED CUSTOM 4 KR",
@@ -142,8 +158,16 @@
       "size": 37429,
       "supportedOS": [
         {
-          "minimum": "17",
-          "maximum": "0"
+          "minimum": "17.0",
+          "maximum": "18.7.1"
+        },
+        {
+          "minimum": "26.0",
+          "maximum": "26.6.1"
+        },
+        {
+          "minimum": "27.0",
+          "maximum": "27.0"
         }
       ],
       "featured": false,
