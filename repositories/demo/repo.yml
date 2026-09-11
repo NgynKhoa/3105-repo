@@ -22,7 +22,7 @@ _shared_screens: &screens
 packages:
   # ----- owen-trial -----
   - identifier: owen-trial
-    name: PUBG Custom Miễn Phí Version 4.5
+    name: ĐỢII / Wait new updated
     author: "@owenindahouse"
     version: 1.0.0
     summary: ✨ Pubg • Bản dùng thử • Trải nghiệm tính năng nâng cao
@@ -36,12 +36,8 @@ packages:
     sha256: CE977931A02FA8D505E6DF202BAC4252811DB1055AE1632BCBDC1413C271FCE0
     size: 37432
     supportedOS:
-      - minimum: "17.0"
-        maximum: "18.7.1"
-      - minimum: "26.0"
-        maximum: "26.6.1"
-      - minimum: "27.0"
-        maximum: "27.0"
+      - minimum: "17"
+        maximum: "0"
     featured: false
     isPrivate: false
     description: |
@@ -118,7 +114,7 @@ packages:
 
   # ----- owen-003 -----
   - identifier: owen-003
-    name: PUBG Custom For GL Version 4.5
+    name: ĐỢI ĐỢI/ Wait for update file
     author: "@owenindahouse"
     version: 1.0.0
     summary: ✨ ADVANCED CUSTOM 4 GLOBAL
@@ -133,12 +129,8 @@ packages:
     sha256: C8669AEDFB5BFD0AB05029B3F6D09320FBC562859B1EB22F17EF602E66F3BC04
     size: 37428
     supportedOS:
-      - minimum: "17.0"
-        maximum: "18.7.1"
-      - minimum: "26.0"
-        maximum: "26.6.1"
-      - minimum: "27.0"
-        maximum: "27.0"
+      - minimum: "17"
+        maximum: "0"
     featured: false
     isPrivate: false
     description: |
@@ -179,7 +171,7 @@ packages:
 
   # ----- owen-004 -----
   - identifier: owen-004
-    name: 💫 PUBG Custom For KR Version 4.5
+    name: 💫 Đợiiii file mới chưa có file mới đâu
     author: "@owenindahouse"
     version: 1.0.0
     summary: ✨ ADVANCED CUSTOM 4 KR
@@ -193,12 +185,8 @@ packages:
     sha256: AB58206C6DD088D60D3471D8BA65E544D80519EAA365CC2832ED192E3F5AD503
     size: 37429
     supportedOS:
-      - minimum: "17.0"
-        maximum: "18.7.1"
-      - minimum: "26.0"
-        maximum: "26.6.1"
-      - minimum: "27.0"
-        maximum: "27.0"
+      - minimum: "17"
+        maximum: "0"
     featured: false
     isPrivate: false
     description: |
@@ -403,7 +391,7 @@ packages:
 
   # ----- owen-008 -----
   - identifier: owen-008
-    name: GRAPHICS POTATO WITH 120FPS PUBG Ver 4.5
+    name: Chưa có file mới
     author: "@owenindahouse"
     version: 1.0.0
     summary: ✨chỉ dành cho người dùng VIỆT NAM - Only for VNG
@@ -418,12 +406,8 @@ packages:
     sha256: F7A03FE347ADF7DD29E0358FCF6FAED628E519F6837C7DDC6D5EE50FE15663B3
     size: 14102893
     supportedOS:
-      - minimum: "17.0"
-        maximum: "18.7.1"
-      - minimum: "26.0"
-        maximum: "26.6.1"
-      - minimum: "27.0"
-        maximum: "27.0"
+      - minimum: "17"
+        maximum: "0"
     featured: true
     isPrivate: false
     description: |
@@ -505,7 +489,7 @@ packages:
 
   # ----- owen-010 -----
   - identifier: owen-010
-    name: 👑 PUBG ALL IN ONE Ver 4.5
+    name: Chưa có file mớiii
     author: "@owenindahouse"
     version: 1.0.0
     summary: ✨ 1 PATCH FOR 3 SERVERS
@@ -519,12 +503,8 @@ packages:
     sha256: 9BF4F7C31A97C294714FA395AA9BE1674A5A4A4D414C5109FBBE9137DAF9C9DE
     size: 38137
     supportedOS:
-      - minimum: "17.0"
-        maximum: "18.7.1"
-      - minimum: "26.0"
-        maximum: "26.6.1"
-      - minimum: "27.0"
-        maximum: "27.0"
+      - minimum: "17"
+        maximum: "0"
     featured: false
     isPrivate: false
     description: |
@@ -585,7 +565,7 @@ packages:
 
   # ----- owen-001 -----
   - identifier: owen-001
-    name: PUBG Version 4.6 For VNG,KR,GLOBAL UPDATED
+    name: Wait for update new file ok
     author: "@owenindahouse"
     version: 4.6.0
     summary: 1 Patch dùng được cho 3 server
@@ -600,12 +580,8 @@ packages:
     sha256: 85E90E4435DEC263F99F923082DEF04D61D45FD3F468A6521052CFFF77249ACC
     size: 1180183
     supportedOS:
-      - minimum: "17.0"
-        maximum: "18.7.1"
-      - minimum: "26.0"
-        maximum: "26.6.1"
-      - minimum: "27.0"
-        maximum: "27.0"
+      - minimum: "17"
+        maximum: "0"
     featured: true
     isPrivate: false
     description: |
@@ -641,7 +617,7 @@ packages:
 
   # ----- owen-000 -----
   - identifier: owen-000
-    name: PUBG Custom Version 4.6 For KR
+    name: Chưa có file mới đâuu ạ
     author: "@owenindahouse"
     version: 4.6.0
     summary: PUBG for Server Korean
@@ -655,12 +631,8 @@ packages:
     sha256: 1BB59B93DB2D4187F25EDD53C0BECB9EF15FB825ED7C0C479D62F48999B43930
     size: 1179331
     supportedOS:
-      - minimum: "17.0"
-        maximum: "18.7.1"
-      - minimum: "26.0"
-        maximum: "26.6.1"
-      - minimum: "27.0"
-        maximum: "27.0"
+      - minimum: "17"
+        maximum: "0"
     featured: false
     isPrivate: false
     description: |
@@ -693,7 +665,7 @@ packages:
 
   # ----- owen-011 -----
   - identifier: owen-011
-    name: PUBG Custom Version 4.6 For VNG
+    name: ĐỢI BẢN MỚI NHÉ  CHƯA CÓ ĐÂUU
     author: "@owenindahouse"
     version: 4.6.0
     summary: PUBG for Server VNG
@@ -708,12 +680,8 @@ packages:
     sha256: 5B7FF2AD45BE505D398A1F2A0584831BBB7B690198E79DB1B9F79F44003A98F1
     size: 1179332
     supportedOS:
-      - minimum: "17.0"
-        maximum: "18.7.1"
-      - minimum: "26.0"
-        maximum: "26.6.1"
-      - minimum: "27.0"
-        maximum: "27.0"
+      - minimum: "17"
+        maximum: "0"
     featured: true
     isPrivate: false
     description: |
@@ -760,7 +728,7 @@ packages:
 
   # ----- owen-012 -----
   - identifier: owen-012
-    name: PUBG Custom Version 4.6 For Global
+    name: ĐỢIIIIIIIIIIIIIIIIIII
     author: "@owenindahouse"
     version: 4.6.0
     summary: PUBG for Server Global
@@ -775,12 +743,8 @@ packages:
     sha256: D71D28CE86665C243A3540D81CEF6E19108C4AC325FA12243AA8DB8805344C8F
     size: 1179326
     supportedOS:
-      - minimum: "17.0"
-        maximum: "18.7.1"
-      - minimum: "26.0"
-        maximum: "26.6.1"
-      - minimum: "27.0"
-        maximum: "27.0"
+      - minimum: "17"
+        maximum: "0"
     featured: true
     isPrivate: false
     description: |
