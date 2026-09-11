@@ -54,10 +54,10 @@ DEFAULT_OS_RULES: list[dict[str, Any]] = [
 # Screenshots mặc định dùng chung — nếu repo có bộ ảnh khác thì anchor
 # sẽ được sinh tự động theo danh sách được phát hiện.
 DEFAULT_SCREENSHOTS: list[str] = [
-    "assets/preview-first.png",
-    "assets/preview-second.png",
-    "assets/preview-third.png",
-    "assets/preview-four.png",  # Lưu ý: "four" chứ không phải "fourth"!
+    "assets/preview/preview-first.png",
+    "assets/preview/preview-second.png",
+    "assets/preview/preview-third.png",
+    "assets/preview/preview-fourth.png",
 ]
 
 # Anchor name sẽ được dùng trong YAML
