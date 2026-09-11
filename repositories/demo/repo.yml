@@ -36,8 +36,13 @@ packages:
     sha256: CE977931A02FA8D505E6DF202BAC4252811DB1055AE1632BCBDC1413C271FCE0
     size: 37432
     supportedOS:
-      - minimum: "17"
-        maximum: "0"
+      - minimum: "17.0"
+        maximum: "18.7.1"
+      - minimum: "26.0"
+        maximum: "26.6.1"
+      - minimum: "27.0"
+        maximum: "27.0"
+        builds: ["24A5355q", "24A5370h", "24A5380h", "24A5390f"]
     featured: false
     isPrivate: false
     description: |
@@ -129,8 +134,13 @@ packages:
     sha256: C8669AEDFB5BFD0AB05029B3F6D09320FBC562859B1EB22F17EF602E66F3BC04
     size: 37428
     supportedOS:
-      - minimum: "17"
-        maximum: "0"
+      - minimum: "17.0"
+        maximum: "18.7.1"
+      - minimum: "26.0"
+        maximum: "26.6.1"
+      - minimum: "27.0"
+        maximum: "27.0"
+        builds: ["24A5355q", "24A5370h", "24A5380h", "24A5390f"]
     featured: false
     isPrivate: false
     description: |
@@ -185,8 +195,13 @@ packages:
     sha256: AB58206C6DD088D60D3471D8BA65E544D80519EAA365CC2832ED192E3F5AD503
     size: 37429
     supportedOS:
-      - minimum: "17"
-        maximum: "0"
+      - minimum: "17.0"
+        maximum: "18.7.1"
+      - minimum: "26.0"
+        maximum: "26.6.1"
+      - minimum: "27.0"
+        maximum: "27.0"
+        builds: ["24A5355q", "24A5370h", "24A5380h", "24A5390f"]
     featured: false
     isPrivate: false
     description: |
@@ -406,8 +421,13 @@ packages:
     sha256: F7A03FE347ADF7DD29E0358FCF6FAED628E519F6837C7DDC6D5EE50FE15663B3
     size: 14102893
     supportedOS:
-      - minimum: "17"
-        maximum: "0"
+      - minimum: "17.0"
+        maximum: "18.7.1"
+      - minimum: "26.0"
+        maximum: "26.6.1"
+      - minimum: "27.0"
+        maximum: "27.0"
+        builds: ["24A5355q", "24A5370h", "24A5380h", "24A5390f"]
     featured: true
     isPrivate: false
     description: |
@@ -503,8 +523,13 @@ packages:
     sha256: 9BF4F7C31A97C294714FA395AA9BE1674A5A4A4D414C5109FBBE9137DAF9C9DE
     size: 38137
     supportedOS:
-      - minimum: "17"
-        maximum: "0"
+      - minimum: "17.0"
+        maximum: "18.7.1"
+      - minimum: "26.0"
+        maximum: "26.6.1"
+      - minimum: "27.0"
+        maximum: "27.0"
+        builds: ["24A5355q", "24A5370h", "24A5380h", "24A5390f"]
     featured: false
     isPrivate: false
     description: |
@@ -580,8 +605,13 @@ packages:
     sha256: 85E90E4435DEC263F99F923082DEF04D61D45FD3F468A6521052CFFF77249ACC
     size: 1180183
     supportedOS:
-      - minimum: "17"
-        maximum: "0"
+      - minimum: "17.0"
+        maximum: "18.7.1"
+      - minimum: "26.0"
+        maximum: "26.6.1"
+      - minimum: "27.0"
+        maximum: "27.0"
+        builds: ["24A5355q", "24A5370h", "24A5380h", "24A5390f"]
     featured: true
     isPrivate: false
     description: |
@@ -631,8 +661,13 @@ packages:
     sha256: 1BB59B93DB2D4187F25EDD53C0BECB9EF15FB825ED7C0C479D62F48999B43930
     size: 1179331
     supportedOS:
-      - minimum: "17"
-        maximum: "0"
+      - minimum: "17.0"
+        maximum: "18.7.1"
+      - minimum: "26.0"
+        maximum: "26.6.1"
+      - minimum: "27.0"
+        maximum: "27.0"
+        builds: ["24A5355q", "24A5370h", "24A5380h", "24A5390f"]
     featured: false
     isPrivate: false
     description: |
@@ -680,8 +715,13 @@ packages:
     sha256: 5B7FF2AD45BE505D398A1F2A0584831BBB7B690198E79DB1B9F79F44003A98F1
     size: 1179332
     supportedOS:
-      - minimum: "17"
-        maximum: "0"
+      - minimum: "17.0"
+        maximum: "18.7.1"
+      - minimum: "26.0"
+        maximum: "26.6.1"
+      - minimum: "27.0"
+        maximum: "27.0"
+        builds: ["24A5355q", "24A5370h", "24A5380h", "24A5390f"]
     featured: true
     isPrivate: false
     description: |
@@ -743,8 +783,13 @@ packages:
     sha256: D71D28CE86665C243A3540D81CEF6E19108C4AC325FA12243AA8DB8805344C8F
     size: 1179326
     supportedOS:
-      - minimum: "17"
-        maximum: "0"
+      - minimum: "17.0"
+        maximum: "18.7.1"
+      - minimum: "26.0"
+        maximum: "26.6.1"
+      - minimum: "27.0"
+        maximum: "27.0"
+        builds: ["24A5355q", "24A5370h", "24A5380h", "24A5390f"]
     featured: true
     isPrivate: false
     description: |

@@ -1723,9 +1723,17 @@ function savePackageFromForm() {
   delete pkgClean.__use_default_screens;
   // Nếu user bỏ check "dùng iOS rule mặc định" → ghi rõ supportedOS vào package
   if (!useOs) {
-    const min = parseFloat(pkgClean.os_minimum) || 0;
-    const max = parseFloat(pkgClean.os_maximum) || 0;
-    pkgClean.supportedOS = [{ minimum: String(min), maximum: String(max) }];
+    // Giữ nguyên string format từ form (e.g. "17.0", "18.7.1") thay vì parseFloat
+    // vì parseFloat sẽ mất phần ".0" → bug "minimum": "17" thay vì "17.0".
+    let minStr = (pkgClean.os_minimum || '').toString().trim();
+    let maxStr = (pkgClean.os_maximum || '').toString().trim();
+    // Nếu rỗng → fallback DEFAULT_OS_RULES[0] thay vì 0
+    if (!minStr || !maxStr) {
+      const def = (window.DEFAULT_OS_RULES && window.DEFAULT_OS_RULES[0]) || { minimum: '17.0', maximum: '27.0' };
+      minStr = minStr || String(def.minimum);
+      maxStr = maxStr || String(def.maximum);
+    }
+    pkgClean.supportedOS = [{ minimum: minStr, maximum: maxStr }];
   } else {
     delete pkgClean.supportedOS;
   }

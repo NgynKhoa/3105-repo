@@ -315,8 +315,26 @@ def _render_package_yaml(
     if pkg.get("size") is not None:
         lines.append(f"    size: {pkg['size']}")
 
-    # supportedOS: anchor hoặc liệt kê
-    os_rules = pkg.get("supportedOS") or DEFAULT_OS_RULES
+    # supportedOS: nếu use_anchor_os thì dùng anchor; nếu không thì ghi DEFAULT_OS_RULES
+    # để đảm bảo file YAML luôn có OS hợp lệ, không phụ thuộc vào supportedOS
+    # có thể rỗng/sai trong dữ liệu gửi lên.
+    # Fix bug trước đây: nếu supportedOS chỉ có 1 rule với minimum="17" & maximum="0"
+    # (giá trị default rỗng từ form khi user chưa nhập), file YAML bị ghi sai.
+    if use_anchor_os:
+        os_rules = DEFAULT_OS_RULES
+    else:
+        pkg_os = pkg.get("supportedOS")
+        is_broken_single = (
+            isinstance(pkg_os, list)
+            and len(pkg_os) == 1
+            and isinstance(pkg_os[0], dict)
+            and pkg_os[0].get("minimum") in ("17", "17.0")
+            and pkg_os[0].get("maximum") in ("0", "0.0")
+        )
+        if is_broken_single:
+            os_rules = DEFAULT_OS_RULES
+        else:
+            os_rules = pkg_os or DEFAULT_OS_RULES
     if use_anchor_os:
         lines.append(f"    supportedOS: *{anchor_os}")
     else:
