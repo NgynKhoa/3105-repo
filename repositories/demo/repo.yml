@@ -819,3 +819,25 @@ packages:
       @owenindahouse
       admin Mod @Thanhdat1690.
     changelog: 🎉 v4.6.0 — Phát hành lần đầu
+
+  # ----- owen-013 -----
+  - identifier: owen-013
+    name: ĐỢI ĐÊ
+    author: "@owenindahouse"
+    version: 1.0.0
+    summary: test
+    category: Customization
+    tags: [CUSTOM]
+    icon: assets/preview/preview-third.png
+    banner: assets/banner/banner_new.png
+    screenshots: *screens
+    download: packages/Classical_dialer.3105pass
+    sha256: 3557A840CF720126142E7EE07AEC5AA10754AEE6F59DE7ABF66807195D1C85C3
+    size: 829136
+    supportedOS:
+      - minimum: "17.6"
+        maximum: "26.6"
+    featured: false
+    isPrivate: false
+    description: test
+    changelog: 🎉 v1.0.0 — Phát hành lần đầu
