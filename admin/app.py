@@ -503,6 +503,114 @@ def dashboard():
     return render_template("dashboard.html")
 
 
+# ===================== SCAN FRONT REPO (PLAYWRIGHT) =====================
+@app.route("/api/scan-front-repo")
+def api_scan_front_repo():
+    """Dùng Playwright scan trang Front repo, trả về JSON các khung lớn + vị trí tương đối.
+    Mỗi khung: { key, selector, tag, id, classes, title, x, y, w, h, type }
+    """
+    try:
+        from playwright.sync_api import sync_playwright
+    except Exception as e:
+        return jsonify({"ok": False, "error": f"playwright không khả dụng: {e}"}), 500
+
+    url = request.args.get("url") or request.host_url.rstrip("/")
+    viewport_w = int(request.args.get("vw") or 1280)
+    viewport_h = int(request.args.get("vh") or 900)
+
+    # Selector cho các khung lớn: header/main/aside/footer + .box + các id cố định
+    SELECTORS = [
+        # (key hint, selector)
+        ("masthead", "#masthead"),
+        ("meta", "section.box:first-of-type"),
+        ("packages", "#packagesBox"),
+        ("blog-section", "#blog-section"),
+        ("stars", "#stars"),
+        ("music-player", "#music-player"),
+        ("moon-widget", "#moon-widget"),
+        ("hint-box", "section.hint-box"),
+    ]
+
+    # Các box generic nếu có
+    GENERIC_BOX_SELECTOR = "section.box, div.box"
+
+    boxes = []
+    seen_keys = set()
+    try:
+        with sync_playwright() as p:
+            browser = p.chromium.launch()
+            ctx = browser.new_context(viewport={"width": viewport_w, "height": viewport_h})
+            page = ctx.new_page()
+            page.goto(url, wait_until="networkidle", timeout=15000)
+            page.wait_for_timeout(800)
+
+            # Lấy vị trí các selector ưu tiên
+            for hint, sel in SELECTORS:
+                try:
+                    el = page.locator(sel).first
+                    if el.count() == 0:
+                        continue
+                    box = el.bounding_box()
+                    if not box:
+                        continue
+                    txt = el.inner_text()[:80].replace("\n", " ").strip()
+                    boxes.append({
+                        "key": hint,
+                        "selector": sel,
+                        "title": txt or hint,
+                        "x": round(box["x"]),
+                        "y": round(box["y"]),
+                        "w": round(box["width"]),
+                        "h": round(box["height"]),
+                        "type": "content",
+                        "isReal": True,
+                    })
+                    seen_keys.add(hint)
+                except Exception:
+                    continue
+
+            # Bổ sung các box generic chưa có trong danh sách (tính theo viewport coords)
+            try:
+                gen = page.locator(GENERIC_BOX_SELECTOR).all()
+                idx = 1
+                for el in gen:
+                    try:
+                        bb = el.bounding_box()
+                        if not bb:
+                            continue
+                        # Skip nếu đã có trong danh sách (cùng x,y,w,h)
+                        already = any(abs(b["x"] - round(bb["x"])) < 2 and abs(b["y"] - round(bb["y"])) < 2 and abs(b["w"] - round(bb["width"])) < 2 for b in boxes)
+                        if already:
+                            continue
+                        # Bỏ các box ẩn hoặc quá nhỏ
+                        if bb["width"] < 40 or bb["height"] < 30:
+                            continue
+                        txt = el.inner_text()[:60].replace("\n", " ").strip() or f"box-{idx}"
+                        bkey = f"auto-box-{idx}"
+                        boxes.append({
+                            "key": bkey,
+                            "selector": GENERIC_BOX_SELECTOR,
+                            "title": txt,
+                            "x": round(bb["x"]),
+                            "y": round(bb["y"]),
+                            "w": round(bb["width"]),
+                            "h": round(bb["height"]),
+                            "type": "content",
+                            "isReal": True,
+                        })
+                        idx += 1
+                    except Exception:
+                        continue
+            except Exception:
+                pass
+
+            browser.close()
+    except Exception as e:
+        return jsonify({"ok": False, "error": str(e)}), 500
+
+    return jsonify({"ok": True, "url": url, "viewport": {"w": viewport_w, "h": viewport_h}, "boxes": boxes})
+
+
 # ===================== BLOG DATA =====================
 BLOG_POSTS = [
     {"id": 1, "icon": "📦", "title": "Cách cài đặt Repository trên ứng dụng 3105", "date": "2 ngày trước",

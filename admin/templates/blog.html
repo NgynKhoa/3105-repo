@@ -676,9 +676,8 @@
       document.querySelectorAll('.theme-btn').forEach(b => b.classList.remove('active'));
       document.querySelector(`.theme-btn[data-theme="${name}"]`).classList.add('active');
       localStorage.setItem('blog_theme', name);
-      // Sync to repo/dashboard too
-      localStorage.setItem('repo_theme', name);
-      localStorage.setItem('dash_theme', name);
+      // TÁCH BIỆT: Blog chỉ ghi blog_theme.
+      // KHÔNG đụng repo_theme (Front repo) / dash_theme (Dashboard).
     }
 
     document.querySelectorAll('.theme-btn').forEach(btn => {
@@ -697,8 +696,7 @@
     });
 
     // Dark mode toggle - FIX
-    document.getElementById('toggleDarkMode').addEventListener('change', e => {
-      const isDark = e.target.checked;
+    function applyDarkMode(isDark) {
       if (isDark) {
         document.documentElement.style.setProperty('--panel', `rgba(10, 14, 26, var(--panel-alpha, 0.92))`);
         document.documentElement.style.setProperty('--panel-alt', 'rgba(6, 9, 18, 0.96)');
@@ -712,7 +710,13 @@
         document.documentElement.style.setProperty('--text-bright', '#0a0a1a');
         document.documentElement.style.setProperty('--muted', '#888899');
       }
-      localStorage.setItem('blog_darkMode', isDark);
+    }
+    document.getElementById('toggleDarkMode').addEventListener('change', e => {
+      const isDark = e.target.checked;
+      applyDarkMode(isDark);
+      // Lưu preference — chỉ ghi khi user chủ động toggle.
+      // Lưu dạng string 'true'/'false' để nhất quán với transparency handler bên dưới.
+      localStorage.setItem('blog_darkMode', isDark ? 'true' : 'false');
     });
 
     // Transparency - FIX: updates panel-alpha so ALL panel usages update
@@ -736,16 +740,15 @@
       const savedTheme = localStorage.getItem('blog_theme') || localStorage.getItem('repo_theme') || 'green';
       applyTheme(savedTheme);
 
-      // Dark mode
+      // Dark mode — DEFAULT DARK on first visit (no saved key).
+      // Người dùng chưa chỉnh gì → blog_darkMode chưa tồn tại → mặc định dark.
+      // Chỉ sau khi user chủ động toggle thì mới lưu vào localStorage.
       const savedDark = localStorage.getItem('blog_darkMode');
-      if (savedDark === 'false') {
-        document.getElementById('toggleDarkMode').checked = false;
-        document.documentElement.style.setProperty('--panel', `rgba(240, 240, 245, var(--panel-alpha, 0.92))`);
-        document.documentElement.style.setProperty('--panel-alt', 'rgba(255, 255, 255, 0.96)');
-        document.documentElement.style.setProperty('--text', '#2a2a3a');
-        document.documentElement.style.setProperty('--text-bright', '#0a0a1a');
-        document.documentElement.style.setProperty('--muted', '#888899');
-      }
+      // savedDark có thể là 'true', 'false', boolean true/false, hoặc null.
+      // Mặc định dark (true). Chỉ light khi rõ ràng là false.
+      const initialDark = (savedDark !== false && savedDark !== 'false');
+      document.getElementById('toggleDarkMode').checked = initialDark;
+      applyDarkMode(initialDark);
 
       // Transparency
       const savedTrans = localStorage.getItem('blog_transparency') || '92';

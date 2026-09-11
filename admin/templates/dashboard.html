@@ -242,7 +242,7 @@
       font-family: 'Press Start 2P', monospace;
       font-size: 42px;
       font-weight: 700;
-      color: var(--neon);
+      color: var(--logo-preview-color, var(--neon)); /* Mặc định = --neon, nhưng JS có thể override riêng */
       -webkit-text-stroke: 0.5px rgba(var(--logo-shadow-rgb), 0.9);
       animation: dashLogoBlink 6s infinite steps(60);
       display: inline-block;
@@ -566,6 +566,295 @@
       margin-bottom: 14px;
       line-height: 1.5;
     }
+
+    /* ====================== BOXES PREVIEW ====================== */
+    .prev-title {
+      position: absolute;
+      z-index: 2;
+      font-family: 'Press Start 2P', monospace;
+      font-size: 9px;
+      color: var(--neon);
+      text-shadow: 0 0 4px rgba(var(--neon-rgb),0.5);
+      letter-spacing: 0.5px;
+      pointer-events: none;
+      background: rgba(6, 9, 18, 0.7);
+      padding: 1px 5px;
+      border-radius: 3px;
+      white-space: nowrap;
+      max-width: calc(100% - 8px);
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .prev-title[data-pos="top-left"]     { top: 4px;    left: 4px;    }
+    .prev-title[data-pos="top-center"]   { top: 4px;    left: 50%;    transform: translateX(-50%); }
+    .prev-title[data-pos="top-right"]    { top: 4px;    right: 4px;   }
+    .prev-title[data-pos="center-left"]  { top: 50%;    left: 4px;    transform: translateY(-50%); }
+    .prev-title[data-pos="center"]       { top: 50%;    left: 50%;    transform: translate(-50%, -50%); }
+    .prev-title[data-pos="center-right"] { top: 50%;    right: 4px;   transform: translateY(-50%); }
+    .prev-title[data-pos="bottom-left"]  { bottom: 4px; left: 4px;    }
+    .prev-title[data-pos="bottom-center"]{ bottom: 4px; left: 50%;    transform: translateX(-50%); }
+    .prev-title[data-pos="bottom-right"] { bottom: 4px; right: 4px;   }
+    .prev-title:empty { display: none; }
+
+    .prev-del {
+      position: absolute;
+      top: 4px;
+      right: 4px;
+      z-index: 3;
+      width: 20px; height: 20px;
+      border-radius: 50%;
+      border: 1px solid var(--neon-pink);
+      background: rgba(var(--neon-pink-rgb),0.15);
+      color: var(--neon-pink);
+      font-size: 14px;
+      line-height: 1;
+      cursor: pointer;
+      display: none;
+      padding: 0;
+    }
+    .prev-del:hover { background: rgba(var(--neon-pink-rgb),0.3); }
+
+    /* Khi đang edit mode thì hiện nút xóa trên mỗi box */
+    .edit-mode-on .prev-del { display: block; }
+
+    /* Bảng config */
+    .box-config-row {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr 1.6fr auto;
+      gap: 8px;
+      align-items: center;
+      padding: 8px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      margin-bottom: 6px;
+      background: var(--panel);
+    }
+    .box-config-row input,
+    .box-config-row select {
+      padding: 4px 8px;
+      background: var(--panel-alt);
+      border: 1px solid var(--border);
+      color: var(--text);
+      border-radius: 4px;
+      font-size: 11px;
+    }
+    .box-config-row label {
+      font-size: 10px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .box-config-row .pos-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+      background: var(--panel-alt);
+      padding: 3px;
+      border-radius: 4px;
+      border: 1px solid var(--border);
+    }
+    .box-config-row .pos-grid button {
+      padding: 4px;
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 9px;
+      border-radius: 2px;
+      transition: all 0.15s;
+    }
+    .box-config-row .pos-grid button:hover { background: var(--border); color: var(--text); }
+    .box-config-row .pos-grid button.active {
+      background: var(--neon);
+      color: #000;
+      font-weight: 700;
+    }
+    .box-config-row .del-btn {
+      padding: 4px 10px;
+      background: rgba(var(--neon-pink-rgb),0.15);
+      border: 1px solid var(--neon-pink);
+      color: var(--neon-pink);
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 11px;
+    }
+    .box-config-row .del-btn:hover { background: rgba(var(--neon-pink-rgb),0.3); }
+
+    /* ====================== BOXES EDITOR (3-PANE) ====================== */
+    .icon-btn { padding: 4px 10px !important; min-width: 32px; }
+
+    /* Layers panel */
+    .layer-row {
+      display: flex; align-items: center; gap: 6px;
+      padding: 6px 8px;
+      border: 1px solid transparent;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 11px;
+      color: var(--text);
+      margin-bottom: 2px;
+      transition: all 0.1s;
+      user-select: none;
+    }
+    .layer-row:hover { background: rgba(var(--neon-rgb),0.06); }
+    .layer-row.selected {
+      background: rgba(var(--neon-rgb),0.15);
+      border-color: var(--neon);
+      color: var(--neon);
+    }
+    .layer-row .layer-icon { width: 16px; text-align: center; flex-shrink: 0; opacity: 0.7; }
+    .layer-row .layer-name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .layer-row .layer-size { font-size: 9px; color: var(--muted); font-family: 'Press Start 2P', monospace; }
+    .layer-row.selected .layer-size { color: var(--neon); opacity: 0.7; }
+
+    /* Boxes preview (canvas) */
+    .prev-box {
+      position: absolute;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--neon);
+      border-radius: 4px;
+      cursor: move;
+      overflow: hidden;
+      box-sizing: border-box;
+    }
+    .prev-box.selected {
+      outline: 2px solid var(--neon) !important;
+      outline-offset: 1px;
+      box-shadow: 0 0 16px rgba(var(--neon-rgb),0.3);
+    }
+    .prev-box.prev-side {
+      background: transparent;
+      border: none;
+      border-left: none;
+    }
+
+    /* Resize handles — 8 directions */
+    .resize-handle {
+      position: absolute;
+      width: 10px; height: 10px;
+      background: var(--neon);
+      border-radius: 50%;
+      z-index: 4;
+      box-shadow: 0 0 4px rgba(var(--neon-rgb),0.5);
+    }
+    .resize-handle.h-nw { top: -5px; left: -5px; cursor: nwse-resize; }
+    .resize-handle.h-n  { top: -5px; left: 50%; transform: translateX(-50%); cursor: ns-resize; }
+    .resize-handle.h-ne { top: -5px; right: -5px; cursor: nesw-resize; }
+    .resize-handle.h-e  { top: 50%; right: -5px; transform: translateY(-50%); cursor: ew-resize; }
+    .resize-handle.h-se { bottom: -5px; right: -5px; cursor: nwse-resize; }
+    .resize-handle.h-s  { bottom: -5px; left: 50%; transform: translateX(-50%); cursor: ns-resize; }
+    .resize-handle.h-sw { bottom: -5px; left: -5px; cursor: nesw-resize; }
+    .resize-handle.h-w  { top: 50%; left: -5px; transform: translateY(-50%); cursor: ew-resize; }
+    .resize-handle { display: none; }
+    .prev-box.selected .resize-handle { display: block; }
+
+    /* Selection bounding box with 8 handles */
+    .prev-box .prev-del {
+      position: absolute;
+      top: -10px; right: -10px;
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      border: 2px solid var(--neon-pink);
+      background: rgba(var(--neon-pink-rgb),0.9);
+      color: #fff;
+      font-size: 14px;
+      line-height: 1;
+      cursor: pointer;
+      display: none;
+      padding: 0;
+      z-index: 5;
+    }
+    .prev-box.selected .prev-del { display: flex; align-items: center; justify-content: center; }
+    .prev-box .prev-del:hover { background: var(--neon-pink); }
+
+    /* Inspector */
+    .inspector-section {
+      margin-bottom: 14px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+    .inspector-section:last-child { border-bottom: none; }
+    .inspector-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      color: var(--muted);
+      letter-spacing: 0.5px;
+      margin-bottom: 6px;
+      display: block;
+    }
+    .inspector-input {
+      width: 100%;
+      padding: 5px 8px;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      color: var(--text);
+      border-radius: 4px;
+      font-size: 11px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .inspector-input:focus { outline: none; border-color: var(--neon); }
+    .inspector-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      margin-bottom: 6px;
+    }
+    .inspector-row-4 {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr 1fr;
+      gap: 4px;
+      margin-bottom: 6px;
+    }
+    .inspector-pos-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 3px;
+      background: var(--panel);
+      padding: 4px;
+      border-radius: 5px;
+      border: 1px solid var(--border);
+    }
+    .inspector-pos-grid button {
+      padding: 6px;
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 11px;
+      border-radius: 3px;
+      transition: all 0.1s;
+    }
+    .inspector-pos-grid button:hover { background: var(--border); color: var(--text); }
+    .inspector-pos-grid button.active {
+      background: var(--neon);
+      color: #000;
+      font-weight: 700;
+    }
+    .inspector-row-4 label {
+      font-size: 9px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 2px;
+      display: block;
+    }
+
+    /* Canvas helpers */
+    .canvas-pan-mode #canvasWrap { cursor: grabbing !important; }
+    #canvasWrap { cursor: grab; }
+    #canvasWrap:active { cursor: grabbing; }
+
+    /* Snap guides trên canvas */
+    .snap-guide {
+      position: absolute;
+      pointer-events: none;
+      z-index: 999;
+      background: var(--neon-pink);
+      box-shadow: 0 0 4px var(--neon-pink);
+    }
+    .snap-guide.h-line { height: 1px; left: 0; right: 0; }
+    .snap-guide.v-line { width: 1px; top: 0; bottom: 0; }
   </style>
 </head>
 <body>
@@ -644,7 +933,7 @@
         <div class="logo-preview-wrap">
           <div id="dashLogoPreview" class="logo-preview">
             <div id="dashLogoText" class="dash-logo-text">OWEN</div>
-            <div class="dash-logo-sub">// portfolio / neon</div>
+            <!-- <div class="dash-logo-sub"> Change Color Logo</div> -->
           </div>
         </div>
 
@@ -724,84 +1013,146 @@
     <!-- ===================== BOXES PANEL ===================== -->
     <div class="dash-panel" id="panel-boxes">
       <div class="section-card">
-        <div class="section-title">&#128230; Preview Trang Front Repo (Kéo thả + Resize)</div>
-        <div class="info-note">Bên dưới là <b>preview trực tiếp</b> trang Front Repo. Bạn có thể <b>kéo thả</b> các khung để sắp xếp vị trí, <b>kéo góc</b> để thay đổi kích thước. Thay đổi sẽ tự lưu và áp dụng cho trang Repo.</div>
-        <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;align-items:center;">
-          <button class="form-btn" onclick="resetPreviewLayout()">&#128260; Reset Layout</button>
-          <button class="form-btn success" onclick="savePreviewLayout()">&#128190; Lưu Layout</button>
-          <button class="form-btn" onclick="togglePreviewEdit()">&#9998; <span id="editModeLabel">Bật chỉnh sửa</span></button>
-          <label style="font-size:11px;color:var(--muted);display:flex;align-items:center;gap:6px;margin-left:8px;">
+        <div class="section-title">🎨 Boxes Editor — Canvas tùy chỉnh trang Front Repo</div>
+        <div class="info-note">
+          Trình chỉnh sửa canvas <b>kiểu Framer/Webflow/Wix</b>:
+          <ul style="margin:6px 0 0 18px;line-height:1.7;">
+            <li><b>🔄 Sync với Front Repo</b> — dùng Playwright fetch <code>/</code> và tự tạo các khung khớp tọa độ thực.</li>
+            <li><b>Layers (trái)</b> · <b>Canvas (giữa)</b> · <b>Inspector (phải)</b>.</li>
+            <li><b>Zoom 25–200%</b>, <b>Pan</b> bằng chuột giữa hoặc Space+drag, <b>Auto-expand canvas</b> khi kéo box ra biên.</li>
+            <li>Kéo thả, resize 4 góc/cạnh, snap vào biên canvas + giữa các khung.</li>
+          </ul>
+        </div>
+
+        <!-- Toolbar -->
+        <div id="boxesToolbar" style="display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap;align-items:center;">
+          <button class="form-btn" style="background:rgba(57,255,20,0.12);border-color:var(--neon);color:var(--neon);" onclick="syncFromFrontRepo(this)" id="syncBtn">🔄 Sync với Front Repo</button>
+          <button class="form-btn" onclick="togglePreviewEdit()">✏️ <span id="editModeLabel">Bật chỉnh sửa</span></button>
+          <button class="form-btn" onclick="addBoxFromCanvas()">＋ Khung</button>
+          <span style="width:1px;height:22px;background:var(--border);margin:0 4px;"></span>
+          <button class="form-btn icon-btn" onclick="zoomOut()" title="Zoom out">−</button>
+          <input id="zoomLevel" type="number" value="50" min="25" max="200" step="5" style="width:56px;text-align:center;padding:4px 6px;background:var(--panel-alt);border:1px solid var(--border);color:var(--neon);border-radius:4px;font-size:11px;font-weight:700;">
+          <span style="font-size:11px;color:var(--muted);">%</span>
+          <button class="form-btn icon-btn" onclick="zoomIn()" title="Zoom in">+</button>
+          <button class="form-btn icon-btn" onclick="zoomFit()" title="Fit canvas">⤢</button>
+          <button class="form-btn icon-btn" onclick="zoomReset()" title="Reset 50%">↺</button>
+          <span style="width:1px;height:22px;background:var(--border);margin:0 4px;"></span>
+          <label style="font-size:11px;color:var(--muted);display:flex;align-items:center;gap:6px;">
             <input type="checkbox" id="snapEnabled" checked style="accent-color: var(--neon);"> <span>Snap</span>
           </label>
           <label style="font-size:11px;color:var(--muted);display:flex;align-items:center;gap:6px;">
-            <span>Bước snap:</span>
-            <input type="number" id="snapStep" value="8" min="1" max="32" style="width:50px;padding:2px 6px;background:var(--panel-alt);border:1px solid var(--border);color:var(--text);border-radius:4px;">
+            <span>Bước:</span>
+            <input type="number" id="snapStep" value="8" min="1" max="32" style="width:46px;padding:2px 6px;background:var(--panel-alt);border:1px solid var(--border);color:var(--text);border-radius:4px;font-size:11px;">
             <span>px</span>
           </label>
+          <label style="font-size:11px;color:var(--muted);display:flex;align-items:center;gap:6px;">
+            <input type="checkbox" id="showGuides" checked style="accent-color: var(--neon);"> <span>Guides</span>
+          </label>
           <div id="xy-display" style="margin-left:auto;font-size:11px;color:var(--neon);padding:4px 10px;border:1px solid var(--border);border-radius:6px;background:var(--panel-alt);">
-            X: <span id="xy-x">0</span>, Y: <span id="xy-y">0</span>
-            | W: <span id="xy-w">0</span>, H: <span id="xy-h">0</span>
+            <span id="xy-empty">Chọn 1 khung để xem chi tiết</span>
+            <span id="xy-info" style="display:none;">
+              <span id="xy-key" style="font-family:'Press Start 2P',monospace;font-size:9px;"></span> ·
+              X:<span id="xy-x">0</span> Y:<span id="xy-y">0</span>
+              W:<span id="xy-w">0</span> H:<span id="xy-h">0</span>
+            </span>
           </div>
         </div>
-        <!-- Vùng preview giống trang repo -->
-        <div id="previewStage" style="position:relative;background:var(--bg-color);border:1px solid var(--border);border-radius:10px;padding:16px;min-height:600px;overflow:auto;">
-          <!-- Masthead giả lập -->
-          <div class="prev-masthead" data-box="masthead-box" style="position:absolute;left:16px;top:16px;right:16px;height:64px;background:var(--panel);border:1px solid var(--border);border-left:3px solid var(--neon);border-radius:4px;display:flex;align-items:center;padding:0 14px;cursor:move;">
-            <div style="width:36px;height:36px;background:var(--panel-alt);border-radius:4px;display:flex;align-items:center;justify-content:center;font-family:'Press Start 2P',monospace;font-size:10px;color:var(--neon);margin-right:10px;">OW</div>
-            <div style="font-size:13px;color:var(--neon);font-weight:600;">Owen Custom Repository</div>
-            <div class="resize-handle" style="position:absolute;bottom:-3px;right:-3px;width:12px;height:12px;background:var(--neon);cursor:nwse-resize;border-radius:2px;display:none;"></div>
-          </div>
-          <!-- Search box -->
-          <div class="prev-box" data-box="search-box" style="position:absolute;left:16px;top:96px;width:300px;height:50px;background:var(--panel);border:1px solid var(--border);border-left:3px solid var(--neon);border-radius:4px;display:flex;align-items:center;padding:0 12px;cursor:move;">
-            <input type="search" placeholder="🔍 Tìm package..." style="flex:1;border:none;background:transparent;color:var(--text);font-size:12px;pointer-events:none;" disabled />
-            <div class="resize-handle" style="position:absolute;bottom:-3px;right:-3px;width:12px;height:12px;background:var(--neon);cursor:nwse-resize;border-radius:2px;display:none;"></div>
-          </div>
-          <!-- Categories -->
-          <div class="prev-box" data-box="categories-box" style="position:absolute;left:16px;top:160px;width:300px;height:60px;background:var(--panel);border:1px solid var(--border);border-left:3px solid var(--neon);border-radius:4px;padding:10px;display:flex;gap:6px;flex-wrap:wrap;align-content:center;cursor:move;">
-            <span style="padding:3px 9px;border:1px solid var(--neon);border-radius:12px;font-size:10px;color:var(--neon);background:rgba(var(--neon-rgb),0.08);">All</span>
-            <span style="padding:3px 9px;border:1px solid var(--border);border-radius:12px;font-size:10px;color:var(--text);">Custom</span>
-            <span style="padding:3px 9px;border:1px solid var(--border);border-radius:12px;font-size:10px;color:var(--text);">Enhance</span>
-            <span style="padding:3px 9px;border:1px solid var(--border);border-radius:12px;font-size:10px;color:var(--text);">Theme</span>
-            <div class="resize-handle" style="position:absolute;bottom:-3px;right:-3px;width:12px;height:12px;background:var(--neon);cursor:nwse-resize;border-radius:2px;display:none;"></div>
-          </div>
-          <!-- Packages box -->
-          <div class="prev-box" data-box="packages-box" style="position:absolute;left:16px;top:234px;width:480px;height:300px;background:var(--panel);border:1px solid var(--border);border-left:3px solid var(--neon);border-radius:4px;padding:12px;cursor:move;overflow:hidden;">
-            <div style="font-family:'Press Start 2P',monospace;font-size:9px;color:var(--neon);margin-bottom:8px;">📦 PACKAGES</div>
-            <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:6px;">
-              <div style="height:60px;background:var(--panel-alt);border-radius:4px;padding:6px;font-size:10px;color:var(--text);">owen-trial</div>
-              <div style="height:60px;background:var(--panel-alt);border-radius:4px;padding:6px;font-size:10px;color:var(--text);">owen-002</div>
-              <div style="height:60px;background:var(--panel-alt);border-radius:4px;padding:6px;font-size:10px;color:var(--text);">owen-003</div>
-              <div style="height:60px;background:var(--panel-alt);border-radius:4px;padding:6px;font-size:10px;color:var(--text);">owen-004</div>
+
+        <!-- 3-pane editor -->
+        <div id="boxesEditor" style="display:grid;grid-template-columns:220px 1fr 280px;gap:10px;height:780px;border:1px solid var(--border);border-radius:10px;overflow:hidden;background:var(--bg-color);">
+
+          <!-- LEFT: LAYERS PANEL -->
+          <div id="layersPanel" style="background:var(--panel-alt);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;">
+            <div style="padding:10px 12px;border-bottom:1px solid var(--border);font-family:'Press Start 2P',monospace;font-size:10px;color:var(--neon);">📚 LAYERS</div>
+            <div style="padding:6px 8px;border-bottom:1px solid var(--border);display:flex;gap:4px;">
+              <button class="form-btn" style="padding:3px 6px;font-size:10px;" onclick="addBoxFromCanvas()" title="Thêm khung">＋</button>
+              <button class="form-btn" style="padding:3px 6px;font-size:10px;" onclick="deleteSelectedBox()" title="Xóa khung đang chọn">🗑</button>
+              <button class="form-btn" style="padding:3px 6px;font-size:10px;" onclick="duplicateSelectedBox()" title="Nhân đôi">⎘</button>
             </div>
-            <div class="resize-handle" style="position:absolute;bottom:-3px;right:-3px;width:12px;height:12px;background:var(--neon);cursor:nwse-resize;border-radius:2px;display:none;"></div>
+            <div id="layersList" style="flex:1;overflow-y:auto;padding:4px;"></div>
           </div>
-          <!-- Files box -->
-          <div class="prev-box" data-box="files-box" style="position:absolute;left:16px;top:548px;width:480px;height:80px;background:var(--panel);border:1px solid var(--border);border-left:3px solid var(--neon);border-radius:4px;padding:10px;cursor:move;">
-            <div style="font-family:'Press Start 2P',monospace;font-size:9px;color:var(--neon);margin-bottom:6px;">📁 FILES</div>
-            <div style="font-size:10px;color:var(--muted);">assets/ — packages/</div>
-            <div class="resize-handle" style="position:absolute;bottom:-3px;right:-3px;width:12px;height:12px;background:var(--neon);cursor:nwse-resize;border-radius:2px;display:none;"></div>
-          </div>
-          <!-- Blog section -->
-          <div class="prev-box" data-box="blog-section" style="position:absolute;left:510px;top:234px;width:240px;height:300px;background:var(--panel);border:1px solid var(--border);border-left:3px solid var(--neon);border-radius:4px;padding:10px;cursor:move;overflow:hidden;">
-            <div style="font-family:'Press Start 2P',monospace;font-size:9px;color:var(--neon);margin-bottom:8px;">📝 BLOG</div>
-            <div style="font-size:10px;color:var(--text);line-height:1.6;">
-              <div style="padding:4px 0;border-bottom:1px solid var(--border);">📦 Cách cài đặt Repo</div>
-              <div style="padding:4px 0;border-bottom:1px solid var(--border);">🛡️ Bảo mật khi sử dụng</div>
-              <div style="padding:4px 0;border-bottom:1px solid var(--border);">⚡ Cập nhật v1.2</div>
+
+          <!-- CENTER: CANVAS -->
+          <div id="canvasWrap" style="position:relative;overflow:hidden;background:
+            repeating-linear-gradient(0deg, rgba(255,255,255,0.02) 0 1px, transparent 1px 24px),
+            repeating-linear-gradient(90deg, rgba(255,255,255,0.02) 0 1px, transparent 1px 24px),
+            var(--bg-color);cursor:grab;">
+            <div id="canvasViewport" style="position:absolute;top:0;left:0;transform-origin:0 0;will-change:transform;">
+              <div id="previewStage" style="position:relative;background:var(--bg-color);width:1280px;height:900px;box-shadow:0 0 0 1px rgba(var(--neon-rgb),0.3);">
+                <!-- Boxes sẽ được render động bởi JS -->
+              </div>
             </div>
-            <div class="resize-handle" style="position:absolute;bottom:-3px;right:-3px;width:12px;height:12px;background:var(--neon);cursor:nwse-resize;border-radius:2px;display:none;"></div>
+            <!-- Mini zoom indicator -->
+            <div id="zoomIndicator" style="position:absolute;bottom:8px;left:8px;background:rgba(0,0,0,0.6);color:var(--neon);padding:3px 8px;border-radius:4px;font-size:10px;font-family:'Press Start 2P',monospace;border:1px solid var(--border);">50%</div>
+            <!-- Hint -->
+            <div id="canvasHint" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:var(--muted);font-size:12px;text-align:center;pointer-events:none;display:none;">
+              <div style="font-size:32px;opacity:0.4;">🎨</div>
+              <div>Canvas trống — bấm <b style="color:var(--neon);">🔄 Sync với Front Repo</b> để tự tạo các khung</div>
+              <div style="margin-top:6px;font-size:10px;">hoặc bấm <b>＋ Khung</b> để thêm thủ công</div>
+            </div>
           </div>
-          <!-- Sidebar -->
-          <div class="prev-box" data-box="sidebar-box" style="position:absolute;left:510px;top:96px;width:240px;height:124px;background:var(--panel);border:1px solid var(--border);border-left:3px solid var(--neon);border-radius:4px;padding:10px;cursor:move;">
-            <div style="font-family:'Press Start 2P',monospace;font-size:9px;color:var(--neon);margin-bottom:6px;">✩ LINKS</div>
-            <div style="font-size:11px;color:var(--text);line-height:1.6;">✩ Home<br>✩ Admin<br>✩ GitHub<br>✩ E-mail</div>
-            <div class="resize-handle" style="position:absolute;bottom:-3px;right:-3px;width:12px;height:12px;background:var(--neon);cursor:nwse-resize;border-radius:2px;display:none;"></div>
+
+          <!-- RIGHT: INSPECTOR -->
+          <div id="inspectorPanel" style="background:var(--panel-alt);border-left:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;">
+            <div style="padding:10px 12px;border-bottom:1px solid var(--border);font-family:'Press Start 2P',monospace;font-size:10px;color:var(--neon);">⚙ INSPECTOR</div>
+            <div id="inspectorBody" style="flex:1;overflow-y:auto;padding:12px;">
+              <div style="color:var(--muted);font-size:11px;text-align:center;padding:20px 0;">Chọn 1 khung trên canvas để chỉnh</div>
+            </div>
           </div>
-          <!-- Footer -->
-          <div class="prev-box" data-box="footer-box" style="position:absolute;left:16px;top:642px;right:16px;height:60px;background:var(--panel);border:1px solid var(--border);border-left:3px solid var(--neon);border-radius:4px;padding:10px;display:flex;align-items:center;cursor:move;">
-            <div style="font-size:11px;color:var(--muted);">// Footer — Hướng dẫn sử dụng &amp; credits</div>
-            <div class="resize-handle" style="position:absolute;bottom:-3px;right:-3px;width:12px;height:12px;background:var(--neon);cursor:nwse-resize;border-radius:2px;display:none;"></div>
+
+        </div>
+
+        <!-- Save bar -->
+        <div style="display:flex;gap:8px;margin-top:12px;align-items:center;">
+          <button class="form-btn success" onclick="savePreviewLayout()">💾 Lưu Layout</button>
+          <button class="form-btn" onclick="resetPreviewLayout()">↺ Reset Layout</button>
+          <div id="saveStatus" style="margin-left:auto;font-size:11px;color:var(--muted);"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===================== MODAL: THÊM KHUNG MỚI ===================== -->
+    <div id="addBoxModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:9999;align-items:center;justify-content:center;">
+      <div style="background:var(--panel);border:1px solid var(--neon);border-radius:10px;padding:20px;max-width:520px;width:90%;">
+        <div style="font-family:'Press Start 2P',monospace;font-size:12px;color:var(--neon);margin-bottom:14px;">＋ THÊM KHUNG MỚI</div>
+        <div class="form-group" style="margin-bottom:10px;">
+          <label class="form-label">Tên khung (data-box, không dấu)</label>
+          <input class="form-input" id="newBoxKey" placeholder="vd: custom-box-1">
+        </div>
+        <div class="form-group" style="margin-bottom:10px;">
+          <label class="form-label">Tiêu đề hiển thị</label>
+          <input class="form-input" id="newBoxTitle" placeholder="vd: Khung tùy chỉnh">
+        </div>
+        <div class="form-row" style="margin-bottom:10px;">
+          <div class="form-group">
+            <label class="form-label">Vị trí X (px)</label>
+            <input class="form-input" type="number" id="newBoxX" value="20">
           </div>
+          <div class="form-group">
+            <label class="form-label">Vị trí Y (px)</label>
+            <input class="form-input" type="number" id="newBoxY" value="20">
+          </div>
+        </div>
+        <div class="form-row" style="margin-bottom:14px;">
+          <div class="form-group">
+            <label class="form-label">Chiều rộng (px)</label>
+            <input class="form-input" type="number" id="newBoxW" value="300">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Chiều cao (px)</label>
+            <input class="form-input" type="number" id="newBoxH" value="200">
+          </div>
+        </div>
+        <div class="form-group" style="margin-bottom:14px;">
+          <label class="form-label">Loại khung</label>
+          <select class="form-select" id="newBoxType">
+            <option value="content">Content (có border + bg)</option>
+            <option value="side">Side (trong suốt, nằm cạnh)</option>
+          </select>
+        </div>
+        <div style="display:flex;gap:8px;justify-content:flex-end;">
+          <button class="form-btn" onclick="closeAddBoxModal()">Huỷ</button>
+          <button class="form-btn success" onclick="confirmAddBox()">＋ Tạo khung</button>
         </div>
       </div>
     </div>
@@ -1093,9 +1444,25 @@
       document.querySelectorAll('.theme-btn').forEach(b => b.classList.remove('active'));
       document.querySelectorAll(`.theme-btn[data-theme="${name}"]`).forEach(b => b.classList.add('active'));
       if (saveToStorage) {
-        localStorage.setItem('repo_theme', name);
+        // TÁCH BIỆT: Dashboard chỉ ghi dash_theme.
+        // KHÔNG đụng repo_theme / blog_theme / theme — đó là của trang khác.
+        // Logo preview color sẽ được sync từ repo_theme qua updateLogoPreviewFromRepoTheme() bên dưới.
         localStorage.setItem('dash_theme', name);
+        updateLogoPreviewFromRepoTheme();
       }
+    }
+
+    // Logo preview color theo Front repo theme (repo_theme) — ĐỘC LẬP với Dashboard theme.
+    // Được gọi:
+    //   - Sau khi applyTheme() ghi dash_theme (để logo cập nhật theo repo_theme nếu có)
+    //   - Khi load trang
+    //   - Khi nghe storage event từ tab Front repo (theme/repo_theme thay đổi)
+    function updateLogoPreviewFromRepoTheme() {
+      const repoTheme = localStorage.getItem('repo_theme') || localStorage.getItem('theme') || 'green';
+      const t = themes[repoTheme];
+      if (!t) return;
+      document.documentElement.style.setProperty('--logo-preview-color', t.neon);
+      // Border glow logo cũng dùng màu repo (tùy chọn, giữ shadow vars theo repo)
     }
 
     // All theme buttons (both in menu and in style panel)
@@ -1117,6 +1484,12 @@
     // Dark mode toggle - FIX: đổi MÀU NỀN WEB (--bg-color) thay vì đổi màu các khung
     document.getElementById('toggleDarkMode').addEventListener('change', e => {
       const isDark = e.target.checked;
+      applyDarkMode(isDark);
+      // Lưu preference — chỉ ghi khi user chủ động toggle.
+      localStorage.setItem('dash_darkMode', isDark ? 'true' : 'false');
+    });
+
+    function applyDarkMode(isDark) {
       const root = document.documentElement.style;
       if (isDark) {
         root.setProperty('--bg-color', '#06060e');
@@ -1147,8 +1520,7 @@
         root.setProperty('--option-color', '#1a1a1a');
         root.setProperty('--slider-bg', 'rgba(0,0,0,0.1)');
       }
-      localStorage.setItem('dash_darkMode', isDark ? 'true' : 'false');
-    });
+    }
 
     // Transparency - FIX: chỉ tác động lên panel (var(--panel)), không đổi bg
     document.getElementById('rangeTransparency').addEventListener('input', e => {
@@ -1473,29 +1845,26 @@
 
     // ====================== LOAD SAVED SETTINGS ======================
     function loadSavedSettings() {
-      // Theme
-      const savedTheme = localStorage.getItem('dash_theme') || localStorage.getItem('repo_theme') || 'green';
-      applyTheme(savedTheme, false);
+      // TÁCH BIỆT:
+      //   - Dashboard UI theme: ưu tiên dash_theme, fallback repo_theme (cho lần đầu chưa có dash_theme)
+      //   - Logo preview color: từ repo_theme (Front repo)
+      const dashUiTheme = localStorage.getItem('dash_theme') || localStorage.getItem('repo_theme') || 'green';
+      applyTheme(dashUiTheme, false);
+      updateLogoPreviewFromRepoTheme();
 
-      // Dark mode
+      // Dark mode — DEFAULT DARK on first visit (no saved key).
+      // Người dùng chưa chỉnh gì → dash_darkMode chưa tồn tại → mặc định dark.
+      // Chỉ sau khi user chủ động toggle thì mới lưu vào localStorage.
       const savedDark = localStorage.getItem('dash_darkMode');
+      let initialDark;
       if (savedDark === 'false') {
-        document.getElementById('toggleDarkMode').checked = false;
-        const root = document.documentElement.style;
-        root.setProperty('--bg-color', '#ffffff');
-        root.setProperty('--text', '#1a1a1a');
-        root.setProperty('--text-bright', '#000000');
-        root.setProperty('--muted', '#555555');
-        root.setProperty('--panel', 'rgba(245, 245, 250, 0.92)');
-        root.setProperty('--panel-alt', 'rgba(230, 230, 240, 0.96)');
-        root.setProperty('--border', 'rgba(57, 255, 20, 0.25)');
-        root.setProperty('--border-glow', 'rgba(57, 255, 20, 0.5)');
-        root.setProperty('--input-bg', 'rgba(255, 255, 255, 0.6)');
-        root.setProperty('--input-color', '#000000');
-        root.setProperty('--option-bg', '#ffffff');
-        root.setProperty('--option-color', '#1a1a1a');
-        root.setProperty('--slider-bg', 'rgba(0,0,0,0.1)');
+        initialDark = false;
+      } else {
+        // null (first visit) hoặc 'true' → dark
+        initialDark = true;
       }
+      document.getElementById('toggleDarkMode').checked = initialDark;
+      applyDarkMode(initialDark);
 
       // Transparency
       const savedTrans = localStorage.getItem('dash_transparency') || localStorage.getItem('repo_transparency') || '92';
@@ -1620,234 +1989,804 @@
     }
     loadSavedSettings();
 
-    // ====================== PREVIEW DRAG & RESIZE ======================
+    // Lắng nghe storage event: khi tab Front repo đổi repo_theme, Dashboard
+    // tự cập nhật logo preview color (KHÔNG đổi UI theme Dashboard).
+    window.addEventListener('storage', function(e) {
+      if (e.key === 'repo_theme' || e.key === 'theme') {
+        updateLogoPreviewFromRepoTheme();
+      }
+    });
+
+// ====================== BOXES EDITOR — Framer-style ======================
+    // State
     var previewEditMode = false;
+    var previewTitles = {}; // box key → { title, pos }
+    var previewBoxesData = {}; // box key → { x, y, w, h, type, title, pos, locked, hidden }
+    var previewSelectedKey = null;
+    var previewZoom = 50; // %
+    var previewPanX = 0, previewPanY = 0;
+    var previewPanState = null; // { startX, startY, startPanX, startPanY }
+    var previewSpaceDown = false;
     var previewDragState = null;
     var previewResizeState = null;
+    var previewCanvasW = 1280, previewCanvasH = 900;
 
+    // DOM refs
+    var _stage, _viewport, _canvasWrap, _layersList, _inspectorBody, _xyDisp;
+
+    function _getDoms() {
+      _stage = document.getElementById('previewStage');
+      _viewport = document.getElementById('canvasViewport');
+      _canvasWrap = document.getElementById('canvasWrap');
+      _layersList = document.getElementById('layersList');
+      _inspectorBody = document.getElementById('inspectorBody');
+      _xyDisp = document.getElementById('xy-display');
+    }
+
+    // ============ ZOOM + PAN ============
+    function applyZoom() {
+      if (!_viewport) _getDoms();
+      if (!_viewport) return;
+      const z = previewZoom / 100;
+      _viewport.style.transform = `translate(${previewPanX}px, ${previewPanY}px) scale(${z})`;
+      const zEl = document.getElementById('zoomLevel');
+      const zInd = document.getElementById('zoomIndicator');
+      if (zEl) zEl.value = previewZoom;
+      if (zInd) zInd.textContent = previewZoom + '%';
+    }
+    function setZoom(z) {
+      previewZoom = Math.max(25, Math.min(200, z));
+      applyZoom();
+    }
+    function zoomIn() { setZoom(previewZoom + 10); }
+    function zoomOut() { setZoom(previewZoom - 10); }
+    function zoomReset() {
+      previewZoom = 50;
+      // Center canvas in viewport
+      if (_canvasWrap) {
+        const w = _canvasWrap.clientWidth, h = _canvasWrap.clientHeight;
+        previewPanX = (w - previewCanvasW * previewZoom / 100) / 2;
+        previewPanY = (h - previewCanvasH * previewZoom / 100) / 2;
+      } else { previewPanX = 0; previewPanY = 0; }
+      applyZoom();
+    }
+    function zoomFit() {
+      if (!_canvasWrap) _getDoms();
+      const w = _canvasWrap.clientWidth - 40, h = _canvasWrap.clientHeight - 40;
+      const z = Math.min(w / previewCanvasW, h / previewCanvasH) * 100;
+      setZoom(Math.max(25, Math.min(100, z)));
+      previewPanX = (w + 40 - previewCanvasW * previewZoom / 100) / 2;
+      previewPanY = (h + 40 - previewCanvasH * previewZoom / 100) / 2;
+      applyZoom();
+    }
+    function onZoomInput(e) {
+      const v = parseInt(e.target.value) || 50;
+      setZoom(v);
+    }
+    function onWheelZoom(e) {
+      if (!e.ctrlKey && !e.metaKey) return;
+      e.preventDefault();
+      const delta = e.deltaY > 0 ? -5 : 5;
+      setZoom(previewZoom + delta);
+    }
+    // Pan bằng chuột giữa hoặc Space+drag
+    function onCanvasMouseDown(e) {
+      if (e.button === 1 || previewSpaceDown || e.target.id === 'canvasWrap' || e.target.id === 'previewStage') {
+        if (e.target.classList && e.target.classList.contains('prev-box')) return; // let box handle
+        if (e.target.id !== 'canvasWrap' && e.target.id !== 'previewStage' && !previewSpaceDown && e.button !== 1) return;
+        e.preventDefault();
+        previewPanState = {
+          startX: e.clientX, startY: e.clientY,
+          startPanX: previewPanX, startPanY: previewPanY,
+        };
+        document.addEventListener('mousemove', onCanvasPanMove);
+        document.addEventListener('mouseup', onCanvasPanUp);
+      }
+    }
+    function onCanvasPanMove(e) {
+      if (!previewPanState) return;
+      previewPanX = previewPanState.startPanX + (e.clientX - previewPanState.startX);
+      previewPanY = previewPanState.startPanY + (e.clientY - previewPanState.startY);
+      applyZoom();
+    }
+    function onCanvasPanUp() {
+      previewPanState = null;
+      document.removeEventListener('mousemove', onCanvasPanMove);
+      document.removeEventListener('mouseup', onCanvasPanUp);
+    }
+    function onCanvasClick(e) {
+      // Click trống → bỏ select
+      if (e.target.id === 'canvasWrap' || e.target.id === 'previewStage') {
+        selectBox(null);
+      }
+    }
+
+    // ============ BOX CRUD ============
+    function selectBox(key) {
+      previewSelectedKey = key;
+      document.querySelectorAll('#previewStage .prev-box').forEach(b => {
+        b.classList.toggle('selected', b.dataset.box === key);
+      });
+      renderLayers();
+      renderInspector();
+      updateXYDisplay();
+    }
+    function deleteBox(key) {
+      if (!key) return;
+      if (!confirm('Xóa khung "' + key + '"?')) return;
+      const el = _stage.querySelector(`[data-box="${key}"]`);
+      if (el) el.remove();
+      delete previewTitles[key];
+      delete previewBoxesData[key];
+      if (previewSelectedKey === key) previewSelectedKey = null;
+      renderLayers();
+      renderInspector();
+      autoExpandCanvas();
+      updateCanvasHint();
+      showNotif('Đã xóa khung ' + key);
+    }
+    function deleteSelectedBox() {
+      if (previewSelectedKey) deleteBox(previewSelectedKey);
+    }
+    function duplicateSelectedBox() {
+      if (!previewSelectedKey) return;
+      const orig = previewBoxesData[previewSelectedKey];
+      if (!orig) return;
+      const newKey = previewSelectedKey + '-copy-' + Date.now();
+      const newTitle = (previewTitles[previewSelectedKey]?.title || previewSelectedKey) + ' (bản sao)';
+      createBoxOnCanvas({
+        key: newKey,
+        title: newTitle,
+        x: orig.x + 20,
+        y: orig.y + 20,
+        w: orig.w,
+        h: orig.h,
+        type: orig.type,
+      });
+      selectBox(newKey);
+      showNotif('Đã nhân đôi: ' + newKey);
+    }
+
+    function createBoxOnCanvas(b) {
+      // b: { key, title, x, y, w, h, type }
+      if (_stage.querySelector(`[data-box="${b.key}"]`)) return;
+      const isSide = b.type === 'side';
+      const box = document.createElement('div');
+      box.className = 'prev-box' + (isSide ? ' prev-side' : '');
+      box.setAttribute('data-box', b.key);
+      box.dataset.defaultTitle = b.title || b.key;
+      box.style.cssText = `position:absolute;left:${b.x}px;top:${b.y}px;width:${b.w}px;height:${b.h}px;`
+        + (isSide ? 'background:transparent;border:none;border-left:none;display:flex;align-items:center;' : '')
+        + 'cursor:move;overflow:hidden;box-sizing:border-box;';
+      box.innerHTML =
+        `<div class="prev-title" data-pos="top-left"></div>` +
+        `<div style="font-family:'Press Start 2P',monospace;font-size:9px;color:var(--muted);text-align:center;flex:1;pointer-events:none;">${b.title || b.key}</div>` +
+        // 8 resize handles
+        `<div class="resize-handle h-nw" data-dir="nw"></div>` +
+        `<div class="resize-handle h-n" data-dir="n"></div>` +
+        `<div class="resize-handle h-ne" data-dir="ne"></div>` +
+        `<div class="resize-handle h-e" data-dir="e"></div>` +
+        `<div class="resize-handle h-se" data-dir="se"></div>` +
+        `<div class="resize-handle h-s" data-dir="s"></div>` +
+        `<div class="resize-handle h-sw" data-dir="sw"></div>` +
+        `<div class="resize-handle h-w" data-dir="w"></div>` +
+        `<button class="prev-del" title="Xóa khung">&times;</button>`;
+      _stage.appendChild(box);
+
+      previewTitles[b.key] = { title: b.title || '', pos: 'top-left' };
+      previewBoxesData[b.key] = { x: b.x, y: b.y, w: b.w, h: b.h, type: b.type || 'content', locked: false, hidden: false };
+
+      // Bind events
+      box.addEventListener('mousedown', onBoxMouseDown);
+      box.addEventListener('click', (e) => { e.stopPropagation(); selectBox(b.key); });
+      box.querySelector('.prev-del').addEventListener('click', (e) => { e.stopPropagation(); deleteBox(b.key); });
+      box.querySelectorAll('.resize-handle').forEach(h => {
+        h.addEventListener('mousedown', (e) => { e.stopPropagation(); onResizeHandleDown(e, h.dataset.dir, b.key); });
+      });
+
+      applyTitleToBox(b.key);
+      renderLayers();
+      autoExpandCanvas();
+      updateCanvasHint();
+    }
+
+    // ============ LAYERS PANEL ============
+    function renderLayers() {
+      if (!_layersList) return;
+      const boxes = Array.from(_stage.querySelectorAll('.prev-box'));
+      // Sort by tab order (DOM order = z-order)
+      if (!boxes.length) {
+        _layersList.innerHTML = '<div style="text-align:center;color:var(--muted);padding:14px 6px;font-size:10px;">Chưa có khung nào.<br>Bấm <b>＋ Khung</b> hoặc <b>Sync</b>.</div>';
+        return;
+      }
+      _layersList.innerHTML = boxes.map(b => {
+        const key = b.dataset.box;
+        const d = previewBoxesData[key] || {};
+        const sz = `${d.w||b.offsetWidth}×${d.h||b.offsetHeight}`;
+        const sel = key === previewSelectedKey ? 'selected' : '';
+        const ico = (d.type === 'side') ? '▢' : '▭';
+        const t = previewTitles[key]?.title || key;
+        return `<div class="layer-row ${sel}" data-key="${key}">
+          <span class="layer-icon">${ico}</span>
+          <span class="layer-name">${escapeHtml(t)}</span>
+          <span class="layer-size">${sz}</span>
+        </div>`;
+      }).join('');
+      _layersList.querySelectorAll('.layer-row').forEach(row => {
+        row.addEventListener('click', () => {
+          selectBox(row.dataset.key);
+          scrollToBox(row.dataset.key);
+        });
+      });
+    }
+
+    function escapeHtml(s) {
+      return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    }
+
+    // ============ INSPECTOR PANEL ============
+    function renderInspector() {
+      if (!_inspectorBody) return;
+      const key = previewSelectedKey;
+      if (!key) {
+        _inspectorBody.innerHTML = '<div style="color:var(--muted);font-size:11px;text-align:center;padding:20px 0;">Chọn 1 khung trên canvas<br>hoặc trong <b>Layers</b> để chỉnh.</div>';
+        return;
+      }
+      const d = previewBoxesData[key] || {};
+      const t = previewTitles[key] || { title: '', pos: 'top-left' };
+      const boxEl = _stage.querySelector(`[data-box="${key}"]`);
+
+      _inspectorBody.innerHTML = `
+        <div class="inspector-section">
+          <div class="inspector-label">📦 Khung: <span style="color:var(--neon);font-family:'Press Start 2P',monospace;font-size:9px;">${key}</span></div>
+        </div>
+
+        <div class="inspector-section">
+          <span class="inspector-label">✏️ Tiêu đề & Vị trí tiêu đề</span>
+          <input class="inspector-input" id="insp-title" value="${escapeHtml(t.title || '')}" placeholder="Tiêu đề khung">
+          <div class="inspector-pos-grid" style="margin-top:8px;">
+            ${['top-left','top-center','top-right','center-left','center','center-right','bottom-left','bottom-center','bottom-right'].map(p => `
+              <button data-pos="${p}" class="${(t.pos||'top-left')===p?'active':''}" title="${p}">${pPosIcon(p)}</button>
+            `).join('')}
+          </div>
+        </div>
+
+        <div class="inspector-section">
+          <span class="inspector-label">📐 Vị trí & Kích thước (px)</span>
+          <div class="inspector-row-4">
+            <div><label>X</label><input class="inspector-input insp-pos" type="number" data-k="x" value="${d.x||0}"></div>
+            <div><label>Y</label><input class="inspector-input insp-pos" type="number" data-k="y" value="${d.y||0}"></div>
+            <div><label>W</label><input class="inspector-input insp-size" type="number" data-k="w" value="${d.w||100}"></div>
+            <div><label>H</label><input class="inspector-input insp-size" type="number" data-k="h" value="${d.h||100}"></div>
+          </div>
+          <div style="display:flex;gap:4px;margin-top:4px;">
+            <button class="form-btn" style="flex:1;padding:4px;font-size:10px;" onclick="alignSelected('left')">⬅ Trái</button>
+            <button class="form-btn" style="flex:1;padding:4px;font-size:10px;" onclick="alignSelected('center-h')">↔ Giữa</button>
+            <button class="form-btn" style="flex:1;padding:4px;font-size:10px;" onclick="alignSelected('right')">Phải ➡</button>
+          </div>
+          <div style="display:flex;gap:4px;margin-top:4px;">
+            <button class="form-btn" style="flex:1;padding:4px;font-size:10px;" onclick="alignSelected('top')">⬆ Trên</button>
+            <button class="form-btn" style="flex:1;padding:4px;font-size:10px;" onclick="alignSelected('center-v')">↕ Giữa</button>
+            <button class="form-btn" style="flex:1;padding:4px;font-size:10px;" onclick="alignSelected('bottom')">⬇ Dưới</button>
+          </div>
+        </div>
+
+        <div class="inspector-section">
+          <span class="inspector-label">🎨 Loại</span>
+          <select class="inspector-input" id="insp-type">
+            <option value="content" ${d.type==='content'?'selected':''}>Content (có border + bg)</option>
+            <option value="side" ${d.type==='side'?'selected':''}>Side (trong suốt)</option>
+          </select>
+        </div>
+
+        <div class="inspector-section">
+          <span class="inspector-label">⚙ Hành động</span>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;">
+            <button class="form-btn" onclick="duplicateSelectedBox()">⎘ Nhân đôi</button>
+            <button class="form-btn" style="border-color:var(--neon-pink);color:var(--neon-pink);" onclick="deleteSelectedBox()">🗑 Xóa</button>
+          </div>
+        </div>
+      `;
+
+      // Bind inspector events
+      const titleInput = _inspectorBody.querySelector('#insp-title');
+      if (titleInput) titleInput.addEventListener('input', e => {
+        previewTitles[key].title = e.target.value;
+        applyTitleToBox(key);
+        renderLayers();
+      });
+      _inspectorBody.querySelectorAll('.inspector-pos-grid button').forEach(btn => {
+        btn.addEventListener('click', () => {
+          previewTitles[key].pos = btn.dataset.pos;
+          applyTitleToBox(key);
+          renderInspector();
+        });
+      });
+      _inspectorBody.querySelectorAll('.insp-pos').forEach(inp => {
+        inp.addEventListener('input', e => {
+          const v = parseInt(e.target.value) || 0;
+          const k = inp.dataset.k;
+          previewBoxesData[key][k] = v;
+          const el = _stage.querySelector(`[data-box="${key}"]`);
+          if (el) el.style[k] = v + 'px';
+          autoExpandCanvas();
+          updateXYDisplay();
+        });
+      });
+      _inspectorBody.querySelectorAll('.insp-size').forEach(inp => {
+        inp.addEventListener('input', e => {
+          const v = parseInt(e.target.value) || 50;
+          const k = inp.dataset.k;
+          previewBoxesData[key][k] = Math.max(20, v);
+          const el = _stage.querySelector(`[data-box="${key}"]`);
+          if (el) el.style[k] = previewBoxesData[key][k] + 'px';
+          renderLayers();
+        });
+      });
+      const typeSel = _inspectorBody.querySelector('#insp-type');
+      if (typeSel) typeSel.addEventListener('change', e => {
+        previewBoxesData[key].type = e.target.value;
+        const el = _stage.querySelector(`[data-box="${key}"]`);
+        if (el) {
+          el.classList.toggle('prev-side', e.target.value === 'side');
+          if (e.target.value === 'side') {
+            el.style.background = 'transparent';
+            el.style.border = 'none';
+          } else {
+            el.style.background = 'var(--panel)';
+            el.style.border = '1px solid var(--border)';
+            el.style.borderLeft = '3px solid var(--neon)';
+          }
+        }
+        renderLayers();
+      });
+    }
+
+    function alignSelected(mode) {
+      if (!previewSelectedKey) return;
+      const d = previewBoxesData[previewSelectedKey];
+      if (!d) return;
+      const CW = previewCanvasW, CH = previewCanvasH;
+      switch (mode) {
+        case 'left': d.x = 0; break;
+        case 'right': d.x = CW - d.w; break;
+        case 'center-h': d.x = Math.round((CW - d.w) / 2); break;
+        case 'top': d.y = 0; break;
+        case 'bottom': d.y = CH - d.h; break;
+        case 'center-v': d.y = Math.round((CH - d.h) / 2); break;
+      }
+      const el = _stage.querySelector(`[data-box="${previewSelectedKey}"]`);
+      if (el) { el.style.left = d.x + 'px'; el.style.top = d.y + 'px'; }
+      renderInspector();
+    }
+
+    function pPosIcon(p) {
+      return { 'top-left':'↖','top-center':'↑','top-right':'↗','center-left':'←','center':'●','center-right':'→','bottom-left':'↙','bottom-center':'↓','bottom-right':'↘' }[p] || '·';
+    }
+
+    function scrollToBox(key) {
+      const el = _stage.querySelector(`[data-box="${key}"]`);
+      if (!el || !_canvasWrap) return;
+      const z = previewZoom / 100;
+      const bx = el.offsetLeft * z + previewPanX;
+      const by = el.offsetTop * z + previewPanY;
+      // Pan to bring box near center if not visible
+      if (bx < 50 || bx > _canvasWrap.clientWidth - 50 || by < 50 || by > _canvasWrap.clientHeight - 50) {
+        previewPanX = (_canvasWrap.clientWidth - el.offsetWidth * z) / 2 - el.offsetLeft * z;
+        previewPanY = (_canvasWrap.clientHeight - el.offsetHeight * z) / 2 - el.offsetTop * z;
+        applyZoom();
+      }
+    }
+
+    function applyTitleToBox(key) {
+      const boxEl = _stage.querySelector(`[data-box="${key}"]`);
+      if (!boxEl) return;
+      const t = previewTitles[key];
+      const titleEl = boxEl.querySelector('.prev-title');
+      if (!titleEl) return;
+      if (t && t.title) {
+        titleEl.textContent = t.title;
+        titleEl.setAttribute('data-pos', t.pos || 'top-left');
+      } else {
+        titleEl.textContent = '';
+      }
+    }
+
+    function updateXYDisplay() {
+      const empty = document.getElementById('xy-empty');
+      const info = document.getElementById('xy-info');
+      const key = previewSelectedKey;
+      if (!key) {
+        if (empty) empty.style.display = '';
+        if (info) info.style.display = 'none';
+        return;
+      }
+      if (empty) empty.style.display = 'none';
+      if (info) info.style.display = '';
+      const d = previewBoxesData[key] || {};
+      const el = document.getElementById('xy-key');
+      if (el) el.textContent = key;
+      const x = document.getElementById('xy-x');
+      const y = document.getElementById('xy-y');
+      const w = document.getElementById('xy-w');
+      const h = document.getElementById('xy-h');
+      if (x) x.textContent = Math.round(d.x || 0);
+      if (y) y.textContent = Math.round(d.y || 0);
+      if (w) w.textContent = Math.round(d.w || 0);
+      if (h) h.textContent = Math.round(d.h || 0);
+    }
+
+    // ============ DRAG & RESIZE ============
+    function onBoxMouseDown(e) {
+      if (!previewEditMode) return;
+      if (e.button !== 0) return;
+      // Ignore clicks on handles, del, title, inputs
+      if (e.target.closest('.prev-del') || e.target.closest('.prev-title') || e.target.closest('.resize-handle')) return;
+      e.preventDefault();
+      e.stopPropagation();
+      const box = e.currentTarget;
+      const key = box.dataset.box;
+      selectBox(key);
+      const z = previewZoom / 100;
+      previewDragState = {
+        box, key,
+        startMouseX: e.clientX, startMouseY: e.clientY,
+        startX: box.offsetLeft, startY: box.offsetTop,
+        z,
+      };
+      document.addEventListener('mousemove', onBoxDragMove);
+      document.addEventListener('mouseup', onBoxDragUp);
+    }
+    function onBoxDragMove(e) {
+      if (!previewDragState) return;
+      const st = previewDragState;
+      const dx = (e.clientX - st.startMouseX) / st.z;
+      const dy = (e.clientY - st.startMouseY) / st.z;
+      let nx = Math.round(st.startX + dx);
+      let ny = Math.round(st.startY + dy);
+      // Snap
+      const snap = computeSnap(st.box, nx, ny);
+      nx = snap.x; ny = snap.y;
+      // Auto-expand canvas if dragging near edge
+      const minMargin = 40;
+      if (nx + st.box.offsetWidth + minMargin > previewCanvasW) previewCanvasW = nx + st.box.offsetWidth + minMargin;
+      if (ny + st.box.offsetHeight + minMargin > previewCanvasH) previewCanvasH = ny + st.box.offsetHeight + minMargin;
+      if (nx < -minMargin) { previewCanvasW += -minMargin - nx; nx = -minMargin; }
+      if (ny < -minMargin) { previewCanvasH += -minMargin - ny; ny = -minMargin; }
+      updateCanvasSize();
+      st.box.style.left = nx + 'px';
+      st.box.style.top = ny + 'px';
+      previewBoxesData[st.key].x = nx;
+      previewBoxesData[st.key].y = ny;
+      showSnapGuides(snap.guides);
+      updateXYDisplay();
+    }
+    function onBoxDragUp() {
+      previewDragState = null;
+      hideSnapGuides();
+      document.removeEventListener('mousemove', onBoxDragMove);
+      document.removeEventListener('mouseup', onBoxDragUp);
+      renderLayers();
+      renderInspector();
+    }
+
+    function onResizeHandleDown(e, dir, key) {
+      if (!previewEditMode) return;
+      e.preventDefault();
+      e.stopPropagation();
+      const box = _stage.querySelector(`[data-box="${key}"]`);
+      if (!box) return;
+      selectBox(key);
+      const z = previewZoom / 100;
+      previewResizeState = {
+        box, key, dir,
+        startMouseX: e.clientX, startMouseY: e.clientY,
+        startX: box.offsetLeft, startY: box.offsetTop,
+        startW: box.offsetWidth, startH: box.offsetHeight, z,
+      };
+      document.addEventListener('mousemove', onResizeMove);
+      document.addEventListener('mouseup', onResizeUp);
+    }
+    function onResizeMove(e) {
+      if (!previewResizeState) return;
+      const st = previewResizeState;
+      const dx = (e.clientX - st.startMouseX) / st.z;
+      const dy = (e.clientY - st.startMouseY) / st.z;
+      let nx = st.startX, ny = st.startY, nw = st.startW, nh = st.startH;
+      if (st.dir.includes('e')) nw = Math.max(20, st.startW + dx);
+      if (st.dir.includes('s')) nh = Math.max(20, st.startH + dy);
+      if (st.dir.includes('w')) { nw = Math.max(20, st.startW - dx); nx = st.startX + (st.startW - nw); }
+      if (st.dir.includes('n')) { nh = Math.max(20, st.startH - dy); ny = st.startY + (st.startH - nh); }
+      // Auto-expand canvas
+      if (nx + nw + 40 > previewCanvasW) previewCanvasW = nx + nw + 40;
+      if (ny + nh + 40 > previewCanvasH) previewCanvasH = ny + nh + 40;
+      updateCanvasSize();
+      st.box.style.left = nx + 'px';
+      st.box.style.top = ny + 'px';
+      st.box.style.width = nw + 'px';
+      st.box.style.height = nh + 'px';
+      previewBoxesData[st.key].x = nx;
+      previewBoxesData[st.key].y = ny;
+      previewBoxesData[st.key].w = nw;
+      previewBoxesData[st.key].h = nh;
+      updateXYDisplay();
+    }
+    function onResizeUp() {
+      previewResizeState = null;
+      document.removeEventListener('mousemove', onResizeMove);
+      document.removeEventListener('mouseup', onResizeUp);
+      renderLayers();
+      renderInspector();
+    }
+
+    function computeSnap(box, px, py) {
+      if (!document.getElementById('snapEnabled')?.checked) return { x: px, y: py, guides: [] };
+      const step = parseInt(document.getElementById('snapStep')?.value) || 8;
+      const thr = 8;
+      const boxW = box.offsetWidth, boxH = box.offsetHeight;
+      const others = Array.from(_stage.querySelectorAll('.prev-box')).filter(b => b !== box);
+      const myEdges = {
+        l: px, r: px + boxW, c: px + boxW/2,
+        t: py, b: py + boxH, m: py + boxH/2,
+      };
+      const myX = Math.round(px/step)*step, myY = Math.round(py/step)*step;
+      let bestX = px, bestY = py, dx = 999, dy = 999;
+      const candidatesX = [0, previewCanvasW, previewCanvasW/2];
+      const candidatesY = [0, previewCanvasH, previewCanvasH/2];
+      others.forEach(o => {
+        candidatesX.push(o.offsetLeft, o.offsetLeft + o.offsetWidth, o.offsetLeft + o.offsetWidth/2);
+        candidatesY.push(o.offsetTop, o.offsetTop + o.offsetHeight, o.offsetTop + o.offsetHeight/2);
+      });
+      // X snap
+      [myEdges.l, myEdges.r, myEdges.c].forEach((mv, i) => {
+        candidatesX.forEach(cv => {
+          const d = Math.abs(mv - cv);
+          if (d < thr && d < dx) { dx = d; bestX = i===0?cv : i===1?cv-boxW : cv-boxW/2; }
+        });
+      });
+      // Grid snap if no neighbor snap
+      if (dx === 999) {
+        const gridX = myX; if (Math.abs(gridX - px) < thr) { bestX = gridX; dx = Math.abs(gridX - px); }
+      }
+      // Y snap
+      [myEdges.t, myEdges.b, myEdges.m].forEach((mv, i) => {
+        candidatesY.forEach(cv => {
+          const d = Math.abs(mv - cv);
+          if (d < thr && d < dy) { dy = d; bestY = i===0?cv : i===1?cv-boxH : cv-boxH/2; }
+        });
+      });
+      if (dy === 999) {
+        const gridY = myY; if (Math.abs(gridY - py) < thr) { bestY = gridY; dy = Math.abs(gridY - py); }
+      }
+      const guides = [];
+      if (dx < thr) {
+        // Show vertical guide at the aligned edge
+        if (Math.abs(myEdges.l - bestX) < thr) guides.push({ type:'v', pos: bestX });
+        else if (Math.abs(myEdges.r - bestX) < thr) guides.push({ type:'v', pos: bestX + boxW });
+        else guides.push({ type:'v', pos: bestX + boxW/2 });
+      }
+      if (dy < thr) {
+        if (Math.abs(myEdges.t - bestY) < thr) guides.push({ type:'h', pos: bestY });
+        else if (Math.abs(myEdges.b - bestY) < thr) guides.push({ type:'h', pos: bestY + boxH });
+        else guides.push({ type:'h', pos: bestY + boxH/2 });
+      }
+      return { x: Math.round(bestX), y: Math.round(bestY), guides };
+    }
+    function showSnapGuides(guides) {
+      hideSnapGuides();
+      if (!document.getElementById('showGuides')?.checked) return;
+      guides.forEach(g => {
+        const el = document.createElement('div');
+        el.className = 'snap-guide ' + (g.type === 'h' ? 'h-line' : 'v-line');
+        if (g.type === 'h') { el.style.top = g.pos + 'px'; }
+        else { el.style.left = g.pos + 'px'; }
+        _stage.appendChild(el);
+      });
+    }
+    function hideSnapGuides() {
+      _stage.querySelectorAll('.snap-guide').forEach(g => g.remove());
+    }
+
+    // ============ CANVAS AUTO-EXPAND ============
+    function autoExpandCanvas() {
+      let maxR = 0, maxB = 0, minL = 9999, minT = 9999;
+      Array.from(_stage.querySelectorAll('.prev-box')).forEach(b => {
+        const r = b.offsetLeft + b.offsetWidth;
+        const bot = b.offsetTop + b.offsetHeight;
+        if (r > maxR) maxR = r;
+        if (bot > maxB) maxB = bot;
+        if (b.offsetLeft < minL) minL = b.offsetLeft;
+        if (b.offsetTop < minT) minT = b.offsetTop;
+      });
+      const margin = 40;
+      if (maxR + margin > previewCanvasW) previewCanvasW = maxR + margin;
+      if (maxB + margin > previewCanvasH) previewCanvasH = maxB + margin;
+      updateCanvasSize();
+    }
+    function updateCanvasSize() {
+      _stage.style.width = previewCanvasW + 'px';
+      _stage.style.height = previewCanvasH + 'px';
+    }
+    function updateCanvasHint() {
+      const hint = document.getElementById('canvasHint');
+      if (!hint) return;
+      const count = _stage.querySelectorAll('.prev-box').length;
+      hint.style.display = count === 0 ? 'block' : 'none';
+    }
+
+    // ============ EDIT MODE ============
     function togglePreviewEdit() {
       previewEditMode = !previewEditMode;
       const label = document.getElementById('editModeLabel');
       label.textContent = previewEditMode ? 'Tắt chỉnh sửa' : 'Bật chỉnh sửa';
-      document.querySelectorAll('#previewStage .prev-box, #previewStage .prev-masthead').forEach(b => {
-        const handle = b.querySelector('.resize-handle');
-        if (handle) handle.style.display = previewEditMode ? 'block' : 'none';
-        if (previewEditMode) {
-          b.style.outline = '2px dashed rgba(var(--neon-cyan-rgb), 0.5)';
-        } else {
-          b.style.outline = 'none';
-        }
-      });
-      if (previewEditMode) {
-        initPreviewDragAndResize();
+      document.body.classList.toggle('canvas-pan-mode', false);
+    }
+
+    // ============ SYNC FROM FRONT REPO (Playwright) ============
+    async function syncFromFrontRepo(btn) {
+      if (btn) { btn.disabled = true; btn.textContent = '🔄 Đang sync...'; }
+      try {
+        const r = await fetch('/api/scan-front-repo?vw=1280&vh=900');
+        const data = await r.json();
+        if (!data.ok) { alert('Sync lỗi: ' + (data.error || 'unknown')); return; }
+        // Xoá box cũ không có flag isReal? → giữ lại user-defined
+        const newBoxes = data.boxes;
+        if (!newBoxes.length) { alert('Không tìm thấy khung nào trên Front repo.'); return; }
+        if (!confirm(`Tìm thấy ${newBoxes.length} khung trên Front Repo. Bấm OK để thay thế các khung hiện tại.`)) return;
+        // Clear canvas
+        _stage.querySelectorAll('.prev-box').forEach(b => b.remove());
+        previewTitles = {};
+        previewBoxesData = {};
+        previewSelectedKey = null;
+        // Update canvas size từ viewport scan
+        previewCanvasW = data.viewport.w;
+        previewCanvasH = data.viewport.h;
+        updateCanvasSize();
+        // Add boxes
+        newBoxes.forEach(b => createBoxOnCanvas({
+          key: b.key,
+          title: b.title || b.key,
+          x: b.x, y: b.y, w: b.w, h: b.h,
+          type: b.type,
+        }));
+        renderLayers();
+        renderInspector();
+        zoomFit();
+        showNotif(`Đã sync ${newBoxes.length} khung từ Front Repo`);
+      } catch (e) {
+        alert('Sync lỗi: ' + e.message);
+      } finally {
+        if (btn) { btn.disabled = false; btn.textContent = '🔄 Sync với Front Repo'; }
       }
     }
 
-    function initPreviewDragAndResize() {
-      const stage = document.getElementById('previewStage');
-      const boxes = () => Array.from(document.querySelectorAll('#previewStage .prev-box, #previewStage .prev-masthead'));
-      // Create guide lines for snap visual feedback
-      const guideH = document.createElement('div');
-      const guideV = document.createElement('div');
-      [guideH, guideV].forEach(g => {
-        g.style.cssText = 'position:absolute;pointer-events:none;display:none;z-index:9999;background:rgba(var(--neon-rgb),0.7);box-shadow:0 0 4px rgba(var(--neon-rgb),0.7);';
-        stage.appendChild(g);
-      });
-      guideH.style.height = '1px';
-      guideH.style.width = '100%';
-      guideV.style.width = '1px';
-      guideV.style.height = '100%';
-
-      const setUI = (box) => {
-        if (!box) return;
-        const xEl = document.getElementById('xy-x');
-        const yEl = document.getElementById('xy-y');
-        const wEl = document.getElementById('xy-w');
-        const hEl = document.getElementById('xy-h');
-        if (xEl) xEl.textContent = Math.round(box.offsetLeft);
-        if (yEl) yEl.textContent = Math.round(box.offsetTop);
-        if (wEl) wEl.textContent = Math.round(box.offsetWidth);
-        if (hEl) hEl.textContent = Math.round(box.offsetHeight);
-      };
-      const snapEnabled = () => document.getElementById('snapEnabled')?.checked;
-      const snapStep = () => parseInt(document.getElementById('snapStep')?.value) || 8;
-      // Snap-to-grid + snap-to-other-boxes
-      const snapValue = (val, threshold = 6) => {
-        const step = snapStep();
-        // Grid snap
-        const grid = Math.round(val / step) * step;
-        if (Math.abs(grid - val) <= threshold) return { v: grid, snap: 'grid' };
-        return { v: val, snap: null };
-      };
-      const snapToNeighbors = (box, proposedX, proposedY) => {
-        if (!snapEnabled()) return { x: proposedX, y: proposedY, xSnap: null, ySnap: null };
-        const stageRect = stage.getBoundingClientRect();
-        const me = { left: proposedX, top: proposedY, right: proposedX + box.offsetWidth, bottom: proposedY + box.offsetHeight, cx: proposedX + box.offsetWidth / 2, cy: proposedY + box.offsetHeight / 2 };
-        let bestX = null, bestY = null, dx = 999, dy = 999;
-        const others = boxes().filter(b => b !== box);
-        for (const other of others) {
-          const rect = other.getBoundingClientRect();
-          const o = { left: rect.left - stageRect.left, top: rect.top - stageRect.top, right: rect.right - stageRect.left, bottom: rect.bottom - stageRect.top, cx: (rect.left + rect.right) / 2 - stageRect.left, cy: (rect.top + rect.bottom) / 2 - stageRect.top };
-          // X-axis snaps (left, right, center)
-          for (const [mv, ov] of [[me.left, o.left], [me.right, o.right], [me.cx, o.cx]]) {
-            const d = Math.abs(mv - ov);
-            if (d < dx && d < 8) { dx = d; bestX = ov; }
-          }
-        }
-        for (const other of others) {
-          const rect = other.getBoundingClientRect();
-          const o = { top: rect.top - stageRect.top, bottom: rect.bottom - stageRect.top, cy: (rect.top + rect.bottom) / 2 - stageRect.top };
-          for (const [mv, ov] of [[me.top, o.top], [me.bottom, o.bottom], [me.cy, o.cy]]) {
-            const d = Math.abs(mv - ov);
-            if (d < dy && d < 8) { dy = d; bestY = ov; }
-          }
-        }
-        let newX = proposedX, newY = proposedY;
-        if (bestX !== null) {
-          // Determine which edge of mine aligns with bestX
-          if (Math.abs(me.left - bestX) < 8) newX = bestX;
-          else if (Math.abs(me.right - bestX) < 8) newX = bestX - box.offsetWidth;
-          else if (Math.abs(me.cx - bestX) < 8) newX = bestX - box.offsetWidth / 2;
-        }
-        if (bestY !== null) {
-          if (Math.abs(me.top - bestY) < 8) newY = bestY;
-          else if (Math.abs(me.bottom - bestY) < 8) newY = bestY - box.offsetHeight;
-          else if (Math.abs(me.cy - bestY) < 8) newY = bestY - box.offsetHeight / 2;
-        }
-        // Also apply grid snap
-        const sx = snapValue(newX); newX = sx.v;
-        const sy = snapValue(newY); newY = sy.v;
-        // Show guide lines
-        if (bestX !== null) {
-          guideV.style.left = bestX + 'px';
-          guideV.style.display = 'block';
-        } else guideV.style.display = 'none';
-        if (bestY !== null) {
-          guideH.style.top = bestY + 'px';
-          guideH.style.display = 'block';
-        } else guideH.style.display = 'none';
-        return { x: newX, y: newY };
-      };
-
-      boxes().forEach(box => {
-        if (box.dataset.dragInit) return;
-        box.dataset.dragInit = '1';
-        box.addEventListener('mousedown', onBoxMouseDown);
-        box.addEventListener('click', () => setUI(box));
-      });
-
-      function onBoxMouseDown(e) {
-        if (!previewEditMode) return;
-        const box = e.currentTarget;
-        if (e.target.classList.contains('resize-handle')) {
-          e.preventDefault();
-          e.stopPropagation();
-          previewResizeState = {
-            box: box,
-            startX: e.clientX,
-            startY: e.clientY,
-            startW: box.offsetWidth,
-            startH: box.offsetHeight,
-          };
-          document.addEventListener('mousemove', onResizeMove);
-          document.addEventListener('mouseup', onResizeUp);
-        } else {
-          e.preventDefault();
-          const rect = box.getBoundingClientRect();
-          const stageRect = stage.getBoundingClientRect();
-          previewDragState = {
-            box: box,
-            offsetX: e.clientX - rect.left,
-            offsetY: e.clientY - rect.top,
-            stageLeft: stageRect.left,
-            stageTop: stageRect.top,
-            originalLeft: box.offsetLeft,
-            originalTop: box.offsetTop,
-          };
-          document.addEventListener('mousemove', onDragMove);
-          document.addEventListener('mouseup', onDragUp);
-          setUI(box);
-        }
-      }
-
-      function onDragMove(e) {
-        if (!previewDragState) return;
-        const st = previewDragState;
-        const rawX = e.clientX - st.stageLeft - st.offsetX;
-        const rawY = e.clientY - st.stageTop - st.offsetY;
-        const x = Math.max(0, rawX);
-        const y = Math.max(0, rawY);
-        const snapped = snapToNeighbors(st.box, x, y);
-        st.box.style.left = snapped.x + 'px';
-        st.box.style.top = snapped.y + 'px';
-        setUI(st.box);
-      }
-      function onDragUp() {
-        previewDragState = null;
-        guideH.style.display = 'none';
-        guideV.style.display = 'none';
-        document.removeEventListener('mousemove', onDragMove);
-        document.removeEventListener('mouseup', onDragUp);
-      }
-
-      function onResizeMove(e) {
-        if (!previewResizeState) return;
-        const st = previewResizeState;
-        const dx = e.clientX - st.startX;
-        const dy = e.clientY - st.startY;
-        const w = Math.max(80, st.startW + dx);
-        const h = Math.max(40, st.startH + dy);
-        const sw = snapEnabled() ? Math.round(w / snapStep()) * snapStep() : w;
-        const sh = snapEnabled() ? Math.round(h / snapStep()) * snapStep() : h;
-        st.box.style.width = Math.max(80, sw) + 'px';
-        st.box.style.height = Math.max(40, sh) + 'px';
-        setUI(st.box);
-      }
-      function onResizeUp() {
-        previewResizeState = null;
-        document.removeEventListener('mousemove', onResizeMove);
-        document.removeEventListener('mouseup', onResizeUp);
-      }
+    // ============ ADD BOX ============
+    function addBoxFromCanvas() { openAddBoxModal(); }
+    function openAddBoxModal() { document.getElementById('addBoxModal').style.display = 'flex'; }
+    function closeAddBoxModal() { document.getElementById('addBoxModal').style.display = 'none'; }
+    function confirmAddBox() {
+      const key = (document.getElementById('newBoxKey').value || '').trim();
+      const title = (document.getElementById('newBoxTitle').value || '').trim();
+      const x = parseInt(document.getElementById('newBoxX').value) || 20;
+      const y = parseInt(document.getElementById('newBoxY').value) || 20;
+      const w = parseInt(document.getElementById('newBoxW').value) || 300;
+      const h = parseInt(document.getElementById('newBoxH').value) || 200;
+      const type = document.getElementById('newBoxType').value;
+      if (!key) { alert('Vui lòng nhập tên khung.'); return; }
+      if (!/^[a-z0-9-]+$/i.test(key)) { alert('Key chỉ chứa chữ cái, số và gạch ngang.'); return; }
+      if (_stage.querySelector(`[data-box="${key}"]`)) { alert('Key đã tồn tại.'); return; }
+      createBoxOnCanvas({ key, title, x, y, w, h, type });
+      selectBox(key);
+      closeAddBoxModal();
+      showNotif('Đã tạo khung "' + key + '"');
+      document.getElementById('newBoxKey').value = '';
+      document.getElementById('newBoxTitle').value = '';
     }
 
+    // ============ SAVE / LOAD / RESET ============
     function savePreviewLayout() {
-      const layout = {};
-      document.querySelectorAll('#previewStage .prev-box, #previewStage .prev-masthead').forEach(b => {
+      const boxesData = {};
+      Array.from(_stage.querySelectorAll('.prev-box')).forEach(b => {
         const key = b.dataset.box;
-        layout[key] = {
-          left: b.style.left,
-          top: b.style.top,
-          width: b.style.width,
-          height: b.style.height,
+        boxesData[key] = {
+          x: b.offsetLeft, y: b.offsetTop, w: b.offsetWidth, h: b.offsetHeight,
         };
       });
-      localStorage.setItem('repo_previewLayout', JSON.stringify(layout));
-      showNotif('Đã lưu layout preview!');
+      // Lưu canvas size
+      const data = {
+        canvas: { w: previewCanvasW, h: previewCanvasH, zoom: previewZoom, panX: previewPanX, panY: previewPanY },
+        boxes: boxesData,
+        titles: previewTitles,
+        meta: previewBoxesData,
+      };
+      localStorage.setItem('repo_previewLayout', JSON.stringify(data));
+      const status = document.getElementById('saveStatus');
+      if (status) { status.textContent = '✅ Đã lưu lúc ' + new Date().toLocaleTimeString(); setTimeout(() => status.textContent = '', 3000); }
+      showNotif('Đã lưu layout!');
     }
-
     function resetPreviewLayout() {
-      if (!confirm('Reset layout về mặc định?')) return;
+      if (!confirm('Reset toàn bộ layout + khung về mặc định?')) return;
       localStorage.removeItem('repo_previewLayout');
       location.reload();
     }
-
     function loadPreviewLayout() {
-      const raw = localStorage.getItem('repo_previewLayout');
-      if (!raw) return;
-      try {
-        const layout = JSON.parse(raw);
-        Object.keys(layout).forEach(key => {
-          const el = document.querySelector('#previewStage [data-box="' + key + '"]');
-          if (el && layout[key]) {
-            if (layout[key].left) el.style.left = layout[key].left;
-            if (layout[key].top) el.style.top = layout[key].top;
-            if (layout[key].width && el.style.width) el.style.width = layout[key].width;
-            if (layout[key].height && el.style.height) el.style.height = layout[key].height;
+      requestAnimationFrame(() => {
+        _getDoms();
+        if (!_stage) return;
+        const raw = localStorage.getItem('repo_previewLayout');
+        if (raw) {
+          try {
+            const data = JSON.parse(raw);
+            const canvas = data.canvas || {};
+            previewCanvasW = canvas.w || 1280;
+            previewCanvasH = canvas.h || 900;
+            previewZoom = canvas.zoom || 50;
+            previewPanX = canvas.panX || 0;
+            previewPanY = canvas.panY || 0;
+            updateCanvasSize();
+            const boxes = data.boxes || {};
+            const titles = data.titles || {};
+            const meta = data.meta || {};
+            Object.keys(boxes).forEach(key => {
+              const b = boxes[key];
+              const m = meta[key] || {};
+              createBoxOnCanvas({
+                key,
+                title: titles[key]?.title || key,
+                x: b.x, y: b.y, w: b.w, h: b.h,
+                type: m.type || 'content',
+              });
+              if (titles[key]) {
+                previewTitles[key] = titles[key];
+                applyTitleToBox(key);
+              }
+            });
+          } catch(e) { console.error(e); }
+        }
+        applyZoom();
+        renderLayers();
+        renderInspector();
+        updateCanvasHint();
+        updateXYDisplay();
+
+        // Bind canvas events
+        if (_canvasWrap) {
+          _canvasWrap.addEventListener('wheel', onWheelZoom, { passive: false });
+          _canvasWrap.addEventListener('mousedown', onCanvasMouseDown);
+          _canvasWrap.addEventListener('click', onCanvasClick);
+        }
+        // Keyboard
+        document.addEventListener('keydown', (e) => {
+          if (e.key === ' ' && !previewSpaceDown && document.activeElement.tagName !== 'INPUT') {
+            previewSpaceDown = true;
+            document.body.classList.add('canvas-pan-mode');
+          }
+          // Delete selected
+          if ((e.key === 'Delete' || e.key === 'Backspace') && previewSelectedKey && document.activeElement.tagName !== 'INPUT') {
+            e.preventDefault();
+            deleteSelectedBox();
+          }
+          // Ctrl+S
+          if ((e.ctrlKey || e.metaKey) && e.key === 's') { e.preventDefault(); savePreviewLayout(); }
+          // Esc = bỏ chọn
+          if (e.key === 'Escape') selectBox(null);
+        });
+        document.addEventListener('keyup', (e) => {
+          if (e.key === ' ') {
+            previewSpaceDown = false;
+            document.body.classList.remove('canvas-pan-mode');
           }
         });
-      } catch(e) { console.error(e); }
+        // Zoom input
+        const zIn = document.getElementById('zoomLevel');
+        if (zIn) zIn.addEventListener('change', onZoomInput);
+      });
     }
-    loadPreviewLayout();
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', loadPreviewLayout);
+    } else {
+      loadPreviewLayout();
+    }
   </script>
 </body>
 </html>
