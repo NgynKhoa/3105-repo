@@ -2575,7 +2575,7 @@
   <div id="toast"></div>
 
   <!-- App JS -->
-  <script src="/admin/static/app.js?v=22"></script>
+  <script src="/admin/static/app.js?v=23"></script>
   <!-- Bootstrap data -->
   <script>{{ bootstrap_js | safe }}</script>
 
@@ -3126,12 +3126,15 @@
   if (toggleDark) {
     toggleDark.addEventListener('change', function(e) {
       var isDark = e.target.checked;
-      // Đọc giá trị slider hiện tại trước khi apply mode mới
-      var slider = document.getElementById('rangeTransparency');
-      var transVal = slider ? parseInt(slider.value, 10) : 92;
-      // Ghi darkMode vào localStorage TRƯỚC để _applyTransparency đọc đúng mode
+      // Ghi darkMode vào localStorage TRƯỚC
       localStorage.setItem('darkMode', isDark ? 'true' : 'false');
-      // Cập nhật slider value label để _applyTransparency hiển thị đúng
+      // Lấy transparency đã lưu cho MODE MỚI (không phải slider hiện tại)
+      var newMode = isDark ? 'dark' : 'light';
+      var transVal = window._getTransparencyForMode ? window._getTransparencyForMode(newMode) : 92;
+      // Cập nhật slider UI cho khớp với giá trị của mode mới
+      var slider = document.getElementById('rangeTransparency');
+      if (slider) slider.value = transVal;
+      // Cập nhật label % ngay
       var transValueLabel = document.getElementById('transValue');
       if (transValueLabel) transValueLabel.textContent = transVal;
       applyDarkMode(isDark, transVal);
@@ -3221,12 +3224,23 @@
     rangeTrans.addEventListener('input', function(e) {
       var val = parseInt(e.target.value, 10);
       _applyTransparency(val);
+      // Lưu theo mode hiện tại: transparency_dark | transparency_light
+      var modeKey = (localStorage.getItem('darkMode') === 'false') ? 'light' : 'dark';
+      localStorage.setItem('transparency_' + modeKey, String(val));
+      // Backward compat: cũng ghi key chung (lần cuối user chỉnh)
       localStorage.setItem('transparency', String(val));
       localStorage.setItem('repo_transparency', String(val));
     });
   }
   // Expose for applyDarkMode() to pick up alpha + current slider value
   window._applyTransparency = _applyTransparency;
+
+  // Đọc transparency đã lưu cho một mode cụ thể, fallback key cũ 'transparency'
+  window._getTransparencyForMode = function(mode) {
+    var key = 'transparency_' + mode;
+    var v = parseInt(localStorage.getItem(key) || localStorage.getItem('transparency') || '92', 10);
+    return isNaN(v) ? 92 : v;
+  };
 
   // Load saved settings
   var savedTheme = localStorage.getItem('theme');
@@ -3381,18 +3395,20 @@
     toggleDark.checked = initialDark;
     applyDarkMode(initialDark, parseInt(savedTrans || '92', 10));
   }
-  var savedTrans = localStorage.getItem('transparency');
-  if (savedTrans) {
-    var v = parseInt(savedTrans, 10);
-    document.documentElement.style.setProperty('--panel-alpha', v / 100);
-    document.documentElement.style.setProperty('--panel-alpha-alt', Math.min(v / 100 + 0.04, 1));
-    if (rangeTrans) rangeTrans.value = savedTrans;
+  var savedTrans = (window._getTransparencyForMode && (function() {
+    var savedDark = localStorage.getItem('darkMode');
+    var initialDark = (savedDark !== false && savedDark !== 'false');
+    return window._getTransparencyForMode(initialDark ? 'dark' : 'light');
+  })()) || parseInt(localStorage.getItem('transparency') || '92', 10);
+  if (rangeTrans) {
+    rangeTrans.value = savedTrans;
+    document.documentElement.style.setProperty('--panel-alpha', savedTrans / 100);
+    document.documentElement.style.setProperty('--panel-alpha-alt', Math.min(savedTrans / 100 + 0.04, 1));
   }
   // Re-apply dark mode to set body background + derive panel colors with current transparency
   var savedDark = localStorage.getItem('darkMode');
   var initialDark = (savedDark !== false && savedDark !== 'false');
-  var slider = document.getElementById('rangeTransparency');
-  applyDarkMode(initialDark, slider ? parseInt(slider.value, 10) : parseInt(savedTrans || '92', 10));
+  applyDarkMode(initialDark, savedTrans);
 
   // ====================== Background Image Settings ======================
   var _bgState = { files: [], activeFilename: localStorage.getItem('bgImage') || '' };
