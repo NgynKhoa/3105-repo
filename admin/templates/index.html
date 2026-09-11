@@ -2571,7 +2571,7 @@
   <div id="toast"></div>
 
   <!-- App JS -->
-  <script src="/admin/static/app.js?v=20"></script>
+  <script src="/admin/static/app.js?v=21"></script>
   <!-- Bootstrap data -->
   <script>{{ bootstrap_js | safe }}</script>
 
@@ -3133,7 +3133,9 @@
     var alpha = parseFloat(alphaStr);
     if (isNaN(alpha)) alpha = 0.92;
     if (isDark) {
-      document.documentElement.style.setProperty('--bg-color', '#06060e');
+      var bg = '#06060e';
+      document.documentElement.style.setProperty('--bg-color', bg);
+      document.body.style.background = bg;
       document.documentElement.style.setProperty('--panel', 'rgba(10, 14, 26, ' + alpha + ')');
       document.documentElement.style.setProperty('--panel-alt', 'rgba(6, 9, 18, ' + Math.min(alpha + 0.04, 1) + ')');
       document.documentElement.style.setProperty('--sidebar-panel', 'rgba(10, 14, 26, ' + alpha + ')');
@@ -3149,7 +3151,9 @@
       document.documentElement.style.setProperty('--input-shadow', 'inset 0 0 0 1px rgba(0,0,0,0.3)');
       document.documentElement.style.setProperty('--slider-bg', 'rgba(255,255,255,0.1)');
     } else {
-      document.documentElement.style.setProperty('--bg-color', '#ffffff');
+      var bg = '#f0f0f5';
+      document.documentElement.style.setProperty('--bg-color', bg);
+      document.body.style.background = bg;
       document.documentElement.style.setProperty('--panel', 'rgba(245, 245, 245, ' + alpha + ')');
       document.documentElement.style.setProperty('--panel-alt', 'rgba(255, 255, 255, ' + Math.min(alpha + 0.04, 1) + ')');
       document.documentElement.style.setProperty('--sidebar-panel', 'rgba(245, 245, 245, ' + alpha + ')');
@@ -3343,34 +3347,12 @@
     var va = Math.min(v + 0.04, 1);
     document.documentElement.style.setProperty('--panel-alpha', v);
     document.documentElement.style.setProperty('--panel-alpha-alt', va);
-    var isLightMode = localStorage.getItem('darkMode') === 'false';
-    if (isLightMode) {
-      document.documentElement.style.setProperty('--panel', 'rgba(245, 245, 250, ' + v + ')');
-      document.documentElement.style.setProperty('--panel-alt', 'rgba(255, 255, 255, ' + va + ')');
-      document.documentElement.style.setProperty('--sidebar-panel', 'rgba(245, 245, 250, ' + v + ')');
-      document.documentElement.style.setProperty('--sidebar-panel-alt', 'rgba(255, 255, 255, ' + va + ')');
-      document.documentElement.style.setProperty('--input-bg', 'rgba(255, 255, 255, 0.6)');
-      document.documentElement.style.setProperty('--modal-bg', 'rgba(255, 255, 255, 0.96)');
-      document.documentElement.style.setProperty('--input-color', '#000000');
-      document.documentElement.style.setProperty('--option-bg', '#ffffff');
-      document.documentElement.style.setProperty('--option-color', '#1a1a1a');
-      document.documentElement.style.setProperty('--input-shadow', 'inset 0 0 0 1px rgba(0,0,0,0.1)');
-      document.documentElement.style.setProperty('--slider-bg', 'rgba(0,0,0,0.1)');
-    } else {
-      document.documentElement.style.setProperty('--panel', 'rgba(10, 14, 26, ' + v + ')');
-      document.documentElement.style.setProperty('--panel-alt', 'rgba(6, 9, 18, ' + va + ')');
-      document.documentElement.style.setProperty('--sidebar-panel', 'rgba(10, 14, 26, ' + v + ')');
-      document.documentElement.style.setProperty('--sidebar-panel-alt', 'rgba(6, 9, 18, ' + va + ')');
-      document.documentElement.style.setProperty('--input-bg', 'rgba(0, 0, 0, 0.3)');
-      document.documentElement.style.setProperty('--modal-bg', 'rgba(8, 12, 22, 0.96)');
-      document.documentElement.style.setProperty('--input-color', '#e8fff0');
-      document.documentElement.style.setProperty('--option-bg', '#0a0e1a');
-      document.documentElement.style.setProperty('--option-color', '#e8fff0');
-      document.documentElement.style.setProperty('--input-shadow', 'inset 0 0 0 1px rgba(0,0,0,0.3)');
-      document.documentElement.style.setProperty('--slider-bg', 'rgba(255,255,255,0.1)');
-    }
     if (rangeTrans) rangeTrans.value = savedTrans;
   }
+  // Re-apply dark mode to pick up transparency values + set body background
+  var savedDark = localStorage.getItem('darkMode');
+  var initialDark = (savedDark !== false && savedDark !== 'false');
+  applyDarkMode(initialDark);
 
   // ====================== Background Image Settings ======================
   var _bgState = { files: [], activeFilename: localStorage.getItem('bgImage') || '' };
@@ -3460,13 +3442,18 @@
 
   window._applyBackground = function(url) {
     var body = document.body;
+    // Luôn set solid background trước (blend với transparent panels)
+    var isDark = (localStorage.getItem('darkMode') !== 'false');
+    var solidBg = isDark ? '#06060e' : '#f0f0f5';
     if (!url) {
+      body.style.background = solidBg;
       body.style.backgroundImage = '';
       body.style.backgroundSize = '';
       body.style.backgroundPosition = '';
       body.style.backgroundRepeat = '';
       body.style.backgroundAttachment = '';
     } else {
+      body.style.background = solidBg;
       body.style.backgroundImage = 'url(' + url + ')';
       body.style.backgroundSize = 'cover';
       body.style.backgroundPosition = 'center center';
