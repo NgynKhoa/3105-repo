@@ -2305,8 +2305,12 @@
         </div>
       </div>
       <div class="settings-group">
-        <span class="settings-label">Độ Trong Suốt</span>
+        <span class="settings-label">Độ Trong Suốt <span style="float:right;font-weight:400;color:var(--muted);font-size:10px;"><span id="transValue">92</span>%</span></span>
         <input type="range" id="rangeTransparency" class="settings-range" min="0" max="100" value="92">
+        <div style="display:flex;justify-content:space-between;font-size:9px;color:var(--muted);margin-top:2px;padding:0 2px;">
+          <span>🪟 Trong suốt</span>
+          <span>🏷️ Mờ đặc</span>
+        </div>
       </div>
       <div class="settings-group">
         <span class="settings-label">Điều hướng nhanh</span>
@@ -2571,7 +2575,7 @@
   <div id="toast"></div>
 
   <!-- App JS -->
-  <script src="/admin/static/app.js?v=21"></script>
+  <script src="/admin/static/app.js?v=22"></script>
   <!-- Bootstrap data -->
   <script>{{ bootstrap_js | safe }}</script>
 
@@ -3136,10 +3140,6 @@
       var bg = '#06060e';
       document.documentElement.style.setProperty('--bg-color', bg);
       document.body.style.background = bg;
-      document.documentElement.style.setProperty('--panel', 'rgba(10, 14, 26, ' + alpha + ')');
-      document.documentElement.style.setProperty('--panel-alt', 'rgba(6, 9, 18, ' + Math.min(alpha + 0.04, 1) + ')');
-      document.documentElement.style.setProperty('--sidebar-panel', 'rgba(10, 14, 26, ' + alpha + ')');
-      document.documentElement.style.setProperty('--sidebar-panel-alt', 'rgba(6, 9, 18, ' + Math.min(alpha + 0.04, 1) + ')');
       document.documentElement.style.setProperty('--text', '#e8fff0');
       document.documentElement.style.setProperty('--text-bright', '#ffffff');
       document.documentElement.style.setProperty('--muted', '#9abfa6');
@@ -3154,10 +3154,6 @@
       var bg = '#f0f0f5';
       document.documentElement.style.setProperty('--bg-color', bg);
       document.body.style.background = bg;
-      document.documentElement.style.setProperty('--panel', 'rgba(245, 245, 245, ' + alpha + ')');
-      document.documentElement.style.setProperty('--panel-alt', 'rgba(255, 255, 255, ' + Math.min(alpha + 0.04, 1) + ')');
-      document.documentElement.style.setProperty('--sidebar-panel', 'rgba(245, 245, 245, ' + alpha + ')');
-      document.documentElement.style.setProperty('--sidebar-panel-alt', 'rgba(255, 255, 255, ' + Math.min(alpha + 0.04, 1) + ')');
       document.documentElement.style.setProperty('--text', '#1a1a1a');
       document.documentElement.style.setProperty('--text-bright', '#000000');
       document.documentElement.style.setProperty('--muted', '#555555');
@@ -3169,24 +3165,60 @@
       document.documentElement.style.setProperty('--input-shadow', 'inset 0 0 0 1px rgba(0,0,0,0.1)');
       document.documentElement.style.setProperty('--slider-bg', 'rgba(0,0,0,0.1)');
     }
+    // Re-apply transparency so panel colors re-derive for the new mode
+    if (window._applyTransparency) {
+      var slider = document.getElementById('rangeTransparency');
+      window._applyTransparency(slider ? parseInt(slider.value, 10) : Math.round(alpha * 100));
+    }
   }
 
   // Transparency
+  // Slider: 0% = trong suốt hoàn toàn (nhìn xuyên nền), 100% = mờ đặc
+  // Áp dụng nhất quán cho cả light và dark mode.
   var rangeTrans = document.getElementById('rangeTransparency');
+  var transValueLabel = document.getElementById('transValue');
+  function _panelColorForMode(v, baseDark, baseLight) {
+    var va = Math.min(v + 0.04, 1);
+    var isLight = (localStorage.getItem('darkMode') === 'false');
+    if (isLight) {
+      // Light mode: nền xám nhẹ để trong suốt thấy panel sáng; mờ đặc → trắng
+      var panelRgb = '245, 245, 248';
+      return {
+        panel: 'rgba(' + panelRgb + ', ' + v + ')',
+        panelAlt: 'rgba(255, 255, 255, ' + va + ')',
+        sidebar: 'rgba(' + panelRgb + ', ' + v + ')',
+        sidebarAlt: 'rgba(255, 255, 255, ' + va + ')'
+      };
+    }
+    return {
+      panel: 'rgba(10, 14, 26, ' + v + ')',
+      panelAlt: 'rgba(6, 9, 18, ' + va + ')',
+      sidebar: 'rgba(10, 14, 26, ' + v + ')',
+      sidebarAlt: 'rgba(6, 9, 18, ' + va + ')'
+    };
+  }
+  function _applyTransparency(value) {
+    var v = Math.max(0, Math.min(1, value / 100));
+    var va = Math.min(v + 0.04, 1);
+    var colors = _panelColorForMode(v);
+    document.documentElement.style.setProperty('--panel-alpha', v);
+    document.documentElement.style.setProperty('--panel-alpha-alt', va);
+    document.documentElement.style.setProperty('--panel', colors.panel);
+    document.documentElement.style.setProperty('--panel-alt', colors.panelAlt);
+    document.documentElement.style.setProperty('--sidebar-panel', colors.sidebar);
+    document.documentElement.style.setProperty('--sidebar-panel-alt', colors.sidebarAlt);
+    if (transValueLabel) transValueLabel.textContent = value;
+  }
   if (rangeTrans) {
     rangeTrans.addEventListener('input', function(e) {
-      var v = e.target.value / 100;
-      var va = Math.min(v + 0.04, 1);
-      document.documentElement.style.setProperty('--panel-alpha', v);
-      document.documentElement.style.setProperty('--panel-alpha-alt', va);
-      document.documentElement.style.setProperty('--panel', 'rgba(10, 14, 26, ' + v + ')');
-      document.documentElement.style.setProperty('--panel-alt', 'rgba(6, 9, 18, ' + va + ')');
-      document.documentElement.style.setProperty('--sidebar-panel', 'rgba(10, 14, 26, ' + v + ')');
-      document.documentElement.style.setProperty('--sidebar-panel-alt', 'rgba(6, 9, 18, ' + va + ')');
-      localStorage.setItem('transparency', e.target.value);
-      localStorage.setItem('repo_transparency', e.target.value);
+      var val = parseInt(e.target.value, 10);
+      _applyTransparency(val);
+      localStorage.setItem('transparency', String(val));
+      localStorage.setItem('repo_transparency', String(val));
     });
   }
+  // Expose for applyDarkMode() to pick up alpha + current slider value
+  window._applyTransparency = _applyTransparency;
 
   // Load saved settings
   var savedTheme = localStorage.getItem('theme');
@@ -3343,13 +3375,12 @@
   }
   var savedTrans = localStorage.getItem('transparency');
   if (savedTrans) {
-    var v = savedTrans / 100;
-    var va = Math.min(v + 0.04, 1);
-    document.documentElement.style.setProperty('--panel-alpha', v);
-    document.documentElement.style.setProperty('--panel-alpha-alt', va);
+    var v = parseInt(savedTrans, 10);
+    document.documentElement.style.setProperty('--panel-alpha', v / 100);
+    document.documentElement.style.setProperty('--panel-alpha-alt', Math.min(v / 100 + 0.04, 1));
     if (rangeTrans) rangeTrans.value = savedTrans;
   }
-  // Re-apply dark mode to pick up transparency values + set body background
+  // Re-apply dark mode to set body background + derive panel colors with current transparency
   var savedDark = localStorage.getItem('darkMode');
   var initialDark = (savedDark !== false && savedDark !== 'false');
   applyDarkMode(initialDark);
