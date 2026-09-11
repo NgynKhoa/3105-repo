@@ -848,19 +848,28 @@ def api_upload_background():
     file = request.files.get("image")
     if not file or not file.filename:
         abort(400, description="No image file provided")
-    import magic
-    ALLOWED = {"image/jpeg", "image/png", "image/gif", "image/webp"}
-    mime = magic.from_buffer(file.read(2048), mime=True)
-    file.seek(0)
-    if mime not in ALLOWED:
-        abort(400, description=f"Unsupported file type: {mime}")
-    # Sanitize filename: keep only safe chars
     import re, secrets
     orig = pathlib.Path(file.filename).name
     safe = re.sub(r"[^a-zA-Z0-9._-]", "_", orig)
     ext = pathlib.Path(safe).suffix.lower()
     if ext not in (".jpg", ".jpeg", ".png", ".gif", ".webp"):
-        abort(400, description="Unsupported extension")
+        abort(400, description="Unsupported extension. Chấp nhận: .jpg, .jpeg, .png, .gif, .webp")
+    # Sniff magic bytes để chắc chắn là ảnh (không phụ thuộc python-magic)
+    head = file.read(12)
+    file.seek(0)
+    # JPEG: FF D8 FF  | PNG: 89 50 4E 47  | GIF: 47 49 46 38  | WebP: 52 49 46 46 ?? 57 45 42 50
+    if head.startswith(b"\xff\xd8\xff"):
+        actual_ext = ".jpg"
+    elif head.startswith(b"\x89PNG\r\n\x1a\n"):
+        actual_ext = ".png"
+    elif head.startswith(b"GIF87a") or head.startswith(b"GIF89a"):
+        actual_ext = ".gif"
+    elif head[:4] == b"RIFF" and head[8:12] == b"WEBP":
+        actual_ext = ".webp"
+    else:
+        abort(400, description="File không phải ảnh hợp lệ (chỉ JPG/PNG/GIF/WebP)")
+    # Prefer detected extension
+    ext = actual_ext
     # Generate unique filename to avoid collisions
     name = f"{secrets.token_hex(6)}{ext}"
     path = BG_UPLOAD_DIR / name

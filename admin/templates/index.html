@@ -2277,6 +2277,12 @@
             <input type="file" id="bgFileInput" accept="image/jpeg,image/png,image/gif,image/webp">
           </div>
           <div id="bgErrorMsg" class="bg-error-msg" style="display:none;margin-top:6px;"></div>
+          <div style="font-size:10px;margin-top:8px;padding:8px 10px;background:rgba(var(--neon-rgb),0.05);border:1px solid var(--border);border-radius:6px;color:var(--text);line-height:1.5;">
+            <div style="color:var(--neon);font-weight:600;margin-bottom:3px;">💡 Gợi ý kích thước ảnh</div>
+            • Tỉ lệ <b>16:9</b> sẽ hiển thị đẹp nhất (ví dụ <b>1920×1080</b>, <b>2560×1440</b>)<br>
+            • Tối thiểu khuyến nghị: <b>1280×720</b> · Tối đa: <b>3840×2160</b> (4K)<br>
+            • Ảnh nhỏ hơn sẽ bị upscale → có thể bị mờ; ảnh quá lớn sẽ tốn bộ nhớ
+          </div>
         </div>
       </div>
 
@@ -2565,7 +2571,7 @@
   <div id="toast"></div>
 
   <!-- App JS -->
-  <script src="/admin/static/app.js?v=19"></script>
+  <script src="/admin/static/app.js?v=20"></script>
   <!-- Bootstrap data -->
   <script>{{ bootstrap_js | safe }}</script>
 
@@ -3503,15 +3509,41 @@
       _showBgError('File quá lớn. Tối đa 10MB.');
       return;
     }
+    // Đọc kích thước thực tế để cảnh báo nếu quá nhỏ
+    var reader = new FileReader();
+    var imgPreview = new Image();
+    reader.onload = function(e) {
+      imgPreview.onload = function() {
+        var w = imgPreview.naturalWidth, h = imgPreview.naturalHeight;
+        if (w < 1280 || h < 720) {
+          if (!confirm('Ảnh chỉ có ' + w + '×' + h + ' — nhỏ hơn 1280×720, có thể bị mờ khi làm nền. Vẫn upload?')) {
+            return;
+          }
+        }
+        _doUpload(file);
+      };
+      imgPreview.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function _doUpload(file) {
     var form = new FormData();
     form.append('image', file);
     fetch('/api/backgrounds/upload', { method: 'POST', body: form })
-      .then(function(r) { return r.json(); })
+      .then(function(r) {
+        // Try parse JSON; if response is HTML (error), surface message
+        var ct = r.headers.get('content-type') || '';
+        if (ct.indexOf('application/json') === -1) {
+          return r.text().then(function(t) {
+            throw new Error('Server trả về HTML (có thể lỗi nội bộ). Xem Console để biết chi tiết.');
+          });
+        }
+        return r.json();
+      })
       .then(function(data) {
         if (data.ok) {
           _bgState.files.unshift({ filename: data.filename, url: data.url, size: data.size });
-          _renderBgGrid();
-          // Auto-select newly uploaded image
           _bgState.activeFilename = data.filename;
           localStorage.setItem('bgImage', data.url);
           window._applyBackground(data.url);
@@ -3520,7 +3552,7 @@
           _showBgError(data.description || 'Upload thất bại');
         }
       })
-      .catch(function(err) { _showBgError('Lỗi kết nối: ' + err); });
+      .catch(function(err) { _showBgError('Lỗi kết nối: ' + err.message); });
   }
 
   function _showBgError(msg) {
