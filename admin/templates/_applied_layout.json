@@ -14,9 +14,22 @@
       "css": {}
     },
     {
+      "key": "hello-banner",
+      "selector": "[data-box=\"hello-banner\"]",
+      "title": "HELLO",
+      "titlePos": "top-left",
+      "x": 1177,
+      "y": 433,
+      "w": 95,
+      "h": 34,
+      "type": "content",
+      "children": [],
+      "css": {}
+    },
+    {
       "key": "meta",
       "selector": "[data-box=\"meta\"]",
-      "title": "Thông tin chung Sửa trực tiếp — sẽ ghi vào repo.yml khi bấm Lưu. IDENTIFIER (COM",
+      "title": "Thông tin chung",
       "titlePos": "top-left",
       "x": 168,
       "y": 110,
@@ -29,7 +42,7 @@
     {
       "key": "packages",
       "selector": "[data-box=\"packages\"]",
-      "title": "Danh sách packages 14 / 14 package PUBG Custom Miễn Phí Version 4.5 owen-trial ·",
+      "title": "Danh sách packages",
       "titlePos": "top-left",
       "x": 168,
       "y": 402,
@@ -42,12 +55,12 @@
     {
       "key": "blog-section",
       "selector": "[data-box=\"blog-section\"]",
-      "title": "Blog 10 bài viết 📦 Cách cài đặt Repository trên ứng dụng 3105 2 ngày trước 🛡️ Bả",
+      "title": "Blog",
       "titlePos": "top-left",
       "x": 168,
       "y": 794,
       "w": 730,
-      "h": 290,
+      "h": 392,
       "type": "content",
       "children": [],
       "css": {}
@@ -55,7 +68,7 @@
     {
       "key": "stars",
       "selector": "[data-box=\"stars\"]",
-      "title": "✩ Links ✩ Home ✩ Admin ✩ GitHub ✩ E-mail — online",
+      "title": "✩ Links",
       "titlePos": "top-left",
       "x": 912,
       "y": 402,
@@ -68,7 +81,7 @@
     {
       "key": "music-player",
       "selector": "[data-box=\"music-player\"]",
-      "title": "♫ Now Playing Synthwave Drift — Owen · 80s Mix 0:00 3:21",
+      "title": "♫ Now Playing",
       "titlePos": "top-left",
       "x": 912,
       "y": 685,
@@ -81,7 +94,7 @@
     {
       "key": "moon-widget",
       "selector": "[data-box=\"moon-widget\"]",
-      "title": "☾ Moon New Moon 0% illuminated AZIMUTH 245°00' ALTITUDE 51°17' ▾ // UTC+7 (VN) 1",
+      "title": "☾ Moon",
       "titlePos": "top-left",
       "x": 912,
       "y": 950,
@@ -103,20 +116,7 @@
       "type": "content",
       "children": [],
       "css": {}
-    },
-    {
-      "key": "custom-test",
-      "selector": "[data-box=\"custom-test\"]",
-      "title": "TEST",
-      "titlePos": "top-left",
-      "x": 168,
-      "y": 1096,
-      "w": 730,
-      "h": 101,
-      "type": "content",
-      "children": [],
-      "css": {}
     }
   ],
-  "applied_at": "2026-09-11 16:43:17.095448"
+  "applied_at": "2026-09-12 16:47:09.950272"
 }
