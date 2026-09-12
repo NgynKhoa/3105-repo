@@ -2083,3 +2083,37 @@ document.addEventListener('DOMContentLoaded', () => {
     renderBlogList();
   });
 });
+
+// ==================== Helpers exposed cho Front Repo dynamic-fit ====================
+// Front Repo (renderPackages ở index.html) hiển thị nút Sửa/Xóa nhưng data của
+// nó (cache.packages) có thể là snapshot từ /api/repo/<repo>/packages, không trùng
+// index với state.packages của admin. Để tránh sai lệch, tra cứu theo identifier.
+window.findPackageIdxByIdentifier = function (id) {
+  if (!id || !Array.isArray(state.packages)) return -1;
+  return state.packages.findIndex(p => p && p.identifier === id);
+};
+
+window.editPackageByIdentifier = function (id) {
+  const idx = window.findPackageIdxByIdentifier(id);
+  if (idx < 0) {
+    toast(`Không tìm thấy package "${id}" trong state — thử reload repo.`, 'error');
+    return;
+  }
+  // Đồng bộ state.currentRepo với repo Front Repo đang mở
+  if (typeof window.__frontRepoName === 'string' && window.__frontRepoName) {
+    state.currentRepo = window.__frontRepoName;
+  }
+  openModal(idx);
+};
+
+window.deletePackageByIdentifier = function (id) {
+  const idx = window.findPackageIdxByIdentifier(id);
+  if (idx < 0) {
+    toast(`Không tìm thấy package "${id}" trong state — thử reload repo.`, 'error');
+    return;
+  }
+  if (typeof window.__frontRepoName === 'string' && window.__frontRepoName) {
+    state.currentRepo = window.__frontRepoName;
+  }
+  deletePackage(idx);
+};

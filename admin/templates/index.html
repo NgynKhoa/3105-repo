@@ -2608,7 +2608,7 @@
   <div id="toast"></div>
 
   <!-- App JS -->
-  <script src="/admin/static/app.js?v=31"></script>
+  <script src="/admin/static/app.js?v=32"></script>
   <!-- Bootstrap data -->
   <script>{{ bootstrap_js | safe }}</script>
 
@@ -3723,8 +3723,12 @@ document.querySelectorAll('.blog-card, .blog-item a, .blog-link').forEach(card =
     if (pageState.pkg > totalPages) pageState.pkg = totalPages;
     const start = (pageState.pkg - 1) * max;
     const shown = all.slice(start, start + max);
-    list.innerHTML = shown.map(pkg => `
-      <div class="pkg-item">
+    // Cập nhật currentRepo cho app.js (để openModal/deletePackage dùng đúng repo)
+    if (currentRepo) window.__frontRepoName = currentRepo;
+    list.innerHTML = shown.map(pkg => {
+      const idEsc = escapeHtml(pkg.identifier || '');
+      return `
+      <div class="pkg-item" data-id="${idEsc}">
         <div class="pkg-icon-wrap">
           ${pkg.icon
             ? `<img src="/repo-asset?repo=${encodeURIComponent(currentRepo)}&path=${encodeURIComponent(pkg.icon)}" loading="lazy" onerror="this.style.display='none'" />`
@@ -3739,8 +3743,14 @@ document.querySelectorAll('.blog-card, .blog-item a, .blog-link').forEach(card =
             ${escapeHtml(pkg.author || '')} ${pkg.version ? '· v' + escapeHtml(pkg.version) : ''}
           </div>
         </div>
+        <div class="pkg-actions" style="flex-shrink:0;display:flex;gap:4px;">
+          <button class="btn btn-xs neon-edit" data-action="edit" data-id="${idEsc}" title="Sửa package ${idEsc}">Sửa</button>
+          <button class="btn btn-xs neon-delete" data-action="delete" data-id="${idEsc}" title="Xóa package ${idEsc}">✕</button>
+        </div>
       </div>
-    `).join('');
+    `;}).join('');
+    // Wire nút Sửa/Xóa (idempotent qua delegation)
+    wirePkgRowActions(list);
     // Count
     if (countEl) {
       countEl.textContent = all.length > 0
@@ -3796,6 +3806,37 @@ document.querySelectorAll('.blog-card, .blog-item a, .blog-link').forEach(card =
     if (btnNext) btnNext.addEventListener('click', () => {
       const totalPages = Math.max(1, Math.ceil(cache.packages.length / Math.max(1, fitCount(document.getElementById('packagesBox'), 56, 92))));
       if (pageState.pkg < totalPages) { pageState.pkg++; renderPackages(); }
+    });
+  }
+
+  // Wire nút Sửa/Xóa trên từng row package (event delegation, idempotent)
+  let pkgRowActionsWired = false;
+  function wirePkgRowActions(listEl) {
+    if (pkgRowActionsWired) return;
+    const root = listEl || document.getElementById('packageList');
+    if (!root) return;
+    pkgRowActionsWired = true;
+    root.addEventListener('click', (e) => {
+      const btn = e.target.closest('button[data-action]');
+      if (!btn) return;
+      const id = btn.dataset.id;
+      const action = btn.dataset.action;
+      if (!id) return;
+      e.preventDefault();
+      e.stopPropagation();
+      if (action === 'edit') {
+        if (typeof window.editPackageByIdentifier === 'function') {
+          window.editPackageByIdentifier(id);
+        } else {
+          console.warn('window.editPackageByIdentifier chưa sẵn sàng');
+        }
+      } else if (action === 'delete') {
+        if (typeof window.deletePackageByIdentifier === 'function') {
+          window.deletePackageByIdentifier(id);
+        } else {
+          console.warn('window.deletePackageByIdentifier chưa sẵn sàng');
+        }
+      }
     });
   }
 
