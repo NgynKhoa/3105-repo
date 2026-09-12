@@ -15,6 +15,14 @@ _shared_screens: &screens
   - assets/preview/preview-third.png
   - assets/preview/preview-fourth.png
 
+_shared_os_rules: &os_rules
+  - minimum: "17.0"
+    maximum: "18.7.1"
+  - minimum: "26.0"
+    maximum: "26.6.1"
+  - minimum: "27.0"
+    maximum: "27.0"
+
 # ==========================================
 # DANH SÁCH PACKAGES
 # ==========================================
@@ -472,9 +480,7 @@ packages:
     download: packages/PATCH_V2_FREE_3_SERVER.3105
     sha256: 8CA9141683C9BBE4CDF372736B6A5A26E34FEFDD20B482BA201693E6011F76AB
     size: 3599691
-    supportedOS:
-      - minimum: "17.0"
-        maximum: "18.7.1"
+    supportedOS: *os_rules
     featured: true
     isPrivate: false
     description: |
