@@ -2608,7 +2608,7 @@
   <div id="toast"></div>
 
   <!-- App JS -->
-  <script src="/admin/static/app.js?v=30"></script>
+  <script src="/admin/static/app.js?v=31"></script>
   <!-- Bootstrap data -->
   <script>{{ bootstrap_js | safe }}</script>
 
@@ -3709,9 +3709,16 @@ document.querySelectorAll('.blog-card, .blog-item a, .blog-link').forEach(card =
     const box = document.getElementById('packagesBox');
     if (!list || !box) return;
     const itemH = 56; // .pkg-item height trong CSS
-    const headerH = 92; // box-header-wrap + padding
-    const max = fitCount(box, itemH, headerH);
+    const headerH = 60;
+    const paginationH = 48;
     const all = cache.packages;
+    const boxH = box.clientHeight || 0;
+    const availNoPag = boxH - headerH;
+    const maxNoPag = Math.max(1, Math.floor(availNoPag / itemH));
+    const totalPagesIfNoPag = Math.max(1, Math.ceil(all.length / maxNoPag));
+    const needPag = totalPagesIfNoPag > 1;
+    const avail = needPag ? (boxH - headerH - paginationH) : availNoPag;
+    const max = Math.max(1, Math.floor(avail / itemH));
     const totalPages = Math.max(1, Math.ceil(all.length / max));
     if (pageState.pkg > totalPages) pageState.pkg = totalPages;
     const start = (pageState.pkg - 1) * max;
@@ -3751,10 +3758,11 @@ document.querySelectorAll('.blog-card, .blog-item a, .blog-link').forEach(card =
     const btnPrev = document.getElementById('pkgPagePrev');
     const btnNext = document.getElementById('pkgPageNext');
     if (pag) {
-      if (totalPages <= 1) {
-        pag.classList.add('hidden');
-      } else {
-        pag.classList.remove('hidden');
+      pag.classList.remove('hidden');
+      pag.style.display = needPag ? 'flex' : 'none';
+      pag.style.visibility = 'visible';
+      pag.style.opacity = '1';
+      if (needPag) {
         if (pagInfo) pagInfo.textContent = `Trang ${pageState.pkg} / ${totalPages}`;
         if (btnPrev) btnPrev.disabled = pageState.pkg <= 1;
         if (btnNext) btnNext.disabled = pageState.pkg >= totalPages;
@@ -3809,9 +3817,19 @@ document.querySelectorAll('.blog-card, .blog-item a, .blog-link').forEach(card =
     const box = document.getElementById('blog-section');
     if (!list || !box) return;
     const itemH = 44; // blog-item height (compact)
-    const headerH = 92;
-    const max = fitCount(box, itemH, headerH);
+    const headerH = 60; // box-header-wrap thật ~ 50px (padding 10+10 + line)
+    const paginationH = 48; // blogPagination padding 10+10 + 28 button
     const all = cache.blogPosts;
+    const boxH = box.clientHeight || 0;
+    // Khả dụng cho list sau khi trừ header + (pagination nếu nhiều trang)
+    // Tính total giả định chưa có pagination: xem nếu chia 1 lần thì cần bao nhiêu pag
+    const availNoPag = boxH - headerH;
+    const maxNoPag = Math.max(1, Math.floor(availNoPag / itemH));
+    const totalPagesIfNoPag = Math.max(1, Math.ceil(all.length / maxNoPag));
+    const needPag = totalPagesIfNoPag > 1;
+    // Nếu cần pagination, trừ chiều cao pagination khỏi box
+    const avail = needPag ? (boxH - headerH - paginationH) : availNoPag;
+    const max = Math.max(1, Math.floor(avail / itemH));
     const totalPages = Math.max(1, Math.ceil(all.length / max));
     if (pageState.blog > totalPages) pageState.blog = totalPages;
     const start = (pageState.blog - 1) * max;
@@ -3831,17 +3849,18 @@ document.querySelectorAll('.blog-card, .blog-item a, .blog-link').forEach(card =
         ? (totalPages === 1 ? `${all.length} bài viết` : `${start + 1}–${Math.min(start + shown.length, all.length)} / ${all.length}`)
         : '0 bài viết';
     }
-    // Pagination: chỉ hiện khi còn nhiều hơn 1 trang
+    // Pagination
     const pag = document.getElementById('blogPagination');
     const pagInfo = document.getElementById('blogPaginationInfo');
     const pagNums = document.getElementById('blogPageNumbers');
     const btnPrev = document.getElementById('blogPagePrev');
     const btnNext = document.getElementById('blogPageNext');
     if (pag) {
-      if (totalPages <= 1) {
-        pag.classList.add('hidden');
-      } else {
-        pag.classList.remove('hidden');
+      pag.classList.remove('hidden');
+      pag.style.display = needPag ? 'flex' : 'none';
+      pag.style.visibility = 'visible';
+      pag.style.opacity = '1';
+      if (needPag) {
         if (pagInfo) pagInfo.textContent = `Trang ${pageState.blog} / ${totalPages}`;
         if (btnPrev) btnPrev.disabled = pageState.blog <= 1;
         if (btnNext) btnNext.disabled = pageState.blog >= totalPages;
