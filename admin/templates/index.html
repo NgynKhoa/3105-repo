@@ -2608,7 +2608,7 @@
   <div id="toast"></div>
 
   <!-- App JS -->
-  <script src="/admin/static/app.js?v=29"></script>
+  <script src="/admin/static/app.js?v=30"></script>
   <!-- Bootstrap data -->
   <script>{{ bootstrap_js | safe }}</script>
 
@@ -3676,6 +3676,8 @@ document.querySelectorAll('.blog-card, .blog-item a, .blog-link').forEach(card =
   // Cache full data để không fetch lại mỗi lần re-fit
   const cache = { repo: null, packages: [], blogPosts: [] };
   let currentRepo = null;
+  // Trang hiện tại cho pagination (track riêng trong IIFE)
+  const pageState = { blog: 1, pkg: 1 };
 
   // Tính số items có thể hiển thị trong 1 box dựa vào chiều cao
   // Trừ padding/header khoảng 90-120px (box-header-wrap ~ 60px + 24 padding)
@@ -3684,7 +3686,7 @@ document.querySelectorAll('.blog-card, .blog-item a, .blog-link').forEach(card =
     const h = boxEl.clientHeight || 0;
     if (h <= 0) return 0;
     const available = h - (headerOffset || 92);
-    return Math.max(0, Math.floor(available / itemHeight));
+    return Math.max(1, Math.floor(available / itemHeight));
   }
 
   // === Packages ===
@@ -3695,6 +3697,7 @@ document.querySelectorAll('.blog-card, .blog-item a, .blog-link').forEach(card =
       const data = await res.json();
       cache.repo = currentRepo;
       cache.packages = (data.packages || []).filter(p => p && p.name);
+      pageState.pkg = 1; // reset page khi repo đổi
     } catch (err) {
       console.warn('dynamicFit: load packages failed', err);
     }
@@ -3709,7 +3712,10 @@ document.querySelectorAll('.blog-card, .blog-item a, .blog-link').forEach(card =
     const headerH = 92; // box-header-wrap + padding
     const max = fitCount(box, itemH, headerH);
     const all = cache.packages;
-    const shown = all.slice(0, max);
+    const totalPages = Math.max(1, Math.ceil(all.length / max));
+    if (pageState.pkg > totalPages) pageState.pkg = totalPages;
+    const start = (pageState.pkg - 1) * max;
+    const shown = all.slice(start, start + max);
     list.innerHTML = shown.map(pkg => `
       <div class="pkg-item">
         <div class="pkg-icon-wrap">
@@ -3728,19 +3734,61 @@ document.querySelectorAll('.blog-card, .blog-item a, .blog-link').forEach(card =
         </div>
       </div>
     `).join('');
-    // Count + footer hint
+    // Count
     if (countEl) {
       countEl.textContent = all.length > 0
-        ? (shown.length === all.length ? `${all.length} package` : `${shown.length}/${all.length} package`)
+        ? (totalPages === 1 ? `${all.length} package` : `${start + 1}–${Math.min(start + shown.length, all.length)} / ${all.length}`)
         : '0 package';
     }
     // Empty hint
     const empty = document.getElementById('emptyHint');
     if (empty) empty.classList.toggle('hidden', all.length > 0);
     list.style.display = all.length === 0 ? 'none' : 'block';
-    // Pagination ẩn (đã dynamic-fit)
+    // Pagination: chỉ hiện khi còn nhiều hơn 1 trang
     const pag = document.getElementById('pkgPagination');
-    if (pag) pag.classList.add('hidden');
+    const pagInfo = document.getElementById('pkgPaginationInfo');
+    const pagNums = document.getElementById('pkgPageNumbers');
+    const btnPrev = document.getElementById('pkgPagePrev');
+    const btnNext = document.getElementById('pkgPageNext');
+    if (pag) {
+      if (totalPages <= 1) {
+        pag.classList.add('hidden');
+      } else {
+        pag.classList.remove('hidden');
+        if (pagInfo) pagInfo.textContent = `Trang ${pageState.pkg} / ${totalPages}`;
+        if (btnPrev) btnPrev.disabled = pageState.pkg <= 1;
+        if (btnNext) btnNext.disabled = pageState.pkg >= totalPages;
+        if (pagNums) {
+          pagNums.innerHTML = '';
+          const half = 2;
+          let sp = Math.max(1, pageState.pkg - half);
+          let ep = Math.min(totalPages, sp + 4);
+          if (ep - sp < 4) sp = Math.max(1, ep - 4);
+          for (let p = sp; p <= ep; p++) {
+            const b = document.createElement('button');
+            b.className = `page-num ${p === pageState.pkg ? 'active' : ''}`;
+            b.textContent = p;
+            b.addEventListener('click', () => { pageState.pkg = p; renderPackages(); });
+            pagNums.appendChild(b);
+          }
+        }
+      }
+    }
+  }
+
+  let pkgWired = false;
+  function wirePkgPagination() {
+    if (pkgWired) return;
+    pkgWired = true;
+    const btnPrev = document.getElementById('pkgPagePrev');
+    const btnNext = document.getElementById('pkgPageNext');
+    if (btnPrev) btnPrev.addEventListener('click', () => {
+      if (pageState.pkg > 1) { pageState.pkg--; renderPackages(); }
+    });
+    if (btnNext) btnNext.addEventListener('click', () => {
+      const totalPages = Math.max(1, Math.ceil(cache.packages.length / Math.max(1, fitCount(document.getElementById('packagesBox'), 56, 92))));
+      if (pageState.pkg < totalPages) { pageState.pkg++; renderPackages(); }
+    });
   }
 
   // === Blog ===
@@ -3749,6 +3797,7 @@ document.querySelectorAll('.blog-card, .blog-item a, .blog-link').forEach(card =
       const res = await fetch('/api/blog/posts');
       const data = await res.json();
       cache.blogPosts = (data.posts || []);
+      pageState.blog = 1; // reset page khi blog reload
     } catch (err) {
       console.warn('dynamicFit: load blog failed', err);
     }
@@ -3763,7 +3812,10 @@ document.querySelectorAll('.blog-card, .blog-item a, .blog-link').forEach(card =
     const headerH = 92;
     const max = fitCount(box, itemH, headerH);
     const all = cache.blogPosts;
-    const shown = all.slice(0, max);
+    const totalPages = Math.max(1, Math.ceil(all.length / max));
+    if (pageState.blog > totalPages) pageState.blog = totalPages;
+    const start = (pageState.blog - 1) * max;
+    const shown = all.slice(start, start + max);
     list.innerHTML = shown.map(p => `
       <a href="/blog-post/${p.id}" class="blog-item" style="cursor:pointer;text-decoration:none;color:inherit;display:flex;">
         <span class="blog-icon">${p.icon || '📝'}</span>
@@ -3773,14 +3825,58 @@ document.querySelectorAll('.blog-card, .blog-item a, .blog-link').forEach(card =
         </div>
       </a>
     `).join('');
+    // Count
     if (countEl) {
       countEl.textContent = all.length > 0
-        ? (shown.length === all.length ? `${all.length} bài viết` : `${shown.length}/${all.length} bài viết`)
+        ? (totalPages === 1 ? `${all.length} bài viết` : `${start + 1}–${Math.min(start + shown.length, all.length)} / ${all.length}`)
         : '0 bài viết';
     }
-    // Pagination ẩn
+    // Pagination: chỉ hiện khi còn nhiều hơn 1 trang
     const pag = document.getElementById('blogPagination');
-    if (pag) pag.classList.add('hidden');
+    const pagInfo = document.getElementById('blogPaginationInfo');
+    const pagNums = document.getElementById('blogPageNumbers');
+    const btnPrev = document.getElementById('blogPagePrev');
+    const btnNext = document.getElementById('blogPageNext');
+    if (pag) {
+      if (totalPages <= 1) {
+        pag.classList.add('hidden');
+      } else {
+        pag.classList.remove('hidden');
+        if (pagInfo) pagInfo.textContent = `Trang ${pageState.blog} / ${totalPages}`;
+        if (btnPrev) btnPrev.disabled = pageState.blog <= 1;
+        if (btnNext) btnNext.disabled = pageState.blog >= totalPages;
+        if (pagNums) {
+          pagNums.innerHTML = '';
+          const half = 2;
+          let sp = Math.max(1, pageState.blog - half);
+          let ep = Math.min(totalPages, sp + 4);
+          if (ep - sp < 4) sp = Math.max(1, ep - 4);
+          for (let p = sp; p <= ep; p++) {
+            const b = document.createElement('button');
+            b.className = `page-num ${p === pageState.blog ? 'active' : ''}`;
+            b.textContent = p;
+            b.addEventListener('click', () => { pageState.blog = p; renderBlog(); });
+            pagNums.appendChild(b);
+          }
+        }
+      }
+    }
+  }
+
+  // Wire prev/next 1 lần (idempotent)
+  let blogWired = false;
+  function wireBlogPagination() {
+    if (blogWired) return;
+    blogWired = true;
+    const btnPrev = document.getElementById('blogPagePrev');
+    const btnNext = document.getElementById('blogPageNext');
+    if (btnPrev) btnPrev.addEventListener('click', () => {
+      if (pageState.blog > 1) { pageState.blog--; renderBlog(); }
+    });
+    if (btnNext) btnNext.addEventListener('click', () => {
+      const totalPages = Math.max(1, Math.ceil(cache.blogPosts.length / Math.max(1, fitCount(document.getElementById('blog-section'), 44, 92))));
+      if (pageState.blog < totalPages) { pageState.blog++; renderBlog(); }
+    });
   }
 
   // === Helper: HTML escape ===
@@ -3833,6 +3929,8 @@ document.querySelectorAll('.blog-card, .blog-item a, .blog-link').forEach(card =
     } else {
       console.warn('dynamicFit: no currentRepo — packages sẽ trống');
     }
+    wireBlogPagination();
+    wirePkgPagination();
     refitAll();
     // Watch resize
     watchResize(document.getElementById('packagesBox'), renderPackages);
