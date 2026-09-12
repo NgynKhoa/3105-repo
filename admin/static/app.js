@@ -276,6 +276,11 @@ async function loadRepo() {
 
     renderMeta();
     renderPackageList();
+    // Re-apply Boxes layout (nếu có) SAU khi packages render xong
+    // — tránh race với applyAppliedLayout chạy trước khi list có data.
+    if (typeof window.__reapplyLayout === 'function') {
+      window.__reapplyLayout();
+    }
     // Reset tracking changes cho session mới
     state.changes = { added: [], edited: [], deleted: [] };
     updateAvatar();

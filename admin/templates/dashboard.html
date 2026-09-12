@@ -782,10 +782,12 @@
       box-shadow: 0 0 0 1px var(--neon);
     }
 
-    /* Preview scale wrapper — clone Front Repo nội dung, transform: scale() khi resize */
+    /* Preview scale wrapper — clone Front Repo nội dung, giữ natural size */
     .prev-box .prev-scale {
       pointer-events: none !important;
+      transform: none;
       transform-origin: 0 0;
+      overflow: visible;
     }
     /* Title text (contenteditable) nằm trên cùng, click để edit trực tiếp */
     .prev-box .prev-title-text {
@@ -2275,26 +2277,26 @@
     }
 
     // ============ SCALE NỘI DUNG KHI RESIZE ============
-    // Lưu natural size (khi sync hoặc lúc tạo) → scale theo tỷ lệ khi user kéo.
-    // Công thức: scale = min(boxW/naturalW, boxH/naturalH) để giữ tỷ lệ,
-    // nội dung co dãn mượt, không gãy layout.
+    // Chiến lược: KHÔNG scale nội dung khi resize để fonts/spacing không bị
+    // thu nhỏ/nhòe. Thay vào đó giữ natural size, để overflow:auto xử lý tràn.
+    // Khi box nhỏ hơn natural → nội dung tràn (user dùng scroll để xem).
+    // Khi box lớn hơn natural → nội dung chiếm phần đầu, phần còn lại trống.
     function applyPreviewScale(key) {
       const box = _stage.querySelector(`[data-box="${key}"]`);
       if (!box) return;
       const inner = box.querySelector('.prev-scale');
       if (!inner) return;
+      // Reset về natural size, không scale, không translate
       const nW = parseFloat(box.dataset.naturalW) || box.offsetWidth || 1;
       const nH = parseFloat(box.dataset.naturalH) || box.offsetHeight || 1;
-      const cW = box.offsetWidth || 1;
-      const cH = box.offsetHeight || 1;
-      const scale = Math.min(cW / nW, cH / nH);
       inner.style.width = nW + 'px';
       inner.style.height = nH + 'px';
-      inner.style.transform = `scale(${scale})`;
-      const extraX = (cW - nW * scale) / 2;
-      const extraY = (cH - nH * scale) / 2;
-      inner.style.left = extraX + 'px';
-      inner.style.top = extraY + 'px';
+      inner.style.transform = 'none';
+      inner.style.left = '0';
+      inner.style.top = '0';
+      inner.style.overflow = 'visible';
+      // Cho phép box cha xử lý scroll khi nội dung tràn
+      box.style.overflow = 'auto';
     }
     function applyScaleToAll() {
       _stage.querySelectorAll('.prev-box').forEach(b => applyPreviewScale(b.dataset.box));
@@ -2320,6 +2322,7 @@
         if (rect.height > 0) box.dataset.naturalH = rect.height;
         // Snapshot innerHTML (style attributes đã được tính)
         inner.innerHTML = src.innerHTML;
+        // Clone <style> riêng (nếu có inline style riêng) — cho Front Repo CSS scope
         applyPreviewScale(key);
       } catch (e) {
         console.warn('injectFrontRepoContent(' + key + '):', e);

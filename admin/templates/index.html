@@ -2575,7 +2575,7 @@
   <div id="toast"></div>
 
   <!-- App JS -->
-  <script src="/admin/static/app.js?v=25"></script>
+  <script src="/admin/static/app.js?v=26"></script>
   <!-- Bootstrap data -->
   <script>{{ bootstrap_js | safe }}</script>
 
@@ -3653,6 +3653,10 @@ document.querySelectorAll('.blog-card, .blog-item a, .blog-link').forEach(card =
     // Hide pagination if fewer posts
     const pag = document.getElementById('blogPagination');
     if (pag && data.posts.length <= 5) pag.classList.add('hidden');
+    // Re-apply Boxes layout sau khi blog list render xong
+    if (typeof window.__reapplyLayout === 'function') {
+      setTimeout(window.__reapplyLayout, 50);
+    }
   } catch (err) {
     list.innerHTML = '<div style="padding:14px;color:var(--muted);font-size:11px;">Blog chưa sẵn sàng.</div>';
   }
@@ -3680,99 +3684,98 @@ document.querySelectorAll('#blogList .blog-item').forEach(item => {
    - Lưu "natural size" ban đầu để scale theo tỷ lệ khi resize
 ======================================== */
 (function applyAppliedLayout() {
+  // Hook: áp layout lại SAU khi nội dung thật đã load (loadRepo async).
+  // Hook vào cả DOMContentLoaded và sau khi loadRepo xong.
+  let layoutData = null;
+
+  function applyBoxesLayout() {
+    if (!layoutData || !layoutData.boxes || !layoutData.boxes.length) return;
+    var shell = document.getElementById('shell');
+    if (!shell) return;
+    if (getComputedStyle(shell).position === 'static') {
+      shell.style.position = 'relative';
+    }
+    // Đặt shell thành full-width để toạ độ left khớp 1:1 với Dashboard preview.
+    // Không expand quá rộng: giữ padding ngang 18px để nội dung không dính mép.
+    var shellW = (layoutData.canvas && layoutData.canvas.w) ? layoutData.canvas.w : 1280;
+    shell.style.maxWidth = 'none';
+    shell.style.width = shellW + 'px';
+    shell.style.marginLeft = 'auto';
+    shell.style.marginRight = 'auto';
+    shell.style.paddingLeft = '0';
+    shell.style.paddingRight = '0';
+    shell.style.paddingBottom = '48px';
+    shell.style.boxSizing = 'border-box';
+
+    // Tính max canvas để đặt min-height
+    var maxX = 0, maxY = 0;
+    layoutData.boxes.forEach(function(b) {
+      maxX = Math.max(maxX, b.x + b.w);
+      maxY = Math.max(maxY, b.y + b.h);
+    });
+    if (layoutData.canvas) {
+      maxX = Math.max(maxX, layoutData.canvas.w || 0);
+      maxY = Math.max(maxY, layoutData.canvas.h || 0);
+    }
+    shell.style.minHeight = (maxY + 60) + 'px';
+
+    // Áp layout cho từng box — giữ nguyên flow bên trong, chỉ đổi khung chứa.
+    layoutData.boxes.forEach(function(b) {
+      if (!b.key) return;
+      var el = document.querySelector('[data-box="' + b.key + '"]');
+      if (!el) return;
+      el.style.position = 'absolute';
+      el.style.left = b.x + 'px';
+      el.style.top = b.y + 'px';
+      el.style.width = b.w + 'px';
+      el.style.height = b.h + 'px';
+      el.style.boxSizing = 'border-box';
+      el.style.margin = '0';
+      // Đảm bảo overflow xử lý scroll mượt nếu nội dung vượt khung
+      el.style.overflow = 'hidden';
+      // Title (nếu có trong layout) sẽ được render trong DOM nếu cần — không scale.
+    });
+  }
+
+  // Expose để loadRepo có thể gọi lại sau khi render package list.
+  window.__reapplyLayout = function() { applyBoxesLayout(); };
+
   fetch('/api/get-applied-layout')
     .then(function(r) { return r.json(); })
     .then(function(data) {
       if (!data || !data.boxes || !data.boxes.length) return;
-      var shell = document.getElementById('shell');
-      if (!shell) return;
-      // Đảm bảo shell là positioning context
-      var shellCS = getComputedStyle(shell);
-      if (shellCS.position === 'static') {
-        shell.style.position = 'relative';
-      }
-      // Khi áp layout: shell mở rộng full canvas, bỏ margin auto + padding ngang
-      // để toạ độ left/top của box khớp 1:1 với preview Dashboard (1280×900).
-      // Nếu KHÔNG áp layout: giữ nguyên max-width:980px + margin:auto.
-      shell.style.maxWidth = (data.canvas && data.canvas.w) ? data.canvas.w + 'px' : '1280px';
-      shell.style.width = '100%';
-      shell.style.marginLeft = '0';
-      shell.style.marginRight = '0';
-      shell.style.paddingLeft = '0';
-      shell.style.paddingRight = '0';
-      // Padding dưới giữ 48px cho thoáng
-      shell.style.paddingBottom = '48px';
-      // Đặt viewport stage giả lập: chiều rộng = max(canvas.w, shellW)
-      var maxX = 0, maxY = 0;
-      data.boxes.forEach(function(b) {
-        maxX = Math.max(maxX, b.x + b.w);
-        maxY = Math.max(maxY, b.y + b.h);
+      layoutData = data;
+      // Lần đầu: áp ngay (với content chưa load)
+      applyBoxesLayout();
+      // Sau khi window load + 500ms: áp lại để chắc chắn nội dung thật đã render
+      window.addEventListener('load', function() {
+        setTimeout(applyBoxesLayout, 300);
+        setTimeout(applyBoxesLayout, 1200);
       });
-      if (data.canvas) {
-        maxX = Math.max(maxX, data.canvas.w || 0);
-        maxY = Math.max(maxY, data.canvas.h || 0);
-      }
-      // Shell có min-height đủ chứa tất cả các box
-      shell.style.minHeight = Math.max(maxY + 60, parseInt(shell.style.minHeight) || 0) + 'px';
-
-      data.boxes.forEach(function(b) {
-        if (!b.key) return;
-        var el = document.querySelector('[data-box="' + b.key + '"]');
-        if (!el) return;
-        // Đo natural size TRƯỚC khi đổi layout
-        var rect = el.getBoundingClientRect();
-        var naturalW = rect.width || b.w;
-        var naturalH = rect.height || b.h;
-        el.dataset.naturalW = naturalW;
-        el.dataset.naturalH = naturalH;
-        // Convert sang absolute + toạ độ mới
-        el.style.position = 'absolute';
-        el.style.left = b.x + 'px';
-        el.style.top = b.y + 'px';
-        el.style.width = b.w + 'px';
-        el.style.height = b.h + 'px';
-        el.style.margin = '0';
-        // Scale nội dung bên trong cho vừa (co dãn mượt, không gãy layout)
-        el.style.overflow = 'hidden';
-        var inner = el.querySelector('.scale-wrap');
-        if (!inner) {
-          inner = document.createElement('div');
-          inner.className = 'scale-wrap';
-          // Wrap tất cả children hiện tại
-          while (el.firstChild) inner.appendChild(el.firstChild);
-          el.appendChild(inner);
-        }
-        applyScale(el);
-      });
+      // Hook loadRepo: app.js sẽ gọi window.__reapplyLayout() sau khi render
+      // xong package list. Fallback: poll trong 3s.
+      var attempts = 0;
+      var poll = setInterval(function() {
+        attempts++;
+        applyBoxesLayout();
+        if (attempts > 6) clearInterval(poll);
+      }, 500);
     })
     .catch(function(err) { console.warn('applyAppliedLayout:', err); });
 })();
 
 function applyScale(boxEl) {
-  var inner = boxEl.querySelector('.scale-wrap');
-  if (!inner) return;
-  var nW = parseFloat(boxEl.dataset.naturalW) || 1;
-  var nH = parseFloat(boxEl.dataset.naturalH) || 1;
-  var cW = boxEl.clientWidth || 1;
-  var cH = boxEl.clientHeight || 1;
-  // Scale đều theo min để giữ tỷ lệ + letterbox phần dư
-  var scale = Math.min(cW / nW, cH / nH);
-  inner.style.transformOrigin = '0 0';
-  inner.style.transform = 'scale(' + scale + ')';
-  inner.style.width = nW + 'px';
-  inner.style.height = nH + 'px';
-  // Center theo trục dư
-  var extraX = (cW - nW * scale) / 2;
-  var extraY = (cH - nH * scale) / 2;
-  inner.style.marginLeft = extraX + 'px';
-  inner.style.marginTop = extraY + 'px';
+  // DEPRECATED: scale-wrap logic removed. Boxes now keep natural content size
+  // and rely on overflow:auto from #packageList/.blog-list for vertical scroll.
+  // Kept as no-op for backwards compatibility.
 }
 window._applyBoxScale = applyScale;
 
 window.addEventListener('resize', function() {
-  document.querySelectorAll('[data-box]').forEach(function(el) {
-    if (el.dataset.naturalW) applyScale(el);
-  });
+  // Re-apply layout on window resize to keep absolute positions consistent
+  if (typeof window.__reapplyLayout === 'function') {
+    window.__reapplyLayout();
+  }
 });
 </script>
 
