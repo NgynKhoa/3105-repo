@@ -784,8 +784,18 @@
 
     /* Preview scale wrapper — clone Front Repo nội dung, transform: scale() khi resize */
     .prev-box .prev-scale {
-      pointer-events: none;
+      pointer-events: none !important;
       transform-origin: 0 0;
+    }
+    /* Title text (contenteditable) nằm trên cùng, click để edit trực tiếp */
+    .prev-box .prev-title-text {
+      pointer-events: auto !important;
+    }
+    .prev-box .resize-handle {
+      pointer-events: auto;
+    }
+    .prev-box .prev-del {
+      pointer-events: auto;
     }
 
     /* Inspector */
@@ -1127,10 +1137,11 @@
             repeating-linear-gradient(90deg, rgba(255,255,255,0.02) 0 1px, transparent 1px 24px),
             var(--bg-color);cursor:grab;">
             <div id="canvasViewport" style="position:absolute;top:0;left:0;transform-origin:0 0;will-change:transform;width:1280px;height:900px;">
-              <!-- Iframe clone của Front Repo làm nền -->
-              <iframe id="previewIframe" src="/" style="position:absolute;top:0;left:0;width:1280px;height:900px;border:none;background:var(--bg-color);pointer-events:none;z-index:1;" scrolling="no"></iframe>
-              <!-- Overlay khung để kéo/resize/title edit -->
-              <div id="previewStage" style="position:absolute;top:0;left:0;width:1280px;height:900px;z-index:2;pointer-events:none;">
+              <!-- Iframe ẩn dưới z-index 0: chỉ dùng làm scratch DOM để clone nội dung Front Repo,
+                   không hiển thị để tránh shell 980px bị center lệch phải trong canvas 1280px -->
+              <iframe id="previewIframe" src="/" style="position:absolute;top:0;left:0;width:1280px;height:900px;border:none;background:transparent;pointer-events:none;z-index:0;visibility:hidden;" scrolling="no"></iframe>
+              <!-- Overlay khung: pointer-events:auto để click/drag/resize/edit title hoạt động -->
+              <div id="previewStage" style="position:absolute;top:0;left:0;width:1280px;height:900px;z-index:2;pointer-events:auto;">
                 <!-- Boxes sẽ được render động bởi JS -->
               </div>
             </div>

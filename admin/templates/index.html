@@ -2575,7 +2575,7 @@
   <div id="toast"></div>
 
   <!-- App JS -->
-  <script src="/admin/static/app.js?v=24"></script>
+  <script src="/admin/static/app.js?v=25"></script>
   <!-- Bootstrap data -->
   <script>{{ bootstrap_js | safe }}</script>
 
@@ -3691,6 +3691,17 @@ document.querySelectorAll('#blogList .blog-item').forEach(item => {
       if (shellCS.position === 'static') {
         shell.style.position = 'relative';
       }
+      // Khi áp layout: shell mở rộng full canvas, bỏ margin auto + padding ngang
+      // để toạ độ left/top của box khớp 1:1 với preview Dashboard (1280×900).
+      // Nếu KHÔNG áp layout: giữ nguyên max-width:980px + margin:auto.
+      shell.style.maxWidth = (data.canvas && data.canvas.w) ? data.canvas.w + 'px' : '1280px';
+      shell.style.width = '100%';
+      shell.style.marginLeft = '0';
+      shell.style.marginRight = '0';
+      shell.style.paddingLeft = '0';
+      shell.style.paddingRight = '0';
+      // Padding dưới giữ 48px cho thoáng
+      shell.style.paddingBottom = '48px';
       // Đặt viewport stage giả lập: chiều rộng = max(canvas.w, shellW)
       var maxX = 0, maxY = 0;
       data.boxes.forEach(function(b) {
