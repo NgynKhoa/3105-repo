@@ -11,20 +11,6 @@
     "assets/preview/preview-third.png",
     "assets/preview/preview-fourth.png"
   ],
-  "_shared_os_rules": [
-    {
-      "minimum": "17.0",
-      "maximum": "18.7.1"
-    },
-    {
-      "minimum": "26.0",
-      "maximum": "26.6.1"
-    },
-    {
-      "minimum": "27.0",
-      "maximum": "27.0"
-    }
-  ],
   "packages": [
     {
       "identifier": "owen-trial",
@@ -359,7 +345,7 @@
       "tags": [
         "CUSTOM"
       ],
-      "publishedAt": "2026-09-08T13:34:24.000Z",
+      "publishedAt": "2026-09-12T19:42:16.000Z",
       "icon": "assets/icon/New_ver46/new_4_6.png",
       "banner": "assets/banner/banner_new.png",
       "screenshots": [
