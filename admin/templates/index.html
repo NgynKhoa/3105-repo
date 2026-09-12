@@ -2325,7 +2325,7 @@
 <div id="shell">
 
     <!-- ============================ MASTHEAD ============================ -->
-    <header id="masthead" style="display:flex; align-items:center; gap:14px;">
+    <header id="masthead" data-box="masthead" style="display:flex; align-items:center; gap:14px;">
       <!-- Avatar — bên trái -->
       <div id="mast-avatar" title="Repo icon" style="width:52px; height:52px; flex-shrink:0;">
         <svg viewBox="0 0 52 52" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;">
@@ -2365,7 +2365,7 @@
     <main>
 
       <!-- ============================ META ============================ -->
-      <section class="box">
+      <section class="box" data-box="meta">
         <div class="section-title">Thông tin chung</div>
         <div class="section-copy">Sửa trực tiếp — sẽ ghi vào repo.yml khi bấm Lưu.</div>
         <div class="field-row">
@@ -2395,7 +2395,7 @@
       <!-- ============================ PAGE GRID: PACKAGES + BLOG (left) | SIDEBAR (right) ============================ -->
       <div class="page-grid">
       <div class="packages-col">
-      <section class="box" id="packagesBox" style="padding:0; overflow:hidden;">
+      <section class="box" id="packagesBox" data-box="packages" style="padding:0; overflow:hidden;">
         <div class="box-header-wrap">
           <div class="pkg-header">
             <div class="section-title" style="margin-bottom:0;">Danh sách packages</div>
@@ -2424,7 +2424,7 @@
       </section>
 
       <!-- ============================ BLOG (inside packages-col) ============================ -->
-      <section class="box" id="blog-section" style="padding:0; overflow:hidden;">
+      <section class="box" id="blog-section" data-box="blog-section" style="padding:0; overflow:hidden;">
         <div class="box-header-wrap">
           <div class="pkg-header">
             <div class="section-title" style="margin-bottom:0;">Blog</div>
@@ -2453,7 +2453,7 @@
       <div class="sidebar-col">
 
         <!-- ============= STARS NAV ============= -->
-        <div id="stars">
+        <div id="stars" data-box="stars">
           <div class="star-title">✩ Links</div>
           <a class="star-link" href="/">✩ Home</a>
           <a class="star-link" href="/admin">✩ Admin</a>
@@ -2467,7 +2467,7 @@
         </div>
 
         <!-- ============= BLOG (Music Player) ============= -->
-        <div id="music-player" class="sidebar-box">
+        <div id="music-player" class="sidebar-box" data-box="music-player">
           <div class="star-title">♫ Now Playing</div>
           <div class="mp-cover">
             <div class="mp-cover-inner" id="mpCover">
@@ -2505,7 +2505,7 @@
         </div>
 
         <!-- ============= MOON WIDGET ============= -->
-        <div id="moon-widget" class="sidebar-box">
+        <div id="moon-widget" class="sidebar-box" data-box="moon-widget">
           <div class="star-title">☾ Moon</div>
           <div class="moon-row">
             <div class="moon-visual">
@@ -2543,7 +2543,7 @@
       </div><!-- /page-grid -->
 
       <!-- ============================ HINT ============================ -->
-      <section class="hint-box mt-4">
+      <section class="hint-box mt-4" data-box="hint-box">
         <div class="hint-title">// Hướng dẫn sử dụng</div>
         Bấm <span class="btn-hint">🚀 [>]</span> để ghi file <code>repositories/&lt;repo&gt;/repo.yml</code> và push lên GitHub tự động.<br/>
         GitHub Action <code>build.yml</code> sẽ tự convert YAML → JSON. App 3105 sẽ refresh trong vài giây.<br/>
@@ -2575,7 +2575,7 @@
   <div id="toast"></div>
 
   <!-- App JS -->
-  <script src="/admin/static/app.js?v=23"></script>
+  <script src="/admin/static/app.js?v=24"></script>
   <!-- Bootstrap data -->
   <script>{{ bootstrap_js | safe }}</script>
 
@@ -3671,5 +3671,99 @@ document.querySelectorAll('#blogList .blog-item').forEach(item => {
   }
 });
 </script>
+
+<script>
+/* ========================================
+   APPLY LAYOUT FROM DASHBOARD (Boxes Editor)
+   - Fetch /api/get-applied-layout
+   - Với mỗi box: đặt position:absolute + left/top/width/height
+   - Lưu "natural size" ban đầu để scale theo tỷ lệ khi resize
+======================================== */
+(function applyAppliedLayout() {
+  fetch('/api/get-applied-layout')
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      if (!data || !data.boxes || !data.boxes.length) return;
+      var shell = document.getElementById('shell');
+      if (!shell) return;
+      // Đảm bảo shell là positioning context
+      var shellCS = getComputedStyle(shell);
+      if (shellCS.position === 'static') {
+        shell.style.position = 'relative';
+      }
+      // Đặt viewport stage giả lập: chiều rộng = max(canvas.w, shellW)
+      var maxX = 0, maxY = 0;
+      data.boxes.forEach(function(b) {
+        maxX = Math.max(maxX, b.x + b.w);
+        maxY = Math.max(maxY, b.y + b.h);
+      });
+      if (data.canvas) {
+        maxX = Math.max(maxX, data.canvas.w || 0);
+        maxY = Math.max(maxY, data.canvas.h || 0);
+      }
+      // Shell có min-height đủ chứa tất cả các box
+      shell.style.minHeight = Math.max(maxY + 60, parseInt(shell.style.minHeight) || 0) + 'px';
+
+      data.boxes.forEach(function(b) {
+        if (!b.key) return;
+        var el = document.querySelector('[data-box="' + b.key + '"]');
+        if (!el) return;
+        // Đo natural size TRƯỚC khi đổi layout
+        var rect = el.getBoundingClientRect();
+        var naturalW = rect.width || b.w;
+        var naturalH = rect.height || b.h;
+        el.dataset.naturalW = naturalW;
+        el.dataset.naturalH = naturalH;
+        // Convert sang absolute + toạ độ mới
+        el.style.position = 'absolute';
+        el.style.left = b.x + 'px';
+        el.style.top = b.y + 'px';
+        el.style.width = b.w + 'px';
+        el.style.height = b.h + 'px';
+        el.style.margin = '0';
+        // Scale nội dung bên trong cho vừa (co dãn mượt, không gãy layout)
+        el.style.overflow = 'hidden';
+        var inner = el.querySelector('.scale-wrap');
+        if (!inner) {
+          inner = document.createElement('div');
+          inner.className = 'scale-wrap';
+          // Wrap tất cả children hiện tại
+          while (el.firstChild) inner.appendChild(el.firstChild);
+          el.appendChild(inner);
+        }
+        applyScale(el);
+      });
+    })
+    .catch(function(err) { console.warn('applyAppliedLayout:', err); });
+})();
+
+function applyScale(boxEl) {
+  var inner = boxEl.querySelector('.scale-wrap');
+  if (!inner) return;
+  var nW = parseFloat(boxEl.dataset.naturalW) || 1;
+  var nH = parseFloat(boxEl.dataset.naturalH) || 1;
+  var cW = boxEl.clientWidth || 1;
+  var cH = boxEl.clientHeight || 1;
+  // Scale đều theo min để giữ tỷ lệ + letterbox phần dư
+  var scale = Math.min(cW / nW, cH / nH);
+  inner.style.transformOrigin = '0 0';
+  inner.style.transform = 'scale(' + scale + ')';
+  inner.style.width = nW + 'px';
+  inner.style.height = nH + 'px';
+  // Center theo trục dư
+  var extraX = (cW - nW * scale) / 2;
+  var extraY = (cH - nH * scale) / 2;
+  inner.style.marginLeft = extraX + 'px';
+  inner.style.marginTop = extraY + 'px';
+}
+window._applyBoxScale = applyScale;
+
+window.addEventListener('resize', function() {
+  document.querySelectorAll('[data-box]').forEach(function(el) {
+    if (el.dataset.naturalW) applyScale(el);
+  });
+});
+</script>
+
 </body>
 </html>

@@ -768,6 +768,26 @@
     .prev-box.selected .prev-del { display: flex; align-items: center; justify-content: center; }
     .prev-box .prev-del:hover { background: var(--neon-pink); }
 
+    /* Title text (contenteditable) — user click để edit trực tiếp trên preview */
+    .prev-box .prev-title-text {
+      padding: 4px 6px;
+      border-radius: 3px;
+      transition: background 0.15s;
+    }
+    .prev-box .prev-title-text:hover {
+      background: rgba(var(--neon-rgb), 0.08);
+    }
+    .prev-box .prev-title-text:focus {
+      background: rgba(var(--neon-rgb), 0.15);
+      box-shadow: 0 0 0 1px var(--neon);
+    }
+
+    /* Preview scale wrapper — clone Front Repo nội dung, transform: scale() khi resize */
+    .prev-box .prev-scale {
+      pointer-events: none;
+      transform-origin: 0 0;
+    }
+
     /* Inspector */
     .inspector-section {
       margin-bottom: 14px;
@@ -1106,8 +1126,11 @@
             repeating-linear-gradient(0deg, rgba(255,255,255,0.02) 0 1px, transparent 1px 24px),
             repeating-linear-gradient(90deg, rgba(255,255,255,0.02) 0 1px, transparent 1px 24px),
             var(--bg-color);cursor:grab;">
-            <div id="canvasViewport" style="position:absolute;top:0;left:0;transform-origin:0 0;will-change:transform;">
-              <div id="previewStage" style="position:relative;background:var(--bg-color);width:1280px;height:900px;box-shadow:0 0 0 1px rgba(var(--neon-rgb),0.3);">
+            <div id="canvasViewport" style="position:absolute;top:0;left:0;transform-origin:0 0;will-change:transform;width:1280px;height:900px;">
+              <!-- Iframe clone của Front Repo làm nền -->
+              <iframe id="previewIframe" src="/" style="position:absolute;top:0;left:0;width:1280px;height:900px;border:none;background:var(--bg-color);pointer-events:none;z-index:1;" scrolling="no"></iframe>
+              <!-- Overlay khung để kéo/resize/title edit -->
+              <div id="previewStage" style="position:absolute;top:0;left:0;width:1280px;height:900px;z-index:2;pointer-events:none;">
                 <!-- Boxes sẽ được render động bởi JS -->
               </div>
             </div>
@@ -1135,6 +1158,7 @@
         <div style="display:flex;gap:8px;margin-top:12px;align-items:center;">
           <button class="form-btn success" onclick="savePreviewLayout()">💾 Lưu Layout</button>
           <button class="form-btn" onclick="resetPreviewLayout()">↺ Reset Layout</button>
+          <button class="form-btn" style="background:rgba(57,255,20,0.18);border-color:var(--neon);color:var(--neon);font-weight:700;" onclick="applyLayoutToFront(this)" id="applyLayoutBtn">📤 Add Layout to Front</button>
           <div id="saveStatus" style="margin-left:auto;font-size:11px;color:var(--muted);"></div>
         </div>
       </div>
@@ -2184,13 +2208,18 @@
       box.className = 'prev-box' + (isSide ? ' prev-side' : '');
       box.setAttribute('data-box', b.key);
       box.dataset.defaultTitle = b.title || b.key;
+      box.dataset.naturalW = b.naturalW || b.w;
+      box.dataset.naturalH = b.naturalH || b.h;
       box.style.cssText = `position:absolute;left:${b.x}px;top:${b.y}px;width:${b.w}px;height:${b.h}px;`
         + (isSide ? 'background:transparent;border:none;border-left:none;display:flex;align-items:center;' : '')
         + 'cursor:move;overflow:hidden;box-sizing:border-box;';
-      box.innerHTML =
-        `<div class="prev-title" data-pos="top-left"></div>` +
-        `<div style="font-family:'Press Start 2P',monospace;font-size:9px;color:var(--muted);text-align:center;flex:1;pointer-events:none;">${b.title || b.key}</div>` +
-        // 8 resize handles
+      // Title (contenteditable) — user click để edit trực tiếp trên preview
+      const titleHTML = `<div class="prev-title" data-pos="top-left"></div>` +
+        `<div class="prev-title-text" contenteditable="true" spellcheck="false" data-key="${b.key}" style="font-family:'Press Start 2P',monospace;font-size:9px;color:var(--muted);text-align:center;flex:1;pointer-events:auto;outline:none;min-width:10px;">${escapeHtml(b.title || b.key)}</div>`;
+      // Container scale: clone nội dung thật của Front Repo sẽ được inject vào đây
+      const scaleHTML = `<div class="prev-scale" style="position:absolute;top:0;left:0;width:${b.naturalW||b.w}px;height:${b.naturalH||b.h}px;transform-origin:0 0;pointer-events:none;"></div>`;
+      // 8 resize handles
+      const handlesHTML =
         `<div class="resize-handle h-nw" data-dir="nw"></div>` +
         `<div class="resize-handle h-n" data-dir="n"></div>` +
         `<div class="resize-handle h-ne" data-dir="ne"></div>` +
@@ -2200,6 +2229,7 @@
         `<div class="resize-handle h-sw" data-dir="sw"></div>` +
         `<div class="resize-handle h-w" data-dir="w"></div>` +
         `<button class="prev-del" title="Xóa khung">&times;</button>`;
+      box.innerHTML = titleHTML + scaleHTML + handlesHTML;
       _stage.appendChild(box);
 
       previewTitles[b.key] = { title: b.title || '', pos: 'top-left' };
@@ -2215,11 +2245,77 @@
         h.addEventListener('mousedown', (e) => { e.stopPropagation(); onResizeHandleDown(e, h.dataset.dir, b.key); });
       });
 
+      // Title contenteditable: sync vào previewTitles khi user gõ
+      const titleEl = box.querySelector('.prev-title-text');
+      titleEl.addEventListener('input', () => {
+        const v = titleEl.textContent;
+        if (!previewTitles[b.key]) previewTitles[b.key] = { title: '', pos: 'top-left' };
+        previewTitles[b.key].title = v;
+      });
+      titleEl.addEventListener('mousedown', (e) => e.stopPropagation());
+      titleEl.addEventListener('click', (e) => e.stopPropagation());
+
       applyTitleToBox(b.key);
       applyBoxStyle(b.key);
+      applyPreviewScale(b.key);
       renderLayers();
       autoExpandCanvas();
       updateCanvasHint();
+    }
+
+    // ============ SCALE NỘI DUNG KHI RESIZE ============
+    // Lưu natural size (khi sync hoặc lúc tạo) → scale theo tỷ lệ khi user kéo.
+    // Công thức: scale = min(boxW/naturalW, boxH/naturalH) để giữ tỷ lệ,
+    // nội dung co dãn mượt, không gãy layout.
+    function applyPreviewScale(key) {
+      const box = _stage.querySelector(`[data-box="${key}"]`);
+      if (!box) return;
+      const inner = box.querySelector('.prev-scale');
+      if (!inner) return;
+      const nW = parseFloat(box.dataset.naturalW) || box.offsetWidth || 1;
+      const nH = parseFloat(box.dataset.naturalH) || box.offsetHeight || 1;
+      const cW = box.offsetWidth || 1;
+      const cH = box.offsetHeight || 1;
+      const scale = Math.min(cW / nW, cH / nH);
+      inner.style.width = nW + 'px';
+      inner.style.height = nH + 'px';
+      inner.style.transform = `scale(${scale})`;
+      const extraX = (cW - nW * scale) / 2;
+      const extraY = (cH - nH * scale) / 2;
+      inner.style.left = extraX + 'px';
+      inner.style.top = extraY + 'px';
+    }
+    function applyScaleToAll() {
+      _stage.querySelectorAll('.prev-box').forEach(b => applyPreviewScale(b.dataset.box));
+    }
+
+    // ============ INJECT NỘI DUNG THẬT TỪ IFRAME VÀO BOX ============
+    // Lấy HTML của [data-box="key"] bên trong #previewIframe, clone vào .prev-scale.
+    function injectFrontRepoContent(key) {
+      const box = _stage.querySelector(`[data-box="${key}"]`);
+      if (!box) return;
+      const inner = box.querySelector('.prev-scale');
+      if (!inner) return;
+      const iframe = document.getElementById('previewIframe');
+      if (!iframe) return;
+      try {
+        const doc = iframe.contentDocument || iframe.contentWindow?.document;
+        if (!doc) return;
+        const src = doc.querySelector(`[data-box="${key}"]`);
+        if (!src) return;
+        // Capture natural size trước khi inject
+        const rect = src.getBoundingClientRect();
+        if (rect.width > 0) box.dataset.naturalW = rect.width;
+        if (rect.height > 0) box.dataset.naturalH = rect.height;
+        // Snapshot innerHTML (style attributes đã được tính)
+        inner.innerHTML = src.innerHTML;
+        applyPreviewScale(key);
+      } catch (e) {
+        console.warn('injectFrontRepoContent(' + key + '):', e);
+      }
+    }
+    function injectAllFrontRepoContent() {
+      _stage.querySelectorAll('.prev-box').forEach(b => injectFrontRepoContent(b.dataset.box));
     }
 
     // ============ LAYERS PANEL ============
@@ -3195,6 +3291,7 @@
       previewBoxesData[st.key].y = ny;
       previewBoxesData[st.key].w = nw;
       previewBoxesData[st.key].h = nh;
+      applyPreviewScale(st.key);
       updateXYDisplay();
     }
     function onResizeUp() {
@@ -3328,13 +3425,24 @@
         previewCanvasW = data.viewport.w;
         previewCanvasH = data.viewport.h;
         updateCanvasSize();
-        // Add boxes
+        // Add boxes (naturalW/H dùng luôn w/h scan được)
         newBoxes.forEach(b => createBoxOnCanvas({
           key: b.key,
           title: b.title || b.key,
           x: b.x, y: b.y, w: b.w, h: b.h,
+          naturalW: b.w, naturalH: b.h,
           type: b.type,
         }));
+        // Inject nội dung thật từ iframe vào từng box (sau khi iframe load xong)
+        const iframe = document.getElementById('previewIframe');
+        const doInject = () => injectAllFrontRepoContent();
+        if (iframe && iframe.contentDocument && iframe.contentDocument.readyState === 'complete') {
+          doInject();
+        } else if (iframe) {
+          iframe.addEventListener('load', doInject, { once: true });
+          // Fallback: thử lại sau 1.5s nếu load event đã bị miss
+          setTimeout(doInject, 1500);
+        }
         renderLayers();
         renderInspector();
         zoomFit();
@@ -3390,6 +3498,57 @@
       if (status) { status.textContent = '✅ Đã lưu lúc ' + new Date().toLocaleTimeString(); setTimeout(() => status.textContent = '', 3000); }
       showNotif('Đã lưu layout!');
     }
+
+    // ============ ADD LAYOUT TO FRONT (POST /api/apply-layout) ============
+    // Gửi toạ độ + title mới → Front Repo reload sẽ áp dụng.
+    async function applyLayoutToFront(btn) {
+      const boxes = Array.from(_stage.querySelectorAll('.prev-box'));
+      if (!boxes.length) { alert('Chưa có khung nào. Hãy Sync với Front Repo trước.'); return; }
+      if (!confirm(`Áp dụng ${boxes.length} khung layout cho trang Front Repo?`)) return;
+      if (btn) { btn.disabled = true; btn.textContent = '📤 Đang áp dụng...'; }
+      try {
+        // Thu thập payload đúng schema backend yêu cầu
+        const payload = {
+          canvas: { w: previewCanvasW, h: previewCanvasH },
+          boxes: boxes.map(b => {
+            const key = b.dataset.box;
+            const t = previewTitles[key] || { title: '', pos: 'top-left' };
+            const m = previewBoxesData[key] || {};
+            return {
+              key,
+              selector: `[data-box="${key}"]`,
+              title: t.title || key,
+              titlePos: t.pos || 'top-left',
+              x: b.offsetLeft,
+              y: b.offsetTop,
+              w: b.offsetWidth,
+              h: b.offsetHeight,
+              type: m.type || 'content',
+              children: m.children || [],
+              css: m.css || {},
+            };
+          }),
+        };
+        const r = await fetch('/api/apply-layout', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+        const result = await r.json();
+        if (!result.ok) { alert('Lỗi áp dụng: ' + (result.error || 'unknown')); return; }
+        showNotif(result.message || 'Đã áp dụng layout!');
+        // Force reload iframe preview để user thấy kết quả ngay
+        const iframe = document.getElementById('previewIframe');
+        if (iframe) {
+          iframe.src = iframe.src.split('?')[0] + '?t=' + Date.now();
+        }
+      } catch (e) {
+        alert('Lỗi: ' + e.message);
+      } finally {
+        if (btn) { btn.disabled = false; btn.textContent = '📤 Add Layout to Front'; }
+      }
+    }
+    window.applyLayoutToFront = applyLayoutToFront;
     function resetPreviewLayout() {
       if (!confirm('Reset toàn bộ layout + khung về mặc định?')) return;
       localStorage.removeItem('repo_previewLayout');
@@ -3420,6 +3579,7 @@
                 key,
                 title: titles[key]?.title || key,
                 x: b.x, y: b.y, w: b.w, h: b.h,
+                naturalW: b.w, naturalH: b.h,
                 type: m.type || 'content',
               });
               if (titles[key]) {
@@ -3427,6 +3587,15 @@
                 applyTitleToBox(key);
               }
             });
+            // Inject nội dung thật từ iframe vào các box (nếu iframe đã load)
+            const iframe = document.getElementById('previewIframe');
+            const doInject = () => injectAllFrontRepoContent();
+            if (iframe && iframe.contentDocument && iframe.contentDocument.readyState === 'complete') {
+              doInject();
+            } else if (iframe) {
+              iframe.addEventListener('load', doInject, { once: true });
+              setTimeout(doInject, 2000);
+            }
           } catch(e) { console.error(e); }
         }
         applyZoom();
