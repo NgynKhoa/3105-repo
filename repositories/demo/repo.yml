@@ -15,14 +15,6 @@ _shared_screens: &screens
   - assets/preview/preview-third.png
   - assets/preview/preview-fourth.png
 
-_shared_os_rules: &os_rules
-  - minimum: "17.0"
-    maximum: "18.7.1"
-  - minimum: "26.0"
-    maximum: "26.6.1"
-  - minimum: "27.0"
-    maximum: "27.0"
-
 # ==========================================
 # DANH SÁCH PACKAGES
 # ==========================================
@@ -44,7 +36,13 @@ packages:
     download: packages/PATCH_FREE_V2_VNG.3105
     sha256: AE94A6651B6121A1CB824A602E1246AE3EDEF4D4D6A90AFEBDCC1700E70E7F7B
     size: 3598855
-    supportedOS: *os_rules
+    supportedOS:
+      - minimum: "17.0"
+        maximum: "18.7.1"
+      - minimum: "26.0"
+        maximum: "26.6.1"
+      - minimum: "27.0"
+        maximum: "27.0"
     featured: true
     isPrivate: false
     description: |
@@ -134,7 +132,13 @@ packages:
     download: packages/PATCH_FREE_V2_GLOBAL.3105
     sha256: 059EAA2851EA9C73F7DFC5CFA8273831E4AB42618B64E2AEE5F552111C05DED9
     size: 3598853
-    supportedOS: *os_rules
+    supportedOS:
+      - minimum: "17.0"
+        maximum: "18.7.1"
+      - minimum: "26.0"
+        maximum: "26.6.1"
+      - minimum: "27.0"
+        maximum: "27.0"
     featured: false
     isPrivate: false
     description: |
@@ -188,7 +192,13 @@ packages:
     download: packages/PATCH_FREE_V2_KR.3105
     sha256: 9EB3B5718382D11973D0FDD1C0E859E9FDAA06B75AD92730A90229A90286BA97
     size: 3598854
-    supportedOS: *os_rules
+    supportedOS:
+      - minimum: "17.0"
+        maximum: "18.7.1"
+      - minimum: "26.0"
+        maximum: "26.6.1"
+      - minimum: "27.0"
+        maximum: "27.0"
     featured: false
     isPrivate: false
     description: |
@@ -455,7 +465,7 @@ packages:
     password: "0604"
     category: Customization
     tags: [CUSTOM]
-    publishedAt: "2026-09-08T13:34:24.000Z"
+    publishedAt: "2026-09-12T19:42:16.000Z"
     icon: assets/icon/New_ver46/new_4_6.png
     banner: assets/banner/banner_new.png
     screenshots: *screens
