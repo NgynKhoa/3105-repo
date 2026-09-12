@@ -2608,7 +2608,7 @@
   <div id="toast"></div>
 
   <!-- App JS -->
-  <script src="/admin/static/app.js?v=28"></script>
+  <script src="/admin/static/app.js?v=29"></script>
   <!-- Bootstrap data -->
   <script>{{ bootstrap_js | safe }}</script>
 
@@ -3809,19 +3809,30 @@ document.querySelectorAll('.blog-card, .blog-item a, .blog-link').forEach(card =
 
   // === Boot ===
   async function boot() {
+    // Blog load trước (không phụ thuộc repo)
+    await loadBlog();
+
     // Lấy repo mặc định: ưu tiên localStorage('currentRepo') → /api/repositories[0]
+    // /api/repositories trả { repositories: [...], sources: [...] } (object)
     const saved = (() => { try { return localStorage.getItem('currentRepo'); } catch (e) { return null; } })();
     if (saved) {
       currentRepo = saved;
     } else {
       try {
         const r = await fetch('/api/repositories');
-        const repos = await r.json();
-        if (Array.isArray(repos) && repos.length) currentRepo = typeof repos[0] === 'string' ? repos[0] : (repos[0].name || repos[0].id);
-      } catch (e) { /* ignore */ }
+        const data = await r.json();
+        // Chấp nhận cả 2 format: array trực tiếp HOẶC object {repositories: [...]}
+        const repos = Array.isArray(data) ? data : (data.repositories || data.repos || []);
+        if (Array.isArray(repos) && repos.length) {
+          currentRepo = typeof repos[0] === 'string' ? repos[0] : (repos[0].name || repos[0].id);
+        }
+      } catch (e) { console.warn('dynamicFit: load /api/repositories failed', e); }
     }
-    if (!currentRepo) return;
-    await Promise.all([loadPackages(), loadBlog()]);
+    if (currentRepo) {
+      await loadPackages();
+    } else {
+      console.warn('dynamicFit: no currentRepo — packages sẽ trống');
+    }
     refitAll();
     // Watch resize
     watchResize(document.getElementById('packagesBox'), renderPackages);
@@ -3832,6 +3843,7 @@ document.querySelectorAll('.blog-card, .blog-item a, .blog-link').forEach(card =
       window.__reapplyLayout = function() {
         orig();
         setTimeout(refitAll, 50);
+        setTimeout(refitAll, 250);
       };
     }
     // Fallback: re-fit sau khi DOM ổn định + data chắc chắn đã về
