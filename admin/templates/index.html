@@ -898,6 +898,41 @@
       flex-shrink: 0;
       transition: background 0.15s;
     }
+    /* Giới hạn icon package trong .pkg-item để không phình to che row */
+    .pkg-item img {
+      max-width: 36px;
+      max-height: 36px;
+      width: 36px;
+      height: 36px;
+      object-fit: cover;
+      display: block;
+      flex-shrink: 0;
+    }
+    .pkg-item .pkg-icon-wrap {
+      width: 36px;
+      height: 36px;
+      min-width: 36px;
+      max-width: 36px;
+      overflow: hidden;
+      border-radius: 6px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .pkg-item .pkg-icon-wrap img {
+      max-width: 100%;
+      max-height: 100%;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .pkg-item .pkg-icon-wrap svg,
+    .pkg-item .pkg-icon-wrap svg * {
+      max-width: 100%;
+      max-height: 100%;
+    }
     .pkg-item:last-child { border-bottom: none; }
     .pkg-item:hover { background: rgba(var(--neon-rgb),0.035); }
 
@@ -1518,8 +1553,6 @@
     .page-grid .packages-col .box { margin-bottom: 0; }
     .page-grid .packages-col #packagesBox { height: 378px; min-height: 378px; overflow: hidden; }
     .page-grid .packages-col .package-list { height: 286px; overflow-y: auto; }
-    .page-grid .packages-col .box { margin-bottom: 0; }
-    .page-grid .sidebar-col { flex: 0 0 200px; width: 200px; min-width: 200px; }
 
     /* ============================ SIDEBAR COL (Stars + Music + Moon stacked) ============================ */
     .sidebar-col {
@@ -1623,7 +1656,7 @@
 
     /* ============================ BLOG ITEMS ============================ */
     #blog-section { height: 290px; overflow: hidden; }
-    #blogList { height: 196px; overflow: hidden; }
+    #blogList { height: 100%; min-height: 0; overflow: visible; }
     #blogPagination { padding: 10px 14px; display: flex; gap: 4px; align-items: center; border-top: 1px solid var(--border); }
     .blog-item {
       display: flex;
@@ -2575,7 +2608,7 @@
   <div id="toast"></div>
 
   <!-- App JS -->
-  <script src="/admin/static/app.js?v=27"></script>
+  <script src="/admin/static/app.js?v=28"></script>
   <!-- Bootstrap data -->
   <script>{{ bootstrap_js | safe }}</script>
 
@@ -3679,9 +3712,9 @@ document.querySelectorAll('.blog-card, .blog-item a, .blog-link').forEach(card =
     const shown = all.slice(0, max);
     list.innerHTML = shown.map(pkg => `
       <div class="pkg-item">
-        <div class="flex-shrink-0 w-9 h-9 rounded-md overflow-hidden flex items-center justify-center" style="background:rgba(57,255,20,0.06);">
+        <div class="pkg-icon-wrap">
           ${pkg.icon
-            ? `<img src="/repo-asset?repo=${encodeURIComponent(currentRepo)}&path=${encodeURIComponent(pkg.icon)}" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block;" onerror="this.style.display='none'" />`
+            ? `<img src="/repo-asset?repo=${encodeURIComponent(currentRepo)}&path=${encodeURIComponent(pkg.icon)}" loading="lazy" onerror="this.style.display='none'" />`
             : '<span style="color:var(--muted);font-size:9px;">no img</span>'}
         </div>
         <div class="pkg-info">
@@ -3801,6 +3834,10 @@ document.querySelectorAll('.blog-card, .blog-item a, .blog-link').forEach(card =
         setTimeout(refitAll, 50);
       };
     }
+    // Fallback: re-fit sau khi DOM ổn định + data chắc chắn đã về
+    setTimeout(refitAll, 800);
+    setTimeout(refitAll, 2000);
+    setTimeout(refitAll, 4000);
   }
 
   if (document.readyState === 'loading') {

@@ -499,7 +499,7 @@ def index():
     return render_template(
         "index.html",
         bootstrap_js=bootstrap_js,
-        cache_version=18,
+        cache_version=19,
     )
 
 
