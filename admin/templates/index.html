@@ -2575,7 +2575,7 @@
   <div id="toast"></div>
 
   <!-- App JS -->
-  <script src="/admin/static/app.js?v=26"></script>
+  <script src="/admin/static/app.js?v=27"></script>
   <!-- Bootstrap data -->
   <script>{{ bootstrap_js | safe }}</script>
 
@@ -3633,32 +3633,180 @@ document.querySelectorAll('.blog-card, .blog-item a, .blog-link').forEach(card =
   card.addEventListener('click', e => { e.preventDefault(); window.open(card.getAttribute('href'), '_blank'); });
 });
 
-// Load and render blog posts in sidebar
-(async function loadFrontRepoBlog() {
-  const list = document.getElementById('blogList');
-  if (!list) return;
-  try {
-    const res = await fetch('/api/blog/posts');
-    const data = await res.json();
-    const posts = (data.posts || []).slice(0, 5);
-    list.innerHTML = posts.map(p => `
+// =====================================================
+// DYNAMIC FIT — Tự co giãn số items theo kích thước khung
+// Khi kéo dãn khung → nhiều items hiện ra (bù đắp khoảng trống)
+// Khi thu nhỏ → items thừa bị ẩn (gọn trong khung)
+// Áp dụng cho cả packages list và blog sidebar
+// =====================================================
+(function dynamicFitBoxes() {
+  // Cache full data để không fetch lại mỗi lần re-fit
+  const cache = { repo: null, packages: [], blogPosts: [] };
+  let currentRepo = null;
+
+  // Tính số items có thể hiển thị trong 1 box dựa vào chiều cao
+  // Trừ padding/header khoảng 90-120px (box-header-wrap ~ 60px + 24 padding)
+  function fitCount(boxEl, itemHeight, headerOffset) {
+    if (!boxEl) return 0;
+    const h = boxEl.clientHeight || 0;
+    if (h <= 0) return 0;
+    const available = h - (headerOffset || 92);
+    return Math.max(0, Math.floor(available / itemHeight));
+  }
+
+  // === Packages ===
+  async function loadPackages() {
+    if (!currentRepo) return;
+    try {
+      const res = await fetch(`/api/repo/${encodeURIComponent(currentRepo)}/packages`);
+      const data = await res.json();
+      cache.repo = currentRepo;
+      cache.packages = (data.packages || []).filter(p => p && p.name);
+    } catch (err) {
+      console.warn('dynamicFit: load packages failed', err);
+    }
+  }
+
+  function renderPackages() {
+    const list = document.getElementById('packageList');
+    const countEl = document.getElementById('packageCount');
+    const box = document.getElementById('packagesBox');
+    if (!list || !box) return;
+    const itemH = 56; // .pkg-item height trong CSS
+    const headerH = 92; // box-header-wrap + padding
+    const max = fitCount(box, itemH, headerH);
+    const all = cache.packages;
+    const shown = all.slice(0, max);
+    list.innerHTML = shown.map(pkg => `
+      <div class="pkg-item">
+        <div class="flex-shrink-0 w-9 h-9 rounded-md overflow-hidden flex items-center justify-center" style="background:rgba(57,255,20,0.06);">
+          ${pkg.icon
+            ? `<img src="/repo-asset?repo=${encodeURIComponent(currentRepo)}&path=${encodeURIComponent(pkg.icon)}" loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block;" onerror="this.style.display='none'" />`
+            : '<span style="color:var(--muted);font-size:9px;">no img</span>'}
+        </div>
+        <div class="pkg-info">
+          <div style="display:flex;align-items:center;gap:6px;">
+            <span style="font-weight:500;font-size:0.85rem;color:var(--text-bright);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;min-width:0;">${escapeHtml(pkg.name || '(chưa có tên)')}</span>
+            ${pkg.featured ? '<span style="background:rgba(240,224,64,0.15);color:#f0e040;font-size:9px;padding:1px 6px;border-radius:8px;">featured</span>' : ''}
+          </div>
+          <div style="font-size:0.7rem;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
+            ${escapeHtml(pkg.author || '')} ${pkg.version ? '· v' + escapeHtml(pkg.version) : ''}
+          </div>
+        </div>
+      </div>
+    `).join('');
+    // Count + footer hint
+    if (countEl) {
+      countEl.textContent = all.length > 0
+        ? (shown.length === all.length ? `${all.length} package` : `${shown.length}/${all.length} package`)
+        : '0 package';
+    }
+    // Empty hint
+    const empty = document.getElementById('emptyHint');
+    if (empty) empty.classList.toggle('hidden', all.length > 0);
+    list.style.display = all.length === 0 ? 'none' : 'block';
+    // Pagination ẩn (đã dynamic-fit)
+    const pag = document.getElementById('pkgPagination');
+    if (pag) pag.classList.add('hidden');
+  }
+
+  // === Blog ===
+  async function loadBlog() {
+    try {
+      const res = await fetch('/api/blog/posts');
+      const data = await res.json();
+      cache.blogPosts = (data.posts || []);
+    } catch (err) {
+      console.warn('dynamicFit: load blog failed', err);
+    }
+  }
+
+  function renderBlog() {
+    const list = document.getElementById('blogList');
+    const countEl = document.getElementById('blogCount');
+    const box = document.getElementById('blog-section');
+    if (!list || !box) return;
+    const itemH = 44; // blog-item height (compact)
+    const headerH = 92;
+    const max = fitCount(box, itemH, headerH);
+    const all = cache.blogPosts;
+    const shown = all.slice(0, max);
+    list.innerHTML = shown.map(p => `
       <a href="/blog-post/${p.id}" class="blog-item" style="cursor:pointer;text-decoration:none;color:inherit;display:flex;">
         <span class="blog-icon">${p.icon || '📝'}</span>
         <div class="blog-link" style="flex:1;">
-          <div class="blog-title" style="font-size:0.78rem;">${p.title}</div>
-          <div class="blog-date">${p.date || ''}</div>
+          <div class="blog-title" style="font-size:0.78rem;">${escapeHtml(p.title)}</div>
+          <div class="blog-date">${escapeHtml(p.date || '')}</div>
         </div>
       </a>
     `).join('');
-    // Hide pagination if fewer posts
-    const pag = document.getElementById('blogPagination');
-    if (pag && data.posts.length <= 5) pag.classList.add('hidden');
-    // Re-apply Boxes layout sau khi blog list render xong
-    if (typeof window.__reapplyLayout === 'function') {
-      setTimeout(window.__reapplyLayout, 50);
+    if (countEl) {
+      countEl.textContent = all.length > 0
+        ? (shown.length === all.length ? `${all.length} bài viết` : `${shown.length}/${all.length} bài viết`)
+        : '0 bài viết';
     }
-  } catch (err) {
-    list.innerHTML = '<div style="padding:14px;color:var(--muted);font-size:11px;">Blog chưa sẵn sàng.</div>';
+    // Pagination ẩn
+    const pag = document.getElementById('blogPagination');
+    if (pag) pag.classList.add('hidden');
+  }
+
+  // === Helper: HTML escape ===
+  function escapeHtml(s) {
+    return String(s || '').replace(/[&<>"']/g, c => ({
+      '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+    }[c]));
+  }
+
+  // === Re-fit cả 2 box khi user kéo dãn ===
+  function refitAll() {
+    renderPackages();
+    renderBlog();
+  }
+
+  // ResizeObserver: bắn mỗi khi box thay đổi kích thước (kéo dãn)
+  function watchResize(el, fn) {
+    if (!el || typeof ResizeObserver === 'undefined') return;
+    const ro = new ResizeObserver(() => {
+      // debounce nhẹ để tránh spam trong lúc kéo
+      clearTimeout(el._fitTimer);
+      el._fitTimer = setTimeout(fn, 60);
+    });
+    ro.observe(el);
+  }
+
+  // === Boot ===
+  async function boot() {
+    // Lấy repo mặc định: ưu tiên localStorage('currentRepo') → /api/repositories[0]
+    const saved = (() => { try { return localStorage.getItem('currentRepo'); } catch (e) { return null; } })();
+    if (saved) {
+      currentRepo = saved;
+    } else {
+      try {
+        const r = await fetch('/api/repositories');
+        const repos = await r.json();
+        if (Array.isArray(repos) && repos.length) currentRepo = typeof repos[0] === 'string' ? repos[0] : (repos[0].name || repos[0].id);
+      } catch (e) { /* ignore */ }
+    }
+    if (!currentRepo) return;
+    await Promise.all([loadPackages(), loadBlog()]);
+    refitAll();
+    // Watch resize
+    watchResize(document.getElementById('packagesBox'), renderPackages);
+    watchResize(document.getElementById('blog-section'), renderBlog);
+    // Re-fit khi layout áp xong (boxes thay đổi left/top/w/h)
+    if (typeof window.__reapplyLayout === 'function') {
+      const orig = window.__reapplyLayout;
+      window.__reapplyLayout = function() {
+        orig();
+        setTimeout(refitAll, 50);
+      };
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', boot);
+  } else {
+    boot();
   }
 })();
 
