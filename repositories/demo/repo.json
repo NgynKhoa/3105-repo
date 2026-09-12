@@ -28,7 +28,7 @@
   "packages": [
     {
       "identifier": "owen-trial",
-      "name": "ĐỢII / Wait new updated",
+      "name": "PUBG Ver 4.6 Bản VNG Fixed",
       "author": "@owenindahouse",
       "version": "1.0.0",
       "summary": "✨ Pubg • Bản dùng thử • Trải nghiệm tính năng nâng cao",
@@ -37,17 +37,18 @@
       "tags": [
         "CUSTOM"
       ],
+      "publishedAt": "2026-09-12T19:33:16.000Z",
       "icon": "assets/icon/test.png",
-      "banner": "assets/banner/banner.png",
+      "banner": "assets/banner/banner_new.png",
       "screenshots": [
         "assets/preview/preview-first.png",
         "assets/preview/preview-second.png",
         "assets/preview/preview-third.png",
         "assets/preview/preview-fourth.png"
       ],
-      "download": "packages/PATCH_FREE_V12_BY_TD.3105",
-      "sha256": "CE977931A02FA8D505E6DF202BAC4252811DB1055AE1632BCBDC1413C271FCE0",
-      "size": 37432,
+      "download": "packages/PATCH_FREE_V2_VNG.3105",
+      "sha256": "AE94A6651B6121A1CB824A602E1246AE3EDEF4D4D6A90AFEBDCC1700E70E7F7B",
+      "size": 3598855,
       "supportedOS": [
         {
           "minimum": "17.0",
@@ -62,7 +63,7 @@
           "maximum": "27.0"
         }
       ],
-      "featured": false,
+      "featured": true,
       "isPrivate": false,
       "description": "🔥 PUBG CUSTOM FREE\n\n✨ TÍNH NĂNG\n\n• Bộ Skin tùy chỉnh\n• Hỗ trợ ngắm & tùy chỉnh súng\n• Dễ Dàng Cài Đặt\n• Thường Xuyên Cập Nhật\n\n⚠️ LƯU Ý QUAN TRỌNG\n\n• Hãy xóa gói tùy chỉnh cũ trước khi áp dụng.\n• Nên sao lưu dữ liệu trước khi cài đặt.\n\n💬 HỖ TRỢ\n\nNếu gặp bất kỳ vấn đề nào, hãy liên hệ @owenindahouse.\nHoặc liên hệ admin Mod @Thanhdat1690.\n\n❤️ Chúc bạn chơi game vui vẻ và hãy đón chờ những bản cập nhật tiếp theo!\n",
       "changelog": "🎉 v1.0.0 — Phát hành lần đầu\n\n✨ Bản thử nghiệm công khai đầu tiên\n\n🛠️ Vui lòng báo lỗi cho @owenindahouse nếu gặp sự cố\n\n⚠️ Đây là phiên bản thử nghiệm ban đầu và có thể vẫn còn một số lỗi.\n"
@@ -108,27 +109,26 @@
     },
     {
       "identifier": "owen-003",
-      "name": "ĐỢI ĐỢI/ Wait for update file",
+      "name": "PUBG Ver 4.6 CUSTOM FOR GLOBAL Fixed",
       "author": "@owenindahouse",
       "version": "1.0.0",
-      "summary": "✨ ADVANCED CUSTOM 4 GLOBAL",
+      "summary": "✨ ADVANCED CUSTOM FOR GLOBAL",
       "password": "2752",
       "category": "Customization",
       "tags": [
         "CUSTOM"
       ],
-      "publishedAt": "2026-08-28T10:00:00.000Z",
       "icon": "assets/icon/global-pubg_global.png",
-      "banner": "assets/banner/banner.png",
+      "banner": "assets/banner/banner_new.png",
       "screenshots": [
         "assets/preview/preview-first.png",
         "assets/preview/preview-second.png",
         "assets/preview/preview-third.png",
         "assets/preview/preview-fourth.png"
       ],
-      "download": "packages/V12_GL.3105",
-      "sha256": "C8669AEDFB5BFD0AB05029B3F6D09320FBC562859B1EB22F17EF602E66F3BC04",
-      "size": 37428,
+      "download": "packages/PATCH_FREE_V2_GLOBAL.3105",
+      "sha256": "059EAA2851EA9C73F7DFC5CFA8273831E4AB42618B64E2AEE5F552111C05DED9",
+      "size": 3598853,
       "supportedOS": [
         {
           "minimum": "17.0",
@@ -150,7 +150,7 @@
     },
     {
       "identifier": "owen-004",
-      "name": "💫 Đợiiii file mới chưa có file mới đâu",
+      "name": "💫 PUBG Ver 4.6 CUSTOM FOR KR Fixed",
       "author": "@owenindahouse",
       "version": "1.0.0",
       "summary": "✨ ADVANCED CUSTOM 4 KR",
@@ -160,16 +160,16 @@
         "CUSTOM"
       ],
       "icon": "assets/icon/kr-pubg_kr.png",
-      "banner": "assets/banner/banner.png",
+      "banner": "assets/banner/banner_new.png",
       "screenshots": [
         "assets/preview/preview-first.png",
         "assets/preview/preview-second.png",
         "assets/preview/preview-third.png",
         "assets/preview/preview-fourth.png"
       ],
-      "download": "packages/PATCH_FREE_V12_KR.3105",
-      "sha256": "AB58206C6DD088D60D3471D8BA65E544D80519EAA365CC2832ED192E3F5AD503",
-      "size": 37429,
+      "download": "packages/PATCH_FREE_V2_KR.3105",
+      "sha256": "9EB3B5718382D11973D0FDD1C0E859E9FDAA06B75AD92730A90229A90286BA97",
+      "size": 3598854,
       "supportedOS": [
         {
           "minimum": "17.0",
@@ -310,44 +310,6 @@
       "changelog": "🎉 v1.0.0 — Phát hành lần đầu."
     },
     {
-      "identifier": "owen-008",
-      "name": "Chưa có file mới",
-      "author": "@owenindahouse",
-      "version": "1.0.0",
-      "summary": "✨chỉ dành cho người dùng VIỆT NAM - Only for VNG",
-      "password": "2752",
-      "category": "Enhancement",
-      "tags": [
-        "DISPLAY"
-      ],
-      "icon": "assets/icon/potato.png",
-      "banner": "assets/banner/banner.png",
-      "screenshots": [
-        "assets/potato_120fps/potato_screenshot.png"
-      ],
-      "download": "packages/GRAPHICS_POTATO_WITH_120FPS.3105",
-      "sha256": "F7A03FE347ADF7DD29E0358FCF6FAED628E519F6837C7DDC6D5EE50FE15663B3",
-      "size": 14102893,
-      "supportedOS": [
-        {
-          "minimum": "17.0",
-          "maximum": "18.7.1"
-        },
-        {
-          "minimum": "26.0",
-          "maximum": "26.6.1"
-        },
-        {
-          "minimum": "27.0",
-          "maximum": "27.0"
-        }
-      ],
-      "featured": true,
-      "isPrivate": false,
-      "description": "🔥 PUBG CUSTOM FREE\n\n✨ TÍNH NĂNG\n\n• Bộ Skin tùy chỉnh\n• Hỗ trợ ngắm & tùy chỉnh súng\n• Dễ Dàng Cài Đặt\n• Thường Xuyên Cập Nhật\n\n⚠️ LƯU Ý QUAN TRỌNG\n\n• Hãy xóa gói tùy chỉnh cũ trước khi áp dụng.\n• Nên sao lưu dữ liệu trước khi cài đặt.\n\n💬 HỖ TRỢ\n\nNếu gặp bất kỳ vấn đề nào, hãy liên hệ @owenindahouse.\nHoặc liên hệ admin Mod @Thanhdat1690.\n❤️ Chúc bạn chơi game vui vẻ và hãy đón chờ những bản cập nhật tiếp theo!\n",
-      "changelog": "🛠️ Vui lòng báo lỗi cho @owenindahouse nếu gặp sự cố. "
-    },
-    {
       "identifier": "owen-009",
       "name": "Phụ Nữ Gất iu Dialer",
       "author": "@owenindahouse",
@@ -387,52 +349,11 @@
       "changelog": "🎉 v1.0.0 — Phát hành lần đầu."
     },
     {
-      "identifier": "owen-010",
-      "name": "Chưa có file mớiii",
-      "author": "@owenindahouse",
-      "version": "1.0.0",
-      "summary": "✨ 1 PATCH FOR 3 SERVERS",
-      "password": "owen",
-      "category": "Customization",
-      "tags": [
-        "CUSTOM"
-      ],
-      "icon": "assets/icon/allinone.png",
-      "banner": "assets/banner/banner.png",
-      "screenshots": [
-        "assets/preview/preview-first.png",
-        "assets/preview/preview-second.png",
-        "assets/preview/preview-third.png",
-        "assets/preview/preview-fourth.png"
-      ],
-      "download": "packages/ALL_IN_ONE_V12.3105",
-      "sha256": "9BF4F7C31A97C294714FA395AA9BE1674A5A4A4D414C5109FBBE9137DAF9C9DE",
-      "size": 38137,
-      "supportedOS": [
-        {
-          "minimum": "17.0",
-          "maximum": "18.7.1"
-        },
-        {
-          "minimum": "26.0",
-          "maximum": "26.6.1"
-        },
-        {
-          "minimum": "27.0",
-          "maximum": "27.0"
-        }
-      ],
-      "featured": false,
-      "isPrivate": false,
-      "description": "💎 PREMIUM\nJUST ONE PATCH FOR 3 SERVERS\nVNG - GLOBAL - KR\nJust apply this patch and enjoy all features for 3 servers. \nNo need to download 3 different patches.\n\n╭──────────────────╮\n ✨ TÍNH NĂNG\n╰──────────────────╯\n\n🔥1 Patch chơi được cả 3 server VNG - GLOBAL - KR\n🔥Chỉ việc áp dụng patch là xong, không cần tải 3 patch khác nhau.\n🔥 Tương thích Online\n🎯 Hỗ trợ ngắm tùy chỉnh\n👁️ iPad View\n🚗 Tùy chỉnh tốc độ xe\n⚡ Nhiều tính năng nâng cao khác\n\n╭──────────────────╮\n 🔐 QUYỀN TRUY CẬP PREMIUM\n╰──────────────────╯\n\n👑 Gói này dành cho thành viên TD Premium.\n\n╭──────────────────╮\n ⚠️ LƯU Ý QUAN TRỌNG\n╰──────────────────╯\n\n• Hãy xóa gói tùy chỉnh cũ trước khi áp dụng.\n• Nên sao lưu dữ liệu trước khi cài đặt.\n\n╭──────────────────╮\n 💬 HỖ TRỢ\n╰──────────────────╯\n\n@owenindahouse\n\n❤️ Cảm ơn bạn đã ủng hộ!\n",
-      "changelog": "╭──────────────────╮\n ✨ PHÁT HÀNH\n╰──────────────────╯\n\n🔐 GÓI DÀNH CHO THÀNH VIÊN PREMIUM\n\n╭──────────────────╮\n 🚀 SẮP TỚI\n╰──────────────────╯\n\n✨ Nhiều tính năng mới sẽ được bổ sung.\n\n🔄 Tiếp tục cập nhật và tối ưu trong các phiên bản tiếp theo.\n\n❤️ Cảm ơn bạn đã ủng hộ!\n"
-    },
-    {
       "identifier": "owen-001",
-      "name": "Wait for update new file ok",
+      "name": "PUBG ALL IN ONE Ver4.6  (VNG,KR,GL)",
       "author": "@owenindahouse",
       "version": "4.6.0",
-      "summary": "1 Patch dùng được cho 3 server",
+      "summary": "1 Patch dùng được cho 3 server/ 1 Patch for 3 Server",
       "password": "0604",
       "category": "Customization",
       "tags": [
@@ -440,171 +361,6 @@
       ],
       "publishedAt": "2026-09-08T13:34:24.000Z",
       "icon": "assets/icon/New_ver46/new_4_6.png",
-      "banner": "assets/banner/banner.png",
-      "screenshots": [
-        "assets/preview/preview-first.png",
-        "assets/preview/preview-second.png",
-        "assets/preview/preview-third.png",
-        "assets/preview/preview-fourth.png"
-      ],
-      "download": "packages/PATCH_NEW_VERSION_4-6_PUBG__2_.3105",
-      "sha256": "85E90E4435DEC263F99F923082DEF04D61D45FD3F468A6521052CFFF77249ACC",
-      "size": 1180183,
-      "supportedOS": [
-        {
-          "minimum": "17.0",
-          "maximum": "18.7.1"
-        },
-        {
-          "minimum": "26.0",
-          "maximum": "26.6.1"
-        },
-        {
-          "minimum": "27.0",
-          "maximum": "27.0"
-        }
-      ],
-      "featured": true,
-      "isPrivate": false,
-      "description": "ĐÃ UPDATED LẠI FILE, MỌI NGƯỜI CÓ THỂ CÀI ĐẶT HOẶC UPDATE ĐỂ TẢI XUỐNG FILE MỚI\nHAS BEEN UPDATED NEW FILE, PLS INSTALL OR PRESS UPDATE BUTTON TO DOWNLOAD NEW FILE\n\n🔥1 Patch chơi được cả 3 server VNG - GLOBAL - KR\n🔥1 Patch For 3 server VNG - GLOBAL - KR\n\n     🔥Chỉ việc áp dụng patch là xong, không cần tải 3 patch khác nhau.\n     🔥 Bypass Online \n     🎯 Hỗ trợ ngắm tùy chỉnh/ Aim Bot\n     👁️ iPad View\n     🚗 Tùy chỉnh tốc độ xe/ increase Speed Car\n     ⚡ Nhiều tính năng nâng cao khác/ More another Feature\n     \n     \n     ╭──────────────────╮\n      ⚠️ LƯU Ý QUAN TRỌNG\n     ╰──────────────────╯\n     \n     • Hãy xóa gói mod cũ,clear data trước khi áp dụng.\n     • Nên sao lưu dữ liệu trước khi cài đặt.\n     \n     ╭──────────────────╮\n      💬 HỖ TRỢ\n     ╰──────────────────╯\n     \n     @owenindahouse\n     \n❤️ Cảm ơn bạn đã ủng hộ!\n",
-      "changelog": "🎉 v4.6.0 — Phiên bản 4.6 mới nhất đã được cập nhật"
-    },
-    {
-      "identifier": "owen-000",
-      "name": "Chưa có file mới đâuu ạ",
-      "author": "@owenindahouse",
-      "version": "4.6.0",
-      "summary": "PUBG for Server Korean",
-      "password": "2752",
-      "category": "Customization",
-      "tags": [
-        "CUSTOM"
-      ],
-      "icon": "assets/icon/kr-pubg_kr.png",
-      "banner": "assets/banner/banner.png",
-      "screenshots": [
-        "assets/preview/preview-first.png",
-        "assets/preview/preview-second.png",
-        "assets/preview/preview-third.png",
-        "assets/preview/preview-fourth.png"
-      ],
-      "download": "packages/PATCH_PUBG_V46_FOR_KR.3105",
-      "sha256": "1BB59B93DB2D4187F25EDD53C0BECB9EF15FB825ED7C0C479D62F48999B43930",
-      "size": 1179331,
-      "supportedOS": [
-        {
-          "minimum": "17.0",
-          "maximum": "18.7.1"
-        },
-        {
-          "minimum": "26.0",
-          "maximum": "26.6.1"
-        },
-        {
-          "minimum": "27.0",
-          "maximum": "27.0"
-        }
-      ],
-      "featured": false,
-      "isPrivate": false,
-      "description": "💎 ADVANCED CUSTOM BUILD\n\n╭──────────────────╮\n ✨ FEATURES\n╰──────────────────╯\n\n🔥 Online Compatibility\n🎯 Aim Assistance\n👁️ iPad View\n🚗 Vehicle Enhancement\n⚡ Additional Features\n\n╭──────────────────╮\n ⚠️ IMPORTANT\n╰──────────────────╯\n\n• Remove any previous customization package before applying.\n• Backup your game data before installation.\n\n╭──────────────────╮\n 💬 SUPPORT\n╰──────────────────╯\n\n@owenindahouse\n@Thanhdat1690.\n",
-      "changelog": "🎉 v4.6.0 — Phát hành lần đầu"
-    },
-    {
-      "identifier": "owen-011",
-      "name": "ĐỢI BẢN MỚI NHÉ  CHƯA CÓ ĐÂUU",
-      "author": "@owenindahouse",
-      "version": "4.6.0",
-      "summary": "PUBG for Server VNG",
-      "password": "2752",
-      "category": "Customization",
-      "tags": [
-        "CUSTOM"
-      ],
-      "publishedAt": "2026-09-08T16:48:13.000Z",
-      "icon": "assets/icon/test.png",
-      "banner": "assets/banner/banner.png",
-      "screenshots": [
-        "assets/preview/preview-first.png",
-        "assets/preview/preview-second.png",
-        "assets/preview/preview-third.png",
-        "assets/preview/preview-fourth.png"
-      ],
-      "download": "packages/PATCH_FOR_V46_PUBG_VNG.3105",
-      "sha256": "5B7FF2AD45BE505D398A1F2A0584831BBB7B690198E79DB1B9F79F44003A98F1",
-      "size": 1179332,
-      "supportedOS": [
-        {
-          "minimum": "17.0",
-          "maximum": "18.7.1"
-        },
-        {
-          "minimum": "26.0",
-          "maximum": "26.6.1"
-        },
-        {
-          "minimum": "27.0",
-          "maximum": "27.0"
-        }
-      ],
-      "featured": true,
-      "isPrivate": false,
-      "description": "💎 PREMIUM\nJUST ONE PATCH FOR 3 SERVERS\nVNG - GLOBAL - KR\nJust apply this patch and enjoy all features for 3 servers. \nNo need to download 3 different patches.\n\n╭──────────────────╮\n ✨ TÍNH NĂNG\n╰──────────────────╯\n\n🔥1 Patch chơi được cả 3 server VNG - GLOBAL - KR\n🔥Chỉ việc áp dụng patch là xong, không cần tải 3 patch khác nhau.\n🔥 Tương thích Online\n🔥 Custom Skin \n🎯 Hỗ trợ ngắm tùy chỉnh\n👁️ iPad View\n🚗 Tùy chỉnh tốc độ xe\n⚡ Nhiều tính năng nâng cao khác\n\n╭──────────────────╮\n 🔐 QUYỀN TRUY CẬP PREMIUM\n╰──────────────────╯\n\n👑 Gói này dành cho thành viên TD Premium.\n\n╭──────────────────╮\n ⚠️ LƯU Ý QUAN TRỌNG\n╰──────────────────╯\n\n• Hãy xóa gói tùy chỉnh cũ trước khi áp dụng.\n• Nên sao lưu dữ liệu trước khi cài đặt.\n\n╭──────────────────╮\n 💬 HỖ TRỢ\n╰──────────────────╯\n\n@owenindahouse\n\n❤️ Cảm ơn bạn đã ủng hộ!\n",
-      "changelog": "🎉 v4.6.0 — Phát hành lần đầu"
-    },
-    {
-      "identifier": "owen-012",
-      "name": "ĐỢIIIIIIIIIIIIIIIIIII",
-      "author": "@owenindahouse",
-      "version": "4.6.0",
-      "summary": "PUBG for Server Global",
-      "password": "2752",
-      "category": "Customization",
-      "tags": [
-        "CUSTOM"
-      ],
-      "publishedAt": "2026-09-08T17:44:35.000Z",
-      "icon": "assets/icon/global-pubg_global.png",
-      "banner": "assets/banner/banner.png",
-      "screenshots": [
-        "assets/preview/preview-first.png",
-        "assets/preview/preview-second.png",
-        "assets/preview/preview-third.png",
-        "assets/preview/preview-fourth.png"
-      ],
-      "download": "packages/PATCH_PUBG_V46_GLOBAL.3105",
-      "sha256": "D71D28CE86665C243A3540D81CEF6E19108C4AC325FA12243AA8DB8805344C8F",
-      "size": 1179326,
-      "supportedOS": [
-        {
-          "minimum": "17.0",
-          "maximum": "18.7.1"
-        },
-        {
-          "minimum": "26.0",
-          "maximum": "26.6.1"
-        },
-        {
-          "minimum": "27.0",
-          "maximum": "27.0"
-        }
-      ],
-      "featured": true,
-      "isPrivate": false,
-      "description": "💎 ADVANCED CUSTOM BUILD\n\n╭──────────────────╮\n ✨ FEATURES\n╰──────────────────╯\n\n🔥 Online Compatibility\n🎯 Aim Assistance\n👁️ iPad View\n🚗 Vehicle Enhancement\n⚡ Additional Features\n\n╭──────────────────╮\n ⚠️ IMPORTANT\n╰──────────────────╯\n\n• Remove any previous customization package before applying.\n• Backup your game data before installation.\n\n╭──────────────────╮\n 💬 SUPPORT\n╰──────────────────╯\n\n@owenindahouse\nadmin Mod @Thanhdat1690.\n",
-      "changelog": "🎉 v4.6.0 — Phát hành lần đầu"
-    },
-    {
-      "identifier": "owen-013",
-      "name": "ĐỢI ĐÊ",
-      "author": "@owenindahouse",
-      "version": "1.0.0",
-      "summary": "test",
-      "category": "Customization",
-      "tags": [
-        "CUSTOM"
-      ],
-      "icon": "assets/preview/preview-third.png",
       "banner": "assets/banner/banner_new.png",
       "screenshots": [
         "assets/preview/preview-first.png",
@@ -612,19 +368,19 @@
         "assets/preview/preview-third.png",
         "assets/preview/preview-fourth.png"
       ],
-      "download": "packages/Classical_dialer.3105pass",
-      "sha256": "3557A840CF720126142E7EE07AEC5AA10754AEE6F59DE7ABF66807195D1C85C3",
-      "size": 829136,
+      "download": "packages/PATCH_V2_FREE_3_SERVER.3105",
+      "sha256": "8CA9141683C9BBE4CDF372736B6A5A26E34FEFDD20B482BA201693E6011F76AB",
+      "size": 3599691,
       "supportedOS": [
         {
-          "minimum": "17.6",
-          "maximum": "26.6"
+          "minimum": "17.0",
+          "maximum": "18.7.1"
         }
       ],
-      "featured": false,
+      "featured": true,
       "isPrivate": false,
-      "description": "test",
-      "changelog": "🎉 v1.0.0 — Phát hành lần đầu"
+      "description": "ĐÃ UPDATED LẠI FILE, MỌI NGƯỜI CÓ THỂ CÀI ĐẶT HOẶC UPDATE ĐỂ TẢI XUỐNG FILE MỚI\nHAS BEEN UPDATED NEW FILE, PLS INSTALL OR PRESS UPDATE BUTTON TO DOWNLOAD NEW FILE\n\n🔥1 Patch chơi được cả 3 server VNG - GLOBAL - KR\n🔥1 Patch For 3 server VNG - GLOBAL - KR\n\n     🔥Chỉ việc áp dụng patch là xong, không cần tải 3 patch khác nhau.\n     🔥 Bypass Online \n     🎯 Hỗ trợ ngắm tùy chỉnh/ Aim Bot\n     👁️ iPad View\n     🚗 Tùy chỉnh tốc độ xe/ increase Speed Car\n     ⚡ Nhiều tính năng nâng cao khác/ More another Feature\n     \n     \n     ╭──────────────────╮\n      ⚠️ LƯU Ý QUAN TRỌNG\n     ╰──────────────────╯\n     \n     • Hãy xóa gói mod cũ,clear data trước khi áp dụng.\n     • Nên sao lưu dữ liệu trước khi cài đặt.\n     \n     ╭──────────────────╮\n      💬 HỖ TRỢ\n     ╰──────────────────╯\n     \n     @owenindahouse\n     \n❤️ Cảm ơn bạn đã ủng hộ!\n",
+      "changelog": "🎉 v4.6.0 — Phiên bản 4.6 mới nhất đã được cập nhật"
     }
   ]
 }
