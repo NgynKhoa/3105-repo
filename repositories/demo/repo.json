@@ -390,5 +390,63 @@
       "description": "ĐÃ UPDATED LẠI FILE, MỌI NGƯỜI CÓ THỂ CÀI ĐẶT HOẶC UPDATE ĐỂ TẢI XUỐNG FILE MỚI\nHAS BEEN UPDATED NEW FILE, PLS INSTALL OR PRESS UPDATE BUTTON TO DOWNLOAD NEW FILE\n\n🔥1 Patch chơi được cả 3 server VNG - GLOBAL - KR\n🔥1 Patch For 3 server VNG - GLOBAL - KR\n\n     🔥Chỉ việc áp dụng patch là xong, không cần tải 3 patch khác nhau.\n     🔥 Bypass Online \n     🎯 Hỗ trợ ngắm tùy chỉnh/ Aim Bot\n     👁️ iPad View\n     🚗 Tùy chỉnh tốc độ xe/ increase Speed Car\n     ⚡ Nhiều tính năng nâng cao khác/ More another Feature\n     \n     \n     ╭──────────────────╮\n      ⚠️ LƯU Ý QUAN TRỌNG\n     ╰──────────────────╯\n     \n     • Hãy xóa gói mod cũ,clear data trước khi áp dụng.\n     • Nên sao lưu dữ liệu trước khi cài đặt.\n     \n     ╭──────────────────╮\n      💬 HỖ TRỢ\n     ╰──────────────────╯\n     \n     @owenindahouse\n     \n❤️ Cảm ơn bạn đã ủng hộ!\n",
       "changelog": "🎉 v4.6.0 — Phiên bản 4.6 mới nhất đã được cập nhật"
     }
+  ],
+  "blog": [
+    {
+      "id": 1,
+      "title": "Chào mừng đến với Owen Custom Repository",
+      "date": "2026-01-15",
+      "icon": "📦",
+      "summary": "Giới thiệu repo custom — đây là bài viết mẫu để kiểm thử pagination blog (6 bài/trang)."
+    },
+    {
+      "id": 2,
+      "title": "Hướng dẫn cài đặt package từ repo",
+      "date": "2026-02-02",
+      "icon": "📲",
+      "summary": "Các bước thêm repo vào Sileo/TrollStore và cài package an toàn."
+    },
+    {
+      "id": 3,
+      "title": "v4.6.0 — Cập nhật tính năng tháng 3",
+      "date": "2026-03-10",
+      "icon": "🚀",
+      "summary": "Phiên bản 4.6.0 ra mắt với aim-bot cải tiến, tăng tốc độ xe và nhiều bug-fix."
+    },
+    {
+      "id": 4,
+      "title": "Mẹo tối ưu pin khi dùng tweak",
+      "date": "2026-04-22",
+      "icon": "🔋",
+      "summary": "Hướng dẫn tắt các tweak nền để kéo dài thời lượng pin cho thiết bị jailbreak."
+    },
+    {
+      "id": 5,
+      "title": "Hỗ trợ iOS 27 — preview",
+      "date": "2026-06-05",
+      "icon": "🍎",
+      "summary": "Các package trong repo đã được tối ưu cho iOS 27 — bản preview sớm."
+    },
+    {
+      "id": 6,
+      "title": "Lưu ý khi nâng cấp lên iOS mới",
+      "date": "2026-07-18",
+      "icon": "⚠️",
+      "summary": "Trước khi nâng cấp: clear data, gỡ tweak không tương thích và sao lưu qua iCloud."
+    },
+    {
+      "id": 7,
+      "title": "Top 5 tweak hay nhất 2026",
+      "date": "2026-08-30",
+      "icon": "⭐",
+      "summary": "Tổng hợp 5 tweak được cài nhiều nhất trong repo — đều miễn phí."
+    },
+    {
+      "id": 8,
+      "title": "Roadmap cuối năm 2026",
+      "date": "2026-09-12",
+      "icon": "🗺️",
+      "summary": "Kế hoạch phát triển repo đến cuối năm: thêm giao diện blog, dark-mode tự động."
+    }
   ]
 }
