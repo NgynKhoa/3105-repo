@@ -48,7 +48,7 @@ REPOS = ROOT / "repositories"
 
 # Cache version cho public build — bump khi Front Repo thay đổi để bust browser cache.
 # KHÔNG cần sync với admin cache_version; 2 hệ thống hoàn toàn độc lập.
-_CACHE_VERSION = 3
+_CACHE_VERSION = 4
 
 
 # ---------------------------------------------------------------------------
@@ -162,19 +162,51 @@ def build(repo_slug: str = "demo", clean: bool = True) -> int:
 
     # 2) Render index.html
     html = render_index_html(repo_slug, repo_data)
-    # Patch hardcoded /admin/static/* → /static/* (chỉ áp dụng cho public build)
-    html = re.sub(r"/admin/static/", lambda _m: "/static/", html)
+    # Patch hardcoded /admin/static/* → /static/* (chỉ áp dụng cho public build).
+    # Dùng relative path `./static/` thay vì absolute `/static/` vì GitHub Pages
+    # thường serve ở subpath (vd /3105-repo/) — absolute path sẽ 404.
+    html = re.sub(r"/admin/static/", lambda _m: "./static/", html)
     # Bump cache version để browser không cache HTML cũ
     html = re.sub(r"app\.js\?v=\d+", lambda _m: "app.js?v=" + str(_CACHE_VERSION), html)
     # Đảm bảo bootstrap (window.PUBLIC_MODE = true) chạy TRƯỚC app.js,
     # vì app.js gọi api() ngay tại top-level và check window.PUBLIC_MODE.
     # Trong template gốc có thể app.js đặt trước bootstrap → fix bằng regex.
     pattern = re.compile(
-        r'(<script src="/static/app\.js\?v=\d+"></script>)\s*(<!--\s*Bootstrap.*?-->\s*)?'
+        r'(<script src="\./static/app\.js\?v=\d+"></script>)\s*(<!--\s*Bootstrap.*?-->\s*)?'
         r'(<script>window\.PUBLIC[^<]+</script>)',
         re.DOTALL,
     )
     html = pattern.sub(lambda _m: _m.group(3) + "\n" + _m.group(1), html)
+    # Inject <base> để mọi URL tương đối resolve đúng khi deploy ở subpath
+    # (vd GitHub Pages /3105-repo/). Lấy path từ window.location.
+    # KHÔNG dùng <base href="./"> vì sẽ làm relative như ./static/ ăn theo URL.
+    # Dùng base href = "./" nhưng CHỈ áp dụng cho URL bắt đầu bằng "/" → cần
+    # đổi thành relative. Đơn giản nhất: dùng base href trỏ đến thư mục hiện tại.
+    if "<base" not in html.lower():
+        html = html.replace(
+            "<head>",
+            '<head>\n  <base href="./">',
+            1,
+        )
+    # Patch URL tuyệt đối trong HTML markup thành relative để hoạt động đúng
+    # khi deploy ở subpath (vd GitHub Pages /3105-repo/).
+    #  - /static/...    → ./static/...
+    #  - /assets/...    → ./assets/...
+    # KHÔNG patch /dashboard, /blog (admin routes, không public).
+    def _to_relative(match):
+        prefix = match.group(1)
+        path = match.group(2)
+        return f'{prefix}./{path}'
+    # Chỉ patch path BẮT ĐẦU bằng /static/ hoặc /assets/ trong markup
+    html = re.sub(r'(href="|src=")/(static|assets)/', _to_relative, html)
+    # Patch JS template literal `/repo-asset?repo=...&path=...` → relative
+    # `<img src="/repo-asset?...">` trong dynamicFit render packages.
+    # Public build đã mirror assets/ của repo vào public/assets/ → đổi path
+    # sang `./assets/<path>` cho trực tiếp, không qua Flask endpoint.
+    html = html.replace(
+        '<img src="/repo-asset?repo=${encodeURIComponent(currentRepo)}&path=${encodeURIComponent(pkg.icon)}"',
+        '<img src="${"./assets/" + encodeURIComponent(pkg.icon)}"',
+    )
     # Ghi file bằng bytes mode để newline JSON đã escape KHÔNG bị convert
     # thành platform newline (Windows = \r\n làm vỡ JSON string).
     (PUBLIC / "index.html").write_bytes(html.encode("utf-8"))

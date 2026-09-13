@@ -8,6 +8,25 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Fira+Code:wght@400;500&family=Be+Vietnam+Pro:wght@300;400;500;600&family=VT323&display=swap" rel="stylesheet" />
   <style>
+    /* === FPS overlay widget (đồng bộ style với Front Repo) === */
+    #fps-box {
+      position: fixed;
+      top: 6px;
+      left: 6px;
+      z-index: 999999;
+      padding: 0;
+      font-family: 'VT323', 'Fira Code', monospace;
+      font-size: 14px;
+      line-height: 1;
+      color: #39ff14;
+      background: transparent;
+      border: none;
+      pointer-events: none;
+      text-shadow: 0 0 4px currentColor;
+      letter-spacing: 1px;
+      user-select: none;
+    }
+
     /* ============================ CSS VARIABLES ============================ */
     :root {
       --neon: #80ff40;
@@ -217,11 +236,30 @@
       border-bottom: 1px solid var(--border);
       background: linear-gradient(180deg, rgba(var(--neon-rgb),0.04) 0%, transparent 100%);
     }
+    .post-title {
+      font-family: 'Be Vietnam Pro', 'Fira Code', 'Courier New', monospace;
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--text-bright);
+      line-height: 1.35;
+      margin-bottom: 10px;
+      text-shadow: none;
+      letter-spacing: 0.2px;
+    }
+    .post-meta {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      font-size: 13px;
+      font-family: 'Be Vietnam Pro', 'Fira Code', 'Courier New', monospace;
+      color: var(--muted);
+    }
     .post-back-link {
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      font-size: 12px;
+      font-size: 13px;
+      font-family: 'Be Vietnam Pro', 'Fira Code', 'Courier New', monospace;
       color: var(--neon);
       text-decoration: none;
       margin-bottom: 14px;
@@ -231,22 +269,11 @@
       text-shadow: 0 0 8px rgba(var(--neon-rgb),0.5);
     }
     .post-icon-big {
-      font-size: 46px;
+      font-size: 52px;
+      line-height: 1;
       margin-bottom: 14px;
+      font-family: 'Be Vietnam Pro', 'Fira Code', 'Courier New', monospace;
     }
-    .post-title {
-      font-family: 'Press Start 2P', monospace;
-      font-size: 12px;
-      color: var(--text-bright);
-      line-height: 1.6;
-      margin-bottom: 10px;
-      text-shadow: 0 0 12px rgba(var(--neon-rgb),0.3);
-    }
-    .post-meta {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      font-size: 12px;
       color: var(--muted);
     }
     .post-body {
@@ -697,6 +724,38 @@
     initRain();
     animateRain();
 
+    // === FPS Overlay (góc trái trên) — đồng bộ style + logic với Front Repo ===
+    (function () {
+      var box = document.createElement('div');
+      box.id = 'fps-box';
+      box.title = 'FPS';
+      box.textContent = 'FPS --';
+      document.body.appendChild(box);
+
+      var alpha = 0.1;
+      var lastTime = performance.now();
+      var smoothedFps = 60;
+      var lastTextUpdate = 0;
+
+      function loop(now) {
+        var dt = now - lastTime;
+        lastTime = now;
+        if (dt > 0) {
+          var instant = 1000 / dt;
+          smoothedFps = smoothedFps + alpha * (instant - smoothedFps);
+        }
+        if (now - lastTextUpdate >= 100) {
+          var fps = Math.round(smoothedFps);
+          var color = fps >= 55 ? '#39ff14' : fps >= 30 ? '#ffdd00' : '#ff4040';
+          box.style.color = color;
+          box.textContent = 'FPS ' + fps;
+          lastTextUpdate = now;
+        }
+        requestAnimationFrame(loop);
+      }
+      requestAnimationFrame(loop);
+    })();
+
     // ====================== Settings ======================
     const settingsBtn = document.getElementById('settingsBtn');
     const settingsMenu = document.getElementById('settingsMenu');
@@ -751,19 +810,36 @@
     }
 
     // Theme picker đã bị ẩn — KHÔNG bind event listener. Theme giữ nguyên
-    // mặc định (green) từ :root CSS variables. Nếu user có localStorage
-    // `blog_theme` từ phiên cũ thì xóa luôn để đảm bảo theme luôn là green.
+    // mặc định (green) từ :root CSS variables. Xóa localStorage cũ để đảm bảo
+    // theme luôn là green.
     localStorage.removeItem('blog_theme');
+    localStorage.removeItem('repo_theme');
+    // Migrate key cũ sang key chung để sync với Front Repo.
+    if (localStorage.getItem('blog_rainEnabled') !== null && localStorage.getItem('rainEnabled') === null) {
+      localStorage.setItem('rainEnabled', localStorage.getItem('blog_rainEnabled'));
+      localStorage.removeItem('blog_rainEnabled');
+    }
+    if (localStorage.getItem('blog_heavyRain') !== null && localStorage.getItem('heavyRain') === null) {
+      localStorage.setItem('heavyRain', localStorage.getItem('blog_heavyRain'));
+      localStorage.removeItem('blog_heavyRain');
+    }
+    if (localStorage.getItem('blog_darkMode') !== null && localStorage.getItem('darkMode') === null) {
+      localStorage.setItem('darkMode', localStorage.getItem('blog_darkMode'));
+      localStorage.removeItem('blog_darkMode');
+    }
 
-    // Rain toggle
-    document.getElementById('toggleRain').addEventListener('change', e => {
+    // Rain toggle — đồng bộ key với Front Repo (`rainEnabled` thay vì
+    // `blog_rainEnabled`) để cả 2 trang dùng chung setting khi user mở cả 2 tab.
+    const toggleRainEl = document.getElementById('toggleRain');
+    toggleRainEl.addEventListener('change', e => {
       rainEnabled = e.target.checked;
-      localStorage.setItem('blog_rainEnabled', rainEnabled);
+      localStorage.setItem('rainEnabled', String(rainEnabled));
     });
-    document.getElementById('toggleHeavyRain').addEventListener('change', e => {
+    const toggleHeavyRainEl = document.getElementById('toggleHeavyRain');
+    toggleHeavyRainEl.addEventListener('change', e => {
       heavyRain = e.target.checked;
       initRain();
-      localStorage.setItem('blog_heavyRain', heavyRain);
+      localStorage.setItem('heavyRain', String(heavyRain));
     });
 
     // Dark mode toggle - FIX
@@ -785,9 +861,9 @@
     document.getElementById('toggleDarkMode').addEventListener('change', e => {
       const isDark = e.target.checked;
       applyDarkMode(isDark);
-      // Lưu preference — chỉ ghi khi user chủ động toggle.
-      // Lưu dạng string 'true'/'false' để nhất quán với transparency handler bên dưới.
-      localStorage.setItem('blog_darkMode', isDark ? 'true' : 'false');
+      // Lưu preference dùng key CHUNG với Front Repo (`darkMode`) để sync
+      // giữa 2 trang khi user mở cả 2 tab.
+      localStorage.setItem('darkMode', isDark ? 'true' : 'false');
     });
 
     // Transparency - FIX: updates panel-alpha so ALL panel usages update
@@ -807,44 +883,60 @@
 
     // Load saved settings
     function loadSavedSettings() {
-      // Theme
-      const savedTheme = localStorage.getItem('blog_theme') || localStorage.getItem('repo_theme') || 'green';
-      applyTheme(savedTheme);
+      // Theme đã bị ẩn → luôn giữ mặc định green từ :root.
 
       // Dark mode — DEFAULT DARK on first visit (no saved key).
-      // Người dùng chưa chỉnh gì → blog_darkMode chưa tồn tại → mặc định dark.
-      // Chỉ sau khi user chủ động toggle thì mới lưu vào localStorage.
-      const savedDark = localStorage.getItem('blog_darkMode');
+      // Dùng key CHUNG với Front Repo (`darkMode`) để sync giữa 2 tab.
       // savedDark có thể là 'true', 'false', boolean true/false, hoặc null.
       // Mặc định dark (true). Chỉ light khi rõ ràng là false.
+      const savedDark = localStorage.getItem('darkMode');
       const initialDark = (savedDark !== false && savedDark !== 'false');
       document.getElementById('toggleDarkMode').checked = initialDark;
       applyDarkMode(initialDark);
 
-      // Transparency
+      // Transparency — chỉ dùng riêng cho blog (không sync với Front).
       const savedTrans = localStorage.getItem('blog_transparency') || '92';
       document.getElementById('rangeTransparency').value = savedTrans;
       const v = parseInt(savedTrans) / 100;
       document.documentElement.style.setProperty('--panel-alpha', v.toFixed(2));
-      const isDark = localStorage.getItem('blog_darkMode') !== 'false';
+      const isDark = localStorage.getItem('darkMode') !== 'false';
       if (isDark) {
         document.documentElement.style.setProperty('--panel', `rgba(10, 14, 26, ${v})`);
       } else {
         document.documentElement.style.setProperty('--panel', `rgba(240, 240, 245, ${v})`);
       }
 
-      // Rain
-      if (localStorage.getItem('blog_rainEnabled') === 'false') {
+      // Rain — dùng key CHUNG với Front Repo (`rainEnabled`, `heavyRain`).
+      if (localStorage.getItem('rainEnabled') === 'false') {
         rainEnabled = false;
         document.getElementById('toggleRain').checked = false;
       }
-      if (localStorage.getItem('blog_heavyRain') === 'true') {
+      if (localStorage.getItem('heavyRain') === 'true') {
         heavyRain = true;
         document.getElementById('toggleHeavyRain').checked = true;
         initRain();
       }
     }
     loadSavedSettings();
+
+    // Cross-tab sync: nếu user mở cả Front Repo lẫn Blog, toggle ở trang này
+    // sẽ cập nhật trang kia theo thời gian thực.
+    window.addEventListener('storage', e => {
+      if (e.key === 'rainEnabled') {
+        rainEnabled = e.newValue !== 'false';
+        const el = document.getElementById('toggleRain');
+        if (el) el.checked = rainEnabled;
+      } else if (e.key === 'heavyRain') {
+        heavyRain = e.newValue === 'true';
+        const el = document.getElementById('toggleHeavyRain');
+        if (el) el.checked = heavyRain;
+        initRain();
+      } else if (e.key === 'darkMode') {
+        const isDark = (e.newValue !== 'false' && e.newValue !== null);
+        document.getElementById('toggleDarkMode').checked = isDark;
+        applyDarkMode(isDark);
+      }
+    });
 
     // ====================== Blog Logic ======================
     let allPosts = [];
