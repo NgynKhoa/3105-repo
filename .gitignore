@@ -4,6 +4,8 @@ __pycache__/
 *.pyc
 admin/backgrounds/
 admin/.cache/
+admin/app.log
+admin/app.err
 admin.log
 admin.err
 public/test_*.log
@@ -15,4 +17,12 @@ public/index.html
 public/static/
 public/assets/
 public/repo.json
+
+# Env files - chứa GitHub OAuth secrets, KHÔNG BAO GIỜ commit
+.env
+.env.local
+.env.*.local
+
+# Cache cho OAuth repo discovery (server-side, chứa user info)
+admin/.oauth_cache/
 

@@ -2337,12 +2337,39 @@
       <div class="settings-group">
         <span class="settings-label">Điều hướng nhanh</span>
         <!--
-          Admin Dashboard link chỉ hiện cho CHỦ REPO (window.PUBLIC_REPO_OWNER=true).
+          Admin Dashboard link chỉ hiện cho CHỦ REPO (window.PUBLIC_REPO_OWNER=true
+          HOẶC user đã OAuth login và is_owner_of === currentRepo).
           User thường (read-only) sẽ thấy ẩn — vì không có backend Flask /dashboard
           trên GH Pages để xử lý, link sẽ 404. JS dưới đây set display.
         -->
         <a href="/dashboard" class="settings-nav-link" id="navAdmin" data-owner-only="1">⚙️ Admin Dashboard</a>
         <a href="/blog" class="settings-nav-link">📝 Blog</a>
+      </div>
+
+      <!-- GitHub login (OAuth) — luôn hiện cho mọi user.
+           Sau khi login, button sẽ đổi sang "Đăng xuất + avatar". -->
+      <div class="settings-group" id="authGroup">
+        <span class="settings-label">GitHub</span>
+        <div id="authStatus">
+          <a href="/auth/github/login" class="settings-nav-link" id="btnLogin" style="display:flex;align-items:center;gap:8px;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" style="flex-shrink:0;">
+              <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+            </svg>
+            <span>Đăng nhập GitHub</span>
+          </a>
+          <div id="authUserInfo" style="display:none;align-items:center;gap:8px;padding:6px 4px;">
+            <img id="authAvatar" src="" alt="" style="width:24px;height:24px;border-radius:50%;border:1px solid var(--border);">
+            <div style="flex:1;min-width:0;">
+              <div id="authUserName" style="font-size:13px;color:var(--text-bright);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></div>
+              <div id="authUserRole" style="font-size:11px;color:var(--muted);"></div>
+            </div>
+            <button id="btnLogout" class="btn btn-xs neon-delete" title="Đăng xuất" style="padding:2px 8px;">✕</button>
+          </div>
+        </div>
+        <!-- Banner khi user là owner của repo đang xem -->
+        <div id="ownerBanner" style="display:none;margin-top:8px;padding:8px 10px;background:rgba(57,255,20,0.08);border:1px solid rgba(57,255,20,0.4);border-radius:6px;font-size:12px;color:#39ff14;">
+          🔓 Bạn là <b>admin</b> của repo này — có thể chỉnh sửa package, theme, meta.
+        </div>
       </div>
     </div>
   </div>
@@ -3680,6 +3707,12 @@ document.querySelectorAll('.blog-card, .blog-item a, .blog-link').forEach(card =
   let currentRepo = null;
   // Trang hiện tại cho pagination (track riêng trong IIFE)
   const pageState = { blog: 1, pkg: 1 };
+  window.pageState = pageState;
+  // NOTE: renderPackages / renderBlog chỉ được assign vào __dynamicFit SAU
+  // khi function declaration xong (hoisting không hoạt động với function expression
+  // gán vào const, nhưng `function` declarations thì có hoisting trong cùng scope).
+  // An toàn: để null, set sau khi khai báo function.
+  window.__dynamicFit = { renderPackages: null, renderBlog: null };
 
   // Tính số items có thể hiển thị trong 1 box dựa vào chiều cao
   // Trừ padding/header khoảng 90-120px (box-header-wrap ~ 60px + 24 padding)
@@ -3744,7 +3777,7 @@ document.querySelectorAll('.blog-card, .blog-item a, .blog-link').forEach(card =
       const idEsc = escapeHtml(pkg.identifier || '');
       // Nút Sửa/Xóa chỉ hiện cho CHỦ REPO. User thường (read-only)
       // không có backend Flask /api/repo/.../packages để xử lý, ẩn luôn.
-      const ownerActions = (window.PUBLIC_REPO_OWNER ? `
+      const ownerActions = ((window.PUBLIC_REPO_OWNER || window.__isAuthOwner) ? `
         <div class="pkg-actions" style="flex-shrink:0;display:flex;gap:4px;">
           <button class="btn btn-xs neon-edit" data-action="edit" data-id="${idEsc}" title="Sửa package ${idEsc}">Sửa</button>
           <button class="btn btn-xs neon-delete" data-action="delete" data-id="${idEsc}" title="Xóa package ${idEsc}">✕</button>
@@ -4087,18 +4120,26 @@ document.querySelectorAll('.blog-card, .blog-item a, .blog-link').forEach(card =
     setTimeout(refitAll, 4000);
   }
 
+  // Expose render functions SAU khi function declaration đã hoisted.
+  // fetchAuthState() (ngoài IIFE) gọi để re-render sau khi user login.
+  if (typeof renderPackages === 'function') window.__dynamicFit.renderPackages = renderPackages;
+  if (typeof renderBlog === 'function') window.__dynamicFit.renderBlog = renderBlog;
+
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', boot);
   } else {
     boot();
   }
 
-  // === RBAC: áp dụng khoá/ẩn UI theo window.PUBLIC_REPO_OWNER ===
-  // - Owner (true): hiện Admin link, Sửa/Xóa pkg (render qua template), meta editable
-  // - User thường (false): ẩn Admin link, ẩn Sửa/Xóa, meta readonly + mờ
-  // Áp dụng SỚM (không đợi boot) để tránh flash unhidden UI.
+  // === RBAC: áp dụng khoá/ẩn UI theo role ===
+  // 2 nguồn "owner" được merge:
+  //   1) window.PUBLIC_REPO_OWNER (true nếu build với --owner flag) — tĩnh.
+  //   2) window.__authOwner (true nếu user OAuth login + repo.json match) — dynamic.
+  // Apply sớm để tránh flash unhidden UI khi public build + chưa auth.
+  window.__isAuthOwner = !!window.__authOwner;
+
   function applyRbac() {
-    const isOwner = window.PUBLIC_REPO_OWNER === true;
+    const isOwner = !!window.PUBLIC_REPO_OWNER || !!window.__isAuthOwner;
     // 1) Ẩn/hiện các element có data-owner-only
     document.querySelectorAll('[data-owner-only="1"]').forEach(el => {
       el.style.display = isOwner ? '' : 'none';
@@ -4114,12 +4155,105 @@ document.querySelectorAll('.blog-card, .blog-item a, .blog-link').forEach(card =
         meta.querySelectorAll('input, select, textarea').forEach(el => el.setAttribute('readonly', 'readonly'));
       }
     }
+    // 3) Owner banner
+    const banner = document.getElementById('ownerBanner');
+    if (banner) banner.style.display = isOwner ? 'block' : 'none';
   }
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', applyRbac);
   } else {
     applyRbac();
   }
+
+  // === OAuth: gọi /auth/me, cập nhật UI ===
+  async function fetchAuthState() {
+    try {
+      const url = new URL('/auth/me', location.origin);
+      // Gửi slug hiện tại để server check ownership
+      const slug = (window.PUBLIC_REPO_SLUG || '').toString();
+      if (slug) url.searchParams.set('slug', slug);
+      const r = await fetch(url.toString(), { credentials: 'same-origin' });
+      if (!r.ok) {
+        // Static hosting (GH Pages) → /auth/me 404. Hide login button.
+        hideLoginForStatic();
+        return null;
+      }
+      const data = await r.json();
+      // Cập nhật UI: ẩn/hiện login button + user info
+      const loginBtn = document.getElementById('btnLogin');
+      const userInfo = document.getElementById('authUserInfo');
+      const avatar = document.getElementById('authAvatar');
+      const userName = document.getElementById('authUserName');
+      const userRole = document.getElementById('authUserRole');
+      if (data.authenticated && data.user) {
+        if (loginBtn) loginBtn.style.display = 'none';
+        if (userInfo) userInfo.style.display = 'flex';
+        if (avatar) { avatar.src = data.user.avatar_url || ''; avatar.alt = data.user.login || ''; }
+        if (userName) userName.textContent = data.user.name || data.user.login;
+        const owned = data.is_owner_of;
+        if (userRole) {
+          userRole.textContent = owned
+            ? `🔓 admin của "${owned}"`
+            : (data.repos && data.repos.length
+                ? `admin của ${data.repos.length} repo khác`
+                : 'không có repo.json nào');
+        }
+        // Cập nhật RBAC
+        window.__isAuthOwner = !!owned;
+        // Re-render packages để hiện/ẩn nút Sửa/Xóa
+        if (window.__dynamicFit && window.__dynamicFit.renderPackages) {
+          window.__dynamicFit.renderPackages();
+        }
+      } else {
+        if (loginBtn) loginBtn.style.display = 'flex';
+        if (userInfo) userInfo.style.display = 'none';
+      }
+      applyRbac();
+      return data;
+    } catch (e) {
+      console.warn('fetchAuthState failed', e);
+      hideLoginForStatic();
+      return null;
+    }
+  }
+
+  function hideLoginForStatic() {
+    // Trên static hosting (GH Pages), /auth/* không tồn tại → ẩn login button.
+    // Build cục bộ (--owner) thì vẫn dùng được.
+    if (window.PUBLIC_MODE && !window.PUBLIC_REPO_OWNER) {
+      const group = document.getElementById('authGroup');
+      if (group) group.style.display = 'none';
+    }
+  }
+
+  // Wire logout button + ?auth=ok handler
+  document.addEventListener('DOMContentLoaded', () => {
+    const btn = document.getElementById('btnLogout');
+    if (btn) {
+      btn.addEventListener('click', async () => {
+        try {
+          await fetch('/auth/logout', { method: 'POST', credentials: 'same-origin' });
+        } catch (e) {}
+        location.href = location.pathname;  // reload, xoá ?auth=ok
+      });
+    }
+    fetchAuthState();
+    // Welcome toast khi user vừa login thành công (?auth=ok)
+    const params = new URLSearchParams(location.search);
+    if (params.get('auth') === 'ok') {
+      const user = params.get('user');
+      // Hiện toast đơn giản
+      const toast = document.createElement('div');
+      toast.textContent = `✅ Đăng nhập thành công với GitHub${user ? ' (@' + user + ')' : ''}`;
+      toast.style.cssText = 'position:fixed;top:20px;left:50%;transform:translateX(-50%);background:rgba(57,255,20,0.12);color:#39ff14;padding:10px 18px;border:1px solid #39ff14;border-radius:8px;z-index:999999;font-family:"Be Vietnam Pro",sans-serif;font-size:14px;backdrop-filter:blur(8px);';
+      document.body.appendChild(toast);
+      setTimeout(() => toast.remove(), 4000);
+      // Xoá query string để URL sạch
+      history.replaceState({}, '', location.pathname);
+    } else if (params.get('auth') === 'logout') {
+      history.replaceState({}, '', location.pathname);
+    }
+  });
 })();
 
 // Blog items in the home page - open in new tab

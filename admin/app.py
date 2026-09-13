@@ -15,6 +15,15 @@ Biến môi trường:
 from __future__ import annotations
 
 import hashlib
+import sys
+import pathlib
+
+# Thêm thư mục admin/ vào sys.path để `import fe_checklist` hoạt động
+# bất kể user chạy `python admin/app.py` hay `python -m admin.app`.
+_ADMIN_DIR = pathlib.Path(__file__).resolve().parent
+if str(_ADMIN_DIR) not in sys.path:
+    sys.path.insert(0, str(_ADMIN_DIR))
+
 import json
 import os
 import pathlib
@@ -28,7 +37,13 @@ import datetime
 from typing import Any
 
 import yaml
-from flask import Flask, abort, jsonify, render_template, request, send_from_directory
+from flask import Flask, abort, jsonify, render_template, request, send_from_directory, session
+
+# Import config + auth blueprint
+from .config import Config
+from .auth import auth_bp, login_required, owner_required, is_authenticated
+from .auth import get_owned_repos as auth_get_owned_repos
+from .github_write import write_file as gh_write_file, _validate_inputs
 
 
 # ---------------------------------------------------------------------------
@@ -82,6 +97,30 @@ app = Flask(__name__, template_folder="templates", static_folder="static")
 # Giới hạn upload: 95MB mỗi file
 # Lưu ý: GitHub hard-blocks push nếu file >= 100MB, nên để dưới 100MB
 app.config["MAX_CONTENT_LENGTH"] = 95 * 1024 * 1024
+
+# ============================================================================
+# Flask session config + OAuth blueprint
+# ============================================================================
+# SECRET_KEY dùng để ký session cookie (HttpOnly + SameSite=Lax).
+# Nếu chưa set trong .env → tạo ephemeral key (chỉ OK cho dev, không persist).
+app.config["SECRET_KEY"] = Config.ensure_flask_secret()
+app.config["SESSION_COOKIE_NAME"] = Config.SESSION_COOKIE_NAME
+app.config["SESSION_COOKIE_HTTPONLY"] = Config.SESSION_COOKIE_HTTPONLY
+app.config["SESSION_COOKIE_SAMESITE"] = Config.SESSION_COOKIE_SAMESITE
+app.config["SESSION_COOKIE_SECURE"] = Config.SESSION_COOKIE_SECURE
+app.config["SESSION_COOKIE_MAX_AGE"] = Config.SESSION_COOKIE_MAX_AGE
+app.config["PERMANENT_SESSION_LIFETIME"] = Config.SESSION_COOKIE_MAX_AGE
+
+app.register_blueprint(auth_bp)
+
+# In cảnh báo cấu hình (nếu có) ngay lúc boot
+for _issue in Config.validate_for_runtime():
+    print(f"[config] ⚠ {_issue}", flush=True)
+print(
+    f"[config] OAuth GitHub: "
+    f"{'ENABLED' if Config.is_oauth_configured() else 'DISABLED — set GITHUB_CLIENT_ID/SECRET in .env'}",
+    flush=True,
+)
 
 
 # ---------------------------------------------------------------------------
@@ -1055,7 +1094,14 @@ def api_delete_background(filename: str):
 
 @app.get("/api/repositories")
 def api_repositories():
-    """Liệt kê tất cả repo con + đọc từ sources.json nếu có."""
+    """Liệt kê tất cả repo local + merge với GitHub-owned (nếu user đã login).
+
+    Luôn trả cả 2:
+      - `repositories`: list slug local (như cũ)
+      - `sources`: list URL từ sources.json
+      - `github_owned`: list dict (slug, full_name, html_url, ...) nếu authenticated
+    Front Repo JS dùng `github_owned` để populate dropdown repo + detect ownership.
+    """
     repos = list_repositories()
     sources: list[str] = []
     if SOURCES_FILE.is_file():
@@ -1064,7 +1110,19 @@ def api_repositories():
             sources = data.get("sources", [])
         except Exception:
             pass
-    return jsonify({"repositories": repos, "sources": sources})
+
+    github_owned = []
+    if is_authenticated():
+        try:
+            github_owned = auth_get_owned_repos()
+        except Exception:
+            pass  # discovery failed → return empty
+
+    return jsonify({
+        "repositories": repos,
+        "sources": sources,
+        "github_owned": github_owned,
+    })
 
 
 @app.get("/api/repo/<repo>/packages")
@@ -1491,6 +1549,85 @@ def api_push(repo: str):
         "commit": commit_out[:200],
         "push": push_out[:200],
     })
+
+
+# ============================================================================
+# OAuth-aware write API: ghi file vào GitHub repo qua Contents API
+# ============================================================================
+# Hai mode: "pr" (tạo Pull Request, an toàn) | "direct" (push thẳng).
+# Verify ownership qua @owner_required → chỉ user có repo.json mới ghi được.
+
+@app.route("/api/github/write", methods=["POST"])
+@login_required
+def api_github_write():
+    """Ghi file vào GitHub repo của owner.
+
+    Body JSON:
+      {
+        "slug": "demo",                      # repo slug (required)
+        "path": "repo.yml",                  # file path trong repo (required)
+        "content": "...",                    # UTF-8 text (required)
+        "message": "fix: ...",               # commit message (required)
+        "mode": "pr" | "direct",             # default "pr"
+      }
+
+    Response:
+      {
+        "ok": true,
+        "mode": "pr" | "direct",
+        "branch": "3105-edit-abc123",
+        "commit_sha": "...",
+        "commit_url": "https://github.com/...",
+        "pr_url": "https://github.com/.../pull/42",
+        "pr_number": 42,
+      }
+    """
+    data = request.get_json(silent=True) or {}
+    slug = (data.get("slug") or "").strip()
+    path = (data.get("path") or "").strip().lstrip("/")
+    content = data.get("content") or ""
+    message = (data.get("message") or "").strip()
+    mode = (data.get("mode") or "pr").strip()
+
+    # Validate input
+    err = _validate_inputs(slug, path, content, message)
+    if err:
+        return jsonify({"ok": False, "error": err}), 400
+    if mode not in ("pr", "direct"):
+        return jsonify({"ok": False, "error": "mode phải là 'pr' hoặc 'direct'"}), 400
+
+    # Verify ownership
+    owned = auth_get_owned_repos()
+    target = next((r for r in owned if r.get("slug") == slug), None)
+    if not target:
+        return jsonify({
+            "ok": False,
+            "error": f"Bạn không phải owner của repo slug={slug!r}, hoặc repo không có repo.json",
+        }), 403
+
+    # Write to GitHub
+    from .auth import get_current_token
+    token = get_current_token()
+    if not token:
+        return jsonify({"ok": False, "error": "Session không có GitHub token"}), 401
+
+    try:
+        result = gh_write_file(
+            token=token,
+            full_name=target["full_name"],
+            path=path,
+            content=content,
+            commit_message=message,
+            mode=mode,
+        )
+        return jsonify({"ok": True, **result})
+    except FileNotFoundError as e:
+        return jsonify({"ok": False, "error": str(e)}), 404
+    except RuntimeError as e:
+        return jsonify({"ok": False, "error": str(e)}), 502
+    except Exception as e:
+        app.logger.exception("github_write failed")
+        return jsonify({"ok": False, "error": f"Lỗi không mong đợi: {e}"}), 500
 
 
 # ---------------------------------------------------------------------------

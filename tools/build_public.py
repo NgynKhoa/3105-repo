@@ -210,6 +210,20 @@ def build(repo_slug: str = "demo", clean: bool = True, owner: bool = False) -> i
         '<img src="/repo-asset?repo=${encodeURIComponent(currentRepo)}&path=${encodeURIComponent(pkg.icon)}"',
         '<img src="${"./assets/" + encodeURIComponent((pkg.icon || "").split("assets/").pop() || pkg.icon.split("/").pop())}"',
     )
+    # Trên static hosting (GH Pages), /auth/* không tồn tại. fetchAuthState()
+    # sẽ phát hiện và gọi hideLoginForStatic(). Inject sớm để tránh flash.
+    if not owner and "/auth/github/login" not in html:
+        # Inject 1 lần ngay sau <body> để ẩn #authGroup trước khi render.
+        # Dùng inline script (không qua fetch) để chạy được cả khi offline.
+        inject = (
+            '<script>(function(){'
+            '  if (window.PUBLIC_MODE && !window.PUBLIC_REPO_OWNER) {'
+            '    var g = document.getElementById("authGroup");'
+            '    if (g) g.style.display = "none";'
+            '  }'
+            '})();</script>'
+        )
+        html = html.replace("<body>", "<body>\n  " + inject, 1)
     # Ghi file bằng bytes mode để newline JSON đã escape KHÔNG bị convert
     # thành platform newline (Windows = \r\n làm vỡ JSON string).
     (PUBLIC / "index.html").write_bytes(html.encode("utf-8"))
