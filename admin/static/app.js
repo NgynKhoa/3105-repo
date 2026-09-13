@@ -137,6 +137,13 @@ function dismissProgressModal() {
 }
 
 async function api(path, options = {}) {
+  // ===== PUBLIC MODE (GitHub Pages / read-only) =====
+  // Trên public build, server không có. Mock các read API từ window.PUBLIC_REPO_DATA;
+  // mọi write API (upload, save, push, delete...) sẽ throw để UI hiện banner "read-only".
+  if (window.PUBLIC_MODE === true) {
+    return await publicApiMock(path, options);
+  }
+
   // Không set Content-Type khi dùng FormData (upload), browser tự điền boundary
   const isFormData = options.body instanceof FormData;
   const headers = isFormData ? {} : { 'Content-Type': 'application/json' };
@@ -149,6 +156,110 @@ async function api(path, options = {}) {
     throw new Error(data.description || data.message || `HTTP ${res.status}`);
   }
   return data;
+}
+
+// ---------------------------------------------------------------------------
+// Public API mock — chỉ phục vụ Front Repo trên GitHub Pages (read-only).
+// Mọi write API trả Error để caller handle gracefully (UI ẩn nút, show banner).
+// ---------------------------------------------------------------------------
+
+// Wrap global fetch() để tất cả caller (kể cả code inline trong index.html
+// dùng fetch thẳng) đều đi qua publicApiMock. Trên local admin, fetch gốc
+// được giữ nguyên vì window.PUBLIC_MODE !== true.
+if (window.PUBLIC_MODE === true && !window.__publicFetchPatched) {
+  const origFetch = window.fetch.bind(window);
+  window.fetch = async function patchedFetch(input, init) {
+    const url = typeof input === 'string' ? input : (input && input.url) || '';
+    // Nếu URL không phải /api/* → dùng fetch gốc (vd load ảnh /asset/fonts)
+    if (!url.startsWith('/api/') && !url.startsWith('api/')) {
+      return origFetch(input, init);
+    }
+    // Nếu là /api/* → đi qua publicApiMock
+    return new Response(
+      JSON.stringify(await publicApiMock(url, init || {})),
+      { status: 200, headers: { 'Content-Type': 'application/json' } }
+    );
+  };
+  window.__publicFetchPatched = true;
+}
+
+async function publicApiMock(path, options = {}) {
+  const method = (options.method || 'GET').toUpperCase();
+  const data = window.PUBLIC_REPO_DATA || {};
+  const repo = window.PUBLIC_REPO_SLUG || 'demo';
+
+  // Read APIs — synthesize từ window.PUBLIC_REPO_DATA
+  if (method === 'GET') {
+    // /api/repositories
+    if (path === '/api/repositories') {
+      return {
+        repositories: [{ name: repo, slug: repo }],
+        sources: [{ name: 'default', url: '' }],
+      };
+    }
+    // /api/repo/<repo>/packages — chỉ trả metadata tối thiểu + packages
+    const pkgMatch = path.match(/^\/api\/repo\/([^/]+)\/packages$/);
+    if (pkgMatch) {
+      return {
+        packages: data.packages || [],
+        repoMeta: {
+          repoName: data.name || repo,
+          repoSlug: repo,
+          repoIcon: data.icon || '',
+          repoBanner: data.banner || '',
+          repoScreenshots: data.screenshots || [],
+        },
+        sharedScreens: window.DEFAULT_SCREENSHOTS || [],
+        sharedOS: window.DEFAULT_OS_RULES || [],
+        packagesMeta: (data.packages || []).map((p, i) => ({
+          index: i, name: p.name, anchor: p.name,
+        })),
+      };
+    }
+    // /api/repo/<repo>/files — danh sách assets hardcode cho GH Pages
+    const filesMatch = path.match(/^\/api\/repo\/([^/]+)\/files$/);
+    if (filesMatch) {
+      return { assets: _collectAssetPaths(data) };
+    }
+    // /api/repo/<repo>/folders + folder-files — return [] (read-only không cho browse folder)
+    if (/\/folders$/.test(path) || /\/folder-files/.test(path)) return [];
+    // /api/repo/<repo>/hash — không cần hash trên public
+    const hashMatch = path.match(/^\/api\/repo\/([^/]+)\/hash$/);
+    if (hashMatch) return { hash: '' };
+    // /api/backgrounds — public không có backgrounds
+    if (path === '/api/backgrounds') return { backgrounds: [] };
+    // /api/blog/posts
+    if (path === '/api/blog/posts') return { posts: data.blog || [] };
+    // /api/get-applied-layout — return null
+    if (path === '/api/get-applied-layout') return { layout: null };
+  }
+
+  // Write APIs (POST/PUT/PATCH/DELETE) — không hỗ trợ trên public
+  const err = new Error('Read-only build (GitHub Pages). Mở admin local để chỉnh sửa.');
+  err.readOnly = true;
+  throw err;
+}
+
+function _collectAssetPaths(data) {
+  // Tối thiểu: trả list path được reference trong repo.yml để app khỏi spam fetch
+  const out = [];
+  const seen = new Set();
+  function add(rel) {
+    if (rel && typeof rel === 'string' && rel.includes('/') && !seen.has(rel)) {
+      seen.add(rel);
+      out.push(rel);
+    }
+  }
+  if (data.icon) add(data.icon);
+  if (data.banner) add(data.banner);
+  (data.screenshots || []).forEach(add);
+  (data.packages || []).forEach(p => {
+    if (!p) return;
+    add(p.icon); add(p.banner);
+    (p.screenshots || []).forEach(add);
+    (p.preview || []).forEach(add);
+  });
+  return out;
 }
 
 // replaceAll không có sẵn ở một số trình duyệt cũ — dùng replace + regex /g.

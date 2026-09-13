@@ -1,0 +1,65 @@
+name: Build & Deploy Public (GitHub Pages)
+
+on:
+  push:
+    branches: [main]
+    # Chỉ rebuild khi các file ảnh hưởng tới public build thay đổi.
+    paths:
+      - 'repositories/**'
+      - 'admin/templates/index.html'
+      - 'admin/static/**'
+      - 'tools/build_public.py'
+      - '.github/workflows/build-public.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Cài PyYAML
+        run: pip install pyyaml
+
+      - name: Build phiên bản public
+        run: python tools/build_public.py
+
+      - name: Kiểm tra output
+        run: |
+          echo "===== public/ structure ====="
+          ls -la public/
+          echo "===== packages count ====="
+          python -c "import json; d = json.load(open('public/repo.json')); print('packages:', len(d['data']['packages']), 'blog:', len(d['data']['blog']))"
+          echo "===== assets count ====="
+          find public/assets -type f | wc -l
+          echo "===== HTML size ====="
+          wc -c public/index.html
+
+      - name: Upload artifact cho GitHub Pages
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: public
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy lên GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

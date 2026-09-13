@@ -6,4 +6,13 @@ admin/backgrounds/
 admin/.cache/
 admin.log
 admin.err
+public/test_*.log
+public/test_*.err
+tools/__pycache__/
+# public/ build output — KHÔNG commit, GitHub Actions sẽ build mỗi push.
+# Nếu muốn commit (vd cho lần deploy đầu không cần GH Actions), comment out.
+public/index.html
+public/static/
+public/assets/
+public/repo.json
 

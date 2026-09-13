@@ -1,123 +1,117 @@
-# 3105 Repository Catalog
+# 3105-repo
 
-Kho này chỉ chứa danh sách nguồn và dữ liệu package dành cho ứng dụng 3105.
-Source code của ứng dụng không nằm trong repository này.
+Kho lưu trữ custom iOS jailbreak repo (Sileo/TrollStore) + Admin Dashboard
+local + phiên bản **public read-only** deploy tự động lên GitHub Pages.
 
-## Danh sách nguồn mặc định
+## 🏗️ Kiến trúc
 
-Ứng dụng đọc `sources.json` khi làm mới nguồn. Để thêm một repository mới,
-thêm URL HTTPS đầy đủ của `repo.json` vào mảng `sources`:
-
-```json
-{
-  "schemaVersion": 1,
-  "sources": [
-    "repositories/demo/repo.json",
-    "https://example.com/3105/repo.json"
-  ]
-}
+```
+3105-repo/
+├── repositories/           # Data repo (YAML + assets)
+│   └── demo/
+│       ├── repo.yml        # Schema: name, packages, blog, screenshots...
+│       └── assets/         # icon, banner, screenshots, dialer, hdr_120...
+├── admin/                  # LOCAL Flask admin (không public)
+│   ├── app.py              # Server + API (read + write)
+│   ├── templates/          # index.html (Front Repo), dashboard.html (Admin)
+│   ├── static/             # app.js (chứa publicApiMock cho read-only build)
+│   └── fe_checklist.py     # MCP integration
+├── public/                 # BUILD OUTPUT cho GitHub Pages (auto-generated)
+│   ├── index.html          # Front Repo read-only
+│   ├── static/             # JS, CSS đã mirror
+│   ├── repo.json           # snapshot từ repo.yml
+│   ├── assets/             # 45 asset files mirrored
+│   ├── 404.html
+│   └── .nojekyll
+├── tools/
+│   └── build_public.py     # Sync admin → public
+└── .github/workflows/
+    └── build-public.yml    # GitHub Actions: build + deploy
 ```
 
-URL tương đối được tính từ vị trí của `sources.json`. URL HTTP, localhost,
-địa chỉ IP và URL chứa credentials sẽ bị ứng dụng từ chối.
+## 🔐 Phân quyền
 
-## Nguồn thử nghiệm
+### Public (GitHub Pages)
+- Ai cũng xem được: https://\<user\>.github.io/3105-repo
+- Browse packages, blog, screenshots
+- Tải file `.3105` qua link download
+- ❌ KHÔNG có `/dashboard`, `/api/admin/*`, GitHub OAuth
 
-`repositories/demo/repo.json` là nguồn mẫu có:
+### Local Admin (Flask)
+- Chỉ chạy trên máy dev/admin: `python admin/app.py`
+- Mở http://127.0.0.1:5050
+- Toàn quyền: sửa repo.yml, layout, backgrounds, push lên GitHub
+- ❌ KHÔNG deploy lên public (chỉ dành cho owner)
 
-- Metadata, tác giả, phiên bản và changelog.
-- Icon và hai ảnh preview cho CapCut Pro.
-- Một package `.3105`: CapCut Pro.
-- SHA-256 và kích thước package đã khai báo để kiểm tra khi tải.
+### Dev Patch (tương lai — Phase 2-4)
+- Login GitHub OAuth → verify là owner/maintainer repo
+- Mở admin panel trên web public → chỉnh sửa YAML qua Monaco editor
+- Nút "💾 Save & Create PR" → GitHub App tự tạo PR
+- Nút "⬇️ Export to IDE" → download file repo.yml
 
-## Nguồn wallpaper
+## 🚀 Cách deploy public
 
-130 wallpaper trong `repositories/demo/repo.json` được đồng bộ từ catalog
-[SerStars/Nugget-Wallpapers](https://github.com/SerStars/Nugget-Wallpapers).
-Mỗi gói được khai báo với `kind: "wallpaper"`, ảnh preview nằm trong phần mô
-tả package và file `.tendies` được ghim vào một commit upstream bất biến. Sau
-khi tải, 3105 xác thực và đưa gói vào mục **Đã cài** để người dùng mở và áp dụng.
+### Tự động (đã setup)
+Mỗi khi push lên `main` mà có thay đổi trong:
+- `repositories/**`  (repo.yml + assets)
+- `admin/templates/index.html`
+- `admin/static/**`
+- `tools/build_public.py`
 
-Chạy `python3 scripts/sync_nugget_wallpapers.py` để cập nhật các wallpaper trong
-repo chính lên commit upstream mới nhất. Script giữ nguyên các patch `.3105`,
-thay danh sách wallpaper hiện tại và chỉ nhận file nằm trong commit GitHub đã
-ghim; URL ngoài commit bị bỏ qua để không làm yếu kiểm tra nguồn.
+→ GitHub Actions `.github/workflows/build-public.yml` chạy:
+1. Cài PyYAML
+2. `python tools/build_public.py` — render index.html + copy static/assets
+3. Upload artifact → Deploy lên GitHub Pages
 
-## Thêm package
+Xem logs: https://github.com/NgynKhoa/3105-repo/actions
 
-1. Đặt gói `.3105` trong thư mục `packages` của repository tương ứng.
-2. Đặt icon và ảnh preview trong thư mục `assets`.
-3. Thêm metadata vào `repo.json`.
-4. Tính SHA-256 bằng `shasum -a 256 <package.3105>`.
-5. Khai báo dung lượng và dải iOS. Không cần nhập `packageID` hoặc
-   `bundleIdentifiers`; ứng dụng đọc các thông tin này từ gói `.3105`.
+### Manual (debug local)
+```bash
+# Build
+python tools/build_public.py
 
-Package `.3105` có mật khẩu có thể khai báo thêm `"password": "..."` nếu chủ
-repo muốn chia sẻ công khai để ứng dụng tự mở khoá. Nếu không khai báo, 3105 sẽ
-yêu cầu người dùng liên hệ chủ repo và tự nhập mật khẩu. Mật khẩu không áp dụng
-cho package `wallpaper`.
-
-Wallpaper `.tendies` dùng `kind: "wallpaper"`. SHA-256 vẫn được khuyến nghị;
-ngoại lệ duy nhất là URL `SerStars/Nugget-Wallpapers` được ghim vào commit
-GitHub bất biến và tiếp tục qua bộ kiểm tra archive/descriptor của 3105.
-
-## Xuống dòng trong nội dung
-
-Trong chuỗi JSON, dùng `\n` để xuống dòng. Không dùng `/n`.
-
-```json
-{
-  "description": "Dòng đầu tiên.\nDòng thứ hai."
-}
+# Serve local
+cd public && python -m http.server 8000
+# Mở http://127.0.0.1:8000
 ```
 
-Ứng dụng sẽ hiển thị hai dòng sau khi tải `repo.json`.
-
-Mỗi `repo.json` phải được phục vụ qua HTTPS và tuân theo định dạng repository
-3105 schema version 1.
-
-## Quản lý repo qua web (Repo Builder)
-
-Thay vì sửa `repo.yml` tay rồi `git push`, bạn có thể dùng trang web chạy
-local để thêm/sửa/xoá package. Công cụ này tự tính SHA-256 + size, tự sinh
-anchor YAML chuẩn, không bao giờ làm hỏng format.
-
-### Cài đặt
+## 🛠️ Cách dev local
 
 ```bash
-pip install -r admin/requirements.txt
-```
+# Clone
+git clone https://github.com/NgynKhoa/3105-repo.git
+cd 3105-repo
 
-### Chạy
+# Cài deps cho admin
+pip install -r admin/requirements.txt  # flask, pyyaml
 
-```bash
+# Chạy admin local
 python admin/app.py
+# Mở http://127.0.0.1:5050 (Front Repo) hoặc /dashboard (Admin)
+
+# Test public build local
+python tools/build_public.py
+cd public && python -m http.server 8001
+# Mở http://127.0.0.1:8001 (Public read-only)
 ```
 
-Mở trình duyệt: <http://localhost:5000>
+## 📦 Cách thêm repo mới
 
-### Cách dùng
+1. Tạo folder `repositories/<repo-slug>/` với `repo.yml` + `assets/`
+2. Thêm vào `sources.json` nếu dùng remote sources
+3. Commit + push → GitHub Actions tự build + deploy
 
-1. **Chọn repo** trong dropdown (mặc định là `demo`). Tool hỗ trợ nhiều repo
-   con — nếu sau này tạo thêm `repositories/beta/` thì chỉ cần chọn trong
-   dropdown là chuyển sang repo đó.
-2. **Bấm `+ Thêm package`** để thêm mới, hoặc **Sửa** / **Xoá** trên từng dòng.
-3. Trong form, **chọn file `.3105`** trong dropdown rồi bấm **`⚡ Tự động điền`**
-   → SHA-256 và size sẽ được tính và điền tự động (không cần chạy `shasum` tay).
-4. Tick chọn `Dùng danh sách screenshot mặc định` và `Dùng iOS rule mặc định`
-   để giữ file YAML gọn (tool sẽ dùng anchor `*screens` / `*os_rules`).
-5. Bấm **`💾 Lưu & ghi file`** → tool ghi đè `repositories/<repo>/repo.yml`.
-6. Tự push lên GitHub bằng SSH (tool không tự push để bạn kiểm soát):
+## 🗺️ Roadmap
 
-   ```bash
-   git add repositories/<repo>/repo.yml
-   git commit -m "feat: thêm/sửa package"
-   git push
-   ```
+- [x] **Phase 1**: Tách public/admin, deploy read-only lên GitHub Pages ✅
+- [ ] **Phase 2**: GitHub OAuth login flow (admin local + future public)
+- [ ] **Phase 3**: Verify user là owner/maintainer repo qua GitHub API
+- [ ] **Phase 4**: Monaco editor + Save/Create PR flow cho dev patch
 
-GitHub Action `build.yml` sẽ tự convert YAML → JSON, app 3105 refresh sau vài giây.
+## ⚠️ Lưu ý quan trọng
 
-### Vì sao chạy local (không host web công khai)?
-
-Repo có chứa **mật khẩu package** (`password: "..."`) — không thể để lộ trên
-web public. Khi chạy local, mật khẩu chỉ nằm trên máy bạn.
+- **KHÔNG commit** `admin/.cache/` (cache MCP) — đã có trong `.gitignore`
+- **KHÔNG commit** `admin.log`, `admin.err` — log runtime
+- **KHÔNG sửa** trực tiếp file trong `public/` — sẽ bị build script ghi đè
+- Repo `repositories/demo/repo.yml` là default build — thay đổi ở đây sẽ
+  ảnh hưởng public site ngay sau khi push.

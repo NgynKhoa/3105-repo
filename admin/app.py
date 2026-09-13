@@ -511,7 +511,7 @@ def index():
     return render_template(
         "index.html",
         bootstrap_js=bootstrap_js,
-        cache_version=40,
+        cache_version=42,
     )
 
 
@@ -531,7 +531,7 @@ def blog_post_page(post_id: int = None):
 @app.route("/dashboard")
 def dashboard():
     """Trang Admin Dashboard."""
-    return render_template("dashboard.html", cache_version=40)
+    return render_template("dashboard.html", cache_version=42)
 
 
 # ===================== SCAN FRONT REPO (PLAYWRIGHT) =====================
