@@ -511,7 +511,7 @@ def index():
     return render_template(
         "index.html",
         bootstrap_js=bootstrap_js,
-        cache_version=36,
+        cache_version=39,
     )
 
 
@@ -821,6 +821,124 @@ def api_blog_post(post_id: int):
     if post:
         return jsonify(post)
     abort(404, description="Post not found")
+
+
+# ---------------------------------------------------------------------------
+# Front-End-Checklist MCP integration
+# ---------------------------------------------------------------------------
+import fe_checklist as _fe
+
+
+@app.route("/fe-checklist")
+def fe_checklist_page():
+    """Trang browse + audit Front-End Checklist."""
+    return render_template("fe_checklist.html")
+
+
+@app.get("/api/fe-checklist/categories")
+def api_fe_categories():
+    try:
+        data = _fe.list_categories()
+        return jsonify({"ok": True, "data": data})
+    except Exception as exc:
+        return jsonify({"ok": False, "error": str(exc)}), 502
+
+
+@app.get("/api/fe-checklist/rules")
+def api_fe_rules():
+    """Trả về tất cả rules của 1 category."""
+    category = request.args.get("category", "").strip()
+    if not category:
+        return jsonify({"ok": False, "error": "Missing category"}), 400
+    try:
+        data = _fe.list_all_rules_in_category(category)
+        return jsonify({"ok": True, "category": category, "data": data})
+    except Exception as exc:
+        return jsonify({"ok": False, "error": str(exc)}), 502
+
+
+@app.get("/api/fe-checklist/rule/<slug>")
+def api_fe_rule(slug: str):
+    """Chi tiết 1 rule theo slug."""
+    try:
+        data = _fe.get_rule(slug)
+        return jsonify({"ok": True, "slug": slug, "data": data})
+    except Exception as exc:
+        return jsonify({"ok": False, "error": str(exc)}), 502
+
+
+@app.get("/api/fe-checklist/search")
+def api_fe_search():
+    """Tìm rule theo query."""
+    q = request.args.get("q", "").strip()
+    category = request.args.get("category", "").strip() or None
+    if not q:
+        return jsonify({"ok": False, "error": "Missing q"}), 400
+    try:
+        rules = _fe.search_rules(q, category)
+        return jsonify({"ok": True, "q": q, "rules": rules})
+    except Exception as exc:
+        return jsonify({"ok": False, "error": str(exc)}), 502
+
+
+@app.post("/api/fe-checklist/review-code")
+def api_fe_review_code():
+    """Static review HTML/CSS/JS code paste."""
+    payload = request.get_json(silent=True) or {}
+    code = payload.get("code", "")
+    language = payload.get("language", "html")
+    if not code.strip():
+        return jsonify({"ok": False, "error": "Missing code"}), 400
+    if len(code) > 200_000:
+        return jsonify({"ok": False, "error": "code > 200KB"}), 413
+    try:
+        data = _fe.review_code(code, language)
+        return jsonify({"ok": True, "language": language, "data": data})
+    except Exception as exc:
+        return jsonify({"ok": False, "error": str(exc)}), 502
+
+
+@app.post("/api/fe-checklist/audit-url")
+def api_fe_audit_url():
+    """Audit 1 public URL."""
+    payload = request.get_json(silent=True) or {}
+    url = payload.get("url", "").strip()
+    if not url.startswith(("http://", "https://")):
+        return jsonify({"ok": False, "error": "URL phải bắt đầu bằng http(s)://"}), 400
+    try:
+        data = _fe.audit_url(url)
+        return jsonify({"ok": True, "url": url, "data": data})
+    except Exception as exc:
+        return jsonify({"ok": False, "error": str(exc)}), 502
+
+
+@app.post("/api/fe-checklist/fix-rule")
+def api_fe_fix_rule():
+    """Sinh code fix cho rule."""
+    payload = request.get_json(silent=True) or {}
+    slug = payload.get("slug", "").strip()
+    code = payload.get("code", "")
+    if not slug:
+        return jsonify({"ok": False, "error": "Missing slug"}), 400
+    try:
+        data = _fe.fix_rule(slug, code)
+        return jsonify({"ok": True, "slug": slug, "data": data})
+    except Exception as exc:
+        return jsonify({"ok": False, "error": str(exc)}), 502
+
+
+@app.get("/api/fe-checklist/workflow/<name>")
+def api_fe_workflow(name: str):
+    try:
+        data = _fe.get_workflow(name)
+        return jsonify({"ok": True, "name": name, "data": data})
+    except Exception as exc:
+        return jsonify({"ok": False, "error": str(exc)}), 502
+
+
+@app.get("/api/fe-checklist/cache-status")
+def api_fe_cache_status():
+    return jsonify({"ok": True, "data": _fe.cache_status()})
 
 
 @app.route("/admin/static/<path:filename>")

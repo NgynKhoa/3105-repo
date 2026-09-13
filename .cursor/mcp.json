@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "frontend-checklist": {
+      "url": "https://mcp.frontendchecklist.io",
+      "transport": "streamable-http"
+    }
+  }
+}

@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Front-End Checklist · 3105-repo</title>
+  <link rel="stylesheet" href="/admin/static/fe_checklist.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <a href="/" class="back-btn" title="Về trang chính">← Trang chính</a>
+      <span class="title">🗂 Front-End Checklist</span>
+      <span class="subtitle">385 rules · 11 categories · MCP-powered</span>
+    </div>
+    <div class="status">
+      <span id="mcpStatus" class="mcp-status pending">⏳ Đang tải...</span>
+      <a href="https://frontendchecklist.io" target="_blank" rel="noopener" class="ext-link">frontendchecklist.io ↗</a>
+    </div>
+  </header>
+
+  <main class="layout">
+    <!-- Sidebar: categories -->
+    <aside class="sidebar">
+      <div class="search-box">
+        <input id="searchInput" type="search" placeholder="Tìm rule... (Enter)">
+        <button id="searchBtn" class="btn">Tìm</button>
+      </div>
+      <div class="workflow-box">
+        <span class="lbl">Workflow nhanh:</span>
+        <div class="chips">
+          <button class="chip" data-wf="launch">Launch</button>
+          <button class="chip" data-wf="accessibility">A11y</button>
+          <button class="chip" data-wf="seo">SEO</button>
+          <button class="chip" data-wf="security">Security</button>
+          <button class="chip" data-wf="performance">Perf</button>
+        </div>
+      </div>
+      <h3>📂 Categories</h3>
+      <ul id="catList" class="cat-list">
+        <li class="empty">Đang tải...</li>
+      </ul>
+    </aside>
+
+    <!-- Main: rules + tools -->
+    <section class="main">
+      <nav class="tabs">
+        <button class="tab active" data-tab="rules">📋 Rules</button>
+        <button class="tab" data-tab="review">🔍 Review code</button>
+        <button class="tab" data-tab="audit">🌐 Audit URL</button>
+        <button class="tab" data-tab="fix">🛠 Fix rule</button>
+      </nav>
+
+      <!-- Tab: Rules -->
+      <div class="tab-pane active" id="pane-rules">
+        <div id="rulesArea">
+          <p class="placeholder">Chọn 1 category ở sidebar để xem 385 rules, hoặc dùng ô tìm kiếm.</p>
+        </div>
+      </div>
+
+      <!-- Tab: Review code -->
+      <div class="tab-pane" id="pane-review">
+        <div class="tool-box">
+          <label>Paste code HTML / CSS / JS / React / Next.js:</label>
+          <select id="reviewLang">
+            <option value="html">HTML</option>
+            <option value="css">CSS</option>
+            <option value="javascript">JavaScript</option>
+            <option value="react">React</option>
+            <option value="nextjs">Next.js</option>
+          </select>
+          <textarea id="reviewCode" rows="14" placeholder="<div class='foo'>...</div>"></textarea>
+          <div class="actions">
+            <button id="reviewBtn" class="btn primary">▶ review_code</button>
+            <span class="hint">Gọi MCP tool <code>review_code</code> — static heuristic pass.</span>
+          </div>
+          <pre id="reviewResult" class="result"></pre>
+        </div>
+      </div>
+
+      <!-- Tab: Audit URL -->
+      <div class="tab-pane" id="pane-audit">
+        <div class="tool-box">
+          <label>Nhập public URL:</label>
+          <input id="auditUrl" type="url" placeholder="https://example.com" value="https://frontendchecklist.io">
+          <div class="actions">
+            <button id="auditBtn" class="btn primary">▶ audit_url</button>
+            <span class="hint">Gọi MCP tool <code>audit_url</code> — chỉ audit trang public.</span>
+          </div>
+          <pre id="auditResult" class="result"></pre>
+        </div>
+      </div>
+
+      <!-- Tab: Fix rule -->
+      <div class="tab-pane" id="pane-fix">
+        <div class="tool-box">
+          <label>Rule slug:</label>
+          <input id="fixSlug" type="text" placeholder="vd: html/viewport, css/css-minification">
+          <label>Code cần fix (optional):</label>
+          <textarea id="fixCode" rows="8" placeholder="&lt;meta name='viewport' content='width=320'&gt;"></textarea>
+          <div class="actions">
+            <button id="fixBtn" class="btn primary">▶ fix_rule</button>
+            <span class="hint">Gọi MCP tool <code>fix_rule</code> — sinh code sửa lỗi theo rule.</span>
+          </div>
+          <pre id="fixResult" class="result"></pre>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Modal: rule detail -->
+  <div id="ruleModal" class="modal hidden" aria-hidden="true">
+    <div class="modal-card">
+      <button class="modal-close" id="modalClose">✕</button>
+      <div id="modalBody">Đang tải...</div>
+    </div>
+  </div>
+
+  <script src="/admin/static/fe_checklist.js"></script>
+</body>
+</html>

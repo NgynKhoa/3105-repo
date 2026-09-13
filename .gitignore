@@ -3,4 +3,7 @@
 __pycache__/
 *.pyc
 admin/backgrounds/
+admin/.cache/
+admin.log
+admin.err
 
