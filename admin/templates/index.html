@@ -964,46 +964,54 @@
     /* ============================ PAGINATION ============================ */
     #pkgPagination {
       padding: 10px 14px;
-      border-top: 1px solid var(--border);
+      border-top: 1px solid var(--border-glow);
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 8px;
-      font-size: 0.85rem;
-      color: var(--muted, rgba(122,154,134,0.65));
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--text);
+      background: linear-gradient(180deg, rgba(var(--neon-rgb),0.04), transparent);
+      box-shadow: inset 0 1px 0 rgba(var(--neon-rgb),0.08);
     }
     #pkgPagination.hidden { display: none; }
-    .pages { display: flex; gap: 4px; align-items: center; }
+    .pages { display: flex; gap: 6px; align-items: center; }
     .page-num, #pkgPagination .page-nav {
-      min-width: 28px;
-      height: 28px;
-      padding: 0 6px;
+      min-width: 30px;
+      height: 30px;
+      padding: 0 8px;
       font-family: 'VT323', monospace;
-      font-size: 14px;
+      font-size: 16px;
       line-height: 1;
-      background: rgba(var(--neon-rgb),0.06);
-      border: 1px solid var(--border);
-      color: var(--text);
-      border-radius: 3px;
+      background: rgba(var(--neon-rgb),0.10);
+      border: 1px solid var(--border-glow);
+      color: var(--text-bright);
+      border-radius: 4px;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
       justify-content: center;
       transition: all 0.15s;
+      font-weight: 500;
     }
     .page-num:hover, #pkgPagination .page-nav:hover:not(:disabled) {
-      border-color: var(--border-glow);
+      border-color: var(--neon);
       color: var(--neon);
-      box-shadow: 0 0 6px rgba(57,255,20,0.25);
+      background: rgba(var(--neon-rgb),0.18);
+      box-shadow: 0 0 10px rgba(var(--neon-rgb),0.5);
+      transform: translateY(-1px);
     }
     .page-num.active {
-      color: var(--neon);
-      border-color: var(--border-glow);
-      background: rgba(var(--neon-rgb),0.10);
-      box-shadow: 0 0 6px rgba(57,255,20,0.25);
+      background: var(--neon);
+      color: #000;
+      border-color: var(--neon);
+      box-shadow: 0 0 12px rgba(var(--neon-rgb),0.7), 0 0 2px var(--neon) inset;
+      font-weight: 700;
     }
     #pkgPagination .page-nav:disabled { opacity: 0.3; cursor: not-allowed; }
-    #pkgPagination .page-nav svg { width: 10px; height: 10px; fill: currentColor; }
+    #pkgPagination .page-nav svg { width: 11px; height: 11px; fill: currentColor; }
+    #pkgPaginationInfo { color: var(--neon); font-weight: 600; }
 
     /* ============================ HINT BOX ============================ */
     .hint-box {
@@ -1687,51 +1695,56 @@
     /* ============================ BLOG PAGINATION ============================ */
     #blogPagination {
       padding: 10px 14px;
-      border-top: 1px solid var(--border);
+      border-top: 1px solid var(--border-glow);
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 8px;
-      font-size: 0.85rem;
-      color: var(--muted, rgba(122,154,134,0.65));
-    }
-      gap: 8px;
-      font-size: 0.85rem;
-      color: rgba(122,154,134,0.45);
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--text);
+      background: linear-gradient(180deg, rgba(var(--neon-rgb),0.04), transparent);
+      box-shadow: inset 0 1px 0 rgba(var(--neon-rgb),0.08);
     }
     #blogPagination.hidden { display: none; }
-    #blogPagination .pages { display: flex; gap: 4px; align-items: center; }
+    #blogPagination .pages { display: flex; gap: 6px; align-items: center; }
+    #blogPageNumbers { display: flex; gap: 4px; align-items: center; }
     #blogPageNumbers .page-num, #blogPagination .page-nav {
-      min-width: 28px;
-      height: 28px;
-      padding: 0 6px;
+      min-width: 30px;
+      height: 30px;
+      padding: 0 8px;
       font-family: 'VT323', monospace;
-      font-size: 14px;
+      font-size: 16px;
       line-height: 1;
-      background: rgba(var(--neon-rgb),0.06);
-      border: 1px solid var(--border);
-      color: var(--text);
-      border-radius: 3px;
+      background: rgba(var(--neon-rgb),0.10);
+      border: 1px solid var(--border-glow);
+      color: var(--text-bright);
+      border-radius: 4px;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
       justify-content: center;
       transition: all 0.15s;
+      font-weight: 500;
     }
     #blogPageNumbers .page-num:hover, #blogPagination .page-nav:hover:not(:disabled) {
-      border-color: var(--border-glow);
+      border-color: var(--neon);
       color: var(--neon);
-      box-shadow: 0 0 6px rgba(57,255,20,0.25);
+      background: rgba(var(--neon-rgb),0.18);
+      box-shadow: 0 0 10px rgba(var(--neon-rgb),0.5);
+      transform: translateY(-1px);
     }
     #blogPageNumbers .page-num.active {
-      background: rgba(var(--neon-rgb),0.10);
-      color: var(--neon);
+      background: var(--neon);
+      color: #000;
       border-color: var(--neon);
-      box-shadow: 0 0 6px rgba(57,255,20,0.25);
+      box-shadow: 0 0 12px rgba(var(--neon-rgb),0.7), 0 0 2px var(--neon) inset;
+      font-weight: 700;
     }
     #blogPagination .page-nav:disabled { opacity: 0.3; cursor: not-allowed; }
-    #blogPagination .page-nav svg { width: 10px; height: 10px; fill: currentColor; }
-    #blogCount { font-size: 0.85rem; color: rgba(122,154,134,0.45); }
+    #blogPagination .page-nav svg { width: 11px; height: 11px; fill: currentColor; }
+    #blogCount { font-size: 0.9rem; color: var(--text); font-weight: 500; }
+    #blogPaginationInfo { color: var(--neon); font-weight: 600; }
 
     /* ============================ MUSIC PLAYER ============================ */
     #music-player {
