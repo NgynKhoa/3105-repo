@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="vi">
 <head>
   <meta charset="UTF-8" />
@@ -6,11 +6,11 @@
   <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
-  <title>Owen Custom Repository — Builder</title>
+  <title>Owen Custom Repository â€” Builder</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Fira+Code:wght@400;500&family=Be+Vietnam+Pro:wght@300;400;500;600&family=VT323&display=swap" rel="stylesheet" />
   <style>
-    /* === FPS overlay widget (chỉ chữ) === */
+    /* === FPS overlay widget (chá»‰ chá»¯) === */
     #fps-box {
       position: fixed;
       top: 6px;
@@ -197,7 +197,7 @@
       line-height: 1.4;
       letter-spacing: 2px;
       text-transform: uppercase;
-      /* Perspective cho hiệu ứng rotateX 3D */
+      /* Perspective cho hiá»‡u á»©ng rotateX 3D */
       perspective: 200px;
       transform-style: preserve-3d;
       text-shadow:
@@ -209,7 +209,7 @@
     }
 
     /* === Neon flicker per-letter (broken sign style) === */
-    /* Keyframe mặc định (giữ tương thích cũ) */
+    /* Keyframe máº·c Ä‘á»‹nh (giá»¯ tÆ°Æ¡ng thÃ­ch cÅ©) */
     @keyframes neonFlickerLetter {
       0% { opacity: 1; transform: skewX(0deg) translateY(0); }
       3% { opacity: 0.4; transform: skewX(-4deg) translateY(1px); }
@@ -229,7 +229,7 @@
       100% { opacity: 1; transform: skewX(0deg) translateY(0); }
     }
 
-    /* Keyframe nhẹ dành cho chữ bình thường — chỉ nhấp nhá opacity, KHÔNG skew/translate */
+    /* Keyframe nháº¹ dÃ nh cho chá»¯ bÃ¬nh thÆ°á»ng â€” chá»‰ nháº¥p nhÃ¡ opacity, KHÃ”NG skew/translate */
     @keyframes neonFlickerSubtle {
       0%, 100% { opacity: 1; }
       18% { opacity: 0.92; }
@@ -240,14 +240,14 @@
       74% { opacity: 1; }
     }
 
-    /* Hiệu ứng chữ 3D depth + neon flicker per-letter.
-       ~30% chữ (class .broken) sẽ chập chờn mạnh + skew + mờ + đổi màu như biển neon hư.
-       ~70% chữ còn lại chỉ nhấp nhá nhẹ. */
+    /* Hiá»‡u á»©ng chá»¯ 3D depth + neon flicker per-letter.
+       ~30% chá»¯ (class .broken) sáº½ cháº­p chá»n máº¡nh + skew + má» + Ä‘á»•i mÃ u nhÆ° biá»ƒn neon hÆ°.
+       ~70% chá»¯ cÃ²n láº¡i chá»‰ nháº¥p nhÃ¡ nháº¹. */
     #logo-text .lt {
       display: inline-block;
       transform-origin: center bottom;
       will-change: opacity;
-      /* Depth + glow — dùng CSS var để shadow theme đổi ngay lập tức */
+      /* Depth + glow â€” dÃ¹ng CSS var Ä‘á»ƒ shadow theme Ä‘á»•i ngay láº­p tá»©c */
       text-shadow:
         1px 1px 0 rgba(var(--logo-shadow-rgb), 0.7),
         2px 2px 0 rgba(var(--logo-shadow-rgb), 0.65),
@@ -258,7 +258,7 @@
         7px 7px 0 rgba(0,0,0,0.7);
     }
 
-    /* Wrapper mỗi từ */
+    /* Wrapper má»—i tá»« */
     #logo-text .word {
       display: inline-block;
       white-space: nowrap;
@@ -273,26 +273,26 @@
       font-family: inherit;
     }
 
-    /* === Từ nguyên — ĐỨNG IM hoàn toàn, không animation === */
+    /* === Tá»« nguyÃªn â€” Äá»¨NG IM hoÃ n toÃ n, khÃ´ng animation === */
     #logo-text .lt:not(.broken) {
       animation: none;
       opacity: 1;
     }
     #logo-text .lt:not(.broken).word-space {
-      /* Override delay cũ nếu có */
+      /* Override delay cÅ© náº¿u cÃ³ */
       animation: none !important;
     }
 
-    /* === 3 chữ cái đơn lẻ broken — chớp nhá + nghiêng theo hướng riêng ===
-       Mỗi chữ có class riêng: .broken-right (nghiêng phải), .broken-left (nghiêng trái),
-       .broken-back (ngửa ra sau). Hướng random khi tạo DOM. */
+    /* === 3 chá»¯ cÃ¡i Ä‘Æ¡n láº» broken â€” chá»›p nhÃ¡ + nghiÃªng theo hÆ°á»›ng riÃªng ===
+       Má»—i chá»¯ cÃ³ class riÃªng: .broken-right (nghiÃªng pháº£i), .broken-left (nghiÃªng trÃ¡i),
+       .broken-back (ngá»­a ra sau). HÆ°á»›ng random khi táº¡o DOM. */
     #logo-text .lt.broken {
       animation-duration: 3.2s;
       animation-iteration-count: infinite;
       animation-timing-function: steps(40);
       animation-delay: var(--bd, 0s);
       filter: blur(0.4px);
-      /* Viền + depth + halo dùng CSS var */
+      /* Viá»n + depth + halo dÃ¹ng CSS var */
       -webkit-text-stroke: 0.7px rgba(var(--logo-shadow-rgb), 0.95);
       text-shadow:
         1px 1px 0 rgba(var(--logo-shadow-rgb), 1),
@@ -309,7 +309,7 @@
     #logo-text .lt.broken-left  { animation-name: neonBrokenLeft; }
     #logo-text .lt.broken-back  { animation-name: neonBrokenBack; }
 
-    /* Nghiêng sang PHẢI (skewX dương) */
+    /* NghiÃªng sang PHáº¢I (skewX dÆ°Æ¡ng) */
     @keyframes neonBrokenRight {
       0%   { opacity: 1;    transform: skewX(0deg)  translateY(0); }
       4%   { opacity: 0.05; transform: skewX(7deg)  translateY(2px); }
@@ -331,7 +331,7 @@
       100% { opacity: 1;    transform: skewX(0deg) translateY(0); }
     }
 
-    /* Nghiêng sang TRÁI (skewX âm) */
+    /* NghiÃªng sang TRÃI (skewX Ã¢m) */
     @keyframes neonBrokenLeft {
       0%   { opacity: 1;    transform: skewX(0deg)  translateY(0); }
       4%   { opacity: 0.05; transform: skewX(-7deg) translateY(2px); }
@@ -353,7 +353,7 @@
       100% { opacity: 1;    transform: skewX(0deg) translateY(0); }
     }
 
-    /* Ngửa ra SAU (rotateX 3D + skewX nhẹ) */
+    /* Ngá»­a ra SAU (rotateX 3D + skewX nháº¹) */
     @keyframes neonBrokenBack {
       0%   { opacity: 1;    transform: rotateX(0deg)  translateY(0); }
       4%   { opacity: 0.05; transform: rotateX(-25deg) translateY(3px); }
@@ -375,9 +375,9 @@
       100% { opacity: 1;    transform: rotateX(0deg) translateY(0); }
     }
 
-    /* (logo-text .lt main rule đã ở trên với CSS vars — giữ rule này cho các .lt chưa override) */
+    /* (logo-text .lt main rule Ä‘Ã£ á»Ÿ trÃªn vá»›i CSS vars â€” giá»¯ rule nÃ y cho cÃ¡c .lt chÆ°a override) */
     #logo-text .lt {
-      /* Dùng CSS var --logo-shadow-rgb để shadow đổi theo theme ngay */
+      /* DÃ¹ng CSS var --logo-shadow-rgb Ä‘á»ƒ shadow Ä‘á»•i theo theme ngay */
       -webkit-text-stroke: 0.5px rgba(var(--logo-shadow-rgb), 0.9);
       text-shadow:
         1px 1px 0 rgba(var(--logo-shadow-rgb), 0.95),
@@ -391,11 +391,11 @@
         0 0 70px rgba(var(--logo-shadow-rgb), 0.3);
     }
 
-    /* === 3 từ broken — DEPTH GLOW đậm hơn (không skew, không flicker) === */
-    /* (Rule .lt.broken đã ở trên với CSS vars — giữ đây cho dễ tìm) */
+    /* === 3 tá»« broken â€” DEPTH GLOW Ä‘áº­m hÆ¡n (khÃ´ng skew, khÃ´ng flicker) === */
+    /* (Rule .lt.broken Ä‘Ã£ á»Ÿ trÃªn vá»›i CSS vars â€” giá»¯ Ä‘Ã¢y cho dá»… tÃ¬m) */
 
     /* === Box depth effect === */
-    /* BỎ khung viền quanh logo — chỉ giữ chữ 3D depth bằng text-shadow */
+    /* Bá»Ž khung viá»n quanh logo â€” chá»‰ giá»¯ chá»¯ 3D depth báº±ng text-shadow */
     #logo {
       padding: 0;
       background: none;
@@ -413,7 +413,7 @@
       transform-origin: center bottom;
       animation: neonFlickerLetter 6s infinite steps(60);
       will-change: opacity, transform;
-      /* Hiệu ứng chữ 3D: viền đen + depth + halo glow theo --logo-shadow-color */
+      /* Hiá»‡u á»©ng chá»¯ 3D: viá»n Ä‘en + depth + halo glow theo --logo-shadow-color */
       -webkit-text-stroke: 0.5px rgba(var(--logo-shadow-rgb), 0.9);
       text-shadow:
         1px 1px 0 rgba(var(--logo-shadow-rgb), 0.95),
@@ -515,7 +515,7 @@
     }
 
     /* ============================ SECTION HEADINGS ============================ */
-    /* UNIFIED: tất cả tiêu đề dùng chung style green neon */
+    /* UNIFIED: táº¥t cáº£ tiÃªu Ä‘á» dÃ¹ng chung style green neon */
     .section-title,
     .modal-header h3,
     .star-title,
@@ -623,7 +623,7 @@
       border: 1.5px solid rgba(var(--neon-rgb),0.7);
       padding: 8px 13px;
       font-size: 0.78rem;
-      align-self: center; /* tránh button trong flex row bị stretch bất thường */
+      align-self: center; /* trÃ¡nh button trong flex row bá»‹ stretch báº¥t thÆ°á»ng */
       display: inline-flex;
       align-items: center;
       gap: 6px;
@@ -650,7 +650,7 @@
       gap: 5px;
     }
 
-    /* Neon variants — GIỮ gradient nền của .btn, chỉ thay đổi màu chữ/viền */
+    /* Neon variants â€” GIá»® gradient ná»n cá»§a .btn, chá»‰ thay Ä‘á»•i mÃ u chá»¯/viá»n */
     .neon-edit {
       color: var(--neon);
       border-color: rgba(var(--neon-rgb), 0.75);
@@ -662,21 +662,21 @@
       border-radius: 3px;
     }
 
-    /* Hover chung — phát sáng glow + viền sáng hơn + nâng nhẹ, KHÔNG đổi màu nền */
+    /* Hover chung â€” phÃ¡t sÃ¡ng glow + viá»n sÃ¡ng hÆ¡n + nÃ¢ng nháº¹, KHÃ”NG Ä‘á»•i mÃ u ná»n */
     .btn:hover {
       border-color: var(--neon);
       box-shadow: 0 0 14px rgba(var(--neon-rgb),0.55), 0 0 0 1px rgba(var(--neon-rgb),0.4) inset, 0 8px 20px rgba(0,0,0,0.28);
       transform: translateY(-1px);
     }
 
-    /* Riêng neon-delete: hover giữ viền hồng (vì .btn:hover mặc định đè thành xanh) */
+    /* RiÃªng neon-delete: hover giá»¯ viá»n há»“ng (vÃ¬ .btn:hover máº·c Ä‘á»‹nh Ä‘Ã¨ thÃ nh xanh) */
     .neon-delete:hover {
       border-color: var(--neon-pink, #ff3ea5);
       box-shadow: 0 0 14px rgba(255,62,165,0.55), 0 0 0 1px rgba(255,62,165,0.4) inset, 0 8px 20px rgba(0,0,0,0.28);
       transform: translateY(-1px);
     }
 
-    /* Nút [+] (id btnAdd) — hover glow + viền hồng đồng nhất */
+    /* NÃºt [+] (id btnAdd) â€” hover glow + viá»n há»“ng Ä‘á»“ng nháº¥t */
     #btnAdd:hover {
       border-color: var(--neon-pink);
       box-shadow: 0 0 14px rgba(var(--neon-pink-rgb),0.55), 0 0 0 1px rgba(var(--neon-pink-rgb),0.4) inset, 0 8px 20px rgba(0,0,0,0.28);
@@ -687,7 +687,7 @@
       transform: translateY(0);
     }
 
-    /* Add button — pink */
+    /* Add button â€” pink */
     #btnAdd::before { content: '[+]'; }
     #btnAdd {
       color: var(--neon-pink);
@@ -696,7 +696,7 @@
       text-shadow: 0 0 8px rgba(var(--neon-pink-rgb),0.5);
     }
 
-    /* Save button — green */
+    /* Save button â€” green */
     #btnSave::before { content: '[>]'; }
     #btnSave {
       color: var(--neon);
@@ -704,7 +704,7 @@
       border-color: var(--neon);
       text-shadow: 0 0 10px rgba(var(--neon-rgb),0.6);
     }
-    /* Loading state — dùng ::before giả để button KHÔNG bị to ra */
+    /* Loading state â€” dÃ¹ng ::before giáº£ Ä‘á»ƒ button KHÃ”NG bá»‹ to ra */
     #btnSave[data-loading]::before {
       content: '[~]';
       animation: save-pulse 0.9s linear infinite;
@@ -713,7 +713,7 @@
       0%, 100% { opacity: 1; }
       50% { opacity: 0.35; }
     }
-    /* Kích thước cố định — không đổi dù text dài ngắn */
+    /* KÃ­ch thÆ°á»›c cá»‘ Ä‘á»‹nh â€” khÃ´ng Ä‘á»•i dÃ¹ text dÃ i ngáº¯n */
     #btnSave, #btnAdd, #btnReload {
       min-width: 52px;
       min-height: 36px;
@@ -786,7 +786,7 @@
       grid-column: 1 / -1;
     }
 
-    /* Accent color input — mono font */
+    /* Accent color input â€” mono font */
     #meta_accentColor {
       font-family: 'Press Start 2P', monospace;
       font-size: 0.55rem;
@@ -850,7 +850,7 @@
       white-space: nowrap;
     }
 
-        /* ===== HELLO neon sign — mép phải ngoài 2 khung, fixed giữa viewport ===== */
+        /* ===== HELLO neon sign â€” mÃ©p pháº£i ngoÃ i 2 khung, fixed giá»¯a viewport ===== */
     #helloBanner {
       position: fixed;
       top: 50%;
@@ -898,7 +898,7 @@
       flex-shrink: 0;
       transition: background 0.15s;
     }
-    /* Giới hạn icon package trong .pkg-item để không phình to che row */
+    /* Giá»›i háº¡n icon package trong .pkg-item Ä‘á»ƒ khÃ´ng phÃ¬nh to che row */
     .pkg-item img {
       max-width: 36px;
       max-height: 36px;
@@ -971,6 +971,12 @@
       gap: 8px;
       font-size: 0.72rem;
       color: rgba(122,154,134,0.45);
+      /* Sticky Ä‘á»ƒ pagination LUÃ”N á»Ÿ dÆ°á»›i cÃ¹ng packagesBox khi user scroll */
+      position: sticky;
+      bottom: 0;
+      z-index: 2;
+      background: var(--box-bg, #0e1320);
+      flex-shrink: 0;
     }
     #pkgPagination.hidden { display: none; }
     .pages { display: flex; gap: 4px; align-items: center; }
@@ -1095,7 +1101,7 @@
     }
 
     .modal-header h3 {
-      /* Be Vietnam Pro: hiển thị tiếng Việt tốt, vẫn giữ neon style */
+      /* Be Vietnam Pro: hiá»ƒn thá»‹ tiáº¿ng Viá»‡t tá»‘t, váº«n giá»¯ neon style */
       font-family: 'Be Vietnam Pro', monospace !important;
       font-size: 0.9rem !important;
       font-weight: 600 !important;
@@ -1481,13 +1487,13 @@
     #modalBody > div.grid > details {
       display: block;
     }
-    /* Nhưng tôn trọng inline display:none (iOS custom wrap ẩn khi dùng default) */
+    /* NhÆ°ng tÃ´n trá»ng inline display:none (iOS custom wrap áº©n khi dÃ¹ng default) */
     #modalBody > div.grid > div[style*="display:none"],
     #modalBody > div.grid > div[data-hidden] {
       display: none !important;
     }
 
-    /* Thống nhất kích thước ảnh trong các picker grid (icon/banner/screens) — ép vuông 1:1 */
+    /* Thá»‘ng nháº¥t kÃ­ch thÆ°á»›c áº£nh trong cÃ¡c picker grid (icon/banner/screens) â€” Ã©p vuÃ´ng 1:1 */
     #iconPickerGrid > div,
     #bannerPickerGrid > div,
     #screensGrid > div {
@@ -1509,7 +1515,7 @@
     #f_download_menu { display: none; }
     #f_download_menu.show { display: block !important; }
 
-    /* Highlight ký tự đang gõ trong dropdown — neon */
+    /* Highlight kÃ½ tá»± Ä‘ang gÃµ trong dropdown â€” neon */
     #f_download_menu mark.dl-hl {
       background: rgba(57,255,20,0.18) !important;
       color: var(--neon) !important;
@@ -1518,7 +1524,7 @@
       text-shadow: 0 0 6px rgba(57,255,20,0.45);
     }
 
-    /* Item trong dropdown — neon hover */
+    /* Item trong dropdown â€” neon hover */
     #f_download_menu button.dl-item {
       background: transparent;
       border: none;
@@ -1655,8 +1661,26 @@
     }
 
     /* ============================ BLOG ITEMS ============================ */
-    #blog-section { height: 290px; overflow: hidden; }
-    #blogList { height: 100%; min-height: 0; overflow: visible; }
+    /* Flex column Ä‘á»ƒ header / list / pagination stack tá»± nhiÃªn, pagination
+       luÃ´n á»Ÿ cuá»‘i blog-section. min-height thay vÃ¬ height cá»‘ Ä‘á»‹nh Ä‘á»ƒ box
+       tá»± giÃ£n theo content. */
+    #blog-section {
+      display: flex;
+      flex-direction: column;
+      min-height: 290px;
+      height: auto;
+      overflow: visible !important;
+    }
+    /* Header blog */
+    #blog-section .box-header-wrap {
+      flex-shrink: 0;
+    }
+    #blogList {
+      flex: 1 1 auto;
+      min-height: 0;
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
     #blogPagination { padding: 10px 14px; display: flex; gap: 4px; align-items: center; border-top: 1px solid var(--border); }
     .blog-item {
       display: flex;
@@ -1694,6 +1718,12 @@
       gap: 8px;
       font-size: 0.72rem;
       color: rgba(122,154,134,0.45);
+      /* Sticky Ä‘á»ƒ pagination LUÃ”N á»Ÿ dÆ°á»›i cÃ¹ng blog-section khi user scroll */
+      position: sticky;
+      bottom: 0;
+      z-index: 2;
+      background: var(--box-bg, #0e1320);
+      flex-shrink: 0;
     }
       gap: 8px;
       font-size: 0.72rem;
@@ -2253,23 +2283,23 @@
   <canvas id="trail-canvas"></canvas>
 
   <!-- Settings Button -->
-  <button id="settingsBtn" class="settings-btn" title="Cài đặt">⚙️</button>
+  <button id="settingsBtn" class="settings-btn" title="CÃ i Ä‘áº·t">âš™ï¸</button>
 
   <!-- Settings Menu -->
   <div id="settingsMenu" class="settings-menu">
     <div class="settings-header">
       <span class="settings-title">SETTINGS</span>
-      <button class="settings-close" id="closeSettings">✕</button>
+      <button class="settings-close" id="closeSettings">âœ•</button>
     </div>
     <div class="settings-body">
       <!-- Tab buttons -->
       <div class="settings-tab-row">
-        <button class="settings-tab-btn active" id="tabTheme" onclick="switchSettingsTab('theme')">🎨 Màu Theme</button>
-        <button class="settings-tab-btn" id="tabShadow" onclick="switchSettingsTab('shadow')">✨ Màu Shadow</button>
-        <button class="settings-tab-btn" id="tabBg" onclick="switchSettingsTab('bg')">🖼️ Hình nền</button>
+        <button class="settings-tab-btn active" id="tabTheme" onclick="switchSettingsTab('theme')">ðŸŽ¨ MÃ u Theme</button>
+        <button class="settings-tab-btn" id="tabShadow" onclick="switchSettingsTab('shadow')">âœ¨ MÃ u Shadow</button>
+        <button class="settings-tab-btn" id="tabBg" onclick="switchSettingsTab('bg')">ðŸ–¼ï¸ HÃ¬nh ná»n</button>
       </div>
 
-      <!-- Màu Theme tab -->
+      <!-- MÃ u Theme tab -->
       <div class="settings-tab-panel active" id="panelTheme">
         <div class="settings-group">
           <div id="themeGrid" class="theme-grid">
@@ -2285,7 +2315,7 @@
         </div>
       </div>
 
-      <!-- Màu Shadow tab -->
+      <!-- MÃ u Shadow tab -->
       <div class="settings-tab-panel" id="panelShadow">
         <div class="settings-group">
           <div id="shadowGrid" class="theme-grid">
@@ -2301,58 +2331,58 @@
         </div>
       </div>
 
-      <!-- Hình nền tab -->
+      <!-- HÃ¬nh ná»n tab -->
       <div class="settings-tab-panel" id="panelBg">
         <div class="settings-group">
           <div id="bgGrid" class="bg-grid">
-            <div id="bgLoading" class="bg-loading">⏳ Đang tải ảnh nền...</div>
+            <div id="bgLoading" class="bg-loading">â³ Äang táº£i áº£nh ná»n...</div>
           </div>
           <div id="bgUploadArea" class="bg-upload-area" style="margin-top:8px;">
-            <div class="bg-upload-icon">📤</div>
-            <div>Nhấn hoặc kéo ảnh vào đây để upload</div>
-            <div style="font-size:10px;margin-top:2px;color:var(--muted)">JPG, PNG, GIF, WebP · Tối đa 10MB</div>
+            <div class="bg-upload-icon">ðŸ“¤</div>
+            <div>Nháº¥n hoáº·c kÃ©o áº£nh vÃ o Ä‘Ã¢y Ä‘á»ƒ upload</div>
+            <div style="font-size:10px;margin-top:2px;color:var(--muted)">JPG, PNG, GIF, WebP Â· Tá»‘i Ä‘a 10MB</div>
             <input type="file" id="bgFileInput" accept="image/jpeg,image/png,image/gif,image/webp">
           </div>
           <div id="bgErrorMsg" class="bg-error-msg" style="display:none;margin-top:6px;"></div>
           <div style="font-size:10px;margin-top:8px;padding:8px 10px;background:rgba(var(--neon-rgb),0.05);border:1px solid var(--border);border-radius:6px;color:var(--text);line-height:1.5;">
-            <div style="color:var(--neon);font-weight:600;margin-bottom:3px;">💡 Gợi ý kích thước ảnh</div>
-            • Tỉ lệ <b>16:9</b> sẽ hiển thị đẹp nhất (ví dụ <b>1920×1080</b>, <b>2560×1440</b>)<br>
-            • Tối thiểu khuyến nghị: <b>1280×720</b> · Tối đa: <b>3840×2160</b> (4K)<br>
-            • Ảnh nhỏ hơn sẽ bị upscale → có thể bị mờ; ảnh quá lớn sẽ tốn bộ nhớ
+            <div style="color:var(--neon);font-weight:600;margin-bottom:3px;">ðŸ’¡ Gá»£i Ã½ kÃ­ch thÆ°á»›c áº£nh</div>
+            â€¢ Tá»‰ lá»‡ <b>16:9</b> sáº½ hiá»ƒn thá»‹ Ä‘áº¹p nháº¥t (vÃ­ dá»¥ <b>1920Ã—1080</b>, <b>2560Ã—1440</b>)<br>
+            â€¢ Tá»‘i thiá»ƒu khuyáº¿n nghá»‹: <b>1280Ã—720</b> Â· Tá»‘i Ä‘a: <b>3840Ã—2160</b> (4K)<br>
+            â€¢ áº¢nh nhá» hÆ¡n sáº½ bá»‹ upscale â†’ cÃ³ thá»ƒ bá»‹ má»; áº£nh quÃ¡ lá»›n sáº½ tá»‘n bá»™ nhá»›
           </div>
         </div>
       </div>
 
       <div class="settings-group">
-        <span class="settings-label">Hiệu ứng Mưa</span>
+        <span class="settings-label">Hiá»‡u á»©ng MÆ°a</span>
         <div class="settings-row">
-          <span class="settings-row-label">Bật Mưa</span>
+          <span class="settings-row-label">Báº­t MÆ°a</span>
           <label class="toggle-switch"><input type="checkbox" id="toggleRain" checked><span class="toggle-slider"></span></label>
         </div>
         <div class="settings-row">
-          <span class="settings-row-label">Mưa Nặng</span>
+          <span class="settings-row-label">MÆ°a Náº·ng</span>
           <label class="toggle-switch"><input type="checkbox" id="toggleHeavyRain"><span class="toggle-slider"></span></label>
         </div>
       </div>
       <div class="settings-group">
-        <span class="settings-label">Chế độ Hiển thị</span>
+        <span class="settings-label">Cháº¿ Ä‘á»™ Hiá»ƒn thá»‹</span>
         <div class="settings-row">
           <span class="settings-row-label">Dark Mode</span>
           <label class="toggle-switch"><input type="checkbox" id="toggleDarkMode" checked><span class="toggle-slider"></span></label>
         </div>
       </div>
       <div class="settings-group">
-        <span class="settings-label">Độ Trong Suốt <span style="float:right;font-weight:400;color:var(--muted);font-size:10px;"><span id="transValue">92</span>%</span></span>
+        <span class="settings-label">Äá»™ Trong Suá»‘t <span style="float:right;font-weight:400;color:var(--muted);font-size:10px;"><span id="transValue">92</span>%</span></span>
         <input type="range" id="rangeTransparency" class="settings-range" min="0" max="100" value="92">
         <div style="display:flex;justify-content:space-between;font-size:9px;color:var(--muted);margin-top:2px;padding:0 2px;">
-          <span>🪟 Trong suốt</span>
-          <span>🏷️ Mờ đặc</span>
+          <span>ðŸªŸ Trong suá»‘t</span>
+          <span>ðŸ·ï¸ Má» Ä‘áº·c</span>
         </div>
       </div>
       <div class="settings-group">
-        <span class="settings-label">Điều hướng nhanh</span>
-        <a href="/dashboard" class="settings-nav-link">⚙️ Admin Dashboard</a>
-        <a href="/blog" class="settings-nav-link">📝 Blog</a>
+        <span class="settings-label">Äiá»u hÆ°á»›ng nhanh</span>
+        <a href="/dashboard" class="settings-nav-link">âš™ï¸ Admin Dashboard</a>
+        <a href="/blog" class="settings-nav-link">ðŸ“ Blog</a>
       </div>
     </div>
   </div>
@@ -2363,7 +2393,7 @@
 
     <!-- ============================ MASTHEAD ============================ -->
     <header id="masthead" data-box="masthead" style="display:flex; align-items:center; gap:14px;">
-      <!-- Avatar — bên trái -->
+      <!-- Avatar â€” bÃªn trÃ¡i -->
       <div id="mast-avatar" title="Repo icon" style="width:52px; height:52px; flex-shrink:0;">
         <svg viewBox="0 0 52 52" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;">
           <defs>
@@ -2380,13 +2410,13 @@
         </svg>
       </div>
 
-      <!-- Logo — giữa -->
+      <!-- Logo â€” giá»¯a -->
       <div id="logo" style="flex:1;">
         <div id="logo-text">OWEN CUSTOM REPOSITORY</div>
         <div id="logo-sub">Package Builder &amp; Repo Manager</div>
       </div>
 
-      <!-- Controls — bên phải, cùng hàng -->
+      <!-- Controls â€” bÃªn pháº£i, cÃ¹ng hÃ ng -->
       <div style="display:flex; align-items:center; gap:8px; flex-shrink:0;">
         <label for="repoSelect" style="font-size:0.72rem; color:var(--muted); text-transform:uppercase; white-space:nowrap;">Repo:</label>
         <select id="repoSelect" style="max-width:150px;"></select>
@@ -2396,22 +2426,22 @@
       </div>
     </header>
 
-    <!-- HELLO neon sign — ngay dưới header, canh phải -->
+    <!-- HELLO neon sign â€” ngay dÆ°á»›i header, canh pháº£i -->
     <div id="helloBanner" aria-hidden="true">HELLO</div>
 
     <main>
 
       <!-- ============================ META ============================ -->
       <section class="box" data-box="meta">
-        <div class="section-title">Thông tin chung</div>
-        <div class="section-copy">Sửa trực tiếp — sẽ ghi vào repo.yml khi bấm Lưu.</div>
+        <div class="section-title">ThÃ´ng tin chung</div>
+        <div class="section-copy">Sá»­a trá»±c tiáº¿p â€” sáº½ ghi vÃ o repo.yml khi báº¥m LÆ°u.</div>
         <div class="field-row">
           <div class="field">
             <label for="meta_identifier">Identifier (com.xxx)</label>
             <input id="meta_identifier" />
           </div>
           <div class="field">
-            <label for="meta_name">Tên repo</label>
+            <label for="meta_name">TÃªn repo</label>
             <input id="meta_name" />
           </div>
           <div class="field">
@@ -2435,21 +2465,21 @@
       <section class="box" id="packagesBox" data-box="packages" style="padding:0; overflow:hidden;">
         <div class="box-header-wrap">
           <div class="pkg-header">
-            <div class="section-title" style="margin-bottom:0;">Danh sách packages</div>
+            <div class="section-title" style="margin-bottom:0;">Danh sÃ¡ch packages</div>
             <div class="pkg-search-wrap">
-              <input type="search" id="pkgSearchInput" placeholder="Tìm..." />
+              <input type="search" id="pkgSearchInput" placeholder="TÃ¬m..." />
               <span id="packageCount">0</span>
             </div>
           </div>
         </div>
         <div id="packageList" class="package-list"></div>
         <div id="emptyHint" class="hidden">
-          Chưa có package nào. Bấm <b>+ Thêm package</b> để bắt đầu.
+          ChÆ°a cÃ³ package nÃ o. Báº¥m <b>+ ThÃªm package</b> Ä‘á»ƒ báº¯t Ä‘áº§u.
         </div>
         <div id="pkgPagination" class="hidden">
           <span id="pkgPaginationInfo"></span>
           <div class="pages">
-            <button id="pkgPagePrev" class="page-nav" data-pkg-nav="prev" title="Trang trước" aria-label="Trang trước">
+            <button id="pkgPagePrev" class="page-nav" data-pkg-nav="prev" title="Trang trÆ°á»›c" aria-label="Trang trÆ°á»›c">
               <svg viewBox="0 0 8 8" xmlns="http://www.w3.org/2000/svg"><path d="M5 1 L1.5 4 L5 7 Z"/></svg>
             </button>
             <span id="pkgPageNumbers"></span>
@@ -2466,7 +2496,7 @@
           <div class="pkg-header">
             <div class="section-title" style="margin-bottom:0;">Blog</div>
             <div class="pkg-search-wrap">
-              <span id="blogCount">0 bài viết</span>
+              <span id="blogCount">0 bÃ i viáº¿t</span>
             </div>
           </div>
         </div>
@@ -2474,7 +2504,7 @@
         <div id="blogPagination">
           <span id="blogPaginationInfo"></span>
           <div class="pages">
-            <button id="blogPagePrev" class="page-nav" data-blog-nav="prev" title="Trang trước" aria-label="Trang trước">
+            <button id="blogPagePrev" class="page-nav" data-blog-nav="prev" title="Trang trÆ°á»›c" aria-label="Trang trÆ°á»›c">
               <svg viewBox="0 0 8 8" xmlns="http://www.w3.org/2000/svg"><path d="M5 1 L1.5 4 L5 7 Z"/></svg>
             </button>
             <span id="blogPageNumbers"></span>
@@ -2492,12 +2522,12 @@
 
         <!-- ============= STARS NAV ============= -->
         <div id="stars" data-box="stars">
-          <div class="star-title">✩ Links</div>
-          <a class="star-link" href="/">✩ Home</a>
-          <a class="star-link" href="/admin">✩ Admin</a>
-          <a class="star-link" href="https://github.com" target="_blank">✩ GitHub</a>
-          <a class="star-link" href="mailto:nk@example.com">✩ E-mail</a>
-          <div class="star-divider">—</div>
+          <div class="star-title">âœ© Links</div>
+          <a class="star-link" href="/">âœ© Home</a>
+          <a class="star-link" href="/admin">âœ© Admin</a>
+          <a class="star-link" href="https://github.com" target="_blank">âœ© GitHub</a>
+          <a class="star-link" href="mailto:nk@example.com">âœ© E-mail</a>
+          <div class="star-divider">â€”</div>
           <div class="star-status">
             <span id="status-dot"></span>
             <span id="status-text">online</span>
@@ -2506,7 +2536,7 @@
 
         <!-- ============= BLOG (Music Player) ============= -->
         <div id="music-player" class="sidebar-box" data-box="music-player">
-          <div class="star-title">♫ Now Playing</div>
+          <div class="star-title">â™« Now Playing</div>
           <div class="mp-cover">
             <div class="mp-cover-inner" id="mpCover">
               <div class="mp-disc-grid">
@@ -2522,20 +2552,20 @@
           </div>
           <div class="mp-info">
             <div class="mp-title" id="mpTitle">Synthwave Drift</div>
-            <div class="mp-artist" id="mpArtist">— Owen · 80s Mix</div>
+            <div class="mp-artist" id="mpArtist">â€” Owen Â· 80s Mix</div>
           </div>
           <div class="mp-progress">
             <div class="mp-bar"><div class="mp-bar-fill" id="mpBarFill"></div></div>
             <div class="mp-times"><span id="mpCur">0:00</span><span id="mpDur">3:21</span></div>
           </div>
           <div class="mp-controls">
-            <button class="mp-btn" id="mpPrev" title="Trước" aria-label="Bài trước">
+            <button class="mp-btn" id="mpPrev" title="TrÆ°á»›c" aria-label="BÃ i trÆ°á»›c">
               <svg viewBox="0 0 8 8" xmlns="http://www.w3.org/2000/svg"><path d="M5 0.5 L1 4 L5 7.5 Z M6 0.5 H7 V7.5 H6 Z"/></svg>
             </button>
-            <button class="mp-btn mp-btn-main" id="mpPlay" title="Play/Pause" aria-label="Phát/Dừng">
+            <button class="mp-btn mp-btn-main" id="mpPlay" title="Play/Pause" aria-label="PhÃ¡t/Dá»«ng">
               <svg viewBox="0 0 8 8" xmlns="http://www.w3.org/2000/svg"><path d="M2 1 L7 4 L2 7 Z"/></svg>
             </button>
-            <button class="mp-btn" id="mpNext" title="Sau" aria-label="Bài sau">
+            <button class="mp-btn" id="mpNext" title="Sau" aria-label="BÃ i sau">
               <svg viewBox="0 0 8 8" xmlns="http://www.w3.org/2000/svg"><path d="M3 0.5 L7 4 L3 7.5 Z M1 0.5 H2 V7.5 H1 Z"/></svg>
             </button>
           </div>
@@ -2544,7 +2574,7 @@
 
         <!-- ============= MOON WIDGET ============= -->
         <div id="moon-widget" class="sidebar-box" data-box="moon-widget">
-          <div class="star-title">☾ Moon</div>
+          <div class="star-title">â˜¾ Moon</div>
           <div class="moon-row">
             <div class="moon-visual">
               <svg viewBox="-1.05 -1.05 2.1 2.1" width="64" height="64" id="moonSvg">
@@ -2568,8 +2598,8 @@
             </div>
           </div>
           <div class="moon-grid">
-            <div class="moon-cell"><div class="moon-key">Azimuth</div><div class="moon-val" id="moonAz">286°54'</div></div>
-            <div class="moon-cell"><div class="moon-key">Altitude</div><div class="moon-val" id="moonAlt">37°43' ▾</div></div>
+            <div class="moon-cell"><div class="moon-key">Azimuth</div><div class="moon-val" id="moonAz">286Â°54'</div></div>
+            <div class="moon-cell"><div class="moon-key">Altitude</div><div class="moon-val" id="moonAlt">37Â°43' â–¾</div></div>
           </div>
           <div class="moon-cell moon-clock">
             <div class="moon-key">// UTC+7 (VN)</div>
@@ -2582,10 +2612,10 @@
 
       <!-- ============================ HINT ============================ -->
       <section class="hint-box mt-4" data-box="hint-box">
-        <div class="hint-title">// Hướng dẫn sử dụng</div>
-        Bấm <span class="btn-hint">🚀 [>]</span> để ghi file <code>repositories/&lt;repo&gt;/repo.yml</code> và push lên GitHub tự động.<br/>
-        GitHub Action <code>build.yml</code> sẽ tự convert YAML → JSON. App 3105 sẽ refresh trong vài giây.<br/>
-        <span class="tip">Mẹo: tick "Dùng screenshot mặc định" và "Dùng iOS rule mặc định" để giữ file YAML gọn.</span>
+        <div class="hint-title">// HÆ°á»›ng dáº«n sá»­ dá»¥ng</div>
+        Báº¥m <span class="btn-hint">ðŸš€ [>]</span> Ä‘á»ƒ ghi file <code>repositories/&lt;repo&gt;/repo.yml</code> vÃ  push lÃªn GitHub tá»± Ä‘á»™ng.<br/>
+        GitHub Action <code>build.yml</code> sáº½ tá»± convert YAML â†’ JSON. App 3105 sáº½ refresh trong vÃ i giÃ¢y.<br/>
+        <span class="tip">Máº¹o: tick "DÃ¹ng screenshot máº·c Ä‘á»‹nh" vÃ  "DÃ¹ng iOS rule máº·c Ä‘á»‹nh" Ä‘á»ƒ giá»¯ file YAML gá»n.</span>
       </section>
 
     </main>
@@ -2595,15 +2625,15 @@
   <div id="modal">
     <div class="modal-content">
       <div class="modal-header">
-        <h3 id="modalTitle">Thêm package</h3>
-        <button id="btnCloseModal" type="button" class="btn">✕</button>
+        <h3 id="modalTitle">ThÃªm package</h3>
+        <button id="btnCloseModal" type="button" class="btn">âœ•</button>
       </div>
       <div class="modal-body" id="modalBody"><!-- form rendered by JS --></div>
       <div class="modal-footer">
         <span id="modalStatus"></span>
         <div class="modal-actions">
-          <button id="btnCancel" class="btn neon-delete">Hủy</button>
-          <button id="btnSavePackage" class="btn">💾 Lưu</button>
+          <button id="btnCancel" class="btn neon-delete">Há»§y</button>
+          <button id="btnSavePackage" class="btn">ðŸ’¾ LÆ°u</button>
         </div>
       </div>
     </div>
@@ -2619,7 +2649,7 @@
 
   <script>
     /* ========================================
-       RAIN EFFECT (from portfolio) - FIX: bật/tắt qua toggle, heavy rain support
+       RAIN EFFECT (from portfolio) - FIX: báº­t/táº¯t qua toggle, heavy rain support
     ======================================== */
     (function() {
       var canvas = document.getElementById('rain-canvas');
@@ -2716,7 +2746,7 @@
         }
         requestAnimationFrame(animateRain);
       }
-      // Default: rain bật
+      // Default: rain báº­t
       if (typeof window.rainEnabled === 'undefined') window.rainEnabled = true;
       if (typeof window.heavyRain === 'undefined') window.heavyRain = false;
       rebuildDrops();
@@ -2811,7 +2841,7 @@
       var el = document.getElementById('twFallback');
     }, 3000);
 
-    // === FPS Overlay (góc trái trên) — lấy cảm hứng từ dimden.dev/oneko ===
+    // === FPS Overlay (gÃ³c trÃ¡i trÃªn) â€” láº¥y cáº£m há»©ng tá»« dimden.dev/oneko ===
     (function () {
       var box = document.createElement('div');
       box.id = 'fps-box';
@@ -2819,8 +2849,8 @@
       box.textContent = 'FPS --';
       document.body.appendChild(box);
 
-      // Exponential moving average (EMA) cho FPS mượt
-      var alpha = 0.1;            // 0.1 = update nhanh, 0.05 = mượt hơn
+      // Exponential moving average (EMA) cho FPS mÆ°á»£t
+      var alpha = 0.1;            // 0.1 = update nhanh, 0.05 = mÆ°á»£t hÆ¡n
       var lastTime = performance.now();
       var smoothedFps = 60;
       var lastTextUpdate = 0;
@@ -2830,10 +2860,10 @@
         lastTime = now;
         if (dt > 0) {
           var instant = 1000 / dt;
-          // EMA: gộp giá trị mới với giá trị cũ
+          // EMA: gá»™p giÃ¡ trá»‹ má»›i vá»›i giÃ¡ trá»‹ cÅ©
           smoothedFps = smoothedFps + alpha * (instant - smoothedFps);
         }
-        // Cập nhật text mỗi ~100ms (nhanh, không flicker)
+        // Cáº­p nháº­t text má»—i ~100ms (nhanh, khÃ´ng flicker)
         if (now - lastTextUpdate >= 100) {
           var fps = Math.round(smoothedFps);
           var color = fps >= 55 ? '#39ff14' : fps >= 30 ? '#ffdd00' : '#ff4040';
@@ -2858,7 +2888,7 @@
   const elDur    = document.getElementById('mpDur');
 
   const tracks = [
-    { title: 'Synthwave Drift',  artist: 'Owen · 80s Mix' },
+    { title: 'Synthwave Drift',  artist: 'Owen Â· 80s Mix' },
     { title: 'Neon Rain',        artist: 'Cyber Lo-fi'     },
     { title: 'Hanoi Midnight',   artist: 'Phase FM'        },
     { title: 'CRT Memories',     artist: 'Analog Tape'     },
@@ -2886,7 +2916,7 @@
   }
   function render() {
     document.getElementById('mpTitle').textContent  = tracks[idx].title;
-    document.getElementById('mpArtist').textContent = '— ' + tracks[idx].artist;
+    document.getElementById('mpArtist').textContent = 'â€” ' + tracks[idx].artist;
     elDur.textContent = fmt(TOTAL);
     reset();
   }
@@ -2894,7 +2924,7 @@
     stopSim();
     playing = true;
     player.classList.add('playing');
-    btnPlay.textContent = '⏸';
+    btnPlay.textContent = 'â¸';
     clearInterval(player._sim);
     player._sim = setInterval(() => {
       cur = (cur + 1) % TOTAL;
@@ -2974,9 +3004,9 @@
     shadow.setAttribute('fill', '#0a0a14');
   }
 
-  // ----- Approximate Az/Alt (Hanoi ~ 21°N, 105.85°E) -----
+  // ----- Approximate Az/Alt (Hanoi ~ 21Â°N, 105.85Â°E) -----
   function moonAltAz(date, lat=21.0285, lon=105.8542) {
-    // Simplified algorithm — accuracy ~ few degrees, fine for widget.
+    // Simplified algorithm â€” accuracy ~ few degrees, fine for widget.
     const jd  = date.getTime()/86400000 + 2440587.5;
     const T   = (jd - 2451545.0) / 36525;
     const L   = (218.3164477 + 481267.88123421*T) % 360;
@@ -3018,13 +3048,13 @@
     const a = Math.abs(deg);
     const d = Math.floor(a);
     const m = Math.floor((a - d) * 60);
-    return sign + d + '°' + String(m).padStart(2,'0') + "'";
+    return sign + d + 'Â°' + String(m).padStart(2,'0') + "'";
   }
   function trend(alt) {
     // Compare to 1 min ago (we just use last value stored on element)
     const el = document.getElementById('moonAlt');
     if (!el._last) el._last = alt;
-    const arrow = alt < el._last ? '▾' : '▴';
+    const arrow = alt < el._last ? 'â–¾' : 'â–´';
     el._last = alt;
     return arrow;
   }
@@ -3103,8 +3133,8 @@
     var activeBtn = document.querySelector('.theme-btn[data-theme="' + name + '"]');
     if (activeBtn) activeBtn.classList.add('active');
     localStorage.setItem('theme', name);
-    // TÁCH BIỆT: Front repo chỉ ghi repo_theme (+ theme alias cũ).
-    // KHÔNG đụng dash_theme (Dashboard) / blog_theme (Blog).
+    // TÃCH BIá»†T: Front repo chá»‰ ghi repo_theme (+ theme alias cÅ©).
+    // KHÃ”NG Ä‘á»¥ng dash_theme (Dashboard) / blog_theme (Blog).
     localStorage.setItem('repo_theme', name);
   };
 
@@ -3164,15 +3194,15 @@
   if (toggleDark) {
     toggleDark.addEventListener('change', function(e) {
       var isDark = e.target.checked;
-      // Ghi darkMode vào localStorage TRƯỚC
+      // Ghi darkMode vÃ o localStorage TRÆ¯á»šC
       localStorage.setItem('darkMode', isDark ? 'true' : 'false');
-      // Lấy transparency đã lưu cho MODE MỚI (không phải slider hiện tại)
+      // Láº¥y transparency Ä‘Ã£ lÆ°u cho MODE Má»šI (khÃ´ng pháº£i slider hiá»‡n táº¡i)
       var newMode = isDark ? 'dark' : 'light';
       var transVal = window._getTransparencyForMode ? window._getTransparencyForMode(newMode) : 92;
-      // Cập nhật slider UI cho khớp với giá trị của mode mới
+      // Cáº­p nháº­t slider UI cho khá»›p vá»›i giÃ¡ trá»‹ cá»§a mode má»›i
       var slider = document.getElementById('rangeTransparency');
       if (slider) slider.value = transVal;
-      // Cập nhật label % ngay
+      // Cáº­p nháº­t label % ngay
       var transValueLabel = document.getElementById('transValue');
       if (transValueLabel) transValueLabel.textContent = transVal;
       applyDarkMode(isDark, transVal);
@@ -3222,15 +3252,15 @@
   }
 
   // Transparency
-  // Slider: 0% = trong suốt hoàn toàn (nhìn xuyên nền), 100% = mờ đặc
-  // Áp dụng nhất quán cho cả light và dark mode.
+  // Slider: 0% = trong suá»‘t hoÃ n toÃ n (nhÃ¬n xuyÃªn ná»n), 100% = má» Ä‘áº·c
+  // Ãp dá»¥ng nháº¥t quÃ¡n cho cáº£ light vÃ  dark mode.
   var rangeTrans = document.getElementById('rangeTransparency');
   var transValueLabel = document.getElementById('transValue');
   function _panelColorForMode(v, baseDark, baseLight) {
     var va = Math.min(v + 0.04, 1);
     var isLight = (localStorage.getItem('darkMode') === 'false');
     if (isLight) {
-      // Light mode: nền xám nhẹ để trong suốt thấy panel sáng; mờ đặc → trắng
+      // Light mode: ná»n xÃ¡m nháº¹ Ä‘á»ƒ trong suá»‘t tháº¥y panel sÃ¡ng; má» Ä‘áº·c â†’ tráº¯ng
       var panelRgb = '245, 245, 248';
       return {
         panel: 'rgba(' + panelRgb + ', ' + v + ')',
@@ -3262,10 +3292,10 @@
     rangeTrans.addEventListener('input', function(e) {
       var val = parseInt(e.target.value, 10);
       _applyTransparency(val);
-      // Lưu theo mode hiện tại: transparency_dark | transparency_light
+      // LÆ°u theo mode hiá»‡n táº¡i: transparency_dark | transparency_light
       var modeKey = (localStorage.getItem('darkMode') === 'false') ? 'light' : 'dark';
       localStorage.setItem('transparency_' + modeKey, String(val));
-      // Backward compat: cũng ghi key chung (lần cuối user chỉnh)
+      // Backward compat: cÅ©ng ghi key chung (láº§n cuá»‘i user chá»‰nh)
       localStorage.setItem('transparency', String(val));
       localStorage.setItem('repo_transparency', String(val));
     });
@@ -3273,7 +3303,7 @@
   // Expose for applyDarkMode() to pick up alpha + current slider value
   window._applyTransparency = _applyTransparency;
 
-  // Đọc transparency đã lưu cho một mode cụ thể, fallback key cũ 'transparency'
+  // Äá»c transparency Ä‘Ã£ lÆ°u cho má»™t mode cá»¥ thá»ƒ, fallback key cÅ© 'transparency'
   window._getTransparencyForMode = function(mode) {
     var key = 'transparency_' + mode;
     var v = parseInt(localStorage.getItem(key) || localStorage.getItem('transparency') || '92', 10);
@@ -3385,7 +3415,7 @@
     });
   }
 
-  // Re-apply shadow ONLY (called when shadow theme changes — no text re-render)
+  // Re-apply shadow ONLY (called when shadow theme changes â€” no text re-render)
   window.reapplyLogoShadow = function() {
     var el = document.getElementById('logo-text');
     if (!el) return;
@@ -3422,13 +3452,13 @@
   if (localStorage.getItem('rainEnabled') === 'false') { window.rainEnabled = false; if (toggleRain) toggleRain.checked = false; }
   if (localStorage.getItem('heavyRain') === 'true') { window.heavyRain = true; if (toggleHeavyRain) toggleHeavyRain.checked = true; }
   if (localStorage.getItem('heavyRain') === 'true') { window.heavyRain = true; if (toggleHeavyRain) toggleHeavyRain.checked = true; if (window.initRain) window.initRain(); }
-  // Dark mode — DEFAULT DARK on first visit (no saved key).
-  // Người dùng chưa chỉnh gì → darkMode chưa tồn tại → mặc định dark.
-  // Chỉ sau khi user chủ động toggle thì mới lưu vào localStorage.
+  // Dark mode â€” DEFAULT DARK on first visit (no saved key).
+  // NgÆ°á»i dÃ¹ng chÆ°a chá»‰nh gÃ¬ â†’ darkMode chÆ°a tá»“n táº¡i â†’ máº·c Ä‘á»‹nh dark.
+  // Chá»‰ sau khi user chá»§ Ä‘á»™ng toggle thÃ¬ má»›i lÆ°u vÃ o localStorage.
   if (toggleDark) {
     var savedDark = localStorage.getItem('darkMode');
-    // savedDark có thể là 'true', 'false', boolean true/false, hoặc null.
-    // Mặc định dark (true). Chỉ light khi rõ ràng là false.
+    // savedDark cÃ³ thá»ƒ lÃ  'true', 'false', boolean true/false, hoáº·c null.
+    // Máº·c Ä‘á»‹nh dark (true). Chá»‰ light khi rÃµ rÃ ng lÃ  false.
     var initialDark = (savedDark !== false && savedDark !== 'false');
     toggleDark.checked = initialDark;
     applyDarkMode(initialDark, parseInt(savedTrans || '92', 10));
@@ -3470,11 +3500,11 @@
     if (!grid) return;
     grid.innerHTML = '';
 
-    // "Không có nền" button
+    // "KhÃ´ng cÃ³ ná»n" button
     var noneBtn = document.createElement('button');
     noneBtn.className = 'bg-none-btn' + (_bgState.activeFilename === '' ? ' active' : '');
-    noneBtn.title = 'Không có nền';
-    noneBtn.innerHTML = '🚫';
+    noneBtn.title = 'KhÃ´ng cÃ³ ná»n';
+    noneBtn.innerHTML = 'ðŸš«';
     noneBtn.addEventListener('click', function() {
       _bgState.activeFilename = '';
       localStorage.removeItem('bgImage');
@@ -3504,11 +3534,11 @@
 
       var delBtn = document.createElement('button');
       delBtn.className = 'bg-delete-btn';
-      delBtn.innerHTML = '✕';
-      delBtn.title = 'Xóa';
+      delBtn.innerHTML = 'âœ•';
+      delBtn.title = 'XÃ³a';
       delBtn.addEventListener('click', function(e) {
         e.stopPropagation();
-        if (!confirm('Xóa ảnh nền "' + f.filename + '"?')) return;
+        if (!confirm('XÃ³a áº£nh ná»n "' + f.filename + '"?')) return;
         fetch('/api/backgrounds/' + encodeURIComponent(f.filename), { method: 'DELETE' })
           .then(function() {
             if (_bgState.activeFilename === f.filename) {
@@ -3519,7 +3549,7 @@
             _bgState.files = _bgState.files.filter(function(x) { return x.filename !== f.filename; });
             _renderBgGrid();
           })
-          .catch(function(err) { alert('Xóa thất bại: ' + err); });
+          .catch(function(err) { alert('XÃ³a tháº¥t báº¡i: ' + err); });
       });
       thumb.appendChild(delBtn);
       grid.appendChild(thumb);
@@ -3529,14 +3559,14 @@
       var empty = document.createElement('div');
       empty.className = 'bg-loading';
       empty.style.gridColumn = 'span 3';
-      empty.textContent = 'Chưa có ảnh nền nào. Upload ảnh bên dưới.';
+      empty.textContent = 'ChÆ°a cÃ³ áº£nh ná»n nÃ o. Upload áº£nh bÃªn dÆ°á»›i.';
       grid.appendChild(empty);
     }
   }
 
   window._applyBackground = function(url) {
     var body = document.body;
-    // Luôn set solid background trước (blend với transparent panels)
+    // LuÃ´n set solid background trÆ°á»›c (blend vá»›i transparent panels)
     var isDark = (localStorage.getItem('darkMode') !== 'false');
     var solidBg = isDark ? '#06060e' : '#f0f0f5';
     if (!url) {
@@ -3583,21 +3613,21 @@
     if (errEl) { errEl.style.display = 'none'; errEl.textContent = ''; }
     var validTypes = ['image/jpeg','image/png','image/gif','image/webp'];
     if (!validTypes.includes(file.type)) {
-      _showBgError('Chỉ chấp nhận JPG, PNG, GIF, WebP');
+      _showBgError('Chá»‰ cháº¥p nháº­n JPG, PNG, GIF, WebP');
       return;
     }
     if (file.size > 10 * 1024 * 1024) {
-      _showBgError('File quá lớn. Tối đa 10MB.');
+      _showBgError('File quÃ¡ lá»›n. Tá»‘i Ä‘a 10MB.');
       return;
     }
-    // Đọc kích thước thực tế để cảnh báo nếu quá nhỏ
+    // Äá»c kÃ­ch thÆ°á»›c thá»±c táº¿ Ä‘á»ƒ cáº£nh bÃ¡o náº¿u quÃ¡ nhá»
     var reader = new FileReader();
     var imgPreview = new Image();
     reader.onload = function(e) {
       imgPreview.onload = function() {
         var w = imgPreview.naturalWidth, h = imgPreview.naturalHeight;
         if (w < 1280 || h < 720) {
-          if (!confirm('Ảnh chỉ có ' + w + '×' + h + ' — nhỏ hơn 1280×720, có thể bị mờ khi làm nền. Vẫn upload?')) {
+          if (!confirm('áº¢nh chá»‰ cÃ³ ' + w + 'Ã—' + h + ' â€” nhá» hÆ¡n 1280Ã—720, cÃ³ thá»ƒ bá»‹ má» khi lÃ m ná»n. Váº«n upload?')) {
             return;
           }
         }
@@ -3617,7 +3647,7 @@
         var ct = r.headers.get('content-type') || '';
         if (ct.indexOf('application/json') === -1) {
           return r.text().then(function(t) {
-            throw new Error('Server trả về HTML (có thể lỗi nội bộ). Xem Console để biết chi tiết.');
+            throw new Error('Server tráº£ vá» HTML (cÃ³ thá»ƒ lá»—i ná»™i bá»™). Xem Console Ä‘á»ƒ biáº¿t chi tiáº¿t.');
           });
         }
         return r.json();
@@ -3630,10 +3660,10 @@
           window._applyBackground(data.url);
           _renderBgGrid();
         } else {
-          _showBgError(data.description || 'Upload thất bại');
+          _showBgError(data.description || 'Upload tháº¥t báº¡i');
         }
       })
-      .catch(function(err) { _showBgError('Lỗi kết nối: ' + err.message); });
+      .catch(function(err) { _showBgError('Lá»—i káº¿t ná»‘i: ' + err.message); });
   }
 
   function _showBgError(msg) {
@@ -3672,20 +3702,20 @@ document.querySelectorAll('.blog-card, .blog-item a, .blog-link').forEach(card =
 });
 
 // =====================================================
-// DYNAMIC FIT — Tự co giãn số items theo kích thước khung
-// Khi kéo dãn khung → nhiều items hiện ra (bù đắp khoảng trống)
-// Khi thu nhỏ → items thừa bị ẩn (gọn trong khung)
-// Áp dụng cho cả packages list và blog sidebar
+// DYNAMIC FIT â€” Tá»± co giÃ£n sá»‘ items theo kÃ­ch thÆ°á»›c khung
+// Khi kÃ©o dÃ£n khung â†’ nhiá»u items hiá»‡n ra (bÃ¹ Ä‘áº¯p khoáº£ng trá»‘ng)
+// Khi thu nhá» â†’ items thá»«a bá»‹ áº©n (gá»n trong khung)
+// Ãp dá»¥ng cho cáº£ packages list vÃ  blog sidebar
 // =====================================================
 (function dynamicFitBoxes() {
-  // Cache full data để không fetch lại mỗi lần re-fit
+  // Cache full data Ä‘á»ƒ khÃ´ng fetch láº¡i má»—i láº§n re-fit
   const cache = { repo: null, packages: [], blogPosts: [] };
   let currentRepo = null;
-  // Trang hiện tại cho pagination (track riêng trong IIFE)
+  // Trang hiá»‡n táº¡i cho pagination (track riÃªng trong IIFE)
   const pageState = { blog: 1, pkg: 1 };
 
-  // Tính số items có thể hiển thị trong 1 box dựa vào chiều cao
-  // Trừ padding/header khoảng 90-120px (box-header-wrap ~ 60px + 24 padding)
+  // TÃ­nh sá»‘ items cÃ³ thá»ƒ hiá»ƒn thá»‹ trong 1 box dá»±a vÃ o chiá»u cao
+  // Trá»« padding/header khoáº£ng 90-120px (box-header-wrap ~ 60px + 24 padding)
   function fitCount(boxEl, itemHeight, headerOffset) {
     if (!boxEl) return 0;
     const h = boxEl.clientHeight || 0;
@@ -3702,7 +3732,7 @@ document.querySelectorAll('.blog-card, .blog-item a, .blog-link').forEach(card =
       const data = await res.json();
       cache.repo = currentRepo;
       cache.packages = (data.packages || []).filter(p => p && p.name);
-      pageState.pkg = 1; // reset page khi repo đổi
+      pageState.pkg = 1; // reset page khi repo Ä‘á»•i
     } catch (err) {
       console.warn('dynamicFit: load packages failed', err);
     }
@@ -3716,7 +3746,7 @@ document.querySelectorAll('.blog-card, .blog-item a, .blog-link').forEach(card =
     const itemH = 56; // .pkg-item height trong CSS
     const headerH = 60;
     const paginationH = 48;
-    const MAX_PKG = 5; // user yêu cầu: tối đa 5 packages/trang — CỐ ĐỊNH 5 (bỏ dynamic-fit co rút)
+    const MAX_PKG = 5; // user yÃªu cáº§u: tá»‘i Ä‘a 5 packages/trang â€” Cá» Äá»ŠNH 5 (bá» dynamic-fit co rÃºt)
     const all = cache.packages;
     const boxH = box.clientHeight || 0;
     const availNoPag = boxH - headerH;
@@ -3724,16 +3754,16 @@ document.querySelectorAll('.blog-card, .blog-item a, .blog-link').forEach(card =
     const totalPagesIfNoPag = Math.max(1, Math.ceil(all.length / maxNoPag));
     const needPag = totalPagesIfNoPag > 1;
     const avail = needPag ? (boxH - headerH - paginationH) : availNoPag;
-    // CỐ ĐỊNH max = 5 (user yêu cầu); KHÔNG cap theo dynamic-fit.
-    // Nếu box quá nhỏ (dynamicMax < 5) vẫn hiện 5 — phần thừa sẽ được
-    // #packageList scroll (overflow-y: auto), pagination chia trang giúp 5
-    // packages mỗi lần.
+    // Cá» Äá»ŠNH max = 5 (user yÃªu cáº§u); KHÃ”NG cap theo dynamic-fit.
+    // Náº¿u box quÃ¡ nhá» (dynamicMax < 5) váº«n hiá»‡n 5 â€” pháº§n thá»«a sáº½ Ä‘Æ°á»£c
+    // #packageList scroll (overflow-y: auto), pagination chia trang giÃºp 5
+    // packages má»—i láº§n.
     const max = MAX_PKG;
     const totalPages = Math.max(1, Math.ceil(all.length / max));
     if (pageState.pkg > totalPages) pageState.pkg = totalPages;
     const start = (pageState.pkg - 1) * max;
     const shown = all.slice(start, start + max);
-    // Cập nhật currentRepo cho app.js (để openModal/deletePackage dùng đúng repo)
+    // Cáº­p nháº­t currentRepo cho app.js (Ä‘á»ƒ openModal/deletePackage dÃ¹ng Ä‘Ãºng repo)
     if (currentRepo) window.__frontRepoName = currentRepo;
     list.innerHTML = shown.map(pkg => {
       const idEsc = escapeHtml(pkg.identifier || '');
@@ -3746,34 +3776,34 @@ document.querySelectorAll('.blog-card, .blog-item a, .blog-link').forEach(card =
         </div>
         <div class="pkg-info">
           <div style="display:flex;align-items:center;gap:6px;">
-            <span style="font-weight:500;font-size:0.85rem;color:var(--text-bright);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;min-width:0;">${escapeHtml(pkg.name || '(chưa có tên)')}</span>
+            <span style="font-weight:500;font-size:0.85rem;color:var(--text-bright);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;min-width:0;">${escapeHtml(pkg.name || '(chÆ°a cÃ³ tÃªn)')}</span>
             ${pkg.featured ? '<span style="background:rgba(240,224,64,0.15);color:#f0e040;font-size:9px;padding:1px 6px;border-radius:8px;">featured</span>' : ''}
           </div>
           <div style="font-size:0.7rem;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
-            ${escapeHtml(pkg.author || '')} ${pkg.version ? '· v' + escapeHtml(pkg.version) : ''}
+            ${escapeHtml(pkg.author || '')} ${pkg.version ? 'Â· v' + escapeHtml(pkg.version) : ''}
           </div>
         </div>
         <div class="pkg-actions" style="flex-shrink:0;display:flex;gap:4px;">
-          <button class="btn btn-xs neon-edit" data-action="edit" data-id="${idEsc}" title="Sửa package ${idEsc}">Sửa</button>
-          <button class="btn btn-xs neon-delete" data-action="delete" data-id="${idEsc}" title="Xóa package ${idEsc}">✕</button>
+          <button class="btn btn-xs neon-edit" data-action="edit" data-id="${idEsc}" title="Sá»­a package ${idEsc}">Sá»­a</button>
+          <button class="btn btn-xs neon-delete" data-action="delete" data-id="${idEsc}" title="XÃ³a package ${idEsc}">âœ•</button>
         </div>
       </div>
     `;}).join('');
-    // Wire nút Sửa/Xóa (idempotent qua delegation)
+    // Wire nÃºt Sá»­a/XÃ³a (idempotent qua delegation)
     wirePkgRowActions(list);
     // Count
     if (countEl) {
       countEl.textContent = all.length > 0
-        ? (totalPages === 1 ? `${all.length} package` : `${start + 1}–${Math.min(start + shown.length, all.length)} / ${all.length}`)
+        ? (totalPages === 1 ? `${all.length} package` : `${start + 1}â€“${Math.min(start + shown.length, all.length)} / ${all.length}`)
         : '0 package';
     }
     // Empty hint
     const empty = document.getElementById('emptyHint');
     if (empty) empty.classList.toggle('hidden', all.length > 0);
     list.style.display = all.length === 0 ? 'none' : 'block';
-    // Pagination: HIỆN khi totalPages > 1 (cố định max=5 — user yêu cầu).
-    // KHÔNG phụ thuộc 'needPag' (needPag tính theo dynamic-max, sẽ sai nếu
-    // box quá cao hiện hết trong 1 'trang dynamic' nhưng vẫn còn phân trang
+    // Pagination: HIá»†N khi totalPages > 1 (cá»‘ Ä‘á»‹nh max=5 â€” user yÃªu cáº§u).
+    // KHÃ”NG phá»¥ thuá»™c 'needPag' (needPag tÃ­nh theo dynamic-max, sáº½ sai náº¿u
+    // box quÃ¡ cao hiá»‡n háº¿t trong 1 'trang dynamic' nhÆ°ng váº«n cÃ²n phÃ¢n trang
     // theo MAX_PKG).
     const pag = document.getElementById('pkgPagination');
     const pagInfo = document.getElementById('pkgPaginationInfo');
@@ -3812,10 +3842,10 @@ document.querySelectorAll('.blog-card, .blog-item a, .blog-link').forEach(card =
   function wirePkgPagination() {
     if (pkgWired) return;
     pkgWired = true;
-    // Dùng event delegation trên #pkgPagination để đảm bảo totalPages được
-    // tính từ renderPackages() (logic dynamic-fit: trừ paginationH) thay vì
-    // dùng fitCount() riêng trong handler (đã deprecated, gây bug hiển thị
-    // sai số trang khi click Prev/Next).
+    // DÃ¹ng event delegation trÃªn #pkgPagination Ä‘á»ƒ Ä‘áº£m báº£o totalPages Ä‘Æ°á»£c
+    // tÃ­nh tá»« renderPackages() (logic dynamic-fit: trá»« paginationH) thay vÃ¬
+    // dÃ¹ng fitCount() riÃªng trong handler (Ä‘Ã£ deprecated, gÃ¢y bug hiá»ƒn thá»‹
+    // sai sá»‘ trang khi click Prev/Next).
     const pag = document.getElementById('pkgPagination');
     if (!pag) return;
     pag.addEventListener('click', (e) => {
@@ -3827,7 +3857,7 @@ document.querySelectorAll('.blog-card, .blog-item a, .blog-link').forEach(card =
           pageState.pkg--;
           renderPackages();
         } else if (nav === 'next') {
-          // totalPages tính lại từ renderPackages() (sẽ clamp)
+          // totalPages tÃ­nh láº¡i tá»« renderPackages() (sáº½ clamp)
           pageState.pkg++;
           renderPackages();
         }
@@ -3841,7 +3871,7 @@ document.querySelectorAll('.blog-card, .blog-item a, .blog-link').forEach(card =
     });
   }
 
-  // Wire nút Sửa/Xóa trên từng row package (event delegation, idempotent)
+  // Wire nÃºt Sá»­a/XÃ³a trÃªn tá»«ng row package (event delegation, idempotent)
   let pkgRowActionsWired = false;
   function wirePkgRowActions(listEl) {
     if (pkgRowActionsWired) return;
@@ -3860,13 +3890,13 @@ document.querySelectorAll('.blog-card, .blog-item a, .blog-link').forEach(card =
         if (typeof window.editPackageByIdentifier === 'function') {
           window.editPackageByIdentifier(id);
         } else {
-          console.warn('window.editPackageByIdentifier chưa sẵn sàng');
+          console.warn('window.editPackageByIdentifier chÆ°a sáºµn sÃ ng');
         }
       } else if (action === 'delete') {
         if (typeof window.deletePackageByIdentifier === 'function') {
           window.deletePackageByIdentifier(id);
         } else {
-          console.warn('window.deletePackageByIdentifier chưa sẵn sàng');
+          console.warn('window.deletePackageByIdentifier chÆ°a sáºµn sÃ ng');
         }
       }
     });
@@ -3892,21 +3922,21 @@ document.querySelectorAll('.blog-card, .blog-item a, .blog-link').forEach(card =
     if (!list || !box) return;
     console.log('[blog] renderBlog: boxH=' + box.clientHeight + ' total=' + cache.blogPosts.length);
     const itemH = 44; // blog-item height (compact)
-    const headerH = 60; // box-header-wrap thật ~ 50px (padding 10+10 + line)
+    const headerH = 60; // box-header-wrap tháº­t ~ 50px (padding 10+10 + line)
     const paginationH = 48; // blogPagination padding 10+10 + 28 button
-    const MAX_BLOG = 6; // user yêu cầu: CỐ ĐỊNH 6 bài/trang
+    const MAX_BLOG = 6; // user yÃªu cáº§u: Cá» Äá»ŠNH 6 bÃ i/trang
     const all = cache.blogPosts;
     const boxH = box.clientHeight || 0;
-    // Khả dụng cho list sau khi trừ header + (pagination nếu nhiều trang)
+    // Kháº£ dá»¥ng cho list sau khi trá»« header + (pagination náº¿u nhiá»u trang)
     const availNoPag = boxH - headerH;
     const maxNoPag = Math.max(1, Math.floor(availNoPag / itemH));
     const totalPagesIfNoPag = Math.max(1, Math.ceil(all.length / maxNoPag));
     const needPag = totalPagesIfNoPag > 1;
-    // Nếu cần pagination, trừ chiều cao pagination khỏi box
+    // Náº¿u cáº§n pagination, trá»« chiá»u cao pagination khá»i box
     const avail = needPag ? (boxH - headerH - paginationH) : availNoPag;
-    // CỐ ĐỊNH max = 6 (user yêu cầu); KHÔNG cap theo dynamic-fit.
-    // Box nhỏ thì #blogList scroll (overflow-y: auto) — pagination đảm bảo
-    // mỗi lần chỉ hiện 6 bài.
+    // Cá» Äá»ŠNH max = 6 (user yÃªu cáº§u); KHÃ”NG cap theo dynamic-fit.
+    // Box nhá» thÃ¬ #blogList scroll (overflow-y: auto) â€” pagination Ä‘áº£m báº£o
+    // má»—i láº§n chá»‰ hiá»‡n 6 bÃ i.
     const max = MAX_BLOG;
     const totalPages = Math.max(1, Math.ceil(all.length / max));
     if (pageState.blog > totalPages) pageState.blog = totalPages;
@@ -3914,7 +3944,7 @@ document.querySelectorAll('.blog-card, .blog-item a, .blog-link').forEach(card =
     const shown = all.slice(start, start + max);
     list.innerHTML = shown.map(p => `
       <a href="/blog-post/${p.id}" class="blog-item" style="cursor:pointer;text-decoration:none;color:inherit;display:flex;">
-        <span class="blog-icon">${p.icon || '📝'}</span>
+        <span class="blog-icon">${p.icon || 'ðŸ“'}</span>
         <div class="blog-link" style="flex:1;">
           <div class="blog-title" style="font-size:0.78rem;">${escapeHtml(p.title)}</div>
           <div class="blog-date">${escapeHtml(p.date || '')}</div>
@@ -3924,12 +3954,12 @@ document.querySelectorAll('.blog-card, .blog-item a, .blog-link').forEach(card =
     // Count
     if (countEl) {
       countEl.textContent = all.length > 0
-        ? (totalPages === 1 ? `${all.length} bài viết` : `${start + 1}–${Math.min(start + shown.length, all.length)} / ${all.length}`)
-        : '0 bài viết';
+        ? (totalPages === 1 ? `${all.length} bÃ i viáº¿t` : `${start + 1}â€“${Math.min(start + shown.length, all.length)} / ${all.length}`)
+        : '0 bÃ i viáº¿t';
     }
-    // Pagination: HIỆN khi totalPages > 1 (cố định max=6 — user yêu cầu).
-    // KHÔNG phụ thuộc 'needPag' (needPag tính theo dynamic-max, sẽ sai nếu
-    // box quá cao hiện hết trong 1 'trang dynamic' nhưng vẫn còn phân trang
+    // Pagination: HIá»†N khi totalPages > 1 (cá»‘ Ä‘á»‹nh max=6 â€” user yÃªu cáº§u).
+    // KHÃ”NG phá»¥ thuá»™c 'needPag' (needPag tÃ­nh theo dynamic-max, sáº½ sai náº¿u
+    // box quÃ¡ cao hiá»‡n háº¿t trong 1 'trang dynamic' nhÆ°ng váº«n cÃ²n phÃ¢n trang
     // theo MAX_BLOG).
     const pag = document.getElementById('blogPagination');
     const pagInfo = document.getElementById('blogPaginationInfo');
@@ -3964,9 +3994,9 @@ document.querySelectorAll('.blog-card, .blog-item a, .blog-link').forEach(card =
     }
   }
 
-  // Wire prev/next 1 lần (idempotent) — dùng event delegation để tránh bug
-  // hiển thị sai số trang (cũ: tính totalPages sai do dùng headerH=92 + không
-  // trừ paginationH → click Next có thể nhảy sang totalPages cao hơn thực tế)
+  // Wire prev/next 1 láº§n (idempotent) â€” dÃ¹ng event delegation Ä‘á»ƒ trÃ¡nh bug
+  // hiá»ƒn thá»‹ sai sá»‘ trang (cÅ©: tÃ­nh totalPages sai do dÃ¹ng headerH=92 + khÃ´ng
+  // trá»« paginationH â†’ click Next cÃ³ thá»ƒ nháº£y sang totalPages cao hÆ¡n thá»±c táº¿)
   let blogWired = false;
   function wireBlogPagination() {
     if (blogWired) return;
@@ -4002,17 +4032,17 @@ document.querySelectorAll('.blog-card, .blog-item a, .blog-link').forEach(card =
     }[c]));
   }
 
-  // === Re-fit cả 2 box khi user kéo dãn ===
+  // === Re-fit cáº£ 2 box khi user kÃ©o dÃ£n ===
   function refitAll() {
     renderPackages();
     renderBlog();
   }
 
-  // ResizeObserver: bắn mỗi khi box thay đổi kích thước (kéo dãn)
+  // ResizeObserver: báº¯n má»—i khi box thay Ä‘á»•i kÃ­ch thÆ°á»›c (kÃ©o dÃ£n)
   function watchResize(el, fn) {
     if (!el || typeof ResizeObserver === 'undefined') return;
     const ro = new ResizeObserver(() => {
-      // debounce nhẹ để tránh spam trong lúc kéo
+      // debounce nháº¹ Ä‘á»ƒ trÃ¡nh spam trong lÃºc kÃ©o
       clearTimeout(el._fitTimer);
       el._fitTimer = setTimeout(fn, 60);
     });
@@ -4021,11 +4051,11 @@ document.querySelectorAll('.blog-card, .blog-item a, .blog-link').forEach(card =
 
   // === Boot ===
   async function boot() {
-    // Blog load trước (không phụ thuộc repo)
+    // Blog load trÆ°á»›c (khÃ´ng phá»¥ thuá»™c repo)
     await loadBlog();
 
-    // Lấy repo mặc định: ưu tiên localStorage('currentRepo') → /api/repositories[0]
-    // /api/repositories trả { repositories: [...], sources: [...] } (object)
+    // Láº¥y repo máº·c Ä‘á»‹nh: Æ°u tiÃªn localStorage('currentRepo') â†’ /api/repositories[0]
+    // /api/repositories tráº£ { repositories: [...], sources: [...] } (object)
     const saved = (() => { try { return localStorage.getItem('currentRepo'); } catch (e) { return null; } })();
     if (saved) {
       currentRepo = saved;
@@ -4033,7 +4063,7 @@ document.querySelectorAll('.blog-card, .blog-item a, .blog-link').forEach(card =
       try {
         const r = await fetch('/api/repositories');
         const data = await r.json();
-        // Chấp nhận cả 2 format: array trực tiếp HOẶC object {repositories: [...]}
+        // Cháº¥p nháº­n cáº£ 2 format: array trá»±c tiáº¿p HOáº¶C object {repositories: [...]}
         const repos = Array.isArray(data) ? data : (data.repositories || data.repos || []);
         if (Array.isArray(repos) && repos.length) {
           currentRepo = typeof repos[0] === 'string' ? repos[0] : (repos[0].name || repos[0].id);
@@ -4043,7 +4073,7 @@ document.querySelectorAll('.blog-card, .blog-item a, .blog-link').forEach(card =
     if (currentRepo) {
       await loadPackages();
     } else {
-      console.warn('dynamicFit: no currentRepo — packages sẽ trống');
+      console.warn('dynamicFit: no currentRepo â€” packages sáº½ trá»‘ng');
     }
     wireBlogPagination();
     wirePkgPagination();
@@ -4051,19 +4081,32 @@ document.querySelectorAll('.blog-card, .blog-item a, .blog-link').forEach(card =
     // Watch resize
     watchResize(document.getElementById('packagesBox'), renderPackages);
     watchResize(document.getElementById('blog-section'), renderBlog);
-    // Re-fit khi layout áp xong (boxes thay đổi left/top/w/h)
+    // Re-fit khi layout Ã¡p xong (boxes thay Ä‘á»•i left/top/w/h)
     if (typeof window.__reapplyLayout === 'function') {
       const orig = window.__reapplyLayout;
       window.__reapplyLayout = function() {
         orig();
         setTimeout(refitAll, 50);
         setTimeout(refitAll, 250);
+        // Scroll tá»›i blog-section sau khi layout Ã¡p Ä‘á»ƒ user tháº¥y pagination
+        setTimeout(() => {
+          const blogBox = document.getElementById('blog-section');
+          if (blogBox) blogBox.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 300);
       };
     }
-    // Fallback: re-fit sau khi DOM ổn định + data chắc chắn đã về
+    // Fallback: re-fit sau khi DOM á»•n Ä‘á»‹nh + data cháº¯c cháº¯n Ä‘Ã£ vá»
     setTimeout(refitAll, 800);
     setTimeout(refitAll, 2000);
     setTimeout(refitAll, 4000);
+
+    // Blog items: click handler â€” gáº¯n sau khi list Ä‘Æ°á»£c render (dÃ¹ng event delegation)
+    document.addEventListener('click', function(e) {
+      var item = e.target.closest('#blogList .blog-item');
+      if (!item || e.target.closest('button')) return;
+      var link = item.querySelector('a');
+      if (link) window.open(link.getAttribute('href'), '_blank');
+    });
   }
 
   if (document.readyState === 'loading') {
@@ -4072,31 +4115,18 @@ document.querySelectorAll('.blog-card, .blog-item a, .blog-link').forEach(card =
     boot();
   }
 })();
-
-// Blog items in the home page - open in new tab
-document.querySelectorAll('#blogList .blog-item').forEach(item => {
-  const link = item.querySelector('a');
-  if (link) {
-    item.style.cursor = 'pointer';
-    item.addEventListener('click', e => {
-      if (!e.target.closest('button')) {
-        window.open(link.getAttribute('href'), '_blank');
-      }
-    });
-  }
-});
 </script>
 
 <script>
 /* ========================================
    APPLY LAYOUT FROM DASHBOARD (Boxes Editor)
    - Fetch /api/get-applied-layout
-   - Với mỗi box: đặt position:absolute + left/top/width/height
-   - Lưu "natural size" ban đầu để scale theo tỷ lệ khi resize
+   - Vá»›i má»—i box: Ä‘áº·t position:absolute + left/top/width/height
+   - LÆ°u "natural size" ban Ä‘áº§u Ä‘á»ƒ scale theo tá»· lá»‡ khi resize
 ======================================== */
 (function applyAppliedLayout() {
-  // Hook: áp layout lại SAU khi nội dung thật đã load (loadRepo async).
-  // Hook vào cả DOMContentLoaded và sau khi loadRepo xong.
+  // Hook: Ã¡p layout láº¡i SAU khi ná»™i dung tháº­t Ä‘Ã£ load (loadRepo async).
+  // Hook vÃ o cáº£ DOMContentLoaded vÃ  sau khi loadRepo xong.
   let layoutData = null;
 
   function applyBoxesLayout() {
@@ -4106,8 +4136,8 @@ document.querySelectorAll('#blogList .blog-item').forEach(item => {
     if (getComputedStyle(shell).position === 'static') {
       shell.style.position = 'relative';
     }
-    // Đặt shell thành full-width để toạ độ left khớp 1:1 với Dashboard preview.
-    // Không expand quá rộng: giữ padding ngang 18px để nội dung không dính mép.
+    // Äáº·t shell thÃ nh full-width Ä‘á»ƒ toáº¡ Ä‘á»™ left khá»›p 1:1 vá»›i Dashboard preview.
+    // KhÃ´ng expand quÃ¡ rá»™ng: giá»¯ padding ngang 18px Ä‘á»ƒ ná»™i dung khÃ´ng dÃ­nh mÃ©p.
     var shellW = (layoutData.canvas && layoutData.canvas.w) ? layoutData.canvas.w : 1280;
     shell.style.maxWidth = 'none';
     shell.style.width = shellW + 'px';
@@ -4118,7 +4148,7 @@ document.querySelectorAll('#blogList .blog-item').forEach(item => {
     shell.style.paddingBottom = '48px';
     shell.style.boxSizing = 'border-box';
 
-    // Tính max canvas để đặt min-height
+    // TÃ­nh max canvas Ä‘á»ƒ Ä‘áº·t min-height
     var maxX = 0, maxY = 0;
     layoutData.boxes.forEach(function(b) {
       maxX = Math.max(maxX, b.x + b.w);
@@ -4130,7 +4160,7 @@ document.querySelectorAll('#blogList .blog-item').forEach(item => {
     }
     shell.style.minHeight = (maxY + 60) + 'px';
 
-    // Áp layout cho từng box — giữ nguyên flow bên trong, chỉ đổi khung chứa.
+    // Ãp layout cho tá»«ng box â€” giá»¯ nguyÃªn flow bÃªn trong, chá»‰ Ä‘á»•i khung chá»©a.
     layoutData.boxes.forEach(function(b) {
       if (!b.key) return;
       var el = document.querySelector('[data-box="' + b.key + '"]');
@@ -4142,13 +4172,14 @@ document.querySelectorAll('#blogList .blog-item').forEach(item => {
       el.style.height = b.h + 'px';
       el.style.boxSizing = 'border-box';
       el.style.margin = '0';
-      // Đảm bảo overflow xử lý scroll mượt nếu nội dung vượt khung
-      el.style.overflow = 'hidden';
-      // Title (nếu có trong layout) sẽ được render trong DOM nếu cần — không scale.
+      // Äáº£m báº£o overflow xá»­ lÃ½ scroll mÆ°á»£t náº¿u ná»™i dung vÆ°á»£t khung
+      el.style.overflow = (b.key === 'blog-section' || b.key === 'packages')
+        ? 'visible' : 'hidden';
+      // Title (náº¿u cÃ³ trong layout) sáº½ Ä‘Æ°á»£c render trong DOM náº¿u cáº§n â€” khÃ´ng scale.
     });
   }
 
-  // Expose để loadRepo có thể gọi lại sau khi render package list.
+  // Expose Ä‘á»ƒ loadRepo cÃ³ thá»ƒ gá»i láº¡i sau khi render package list.
   window.__reapplyLayout = function() { applyBoxesLayout(); };
 
   fetch('/api/get-applied-layout')
@@ -4156,14 +4187,14 @@ document.querySelectorAll('#blogList .blog-item').forEach(item => {
     .then(function(data) {
       if (!data || !data.boxes || !data.boxes.length) return;
       layoutData = data;
-      // Lần đầu: áp ngay (với content chưa load)
+      // Láº§n Ä‘áº§u: Ã¡p ngay (vá»›i content chÆ°a load)
       applyBoxesLayout();
-      // Sau khi window load + 500ms: áp lại để chắc chắn nội dung thật đã render
+      // Sau khi window load + 500ms: Ã¡p láº¡i Ä‘á»ƒ cháº¯c cháº¯n ná»™i dung tháº­t Ä‘Ã£ render
       window.addEventListener('load', function() {
         setTimeout(applyBoxesLayout, 300);
         setTimeout(applyBoxesLayout, 1200);
       });
-      // Hook loadRepo: app.js sẽ gọi window.__reapplyLayout() sau khi render
+      // Hook loadRepo: app.js sáº½ gá»i window.__reapplyLayout() sau khi render
       // xong package list. Fallback: poll trong 3s.
       var attempts = 0;
       var poll = setInterval(function() {
