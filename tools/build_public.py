@@ -48,7 +48,7 @@ REPOS = ROOT / "repositories"
 
 # Cache version cho public build — bump khi Front Repo thay đổi để bust browser cache.
 # KHÔNG cần sync với admin cache_version; 2 hệ thống hoàn toàn độc lập.
-_CACHE_VERSION = 5
+_CACHE_VERSION = 6
 
 
 # ---------------------------------------------------------------------------
@@ -201,13 +201,13 @@ def build(repo_slug: str = "demo", clean: bool = True) -> int:
     html = re.sub(r'(href="|src=")/(static|assets)/', _to_relative, html)
     # Patch JS template literal `/repo-asset?repo=...&path=...` → relative
     # `<img src="/repo-asset?...">` trong dynamicFit render packages.
-    # Public build đã mirror assets/ của repo vào public/assets/ → đổi path
-    # sang `./assets/<basename>` cho trực tiếp, không qua Flask endpoint.
-    # pkg.icon có thể là path tương đối ("assets/icon/test.png") hoặc chỉ
-    # basename ("test.png") → lấy basename qua split('/').pop().
+    # Public build đã mirror assets/ của repo vào public/assets/. Logic:
+    #   pkg.icon = "assets/icon/Classic_dialer.png"
+    #   split("assets/").pop() = "icon/Classic_dialer.png"
+    #   prefix "./assets/" → "./assets/icon/Classic_dialer.png" (đúng subdir).
     html = html.replace(
         '<img src="/repo-asset?repo=${encodeURIComponent(currentRepo)}&path=${encodeURIComponent(pkg.icon)}"',
-        '<img src="${"./assets/" + encodeURIComponent((pkg.icon || "").split("/").pop())}"',
+        '<img src="${"./assets/" + encodeURIComponent((pkg.icon || "").split("assets/").pop() || pkg.icon.split("/").pop())}"',
     )
     # Ghi file bằng bytes mode để newline JSON đã escape KHÔNG bị convert
     # thành platform newline (Windows = \r\n làm vỡ JSON string).
@@ -215,40 +215,43 @@ def build(repo_slug: str = "demo", clean: bool = True) -> int:
     log(f"✓ Render index.html ({len(html):,} bytes, cache v={_CACHE_VERSION})")
 
     # 3) Copy static files (admin/static → public/static) rồi patch app.js
-    # để mọi URL `/repo-asset?repo=...&path=...` → `./assets/<basename>`.
-    # pkg.icon có thể là path đầy đủ ("assets/icon/test.png") hoặc basename.
+    # để mọi URL `/repo-asset?repo=...&path=...` → `./assets/<relative path>`.
+    # pkg.icon có thể là path đầy đủ ("assets/icon/test.png") — giữ nguyên
+    # phần relative sau "assets/" để file nằm đúng subdir.
+    # Logic: split path trên "assets/" rồi lấy phần sau. Nếu không có "assets/"
+    # thì coi như filename, prefix "./assets/" thẳng.
     n = copy_tree(ADMIN / "static", PUBLIC / "static")
     appjs = PUBLIC / "static" / "app.js"
     if appjs.exists():
         text = appjs.read_text(encoding="utf-8")
         before = text.count("/repo-asset")
-        # Match cả 2 dạng:
-        #   /repo-asset?repo=${encodeURIComponent(repo)}&path=${encodeURIComponent(iconPath)}
-        #   /repo-asset?repo=${state.currentRepo}&path=${encodeURIComponent(path)}
-        text = re.sub(
-            r'<img src="/repo-asset\?repo=\$\{encodeURIComponent\(([^)]+)\)\}&path=\$\{encodeURIComponent\(([^)]+)\)\}"',
-            lambda m: f'<img src="${{"./assets/" + encodeURIComponent((({m.group(2)} || "").split("/").pop()))}}"',
-            text,
-        )
+        # Helper JS expression: lấy relative path sau "assets/" (hoặc basename).
+        # Áp dụng được cho mọi iconPath/path/pkg.icon khác nhau.
+        def expr(var: str) -> str:
+            return (f'"./assets/" + (({var}.split("assets/").pop() || '
+                    f'{var}.split("/").pop()) || "")')
+        # Pattern 1: state.currentRepo + encodeURIComponent(path)
         text = re.sub(
             r'<img src="/repo-asset\?repo=\$\{(state\.currentRepo)\}&path=\$\{encodeURIComponent\(([^)]+)\)\}"',
-            lambda m: f'<img src="${{"./assets/" + encodeURIComponent((({m.group(2)} || "").split("/").pop()))}}"',
+            lambda m: f'<img src="${{{expr(m.group(2))}}}"',
             text,
         )
-        # Cuối cùng, nếu vẫn còn /repo-asset (chỗ state.currentRepo không wrap encodeURIComponent
-        # và đã được convert thành object) → fallback dùng state.currentRepo?.name || "demo"
-        text = text.replace(
-            '<img src="/repo-asset?repo=${state.currentRepo}&path=${encodeURIComponent(path)}"',
-            '<img src="${"./assets/" + encodeURIComponent((path || "").split("/").pop())}"',
+        # Pattern 2: encodeURIComponent(repo) + encodeURIComponent(path)
+        text = re.sub(
+            r'<img src="/repo-asset\?repo=\$\{encodeURIComponent\(([^)]+)\)\}&path=\$\{encodeURIComponent\(([^)]+)\)\}"',
+            lambda m: f'<img src="${{{expr(m.group(2))}}}"',
+            text,
         )
-        text = text.replace(
-            '<img src="/repo-asset?repo=${state.currentRepo}&path=${encodeURIComponent(pkg.icon)}"',
-            '<img src="${"./assets/" + encodeURIComponent((pkg.icon || "").split("/").pop())}"',
+        # Pattern 3: chỉ /repo-asset?repo=...&path=... (fallback cho mọi chỗ còn lại)
+        text = re.sub(
+            r'<img src="/repo-asset\?repo=[^&"]+&path=\$\{encodeURIComponent\(([^)]+)\)\}"',
+            lambda m: f'<img src="${{{expr(m.group(1))}}}"',
+            text,
         )
-        # Fallback cho mọi URL /repo-asset còn sót
+        # Cuối cùng: bất kỳ URL /repo-asset nào còn lại → fallback empty icon
         text = re.sub(
             r'<img src="/repo-asset\?[^"]*"',
-            '<img src="${"./assets/" + encodeURIComponent(icon.split("/").pop())}"',
+            '<img src="${"./assets/" + (iconPath || "").split("assets/").pop()}"',
             text,
         )
         after = text.count("/repo-asset")
