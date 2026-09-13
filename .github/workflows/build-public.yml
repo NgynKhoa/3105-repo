@@ -12,11 +12,13 @@ on:
       - '.github/workflows/build-public.yml'
   workflow_dispatch:
 
+# Đủ quyền để build artifact + deploy qua Pages API + OIDC cho Pages.
 permissions:
   contents: read
   pages: write
   id-token: write
 
+# Tránh 2 deploy cùng lúc — giữ deploy cũ, skip deploy mới.
 concurrency:
   group: pages
   cancel-in-progress: false
@@ -25,9 +27,9 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: '3.11'
 
@@ -49,7 +51,7 @@ jobs:
           wc -c public/index.html
 
       - name: Upload artifact cho GitHub Pages
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v4
         with:
           path: public
 
@@ -62,4 +64,4 @@ jobs:
     steps:
       - name: Deploy lên GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5

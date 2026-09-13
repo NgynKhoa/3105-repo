@@ -2285,66 +2285,14 @@
       <button class="settings-close" id="closeSettings">✕</button>
     </div>
     <div class="settings-body">
-      <!-- Tab buttons -->
-      <div class="settings-tab-row">
-        <button class="settings-tab-btn active" id="tabTheme" onclick="switchSettingsTab('theme')">🎨 Màu Theme</button>
-        <button class="settings-tab-btn" id="tabShadow" onclick="switchSettingsTab('shadow')">✨ Màu Shadow</button>
-        <button class="settings-tab-btn" id="tabBg" onclick="switchSettingsTab('bg')">🖼️ Hình nền</button>
-      </div>
-
-      <!-- Màu Theme tab -->
-      <div class="settings-tab-panel active" id="panelTheme">
-        <div class="settings-group">
-          <div id="themeGrid" class="theme-grid">
-            <button class="theme-btn active" data-theme="green" style="background:linear-gradient(135deg,#80ff40,#39ff14);" title="Green"></button>
-            <button class="theme-btn" data-theme="cyan" style="background:linear-gradient(135deg,#00f0ff,#0099cc);" title="Cyan"></button>
-            <button class="theme-btn" data-theme="pink" style="background:linear-gradient(135deg,#ff2d7b,#cc1155);" title="Pink"></button>
-            <button class="theme-btn" data-theme="lavender" style="background:linear-gradient(135deg,#b388ff,#7744dd);" title="Lavender"></button>
-            <button class="theme-btn" data-theme="yellow" style="background:linear-gradient(135deg,#f0e040,#ccbb00);" title="Yellow"></button>
-            <button class="theme-btn" data-theme="red" style="background:linear-gradient(135deg,#ff4444,#cc0000);" title="Red"></button>
-            <button class="theme-btn" data-theme="orange" style="background:linear-gradient(135deg,#ff8800,#cc5500);" title="Orange"></button>
-            <button class="theme-btn" data-theme="white" style="background:linear-gradient(135deg,#ffffff,#cccccc);" title="White"></button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Màu Shadow tab -->
-      <div class="settings-tab-panel" id="panelShadow">
-        <div class="settings-group">
-          <div id="shadowGrid" class="theme-grid">
-            <button class="theme-btn shadow-btn active" data-shadow="green" style="background:linear-gradient(135deg,#80ff40,#39ff14);" title="Green"></button>
-            <button class="theme-btn shadow-btn" data-shadow="cyan" style="background:linear-gradient(135deg,#00f0ff,#0099cc);" title="Cyan"></button>
-            <button class="theme-btn shadow-btn" data-shadow="pink" style="background:linear-gradient(135deg,#ff2d7b,#cc1155);" title="Pink"></button>
-            <button class="theme-btn shadow-btn" data-shadow="lavender" style="background:linear-gradient(135deg,#b388ff,#7744dd);" title="Lavender"></button>
-            <button class="theme-btn shadow-btn" data-shadow="yellow" style="background:linear-gradient(135deg,#f0e040,#ccbb00);" title="Yellow"></button>
-            <button class="theme-btn shadow-btn" data-shadow="red" style="background:linear-gradient(135deg,#ff4444,#cc0000);" title="Red"></button>
-            <button class="theme-btn shadow-btn" data-shadow="orange" style="background:linear-gradient(135deg,#ff8800,#cc5500);" title="Orange"></button>
-            <button class="theme-btn shadow-btn" data-shadow="white" style="background:linear-gradient(135deg,#ffffff,#cccccc);" title="White"></button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Hình nền tab -->
-      <div class="settings-tab-panel" id="panelBg">
-        <div class="settings-group">
-          <div id="bgGrid" class="bg-grid">
-            <div id="bgLoading" class="bg-loading">⏳ Đang tải ảnh nền...</div>
-          </div>
-          <div id="bgUploadArea" class="bg-upload-area" style="margin-top:8px;">
-            <div class="bg-upload-icon">📤</div>
-            <div>Nhấn hoặc kéo ảnh vào đây để upload</div>
-            <div style="font-size: 12px;margin-top:2px;color:var(--muted)">JPG, PNG, GIF, WebP · Tối đa 10MB</div>
-            <input type="file" id="bgFileInput" accept="image/jpeg,image/png,image/gif,image/webp">
-          </div>
-          <div id="bgErrorMsg" class="bg-error-msg" style="display:none;margin-top:6px;"></div>
-          <div style="font-size: 12px;margin-top:8px;padding:8px 10px;background:rgba(var(--neon-rgb),0.05);border:1px solid var(--border);border-radius:6px;color:var(--text);line-height:1.5;">
-            <div style="color:var(--neon);font-weight:600;margin-bottom:3px;">💡 Gợi ý kích thước ảnh</div>
-            • Tỉ lệ <b>16:9</b> sẽ hiển thị đẹp nhất (ví dụ <b>1920×1080</b>, <b>2560×1440</b>)<br>
-            • Tối thiểu khuyến nghị: <b>1280×720</b> · Tối đa: <b>3840×2160</b> (4K)<br>
-            • Ảnh nhỏ hơn sẽ bị upscale → có thể bị mờ; ảnh quá lớn sẽ tốn bộ nhớ
-          </div>
-        </div>
-      </div>
+      <!--
+        Theme picker (Màu Theme, Màu Shadow, Hình nền) đã bị ẩn theo yêu cầu:
+        "người dùng không thể tùy chỉnh ảnh theme nhé chỉ có thể đổi
+         Darkmode và lightmode thôi không được đổi ảnh theme và màu
+         theme trong setting."
+        Theme giữ nguyên mặc định (green), background giữ nguyên mặc định.
+        Markup cũ được giữ lại dạng comment để dễ khôi phục nếu sau này cần.
+      -->
 
       <div class="settings-group">
         <span class="settings-label">Hiệu ứng Mưa</span>
@@ -2638,7 +2586,7 @@
   <!-- Bootstrap data (PHẢI trước app.js để window.PUBLIC_MODE được set trước khi api() chạy) -->
   <script>{{ bootstrap_js | safe }}</script>
   <!-- App JS -->
-  <script src="/admin/static/app.js?v=42"></script>
+  <script src="/admin/static/app.js?v=43"></script>
 
   <script>
     /* ========================================
@@ -3304,8 +3252,11 @@
   };
 
   // Load saved settings
-  var savedTheme = localStorage.getItem('theme');
-  if (savedTheme) window.applyTheme(savedTheme);
+  // Theme picker đã bị ẩn — KHÔNG apply theme/shadow đã lưu. Xóa key cũ để
+  // đảm bảo theme luôn là green (mặc định từ :root).
+  localStorage.removeItem('theme');
+  localStorage.removeItem('shadowTheme');
+  localStorage.removeItem('repo_shadowTheme');
 
   // Apply saved logo settings (define first so applyShadowTheme can call it)
   function applyLogoSettings() {
@@ -3440,8 +3391,7 @@
   // Defer to let other init scripts run first
   setTimeout(applyLogoSettings, 100);
   // Load shadow after logo settings defined so reapplyLogoShadow is available
-  var savedShadow = localStorage.getItem('shadowTheme') || localStorage.getItem('repo_shadowTheme');
-  if (savedShadow) window.applyShadowTheme(savedShadow);
+  // Shadow theme đã bị ẩn → không apply saved shadow.
   if (localStorage.getItem('rainEnabled') === 'false') { window.rainEnabled = false; if (toggleRain) toggleRain.checked = false; }
   if (localStorage.getItem('heavyRain') === 'true') { window.heavyRain = true; if (toggleHeavyRain) toggleHeavyRain.checked = true; }
   if (localStorage.getItem('heavyRain') === 'true') { window.heavyRain = true; if (toggleHeavyRain) toggleHeavyRain.checked = true; if (window.initRain) window.initRain(); }

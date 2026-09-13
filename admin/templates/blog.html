@@ -38,10 +38,14 @@
       color: var(--text);
       font-family: 'Be Vietnam Pro', 'Fira Code', 'Courier New', monospace;
       min-height: 100vh;
+      /* text-shadow nhẹ chỉ cho nav/heading; post-body sẽ tự override text-shadow:none */
       text-shadow: 0 0 4px rgba(232,255,240,0.3), 0 0 8px rgba(var(--neon-rgb),0.1);
       overflow-x: hidden;
       position: relative;
     }
+    /* Tắt text-shadow cho body khi đang ở chế độ đọc bài viết (post-detail)
+       — shadow làm chữ nhỏ 14-16px bị nhòe, khó đọc */
+    body.reading-mode { text-shadow: none; }
 
     /* CRT scanlines */
     body::before {
@@ -247,53 +251,112 @@
     }
     .post-body {
       padding: 26px;
-      line-height: 1.8;
-      font-size: 14px;
+      line-height: 1.85;
+      font-size: 16px;
+      font-weight: 400;
+      letter-spacing: 0.2px;
+      /* KHÔNG dùng text-shadow ở body chính — gây nhòe khó đọc */
+      text-shadow: none;
     }
     .post-body h2 {
       color: var(--neon);
-      font-size: 15px;
-      margin: 22px 0 10px;
-      text-shadow: 0 0 8px rgba(var(--neon-rgb),0.4);
+      font-size: 19px;
+      margin: 28px 0 12px;
+      font-weight: 700;
+      line-height: 1.35;
+      text-shadow: none;
     }
     .post-body h2:first-child { margin-top: 0; }
     .post-body h3 {
       color: var(--neon-cyan);
-      font-size: 13px;
+      font-size: 16px;
+      margin: 22px 0 10px;
+      font-weight: 600;
+      text-shadow: none;
+    }
+    .post-body h4 {
+      color: var(--neon-pink);
+      font-size: 15px;
       margin: 18px 0 8px;
+      font-weight: 600;
+      text-shadow: none;
     }
     .post-body p {
-      margin-bottom: 12px;
-      color: var(--text);
+      margin-bottom: 14px;
+      color: var(--text-bright);
+      text-shadow: none;
     }
     .post-body ul, .post-body ol {
-      margin: 10px 0 14px 20px;
+      margin: 12px 0 16px 22px;
     }
     .post-body li {
-      margin-bottom: 7px;
-      color: var(--text);
+      margin-bottom: 8px;
+      color: var(--text-bright);
+      line-height: 1.75;
+      text-shadow: none;
     }
     .post-body table {
       width: 100%;
       border-collapse: collapse;
-      margin: 14px 0;
-      font-size: 13px;
+      margin: 16px 0;
+      font-size: 14px;
     }
     .post-body th, .post-body td {
-      padding: 9px 12px;
+      padding: 10px 14px;
       border: 1px solid var(--border);
       text-align: left;
     }
     .post-body th {
-      background: rgba(var(--neon-rgb),0.06);
+      background: rgba(var(--neon-rgb),0.08);
       color: var(--neon);
+      font-weight: 600;
     }
     .post-body strong {
       color: var(--neon-yellow);
+      font-weight: 600;
     }
     .post-body em {
       color: var(--neon-cyan);
-      font-style: normal;
+      font-style: italic;
+    }
+    .post-body a {
+      color: var(--neon);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+    .post-body a:hover {
+      color: var(--neon-pink);
+    }
+    .post-body code {
+      background: rgba(var(--neon-rgb),0.08);
+      color: var(--neon);
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-family: 'Fira Code', 'Courier New', monospace;
+      font-size: 14px;
+    }
+    .post-body pre {
+      background: var(--panel-alt);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--neon);
+      padding: 14px 18px;
+      border-radius: 6px;
+      overflow-x: auto;
+      margin: 14px 0;
+    }
+    .post-body pre code {
+      background: transparent;
+      padding: 0;
+      color: var(--text-bright);
+      font-size: 13px;
+    }
+    .post-body blockquote {
+      border-left: 3px solid var(--neon);
+      padding: 10px 16px;
+      margin: 14px 0;
+      background: rgba(var(--neon-rgb),0.04);
+      color: var(--text);
+      font-style: italic;
     }
 
     /* ============================ PAGINATION ============================ */
@@ -501,7 +564,14 @@
       <button class="settings-close" id="closeSettings">&#10005;</button>
     </div>
     <div class="settings-body">
-      <div class="settings-group">
+      <!--
+        Theme color picker đã bị ẩn theo yêu cầu của user:
+        "người dùng không thể tùy chỉnh ảnh theme nhé chỉ có thể đổi
+         Darkmode và lightmode thôi không được đổi ảnh theme và màu
+         theme trong setting."
+        Giữ lại markup commented-out để dễ khôi phục nếu sau này cần.
+      -->
+      <div class="settings-group" style="display:none;" aria-hidden="true">
         <span class="settings-label">Mau Theme</span>
         <div class="theme-grid" id="themeGrid">
           <button class="theme-btn active" data-theme="green" style="background:linear-gradient(135deg,#80ff40,#39ff14);" title="Green"></button>
@@ -680,9 +750,10 @@
       // KHÔNG đụng repo_theme (Front repo) / dash_theme (Dashboard).
     }
 
-    document.querySelectorAll('.theme-btn').forEach(btn => {
-      btn.addEventListener('click', () => applyTheme(btn.dataset.theme));
-    });
+    // Theme picker đã bị ẩn — KHÔNG bind event listener. Theme giữ nguyên
+    // mặc định (green) từ :root CSS variables. Nếu user có localStorage
+    // `blog_theme` từ phiên cũ thì xóa luôn để đảm bảo theme luôn là green.
+    localStorage.removeItem('blog_theme');
 
     // Rain toggle
     document.getElementById('toggleRain').addEventListener('change', e => {
@@ -806,8 +877,11 @@
     function renderBlog() {
       const postId = getUrlPostId();
       if (postId) {
+        // Đang đọc bài viết → tắt text-shadow trên body để chữ không bị nhòe
+        document.body.classList.add('reading-mode');
         renderPost(postId);
       } else {
+        document.body.classList.remove('reading-mode');
         renderList();
       }
     }

@@ -48,7 +48,7 @@ REPOS = ROOT / "repositories"
 
 # Cache version cho public build — bump khi Front Repo thay đổi để bust browser cache.
 # KHÔNG cần sync với admin cache_version; 2 hệ thống hoàn toàn độc lập.
-_CACHE_VERSION = 2
+_CACHE_VERSION = 3
 
 
 # ---------------------------------------------------------------------------
