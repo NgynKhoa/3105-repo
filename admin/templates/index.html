@@ -3771,7 +3771,10 @@ document.querySelectorAll('.blog-card, .blog-item a, .blog-link').forEach(card =
     const empty = document.getElementById('emptyHint');
     if (empty) empty.classList.toggle('hidden', all.length > 0);
     list.style.display = all.length === 0 ? 'none' : 'block';
-    // Pagination: chỉ hiện khi còn nhiều hơn 1 trang
+    // Pagination: HIỆN khi totalPages > 1 (cố định max=5 — user yêu cầu).
+    // KHÔNG phụ thuộc 'needPag' (needPag tính theo dynamic-max, sẽ sai nếu
+    // box quá cao hiện hết trong 1 'trang dynamic' nhưng vẫn còn phân trang
+    // theo MAX_PKG).
     const pag = document.getElementById('pkgPagination');
     const pagInfo = document.getElementById('pkgPaginationInfo');
     const pagNums = document.getElementById('pkgPageNumbers');
@@ -3779,10 +3782,11 @@ document.querySelectorAll('.blog-card, .blog-item a, .blog-link').forEach(card =
     const btnNext = document.getElementById('pkgPageNext');
     if (pag) {
       pag.classList.remove('hidden');
-      pag.style.display = needPag ? 'flex' : 'none';
+      const showPag = totalPages > 1;
+      pag.style.display = showPag ? 'flex' : 'none';
       pag.style.visibility = 'visible';
       pag.style.opacity = '1';
-      if (needPag) {
+      if (showPag) {
         if (pagInfo) pagInfo.textContent = `Trang ${pageState.pkg} / ${totalPages}`;
         if (btnPrev) btnPrev.disabled = pageState.pkg <= 1;
         if (btnNext) btnNext.disabled = pageState.pkg >= totalPages;
@@ -3875,6 +3879,7 @@ document.querySelectorAll('.blog-card, .blog-item a, .blog-link').forEach(card =
       const data = await res.json();
       cache.blogPosts = (data.posts || []);
       pageState.blog = 1; // reset page khi blog reload
+      console.log('[blog] loadBlog: total=' + cache.blogPosts.length + ' ids=' + cache.blogPosts.map(p => p.id).join(','));
     } catch (err) {
       console.warn('dynamicFit: load blog failed', err);
     }
@@ -3885,6 +3890,7 @@ document.querySelectorAll('.blog-card, .blog-item a, .blog-link').forEach(card =
     const countEl = document.getElementById('blogCount');
     const box = document.getElementById('blog-section');
     if (!list || !box) return;
+    console.log('[blog] renderBlog: boxH=' + box.clientHeight + ' total=' + cache.blogPosts.length);
     const itemH = 44; // blog-item height (compact)
     const headerH = 60; // box-header-wrap thật ~ 50px (padding 10+10 + line)
     const paginationH = 48; // blogPagination padding 10+10 + 28 button
@@ -3921,7 +3927,10 @@ document.querySelectorAll('.blog-card, .blog-item a, .blog-link').forEach(card =
         ? (totalPages === 1 ? `${all.length} bài viết` : `${start + 1}–${Math.min(start + shown.length, all.length)} / ${all.length}`)
         : '0 bài viết';
     }
-    // Pagination
+    // Pagination: HIỆN khi totalPages > 1 (cố định max=6 — user yêu cầu).
+    // KHÔNG phụ thuộc 'needPag' (needPag tính theo dynamic-max, sẽ sai nếu
+    // box quá cao hiện hết trong 1 'trang dynamic' nhưng vẫn còn phân trang
+    // theo MAX_BLOG).
     const pag = document.getElementById('blogPagination');
     const pagInfo = document.getElementById('blogPaginationInfo');
     const pagNums = document.getElementById('blogPageNumbers');
@@ -3929,10 +3938,11 @@ document.querySelectorAll('.blog-card, .blog-item a, .blog-link').forEach(card =
     const btnNext = document.getElementById('blogPageNext');
     if (pag) {
       pag.classList.remove('hidden');
-      pag.style.display = needPag ? 'flex' : 'none';
+      const showPag = totalPages > 1;
+      pag.style.display = showPag ? 'flex' : 'none';
       pag.style.visibility = 'visible';
       pag.style.opacity = '1';
-      if (needPag) {
+      if (showPag) {
         if (pagInfo) pagInfo.textContent = `Trang ${pageState.blog} / ${totalPages}`;
         if (btnPrev) btnPrev.disabled = pageState.blog <= 1;
         if (btnNext) btnNext.disabled = pageState.blog >= totalPages;
