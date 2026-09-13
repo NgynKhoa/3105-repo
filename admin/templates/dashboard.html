@@ -1,9 +1,9 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="vi">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Admin Dashboard â€” 3105</title>
+  <title>Admin Dashboard — 3105</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Fira+Code:wght@400;500&family=Be+Vietnam+Pro:wght@300;400;500;600&family=VT323&display=swap" rel="stylesheet" />
   <style>
@@ -20,7 +20,7 @@
       --logo-shadow-color: #39ff14;
       --logo-shadow-rgb: 57, 255, 20;
       --logo-holo-color: #39ff14;
-      /* --bg = mÃ u ná»n trang web (Ä‘á»•i theo dark/light mode) */
+      /* --bg = màu nền trang web (đổi theo dark/light mode) */
       --bg: #06060e;
       --bg-color: #06060e;
       --panel: rgba(10, 14, 26, 0.92);
@@ -242,11 +242,11 @@
       font-family: 'Press Start 2P', monospace;
       font-size: 42px;
       font-weight: 700;
-      color: var(--logo-preview-color, var(--neon)); /* Máº·c Ä‘á»‹nh = --neon, nhÆ°ng JS cÃ³ thá»ƒ override riÃªng */
+      color: var(--logo-preview-color, var(--neon)); /* Mặc định = --neon, nhưng JS có thể override riêng */
       -webkit-text-stroke: 0.5px rgba(var(--logo-shadow-rgb), 0.9);
       animation: dashLogoBlink 6s infinite steps(60);
       display: inline-block;
-      /* Depth shadow dÃ¹ng CSS vars â€” cáº­p nháº­t khi slider thay Ä‘á»•i */
+      /* Depth shadow dùng CSS vars — cập nhật khi slider thay đổi */
       text-shadow:
         1px 1px 0 rgba(var(--logo-shadow-rgb), 0.95),
         2px 2px 0 rgba(var(--logo-shadow-rgb), 0.9),
@@ -614,10 +614,10 @@
     }
     .prev-del:hover { background: rgba(var(--neon-pink-rgb),0.3); }
 
-    /* Khi Ä‘ang edit mode thÃ¬ hiá»‡n nÃºt xÃ³a trÃªn má»—i box */
+    /* Khi đang edit mode thì hiện nút xóa trên mỗi box */
     .edit-mode-on .prev-del { display: block; }
 
-    /* Báº£ng config */
+    /* Bảng config */
     .box-config-row {
       display: grid;
       grid-template-columns: 1.4fr 1fr 1.6fr auto;
@@ -729,7 +729,7 @@
       border-left: none;
     }
 
-    /* Resize handles â€” 8 directions */
+    /* Resize handles — 8 directions */
     .resize-handle {
       position: absolute;
       width: 10px; height: 10px;
@@ -768,7 +768,7 @@
     .prev-box.selected .prev-del { display: flex; align-items: center; justify-content: center; }
     .prev-box .prev-del:hover { background: var(--neon-pink); }
 
-    /* Title text (contenteditable) â€” user click Ä‘á»ƒ edit trá»±c tiáº¿p trÃªn preview */
+    /* Title text (contenteditable) — user click để edit trực tiếp trên preview */
     .prev-box .prev-title-text {
       padding: 4px 6px;
       border-radius: 3px;
@@ -782,14 +782,14 @@
       box-shadow: 0 0 0 1px var(--neon);
     }
 
-    /* Preview scale wrapper â€” clone Front Repo ná»™i dung, giá»¯ natural size */
+    /* Preview scale wrapper — clone Front Repo nội dung, giữ natural size */
     .prev-box .prev-scale {
       pointer-events: none !important;
       transform: none;
       transform-origin: 0 0;
       overflow: visible;
     }
-    /* Title text (contenteditable) náº±m trÃªn cÃ¹ng, click Ä‘á»ƒ edit trá»±c tiáº¿p */
+    /* Title text (contenteditable) nằm trên cùng, click để edit trực tiếp */
     .prev-box .prev-title-text {
       pointer-events: auto !important;
     }
@@ -877,7 +877,7 @@
     #canvasWrap { cursor: grab; }
     #canvasWrap:active { cursor: grabbing; }
 
-    /* Snap guides trÃªn canvas */
+    /* Snap guides trên canvas */
     .snap-guide {
       position: absolute;
       pointer-events: none;
@@ -922,7 +922,7 @@
   <canvas id="rain-canvas"></canvas>
 
   <!-- Settings Button -->
-  <button id="settingsBtn" title="CÃ i Ä‘áº·t">&#9881;</button>
+  <button id="settingsBtn" title="Cài đặt">&#9881;</button>
 
   <!-- Settings Menu -->
   <div id="settingsMenu">
@@ -932,7 +932,7 @@
     </div>
     <div class="settings-body">
       <div class="settings-group">
-        <span class="settings-label">MÃ u Theme</span>
+        <span class="settings-label">Màu Theme</span>
         <div id="themeGrid" class="theme-grid">
           <button class="theme-btn active" data-theme="green" style="background:linear-gradient(135deg,#80ff40,#39ff14);" title="Green"></button>
           <button class="theme-btn" data-theme="cyan" style="background:linear-gradient(135deg,#00f0ff,#0099cc);" title="Cyan"></button>
@@ -945,25 +945,25 @@
         </div>
       </div>
       <div class="settings-group">
-        <span class="settings-label">Hiá»‡u á»©ng MÆ°a</span>
+        <span class="settings-label">Hiệu ứng Mưa</span>
         <div class="settings-row">
-          <span class="settings-row-label">Báº­t MÆ°a</span>
+          <span class="settings-row-label">Bật Mưa</span>
           <label class="toggle-switch"><input type="checkbox" id="toggleRain" checked><span class="toggle-slider"></span></label>
         </div>
         <div class="settings-row">
-          <span class="settings-row-label">MÆ°a Náº·ng</span>
+          <span class="settings-row-label">Mưa Nặng</span>
           <label class="toggle-switch"><input type="checkbox" id="toggleHeavyRain"><span class="toggle-slider"></span></label>
         </div>
       </div>
       <div class="settings-group">
-        <span class="settings-label">Cháº¿ Ä‘á»™ Hiá»ƒn thá»‹</span>
+        <span class="settings-label">Chế độ Hiển thị</span>
         <div class="settings-row">
           <span class="settings-row-label">Dark Mode</span>
           <label class="toggle-switch"><input type="checkbox" id="toggleDarkMode" checked><span class="toggle-slider"></span></label>
         </div>
       </div>
       <div class="settings-group">
-        <span class="settings-label">Äá»™ Trong Suá»‘t</span>
+        <span class="settings-label">Độ Trong Suốt</span>
         <input type="range" id="rangeTransparency" min="0" max="100" value="92">
       </div>
     </div>
@@ -987,8 +987,8 @@
     <!-- ===================== GENERAL PANEL ===================== -->
     <div class="dash-panel active" id="panel-general">
       <div class="section-card">
-        <div class="section-title">ðŸŽ¨ Logo Preview &amp; TÃ¹y chá»‰nh (Ãp dá»¥ng cho trang Repo)</div>
-        <div class="info-note">BÃªn dÆ°á»›i lÃ  <b>Preview LOGO</b> cá»§a repo vá»›i cÃ¡c tÃ¹y chá»‰nh font, shadow, holo, Ã¡nh sÃ¡ng. Thay Ä‘á»•i sáº½ Ã¡p dá»¥ng cho trang Front Repo. MÃ u logo Ä‘Æ°á»£c chá»‰nh á»Ÿ <b>Settings â†’ MÃ u Theme</b>.</div>
+        <div class="section-title">🎨 Logo Preview &amp; Tùy chỉnh (Áp dụng cho trang Repo)</div>
+        <div class="info-note">Bên dưới là <b>Preview LOGO</b> của repo với các tùy chỉnh font, shadow, holo, ánh sáng. Thay đổi sẽ áp dụng cho trang Front Repo. Màu logo được chỉnh ở <b>Settings → Màu Theme</b>.</div>
 
         <!-- Live preview -->
         <div class="logo-preview-wrap">
@@ -1000,7 +1000,7 @@
 
         <div class="form-row">
           <div class="form-group">
-            <label class="form-label">TÃªn Logo (Repo Name)</label>
+            <label class="form-label">Tên Logo (Repo Name)</label>
             <input type="text" class="form-input" id="logoText" placeholder="OWEN" oninput="updateDashLogoPreview()">
           </div>
           <div class="form-group">
@@ -1017,12 +1017,12 @@
 
         <div class="form-row">
           <div class="form-group">
-            <label class="form-label">Cá»¡ chá»¯ Logo (Font Size)</label>
+            <label class="form-label">Cỡ chữ Logo (Font Size)</label>
             <input type="range" class="form-range" id="logoFontSize" min="20" max="80" value="42" oninput="updateDashLogoPreview()">
             <span class="range-val" id="logoFontSizeVal">42px</span>
           </div>
           <div class="form-group">
-            <label class="form-label">Äá»™ Ä‘áº­m chá»¯ (Font Weight)</label>
+            <label class="form-label">Độ đậm chữ (Font Weight)</label>
             <input type="range" class="form-range" id="logoFontWeight" min="100" max="900" step="100" value="700" oninput="updateDashLogoPreview()">
             <span class="range-val" id="logoFontWeightVal">700</span>
           </div>
@@ -1030,12 +1030,12 @@
 
         <div class="form-row">
           <div class="form-group">
-            <label class="form-label">Äá»™ sÃ¢u 3D (Depth Offset - bÃ³ng Ä‘á»• nhiá»u lá»›p)</label>
+            <label class="form-label">Độ sâu 3D (Depth Offset - bóng đổ nhiều lớp)</label>
             <input type="range" class="form-range" id="logoDepth" min="0" max="8" value="4" oninput="updateDashLogoPreview()">
             <span class="range-val" id="logoDepthVal">4</span>
           </div>
           <div class="form-group">
-            <label class="form-label">Äá»™ rÃµ cá»§a viá»n chá»¯ (Stroke Width)</label>
+            <label class="form-label">Độ rõ của viền chữ (Stroke Width)</label>
             <input type="range" class="form-range" id="logoStroke" min="0" max="3" step="0.25" value="0.5" oninput="updateDashLogoPreview()">
             <span class="range-val" id="logoStrokeVal">0.5px</span>
           </div>
@@ -1043,12 +1043,12 @@
 
         <div class="form-row">
           <div class="form-group">
-            <label class="form-label">CÆ°á»ng Ä‘á»™ Holo (halo cáº­n chá»¯)</label>
+            <label class="form-label">Cường độ Holo (halo cận chữ)</label>
             <input type="range" class="form-range" id="logoHoloIntensity" min="0" max="100" value="80" oninput="updateDashLogoPreview()">
             <span class="range-val" id="logoHoloIntensityVal">80%</span>
           </div>
           <div class="form-group">
-            <label class="form-label">BÃ¡n kÃ­nh Ã¡nh sÃ¡ng tá»a ra (Glow Radius)</label>
+            <label class="form-label">Bán kính ánh sáng tỏa ra (Glow Radius)</label>
             <input type="range" class="form-range" id="logoGlowRadius" min="0" max="100" value="70" oninput="updateDashLogoPreview()">
             <span class="range-val" id="logoGlowRadiusVal">70px</span>
           </div>
@@ -1056,53 +1056,53 @@
 
         <div class="form-row">
           <div class="form-group">
-            <label class="form-label">Äá»™ trong suá»‘t cá»§a Ã¡nh sÃ¡ng (Glow Alpha)</label>
+            <label class="form-label">Độ trong suốt của ánh sáng (Glow Alpha)</label>
             <input type="range" class="form-range" id="logoGlowAlpha" min="0" max="100" value="65" oninput="updateDashLogoPreview()">
             <span class="range-val" id="logoGlowAlphaVal">65%</span>
           </div>
           <div class="form-group">
-            <label class="form-label">Tá»‘c Ä‘á»™ nháº¥p nhÃ¡y (Blink Speed - giÃ¢y/vÃ²ng)</label>
+            <label class="form-label">Tốc độ nhấp nháy (Blink Speed - giây/vòng)</label>
             <input type="range" class="form-range" id="logoBlink" min="0" max="20" step="1" value="6" oninput="updateDashLogoPreview()">
             <span class="range-val" id="logoBlinkVal">6s</span>
           </div>
         </div>
 
-        <button class="form-btn success" onclick="saveGeneral()">&#128190; LÆ°u thay Ä‘á»•i LOGO</button>
+        <button class="form-btn success" onclick="saveGeneral()">&#128190; Lưu thay đổi LOGO</button>
       </div>
     </div>
 
     <!-- ===================== BOXES PANEL ===================== -->
     <div class="dash-panel" id="panel-boxes">
       <div class="section-card">
-        <div class="section-title">ðŸŽ¨ Boxes Editor â€” Canvas tÃ¹y chá»‰nh trang Front Repo</div>
+        <div class="section-title">🎨 Boxes Editor — Canvas tùy chỉnh trang Front Repo</div>
         <div class="info-note">
-          TrÃ¬nh chá»‰nh sá»­a canvas <b>kiá»ƒu Framer/Webflow/Wix</b>:
+          Trình chỉnh sửa canvas <b>kiểu Framer/Webflow/Wix</b>:
           <ul style="margin:6px 0 0 18px;line-height:1.7;">
-            <li><b>ðŸ”„ Sync vá»›i Front Repo</b> â€” dÃ¹ng Playwright fetch <code>/</code> vÃ  tá»± táº¡o cÃ¡c khung khá»›p tá»a Ä‘á»™ thá»±c.</li>
-            <li><b>Layers (trÃ¡i)</b> Â· <b>Canvas (giá»¯a)</b> Â· <b>Inspector (pháº£i)</b>.</li>
-            <li><b>Zoom 25â€“200%</b>, <b>Pan</b> báº±ng chuá»™t giá»¯a hoáº·c Space+drag, <b>Auto-expand canvas</b> khi kÃ©o box ra biÃªn.</li>
-            <li>KÃ©o tháº£, resize 4 gÃ³c/cáº¡nh, snap vÃ o biÃªn canvas + giá»¯a cÃ¡c khung.</li>
+            <li><b>🔄 Sync với Front Repo</b> — dùng Playwright fetch <code>/</code> và tự tạo các khung khớp tọa độ thực.</li>
+            <li><b>Layers (trái)</b> · <b>Canvas (giữa)</b> · <b>Inspector (phải)</b>.</li>
+            <li><b>Zoom 25–200%</b>, <b>Pan</b> bằng chuột giữa hoặc Space+drag, <b>Auto-expand canvas</b> khi kéo box ra biên.</li>
+            <li>Kéo thả, resize 4 góc/cạnh, snap vào biên canvas + giữa các khung.</li>
           </ul>
         </div>
 
         <!-- Toolbar -->
         <div id="boxesToolbar" style="display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap;align-items:center;">
-          <button class="form-btn" style="background:rgba(57,255,20,0.12);border-color:var(--neon);color:var(--neon);" onclick="syncFromFrontRepo(this)" id="syncBtn">ðŸ”„ Sync vá»›i Front Repo</button>
-          <button class="form-btn" onclick="togglePreviewEdit()">âœï¸ <span id="editModeLabel">Báº­t chá»‰nh sá»­a</span></button>
-          <button class="form-btn" onclick="addBoxFromCanvas()">ï¼‹ Khung</button>
+          <button class="form-btn" style="background:rgba(57,255,20,0.12);border-color:var(--neon);color:var(--neon);" onclick="syncFromFrontRepo(this)" id="syncBtn">🔄 Sync với Front Repo</button>
+          <button class="form-btn" onclick="togglePreviewEdit()">✏️ <span id="editModeLabel">Bật chỉnh sửa</span></button>
+          <button class="form-btn" onclick="addBoxFromCanvas()">＋ Khung</button>
           <span style="width:1px;height:22px;background:var(--border);margin:0 4px;"></span>
-          <button class="form-btn icon-btn" onclick="zoomOut()" title="Zoom out">âˆ’</button>
+          <button class="form-btn icon-btn" onclick="zoomOut()" title="Zoom out">−</button>
           <input id="zoomLevel" type="number" value="50" min="25" max="200" step="5" style="width:56px;text-align:center;padding:4px 6px;background:var(--panel-alt);border:1px solid var(--border);color:var(--neon);border-radius:4px;font-size: 12px;font-weight:700;">
           <span style="font-size: 12px;color:var(--muted);">%</span>
           <button class="form-btn icon-btn" onclick="zoomIn()" title="Zoom in">+</button>
-          <button class="form-btn icon-btn" onclick="zoomFit()" title="Fit canvas">â¤¢</button>
-          <button class="form-btn icon-btn" onclick="zoomReset()" title="Reset 50%">â†º</button>
+          <button class="form-btn icon-btn" onclick="zoomFit()" title="Fit canvas">⤢</button>
+          <button class="form-btn icon-btn" onclick="zoomReset()" title="Reset 50%">↺</button>
           <span style="width:1px;height:22px;background:var(--border);margin:0 4px;"></span>
           <label style="font-size: 12px;color:var(--muted);display:flex;align-items:center;gap:6px;">
             <input type="checkbox" id="snapEnabled" checked style="accent-color: var(--neon);"> <span>Snap</span>
           </label>
           <label style="font-size: 12px;color:var(--muted);display:flex;align-items:center;gap:6px;">
-            <span>BÆ°á»›c:</span>
+            <span>Bước:</span>
             <input type="number" id="snapStep" value="8" min="1" max="32" style="width:46px;padding:2px 6px;background:var(--panel-alt);border:1px solid var(--border);color:var(--text);border-radius:4px;font-size: 12px;">
             <span>px</span>
           </label>
@@ -1110,9 +1110,9 @@
             <input type="checkbox" id="showGuides" checked style="accent-color: var(--neon);"> <span>Guides</span>
           </label>
           <div id="xy-display" style="margin-left:auto;font-size: 12px;color:var(--neon);padding:4px 10px;border:1px solid var(--border);border-radius:6px;background:var(--panel-alt);">
-            <span id="xy-empty">Chá»n 1 khung Ä‘á»ƒ xem chi tiáº¿t</span>
+            <span id="xy-empty">Chọn 1 khung để xem chi tiết</span>
             <span id="xy-info" style="display:none;">
-              <span id="xy-key" style="font-family:'Press Start 2P',monospace;font-size: 12px;"></span> Â·
+              <span id="xy-key" style="font-family:'Press Start 2P',monospace;font-size: 12px;"></span> ·
               X:<span id="xy-x">0</span> Y:<span id="xy-y">0</span>
               W:<span id="xy-w">0</span> H:<span id="xy-h">0</span>
             </span>
@@ -1124,11 +1124,11 @@
 
           <!-- LEFT: LAYERS PANEL -->
           <div id="layersPanel" style="background:var(--panel-alt);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;">
-            <div style="padding:10px 12px;border-bottom:1px solid var(--border);font-family:'Press Start 2P',monospace;font-size: 12px;color:var(--neon);">ðŸ“š LAYERS</div>
+            <div style="padding:10px 12px;border-bottom:1px solid var(--border);font-family:'Press Start 2P',monospace;font-size: 12px;color:var(--neon);">📚 LAYERS</div>
             <div style="padding:6px 8px;border-bottom:1px solid var(--border);display:flex;gap:4px;">
-              <button class="form-btn" style="padding:3px 6px;font-size: 12px;" onclick="addBoxFromCanvas()" title="ThÃªm khung">ï¼‹</button>
-              <button class="form-btn" style="padding:3px 6px;font-size: 12px;" onclick="deleteSelectedBox()" title="XÃ³a khung Ä‘ang chá»n">ðŸ—‘</button>
-              <button class="form-btn" style="padding:3px 6px;font-size: 12px;" onclick="duplicateSelectedBox()" title="NhÃ¢n Ä‘Ã´i">âŽ˜</button>
+              <button class="form-btn" style="padding:3px 6px;font-size: 12px;" onclick="addBoxFromCanvas()" title="Thêm khung">＋</button>
+              <button class="form-btn" style="padding:3px 6px;font-size: 12px;" onclick="deleteSelectedBox()" title="Xóa khung đang chọn">🗑</button>
+              <button class="form-btn" style="padding:3px 6px;font-size: 12px;" onclick="duplicateSelectedBox()" title="Nhân đôi">⎘</button>
             </div>
             <div id="layersList" style="flex:1;overflow-y:auto;padding:4px;"></div>
           </div>
@@ -1139,29 +1139,29 @@
             repeating-linear-gradient(90deg, rgba(255,255,255,0.02) 0 1px, transparent 1px 24px),
             var(--bg-color);cursor:grab;">
             <div id="canvasViewport" style="position:absolute;top:0;left:0;transform-origin:0 0;will-change:transform;width:1280px;height:900px;">
-              <!-- Iframe áº©n dÆ°á»›i z-index 0: chá»‰ dÃ¹ng lÃ m scratch DOM Ä‘á»ƒ clone ná»™i dung Front Repo,
-                   khÃ´ng hiá»ƒn thá»‹ Ä‘á»ƒ trÃ¡nh shell 980px bá»‹ center lá»‡ch pháº£i trong canvas 1280px -->
+              <!-- Iframe ẩn dưới z-index 0: chỉ dùng làm scratch DOM để clone nội dung Front Repo,
+                   không hiển thị để tránh shell 980px bị center lệch phải trong canvas 1280px -->
               <iframe id="previewIframe" src="/" style="position:absolute;top:0;left:0;width:1280px;height:900px;border:none;background:transparent;pointer-events:none;z-index:0;visibility:hidden;" scrolling="no"></iframe>
-              <!-- Overlay khung: pointer-events:auto Ä‘á»ƒ click/drag/resize/edit title hoáº¡t Ä‘á»™ng -->
+              <!-- Overlay khung: pointer-events:auto để click/drag/resize/edit title hoạt động -->
               <div id="previewStage" style="position:absolute;top:0;left:0;width:1280px;height:900px;z-index:2;pointer-events:auto;">
-                <!-- Boxes sáº½ Ä‘Æ°á»£c render Ä‘á»™ng bá»Ÿi JS -->
+                <!-- Boxes sẽ được render động bởi JS -->
               </div>
             </div>
             <!-- Mini zoom indicator -->
             <div id="zoomIndicator" style="position:absolute;bottom:8px;left:8px;background:rgba(0,0,0,0.6);color:var(--neon);padding:3px 8px;border-radius:4px;font-size: 12px;font-family:'Press Start 2P',monospace;border:1px solid var(--border);">50%</div>
             <!-- Hint -->
             <div id="canvasHint" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:var(--muted);font-size:12px;text-align:center;pointer-events:none;display:none;">
-              <div style="font-size:32px;opacity:0.4;">ðŸŽ¨</div>
-              <div>Canvas trá»‘ng â€” báº¥m <b style="color:var(--neon);">ðŸ”„ Sync vá»›i Front Repo</b> Ä‘á»ƒ tá»± táº¡o cÃ¡c khung</div>
-              <div style="margin-top:6px;font-size: 12px;">hoáº·c báº¥m <b>ï¼‹ Khung</b> Ä‘á»ƒ thÃªm thá»§ cÃ´ng</div>
+              <div style="font-size:32px;opacity:0.4;">🎨</div>
+              <div>Canvas trống — bấm <b style="color:var(--neon);">🔄 Sync với Front Repo</b> để tự tạo các khung</div>
+              <div style="margin-top:6px;font-size: 12px;">hoặc bấm <b>＋ Khung</b> để thêm thủ công</div>
             </div>
           </div>
 
           <!-- RIGHT: INSPECTOR -->
           <div id="inspectorPanel" style="background:var(--panel-alt);border-left:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;">
-            <div style="padding:10px 12px;border-bottom:1px solid var(--border);font-family:'Press Start 2P',monospace;font-size: 12px;color:var(--neon);">âš™ INSPECTOR</div>
+            <div style="padding:10px 12px;border-bottom:1px solid var(--border);font-family:'Press Start 2P',monospace;font-size: 12px;color:var(--neon);">⚙ INSPECTOR</div>
             <div id="inspectorBody" style="flex:1;overflow-y:auto;padding:12px;">
-              <div style="color:var(--muted);font-size: 12px;text-align:center;padding:20px 0;">Chá»n 1 khung trÃªn canvas Ä‘á»ƒ chá»‰nh</div>
+              <div style="color:var(--muted);font-size: 12px;text-align:center;padding:20px 0;">Chọn 1 khung trên canvas để chỉnh</div>
             </div>
           </div>
 
@@ -1169,56 +1169,56 @@
 
         <!-- Save bar -->
         <div style="display:flex;gap:8px;margin-top:12px;align-items:center;">
-          <button class="form-btn success" onclick="savePreviewLayout()">ðŸ’¾ LÆ°u Layout</button>
-          <button class="form-btn" onclick="resetPreviewLayout()">â†º Reset Layout</button>
-          <button class="form-btn" style="background:rgba(57,255,20,0.18);border-color:var(--neon);color:var(--neon);font-weight:700;" onclick="applyLayoutToFront(this)" id="applyLayoutBtn">ðŸ“¤ Add Layout to Front</button>
+          <button class="form-btn success" onclick="savePreviewLayout()">💾 Lưu Layout</button>
+          <button class="form-btn" onclick="resetPreviewLayout()">↺ Reset Layout</button>
+          <button class="form-btn" style="background:rgba(57,255,20,0.18);border-color:var(--neon);color:var(--neon);font-weight:700;" onclick="applyLayoutToFront(this)" id="applyLayoutBtn">📤 Add Layout to Front</button>
           <div id="saveStatus" style="margin-left:auto;font-size: 12px;color:var(--muted);"></div>
         </div>
       </div>
     </div>
 
-    <!-- ===================== MODAL: THÃŠM KHUNG Má»šI ===================== -->
+    <!-- ===================== MODAL: THÊM KHUNG MỚI ===================== -->
     <div id="addBoxModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:9999;align-items:center;justify-content:center;">
       <div style="background:var(--panel);border:1px solid var(--neon);border-radius:10px;padding:20px;max-width:520px;width:90%;">
-        <div style="font-family:'Press Start 2P',monospace;font-size:12px;color:var(--neon);margin-bottom:14px;">ï¼‹ THÃŠM KHUNG Má»šI</div>
+        <div style="font-family:'Press Start 2P',monospace;font-size:12px;color:var(--neon);margin-bottom:14px;">＋ THÊM KHUNG MỚI</div>
         <div class="form-group" style="margin-bottom:10px;">
-          <label class="form-label">TÃªn khung (data-box, khÃ´ng dáº¥u)</label>
+          <label class="form-label">Tên khung (data-box, không dấu)</label>
           <input class="form-input" id="newBoxKey" placeholder="vd: custom-box-1">
         </div>
         <div class="form-group" style="margin-bottom:10px;">
-          <label class="form-label">TiÃªu Ä‘á» hiá»ƒn thá»‹</label>
-          <input class="form-input" id="newBoxTitle" placeholder="vd: Khung tÃ¹y chá»‰nh">
+          <label class="form-label">Tiêu đề hiển thị</label>
+          <input class="form-input" id="newBoxTitle" placeholder="vd: Khung tùy chỉnh">
         </div>
         <div class="form-row" style="margin-bottom:10px;">
           <div class="form-group">
-            <label class="form-label">Vá»‹ trÃ­ X (px)</label>
+            <label class="form-label">Vị trí X (px)</label>
             <input class="form-input" type="number" id="newBoxX" value="20">
           </div>
           <div class="form-group">
-            <label class="form-label">Vá»‹ trÃ­ Y (px)</label>
+            <label class="form-label">Vị trí Y (px)</label>
             <input class="form-input" type="number" id="newBoxY" value="20">
           </div>
         </div>
         <div class="form-row" style="margin-bottom:14px;">
           <div class="form-group">
-            <label class="form-label">Chiá»u rá»™ng (px)</label>
+            <label class="form-label">Chiều rộng (px)</label>
             <input class="form-input" type="number" id="newBoxW" value="300">
           </div>
           <div class="form-group">
-            <label class="form-label">Chiá»u cao (px)</label>
+            <label class="form-label">Chiều cao (px)</label>
             <input class="form-input" type="number" id="newBoxH" value="200">
           </div>
         </div>
         <div class="form-group" style="margin-bottom:14px;">
-          <label class="form-label">Loáº¡i khung</label>
+          <label class="form-label">Loại khung</label>
           <select class="form-select" id="newBoxType">
-            <option value="content">Content (cÃ³ border + bg)</option>
-            <option value="side">Side (trong suá»‘t, náº±m cáº¡nh)</option>
+            <option value="content">Content (có border + bg)</option>
+            <option value="side">Side (trong suốt, nằm cạnh)</option>
           </select>
         </div>
         <div style="display:flex;gap:8px;justify-content:flex-end;">
-          <button class="form-btn" onclick="closeAddBoxModal()">Huá»·</button>
-          <button class="form-btn success" onclick="confirmAddBox()">ï¼‹ Táº¡o khung</button>
+          <button class="form-btn" onclick="closeAddBoxModal()">Huỷ</button>
+          <button class="form-btn success" onclick="confirmAddBox()">＋ Tạo khung</button>
         </div>
       </div>
     </div>
@@ -1226,11 +1226,11 @@
     <!-- ===================== BLOG PANEL ===================== -->
     <div class="dash-panel" id="panel-blog">
       <div class="section-card">
-        <div class="section-title">&#128221; Quáº£n lÃ½ Blog Posts (Ãp dá»¥ng cho trang Repo)</div>
+        <div class="section-title">&#128221; Quản lý Blog Posts (Áp dụng cho trang Repo)</div>
         <div id="blogList"></div>
       </div>
       <div class="section-card">
-        <div class="section-title">&#10010; ThÃªm / Sá»­a BÃ i viáº¿t</div>
+        <div class="section-title">&#10010; Thêm / Sửa Bài viết</div>
         <input type="hidden" id="editPostId">
         <div class="form-row">
           <div class="form-group">
@@ -1238,19 +1238,19 @@
             <input type="text" class="form-input" id="postIcon" value="&#128221;">
           </div>
           <div class="form-group">
-            <label class="form-label">TiÃªu Ä‘á»</label>
-            <input type="text" class="form-input" id="postTitle" placeholder="TiÃªu Ä‘á» bÃ i viáº¿t">
+            <label class="form-label">Tiêu đề</label>
+            <input type="text" class="form-input" id="postTitle" placeholder="Tiêu đề bài viết">
           </div>
         </div>
         <div class="form-group">
-<label class="form-label">MÃ´ táº£ ngáº¯n</label>
-            <input type="text" class="form-input" id="postExcerpt" placeholder="MÃ´ táº£ ngáº¯n...">
+<label class="form-label">Mô tả ngắn</label>
+            <input type="text" class="form-input" id="postExcerpt" placeholder="Mô tả ngắn...">
         </div>
         <div class="form-group">
-          <label class="form-label">Ná»™i dung (HTML)</label>
-          <textarea class="form-textarea" id="postContent" placeholder="<h2>TiÃªu Ä‘á»</h2><p>Ná»™i dung...</p>"></textarea>
+          <label class="form-label">Nội dung (HTML)</label>
+          <textarea class="form-textarea" id="postContent" placeholder="<h2>Tiêu đề</h2><p>Nội dung...</p>"></textarea>
         </div>
-        <button class="form-btn success" onclick="savePost()">&#128190; LÆ°u bÃ i viáº¿t</button>
+        <button class="form-btn success" onclick="savePost()">&#128190; Lưu bài viết</button>
         <button class="form-btn" onclick="clearPostForm()">&#128260; Reset</button>
       </div>
     </div>
@@ -1258,7 +1258,7 @@
     <!-- ===================== FONTS PANEL ===================== -->
     <div class="dash-panel" id="panel-fonts">
       <div class="section-card">
-        <div class="section-title">&#128291; Font Settings (Ãp dá»¥ng cho trang Repo)</div>
+        <div class="section-title">&#128291; Font Settings (Áp dụng cho trang Repo)</div>
         <div class="form-row">
           <div class="form-group">
             <label class="form-label">Primary Font</label>
@@ -1310,7 +1310,7 @@
           <div class="font-sample" id="fontPreview">3105 Mod Collection</div>
           <div class="font-sample-sm">Repository Builder - Preview text</div>
         </div>
-        <button class="form-btn success" onclick="saveFonts()">&#128190; LÆ°u Font</button>
+        <button class="form-btn success" onclick="saveFonts()">&#128190; Lưu Font</button>
         <button class="form-btn" onclick="previewFonts()">&#128065; Preview</button>
       </div>
     </div>
@@ -1318,8 +1318,8 @@
     <!-- ===================== STYLE PANEL ===================== -->
     <div class="dash-panel" id="panel-style">
       <div class="section-card">
-        <div class="section-title">&#127912; Global Theme (Ãp dá»¥ng cho cáº£ Dashboard vÃ  Repo)</div>
-        <div class="info-note">Theme mÃ u sáº½ Ã¡p dá»¥ng cho Cáº¢ BA trang: Dashboard, Repo vÃ  Blog.</div>
+        <div class="section-title">&#127912; Global Theme (Áp dụng cho cả Dashboard và Repo)</div>
+        <div class="info-note">Theme màu sẽ áp dụng cho CẢ BA trang: Dashboard, Repo và Blog.</div>
         <div id="themeGridDash" class="theme-grid">
           <button class="theme-btn active" data-theme="green" style="background:linear-gradient(135deg,#80ff40,#39ff14);" title="Green"></button>
           <button class="theme-btn" data-theme="cyan" style="background:linear-gradient(135deg,#00f0ff,#0099cc);" title="Cyan"></button>
@@ -1330,10 +1330,10 @@
           <button class="theme-btn" data-theme="orange" style="background:linear-gradient(135deg,#ff8800,#cc5500);" title="Orange"></button>
           <button class="theme-btn" data-theme="white" style="background:linear-gradient(135deg,#ffffff,#cccccc);" title="White"></button>
         </div>
-        <button class="form-btn success" onclick="saveAndApplyTheme()" style="margin-top:12px;">&#128190; Ãp dá»¥ng Theme</button>
+        <button class="form-btn success" onclick="saveAndApplyTheme()" style="margin-top:12px;">&#128190; Áp dụng Theme</button>
       </div>
       <div class="section-card">
-        <div class="section-title">&#127782; Rain Settings (Ãp dá»¥ng cho trang Repo)</div>
+        <div class="section-title">&#127782; Rain Settings (Áp dụng cho trang Repo)</div>
         <div class="form-row">
           <div class="form-group">
             <div class="form-group-inner">
@@ -1510,25 +1510,25 @@
       document.querySelectorAll('.theme-btn').forEach(b => b.classList.remove('active'));
       document.querySelectorAll(`.theme-btn[data-theme="${name}"]`).forEach(b => b.classList.add('active'));
       if (saveToStorage) {
-        // TÃCH BIá»†T: Dashboard chá»‰ ghi dash_theme.
-        // KHÃ”NG Ä‘á»¥ng repo_theme / blog_theme / theme â€” Ä‘Ã³ lÃ  cá»§a trang khÃ¡c.
-        // Logo preview color sáº½ Ä‘Æ°á»£c sync tá»« repo_theme qua updateLogoPreviewFromRepoTheme() bÃªn dÆ°á»›i.
+        // TÁCH BIỆT: Dashboard chỉ ghi dash_theme.
+        // KHÔNG đụng repo_theme / blog_theme / theme — đó là của trang khác.
+        // Logo preview color sẽ được sync từ repo_theme qua updateLogoPreviewFromRepoTheme() bên dưới.
         localStorage.setItem('dash_theme', name);
         updateLogoPreviewFromRepoTheme();
       }
     }
 
-    // Logo preview color theo Front repo theme (repo_theme) â€” Äá»˜C Láº¬P vá»›i Dashboard theme.
-    // ÄÆ°á»£c gá»i:
-    //   - Sau khi applyTheme() ghi dash_theme (Ä‘á»ƒ logo cáº­p nháº­t theo repo_theme náº¿u cÃ³)
+    // Logo preview color theo Front repo theme (repo_theme) — ĐỘC LẬP với Dashboard theme.
+    // Được gọi:
+    //   - Sau khi applyTheme() ghi dash_theme (để logo cập nhật theo repo_theme nếu có)
     //   - Khi load trang
-    //   - Khi nghe storage event tá»« tab Front repo (theme/repo_theme thay Ä‘á»•i)
+    //   - Khi nghe storage event từ tab Front repo (theme/repo_theme thay đổi)
     function updateLogoPreviewFromRepoTheme() {
       const repoTheme = localStorage.getItem('repo_theme') || localStorage.getItem('theme') || 'green';
       const t = themes[repoTheme];
       if (!t) return;
       document.documentElement.style.setProperty('--logo-preview-color', t.neon);
-      // Border glow logo cÅ©ng dÃ¹ng mÃ u repo (tÃ¹y chá»n, giá»¯ shadow vars theo repo)
+      // Border glow logo cũng dùng màu repo (tùy chọn, giữ shadow vars theo repo)
     }
 
     // All theme buttons (both in menu and in style panel)
@@ -1547,11 +1547,11 @@
       window.initRain();
     });
 
-    // Dark mode toggle - FIX: Ä‘á»•i MÃ€U Ná»€N WEB (--bg-color) thay vÃ¬ Ä‘á»•i mÃ u cÃ¡c khung
+    // Dark mode toggle - FIX: đổi MÀU NỀN WEB (--bg-color) thay vì đổi màu các khung
     document.getElementById('toggleDarkMode').addEventListener('change', e => {
       const isDark = e.target.checked;
       applyDarkMode(isDark);
-      // LÆ°u preference â€” chá»‰ ghi khi user chá»§ Ä‘á»™ng toggle.
+      // Lưu preference — chỉ ghi khi user chủ động toggle.
       localStorage.setItem('dash_darkMode', isDark ? 'true' : 'false');
     });
 
@@ -1588,7 +1588,7 @@
       }
     }
 
-    // Transparency - FIX: chá»‰ tÃ¡c Ä‘á»™ng lÃªn panel (var(--panel)), khÃ´ng Ä‘á»•i bg
+    // Transparency - FIX: chỉ tác động lên panel (var(--panel)), không đổi bg
     document.getElementById('rangeTransparency').addEventListener('input', e => {
       const v = e.target.value / 100;
       document.documentElement.style.setProperty('--panel-alpha', v.toFixed(2));
@@ -1624,7 +1624,7 @@
     function renderBlogList() {
       const el = document.getElementById('blogList');
       if (blogPosts.length === 0) {
-        el.innerHTML = '<div style="color:var(--muted);font-size:12px;text-align:center;padding:20px;">ChÆ°a cÃ³ bÃ i viáº¿t nÃ o.</div>';
+        el.innerHTML = '<div style="color:var(--muted);font-size:12px;text-align:center;padding:20px;">Chưa có bài viết nào.</div>';
         return;
       }
       el.innerHTML = blogPosts.map(p => `
@@ -1635,8 +1635,8 @@
             <div class="blog-date">${p.date}</div>
           </div>
           <div class="blog-actions">
-            <button class="box-btn-sm" onclick="editPost(${p.id})" title="Sá»­a">&#9998;</button>
-            <button class="box-btn-sm danger" onclick="deletePost(${p.id})" title="XÃ³a">&#128465;</button>
+            <button class="box-btn-sm" onclick="editPost(${p.id})" title="Sửa">&#9998;</button>
+            <button class="box-btn-sm danger" onclick="deletePost(${p.id})" title="Xóa">&#128465;</button>
           </div>
         </div>
       `).join('');
@@ -1667,7 +1667,7 @@
         content: document.getElementById('postContent').value,
         date: 'Vua cap nhat'
       };
-      if (!post.title) { showNotif('Vui lÃ²ng nháº­p tiÃªu Ä‘á»!', 'danger'); return; }
+      if (!post.title) { showNotif('Vui lòng nhập tiêu đề!', 'danger'); return; }
       if (id) {
         post.id = parseInt(id);
         const idx = blogPosts.findIndex(p => p.id === post.id);
@@ -1680,15 +1680,15 @@
       clearPostForm();
       // Save to localStorage for repo page
       localStorage.setItem('repo_blogPosts', JSON.stringify(blogPosts));
-      showNotif('ÄÃ£ lÆ°u bÃ i viáº¿t!');
+      showNotif('Đã lưu bài viết!');
     }
 
     function deletePost(id) {
-      if (!confirm('XÃ³a bÃ i viáº¿t nÃ y?')) return;
+      if (!confirm('Xóa bài viết này?')) return;
       blogPosts = blogPosts.filter(p => p.id !== id);
       renderBlogList();
       localStorage.setItem('repo_blogPosts', JSON.stringify(blogPosts));
-      showNotif('ÄÃ£ xÃ³a bÃ i viáº¿t!', 'danger');
+      showNotif('Đã xóa bài viết!', 'danger');
     }
 
     function clearPostForm() {
@@ -1740,11 +1740,11 @@
       if (isHidden) {
         item.dataset.hidden = 'false';
         item.style.opacity = '1';
-        btn.textContent = 'ðŸ‘';
+        btn.textContent = '👁';
       } else {
         item.dataset.hidden = 'true';
         item.style.opacity = '0.4';
-        btn.textContent = 'ðŸ‘â€ðŸ—¨';
+        btn.textContent = '👁‍🗨';
       }
     }
 
@@ -1756,7 +1756,7 @@
       item.style.opacity = '0.3';
       item.style.borderColor = 'var(--neon-pink)';
       item.dataset.removed = 'true';
-      showNotif('ÄÃ£ áº©n ' + id, 'danger');
+      showNotif('Đã ẩn ' + id, 'danger');
     }
 
     // ====================== FONT PREVIEW ======================
@@ -1849,7 +1849,7 @@
       localStorage.setItem('repo_logoGlowRadius', document.getElementById('logoGlowRadius').value);
       localStorage.setItem('repo_logoGlowAlpha', document.getElementById('logoGlowAlpha').value);
       localStorage.setItem('repo_logoBlink', document.getElementById('logoBlink').value);
-      showNotif('ÄÃ£ lÆ°u cáº¥u hÃ¬nh LOGO!');
+      showNotif('Đã lưu cấu hình LOGO!');
     }
 
     function saveBoxSizes() {
@@ -1862,7 +1862,7 @@
       localStorage.setItem('repo_boxOrder', JSON.stringify(boxOrder));
       localStorage.setItem('repo_hiddenBoxes', JSON.stringify(hiddenBoxes));
       localStorage.setItem('repo_removedBoxes', JSON.stringify(removedBoxes));
-      showNotif('ÄÃ£ lÆ°u kÃ­ch thÆ°á»›c vÃ o thá»© tá»± boxes!');
+      showNotif('Đã lưu kích thước vào thứ tự boxes!');
     }
 
     function saveFonts() {
@@ -1871,7 +1871,7 @@
       localStorage.setItem('repo_titleFont', document.getElementById('titleFont').value);
       localStorage.setItem('repo_baseFontSize', document.getElementById('baseFontSize').value);
       localStorage.setItem('repo_titleFontSize', document.getElementById('titleFontSize').value);
-      showNotif('ÄÃ£ lÆ°u Font settings!');
+      showNotif('Đã lưu Font settings!');
     }
 
     function previewFonts() {
@@ -1882,7 +1882,7 @@
       const preview = document.getElementById('fontPreview');
       preview.style.fontFamily = `${primary}, sans-serif`;
       preview.style.fontSize = baseSize + 'px';
-      showNotif('ÄÃ£ xem preview font!');
+      showNotif('Đã xem preview font!');
     }
 
     function saveAndApplyTheme() {
@@ -1890,14 +1890,14 @@
       if (active) {
         const themeName = active.dataset.theme;
         applyTheme(themeName);
-        showNotif('ÄÃ£ Ã¡p dá»¥ng theme ' + themeName + '!');
+        showNotif('Đã áp dụng theme ' + themeName + '!');
       }
     }
 
     function saveRainSettings() {
       localStorage.setItem('repo_rainOpacity', document.getElementById('rainOpacity').value);
       localStorage.setItem('repo_rainSpeed', document.getElementById('rainSpeed').value);
-      showNotif('ÄÃ£ lÆ°u rain settings!');
+      showNotif('Đã lưu rain settings!');
     }
 
     // ====================== NOTIFICATION ======================
@@ -1911,22 +1911,22 @@
 
     // ====================== LOAD SAVED SETTINGS ======================
     function loadSavedSettings() {
-      // TÃCH BIá»†T:
-      //   - Dashboard UI theme: Æ°u tiÃªn dash_theme, fallback repo_theme (cho láº§n Ä‘áº§u chÆ°a cÃ³ dash_theme)
-      //   - Logo preview color: tá»« repo_theme (Front repo)
+      // TÁCH BIỆT:
+      //   - Dashboard UI theme: ưu tiên dash_theme, fallback repo_theme (cho lần đầu chưa có dash_theme)
+      //   - Logo preview color: từ repo_theme (Front repo)
       const dashUiTheme = localStorage.getItem('dash_theme') || localStorage.getItem('repo_theme') || 'green';
       applyTheme(dashUiTheme, false);
       updateLogoPreviewFromRepoTheme();
 
-      // Dark mode â€” DEFAULT DARK on first visit (no saved key).
-      // NgÆ°á»i dÃ¹ng chÆ°a chá»‰nh gÃ¬ â†’ dash_darkMode chÆ°a tá»“n táº¡i â†’ máº·c Ä‘á»‹nh dark.
-      // Chá»‰ sau khi user chá»§ Ä‘á»™ng toggle thÃ¬ má»›i lÆ°u vÃ o localStorage.
+      // Dark mode — DEFAULT DARK on first visit (no saved key).
+      // Người dùng chưa chỉnh gì → dash_darkMode chưa tồn tại → mặc định dark.
+      // Chỉ sau khi user chủ động toggle thì mới lưu vào localStorage.
       const savedDark = localStorage.getItem('dash_darkMode');
       let initialDark;
       if (savedDark === 'false') {
         initialDark = false;
       } else {
-        // null (first visit) hoáº·c 'true' â†’ dark
+        // null (first visit) hoặc 'true' → dark
         initialDark = true;
       }
       document.getElementById('toggleDarkMode').checked = initialDark;
@@ -2055,19 +2055,19 @@
     }
     loadSavedSettings();
 
-    // Láº¯ng nghe storage event: khi tab Front repo Ä‘á»•i repo_theme, Dashboard
-    // tá»± cáº­p nháº­t logo preview color (KHÃ”NG Ä‘á»•i UI theme Dashboard).
+    // Lắng nghe storage event: khi tab Front repo đổi repo_theme, Dashboard
+    // tự cập nhật logo preview color (KHÔNG đổi UI theme Dashboard).
     window.addEventListener('storage', function(e) {
       if (e.key === 'repo_theme' || e.key === 'theme') {
         updateLogoPreviewFromRepoTheme();
       }
     });
 
-// ====================== BOXES EDITOR â€” Framer-style ======================
+// ====================== BOXES EDITOR — Framer-style ======================
     // State
     var previewEditMode = false;
-    var previewTitles = {}; // box key â†’ { title, pos }
-    var previewBoxesData = {}; // box key â†’ { x, y, w, h, type, title, pos, locked, hidden }
+    var previewTitles = {}; // box key → { title, pos }
+    var previewBoxesData = {}; // box key → { x, y, w, h, type, title, pos, locked, hidden }
     var previewSelectedKey = null;
     var previewZoom = 50; // %
     var previewPanX = 0, previewPanY = 0;
@@ -2135,7 +2135,7 @@
       const delta = e.deltaY > 0 ? -5 : 5;
       setZoom(previewZoom + delta);
     }
-    // Pan báº±ng chuá»™t giá»¯a hoáº·c Space+drag
+    // Pan bằng chuột giữa hoặc Space+drag
     function onCanvasMouseDown(e) {
       if (e.button === 1 || previewSpaceDown || e.target.id === 'canvasWrap' || e.target.id === 'previewStage') {
         if (e.target.classList && e.target.classList.contains('prev-box')) return; // let box handle
@@ -2161,7 +2161,7 @@
       document.removeEventListener('mouseup', onCanvasPanUp);
     }
     function onCanvasClick(e) {
-      // Click trá»‘ng â†’ bá» select
+      // Click trống → bỏ select
       if (e.target.id === 'canvasWrap' || e.target.id === 'previewStage') {
         selectBox(null);
       }
@@ -2179,7 +2179,7 @@
     }
     function deleteBox(key) {
       if (!key) return;
-      if (!confirm('XÃ³a khung "' + key + '"?')) return;
+      if (!confirm('Xóa khung "' + key + '"?')) return;
       const el = _stage.querySelector(`[data-box="${key}"]`);
       if (el) el.remove();
       delete previewTitles[key];
@@ -2189,7 +2189,7 @@
       renderInspector();
       autoExpandCanvas();
       updateCanvasHint();
-      showNotif('ÄÃ£ xÃ³a khung ' + key);
+      showNotif('Đã xóa khung ' + key);
     }
     function deleteSelectedBox() {
       if (previewSelectedKey) deleteBox(previewSelectedKey);
@@ -2199,7 +2199,7 @@
       const orig = previewBoxesData[previewSelectedKey];
       if (!orig) return;
       const newKey = previewSelectedKey + '-copy-' + Date.now();
-      const newTitle = (previewTitles[previewSelectedKey]?.title || previewSelectedKey) + ' (báº£n sao)';
+      const newTitle = (previewTitles[previewSelectedKey]?.title || previewSelectedKey) + ' (bản sao)';
       createBoxOnCanvas({
         key: newKey,
         title: newTitle,
@@ -2210,7 +2210,7 @@
         type: orig.type,
       });
       selectBox(newKey);
-      showNotif('ÄÃ£ nhÃ¢n Ä‘Ã´i: ' + newKey);
+      showNotif('Đã nhân đôi: ' + newKey);
     }
 
     function createBoxOnCanvas(b) {
@@ -2226,10 +2226,10 @@
       box.style.cssText = `position:absolute;left:${b.x}px;top:${b.y}px;width:${b.w}px;height:${b.h}px;`
         + (isSide ? 'background:transparent;border:none;border-left:none;display:flex;align-items:center;' : '')
         + 'cursor:move;overflow:hidden;box-sizing:border-box;';
-      // Title (contenteditable) â€” user click Ä‘á»ƒ edit trá»±c tiáº¿p trÃªn preview
+      // Title (contenteditable) — user click để edit trực tiếp trên preview
       const titleHTML = `<div class="prev-title" data-pos="top-left"></div>` +
         `<div class="prev-title-text" contenteditable="true" spellcheck="false" data-key="${b.key}" style="font-family:'Press Start 2P',monospace;font-size: 12px;color:var(--muted);text-align:center;flex:1;pointer-events:auto;outline:none;min-width:10px;">${escapeHtml(b.title || b.key)}</div>`;
-      // Container scale: clone ná»™i dung tháº­t cá»§a Front Repo sáº½ Ä‘Æ°á»£c inject vÃ o Ä‘Ã¢y
+      // Container scale: clone nội dung thật của Front Repo sẽ được inject vào đây
       const scaleHTML = `<div class="prev-scale" style="position:absolute;top:0;left:0;width:${b.naturalW||b.w}px;height:${b.naturalH||b.h}px;transform-origin:0 0;pointer-events:none;"></div>`;
       // 8 resize handles
       const handlesHTML =
@@ -2241,7 +2241,7 @@
         `<div class="resize-handle h-s" data-dir="s"></div>` +
         `<div class="resize-handle h-sw" data-dir="sw"></div>` +
         `<div class="resize-handle h-w" data-dir="w"></div>` +
-        `<button class="prev-del" title="XÃ³a khung">&times;</button>`;
+        `<button class="prev-del" title="Xóa khung">&times;</button>`;
       box.innerHTML = titleHTML + scaleHTML + handlesHTML;
       _stage.appendChild(box);
 
@@ -2258,7 +2258,7 @@
         h.addEventListener('mousedown', (e) => { e.stopPropagation(); onResizeHandleDown(e, h.dataset.dir, b.key); });
       });
 
-      // Title contenteditable: sync vÃ o previewTitles khi user gÃµ
+      // Title contenteditable: sync vào previewTitles khi user gõ
       const titleEl = box.querySelector('.prev-title-text');
       titleEl.addEventListener('input', () => {
         const v = titleEl.textContent;
@@ -2276,17 +2276,17 @@
       updateCanvasHint();
     }
 
-    // ============ SCALE Ná»˜I DUNG KHI RESIZE ============
-    // Chiáº¿n lÆ°á»£c: KHÃ”NG scale ná»™i dung khi resize Ä‘á»ƒ fonts/spacing khÃ´ng bá»‹
-    // thu nhá»/nhÃ²e. Thay vÃ o Ä‘Ã³ giá»¯ natural size, Ä‘á»ƒ overflow:auto xá»­ lÃ½ trÃ n.
-    // Khi box nhá» hÆ¡n natural â†’ ná»™i dung trÃ n (user dÃ¹ng scroll Ä‘á»ƒ xem).
-    // Khi box lá»›n hÆ¡n natural â†’ ná»™i dung chiáº¿m pháº§n Ä‘áº§u, pháº§n cÃ²n láº¡i trá»‘ng.
+    // ============ SCALE NỘI DUNG KHI RESIZE ============
+    // Chiến lược: KHÔNG scale nội dung khi resize để fonts/spacing không bị
+    // thu nhỏ/nhòe. Thay vào đó giữ natural size, để overflow:auto xử lý tràn.
+    // Khi box nhỏ hơn natural → nội dung tràn (user dùng scroll để xem).
+    // Khi box lớn hơn natural → nội dung chiếm phần đầu, phần còn lại trống.
     function applyPreviewScale(key) {
       const box = _stage.querySelector(`[data-box="${key}"]`);
       if (!box) return;
       const inner = box.querySelector('.prev-scale');
       if (!inner) return;
-      // Reset vá» natural size, khÃ´ng scale, khÃ´ng translate
+      // Reset về natural size, không scale, không translate
       const nW = parseFloat(box.dataset.naturalW) || box.offsetWidth || 1;
       const nH = parseFloat(box.dataset.naturalH) || box.offsetHeight || 1;
       inner.style.width = nW + 'px';
@@ -2295,15 +2295,15 @@
       inner.style.left = '0';
       inner.style.top = '0';
       inner.style.overflow = 'visible';
-      // Cho phÃ©p box cha xá»­ lÃ½ scroll khi ná»™i dung trÃ n
+      // Cho phép box cha xử lý scroll khi nội dung tràn
       box.style.overflow = 'auto';
     }
     function applyScaleToAll() {
       _stage.querySelectorAll('.prev-box').forEach(b => applyPreviewScale(b.dataset.box));
     }
 
-    // ============ INJECT Ná»˜I DUNG THáº¬T Tá»ª IFRAME VÃ€O BOX ============
-    // Láº¥y HTML cá»§a [data-box="key"] bÃªn trong #previewIframe, clone vÃ o .prev-scale.
+    // ============ INJECT NỘI DUNG THẬT TỪ IFRAME VÀO BOX ============
+    // Lấy HTML của [data-box="key"] bên trong #previewIframe, clone vào .prev-scale.
     function injectFrontRepoContent(key) {
       const box = _stage.querySelector(`[data-box="${key}"]`);
       if (!box) return;
@@ -2316,13 +2316,13 @@
         if (!doc) return;
         const src = doc.querySelector(`[data-box="${key}"]`);
         if (!src) return;
-        // Capture natural size trÆ°á»›c khi inject
+        // Capture natural size trước khi inject
         const rect = src.getBoundingClientRect();
         if (rect.width > 0) box.dataset.naturalW = rect.width;
         if (rect.height > 0) box.dataset.naturalH = rect.height;
-        // Snapshot innerHTML (style attributes Ä‘Ã£ Ä‘Æ°á»£c tÃ­nh)
+        // Snapshot innerHTML (style attributes đã được tính)
         inner.innerHTML = src.innerHTML;
-        // Clone <style> riÃªng (náº¿u cÃ³ inline style riÃªng) â€” cho Front Repo CSS scope
+        // Clone <style> riêng (nếu có inline style riêng) — cho Front Repo CSS scope
         applyPreviewScale(key);
       } catch (e) {
         console.warn('injectFrontRepoContent(' + key + '):', e);
@@ -2338,15 +2338,15 @@
       const boxes = Array.from(_stage.querySelectorAll('.prev-box'));
       // Sort by tab order (DOM order = z-order)
       if (!boxes.length) {
-        _layersList.innerHTML = '<div style="text-align:center;color:var(--muted);padding:14px 6px;font-size: 12px;">ChÆ°a cÃ³ khung nÃ o.<br>Báº¥m <b>ï¼‹ Khung</b> hoáº·c <b>Sync</b>.</div>';
+        _layersList.innerHTML = '<div style="text-align:center;color:var(--muted);padding:14px 6px;font-size: 12px;">Chưa có khung nào.<br>Bấm <b>＋ Khung</b> hoặc <b>Sync</b>.</div>';
         return;
       }
       _layersList.innerHTML = boxes.map(b => {
         const key = b.dataset.box;
         const d = previewBoxesData[key] || {};
-        const sz = `${d.w||b.offsetWidth}Ã—${d.h||b.offsetHeight}`;
+        const sz = `${d.w||b.offsetWidth}×${d.h||b.offsetHeight}`;
         const sel = key === previewSelectedKey ? 'selected' : '';
-        const ico = (d.type === 'side') ? 'â–¢' : 'â–­';
+        const ico = (d.type === 'side') ? '▢' : '▭';
         const t = previewTitles[key]?.title || key;
         return `<div class="layer-row ${sel}" data-key="${key}">
           <span class="layer-icon">${ico}</span>
@@ -2373,33 +2373,33 @@
       if (!_inspectorBody) return;
       const key = previewSelectedKey;
       if (!key) {
-        _inspectorBody.innerHTML = '<div style="text-align:center;padding:24px 0;"><div style="font-size:36px;margin-bottom:12px;">ðŸ“¦</div><div style="color:var(--muted);font-size: 12px;line-height:1.6;">Chá»n 1 khung trÃªn canvas<br>hoáº·c trong <b>Layers</b><br>Ä‘á»ƒ chá»‰nh sá»­a.</div><div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border);"><div style="font-size: 12px;color:var(--muted);margin-bottom:8px;">PhÃ­m táº¯t:</div><div style="font-size: 12px;color:var(--text);text-align:left;line-height:1.8;"><kbd style="background:var(--panel-alt);padding:1px 5px;border-radius:3px;font-size: 12px;">Del</kbd> XÃ³a khung<br><kbd style="background:var(--panel-alt);padding:1px 5px;border-radius:3px;font-size: 12px;">Ctrl+D</kbd> NhÃ¢n Ä‘Ã´i<br><kbd style="background:var(--panel-alt);padding:1px 5px;border-radius:3px;font-size: 12px;">Ctrl+C</kbd> Copy<br><kbd style="background:var(--panel-alt);padding:1px 5px;border-radius:3px;font-size: 12px;">Ctrl+V</kbd> Paste<br><kbd style="background:var(--panel-alt);padding:1px 5px;border-radius:3px;font-size: 12px;">Ctrl+Z</kbd> Undo<br><kbd style="background:var(--panel-alt);padding:1px 5px;border-radius:3px;font-size: 12px;">â†‘â†“â†â†’</kbd> Di chuyá»ƒn 1px<br><kbd style="background:var(--panel-alt);padding:1px 5px;border-radius:3px;font-size: 12px;">Shift+â†‘</kbd> Di chuyá»ƒn 10px</div></div></div>';
+        _inspectorBody.innerHTML = '<div style="text-align:center;padding:24px 0;"><div style="font-size:36px;margin-bottom:12px;">📦</div><div style="color:var(--muted);font-size: 12px;line-height:1.6;">Chọn 1 khung trên canvas<br>hoặc trong <b>Layers</b><br>để chỉnh sửa.</div><div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border);"><div style="font-size: 12px;color:var(--muted);margin-bottom:8px;">Phím tắt:</div><div style="font-size: 12px;color:var(--text);text-align:left;line-height:1.8;"><kbd style="background:var(--panel-alt);padding:1px 5px;border-radius:3px;font-size: 12px;">Del</kbd> Xóa khung<br><kbd style="background:var(--panel-alt);padding:1px 5px;border-radius:3px;font-size: 12px;">Ctrl+D</kbd> Nhân đôi<br><kbd style="background:var(--panel-alt);padding:1px 5px;border-radius:3px;font-size: 12px;">Ctrl+C</kbd> Copy<br><kbd style="background:var(--panel-alt);padding:1px 5px;border-radius:3px;font-size: 12px;">Ctrl+V</kbd> Paste<br><kbd style="background:var(--panel-alt);padding:1px 5px;border-radius:3px;font-size: 12px;">Ctrl+Z</kbd> Undo<br><kbd style="background:var(--panel-alt);padding:1px 5px;border-radius:3px;font-size: 12px;">↑↓←→</kbd> Di chuyển 1px<br><kbd style="background:var(--panel-alt);padding:1px 5px;border-radius:3px;font-size: 12px;">Shift+↑</kbd> Di chuyển 10px</div></div></div>';
         return;
       }
       const d = previewBoxesData[key] || {};
       const t = previewTitles[key] || { title: '', pos: 'top-left' };
       const children = d.children || [];
       const activeTab = window._inspTab || 'transform';
-      const lockIcon = d.locked ? 'ðŸ”’' : 'ðŸ”“';
-      const hideIcon = d.hidden ? 'ðŸ‘â€ðŸ—¨' : 'ðŸ‘';
+      const lockIcon = d.locked ? '🔒' : '🔓';
+      const hideIcon = d.hidden ? '👁‍🗨' : '👁';
 
       _inspectorBody.innerHTML = '\
         <div style="padding:10px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;flex-shrink:0;">\
-          <div style="font-size: 12px;color:var(--neon);font-weight:700;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">ðŸ“¦ ' + escapeHtml(key) + '</div>\
+          <div style="font-size: 12px;color:var(--neon);font-weight:700;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">📦 ' + escapeHtml(key) + '</div>\
           <div style="display:flex;gap:4px;">\
-            <button class="form-btn" style="padding:2px 6px;font-size: 12px;" onclick="toggleBoxLock(\'' + key + '\')" title="KhÃ³a/Má»Ÿ khÃ³a">' + lockIcon + '</button>\
-            <button class="form-btn" style="padding:2px 6px;font-size: 12px;" onclick="toggleBoxHide(\'' + key + '\')" title="áº¨n/Hiá»‡n">' + hideIcon + '</button>\
-            <button class="form-btn" style="padding:2px 6px;font-size: 12px;" onclick="duplicateSelectedBox()" title="NhÃ¢n Ä‘Ã´i">âŽ˜</button>\
-            <button class="form-btn" style="padding:2px 6px;font-size: 12px;color:var(--neon-pink);border-color:var(--neon-pink);" onclick="deleteSelectedBox()" title="XÃ³a">ðŸ—‘</button>\
+            <button class="form-btn" style="padding:2px 6px;font-size: 12px;" onclick="toggleBoxLock(\'' + key + '\')" title="Khóa/Mở khóa">' + lockIcon + '</button>\
+            <button class="form-btn" style="padding:2px 6px;font-size: 12px;" onclick="toggleBoxHide(\'' + key + '\')" title="Ẩn/Hiện">' + hideIcon + '</button>\
+            <button class="form-btn" style="padding:2px 6px;font-size: 12px;" onclick="duplicateSelectedBox()" title="Nhân đôi">⎘</button>\
+            <button class="form-btn" style="padding:2px 6px;font-size: 12px;color:var(--neon-pink);border-color:var(--neon-pink);" onclick="deleteSelectedBox()" title="Xóa">🗑</button>\
           </div>\
         </div>\
         <div style="display:flex;border-bottom:1px solid var(--border);flex-shrink:0;overflow-x:auto;" id="inspTabBar">\
-          <button class="insp-tab-btn ' + (activeTab==='transform'?'active':'') + '" data-tab="transform" style="flex:1;min-width:0;padding:6px 2px;background:none;border:none;border-bottom:2px solid ' + (activeTab==='transform'?'var(--neon)':'transparent') + ';color:' + (activeTab==='transform'?'var(--neon)':'var(--muted)') + ';cursor:pointer;font-size: 12px;" onclick="switchInspTab(\'transform\')"><span>ðŸ“</span><span style="font-size:8px;">Transform</span></button>\
-          <button class="insp-tab-btn ' + (activeTab==='style'?'active':'') + '" data-tab="style" style="flex:1;min-width:0;padding:6px 2px;background:none;border:none;border-bottom:2px solid ' + (activeTab==='style'?'var(--neon)':'transparent') + ';color:' + (activeTab==='style'?'var(--neon)':'var(--muted)') + ';cursor:pointer;font-size: 12px;" onclick="switchInspTab(\'style\')"><span>ðŸŽ¨</span><span style="font-size:8px;">Style</span></button>\
-          <button class="insp-tab-btn ' + (activeTab==='bg'?'active':'') + '" data-tab="bg" style="flex:1;min-width:0;padding:6px 2px;background:none;border:none;border-bottom:2px solid ' + (activeTab==='bg'?'var(--neon)':'transparent') + ';color:' + (activeTab==='bg'?'var(--neon)':'var(--muted)') + ';cursor:pointer;font-size: 12px;" onclick="switchInspTab(\'bg\')"><span>ðŸ–¼</span><span style="font-size:8px;">Bg</span></button>\
-          <button class="insp-tab-btn ' + (activeTab==='typography'?'active':'') + '" data-tab="typography" style="flex:1;min-width:0;padding:6px 2px;background:none;border:none;border-bottom:2px solid ' + (activeTab==='typography'?'var(--neon)':'transparent') + ';color:' + (activeTab==='typography'?'var(--neon)':'var(--muted)') + ';cursor:pointer;font-size: 12px;" onclick="switchInspTab(\'typography\')"><span>âœï¸</span><span style="font-size:8px;">Text</span></button>\
-          <button class="insp-tab-btn ' + (activeTab==='effects'?'active':'') + '" data-tab="effects" style="flex:1;min-width:0;padding:6px 2px;background:none;border:none;border-bottom:2px solid ' + (activeTab==='effects'?'var(--neon)':'transparent') + ';color:' + (activeTab==='effects'?'var(--neon)':'var(--muted)') + ';cursor:pointer;font-size: 12px;" onclick="switchInspTab(\'effects\')"><span>âœ¨</span><span style="font-size:8px;">Effects</span></button>\
-          <button class="insp-tab-btn ' + (activeTab==='children'?'active':'') + '" data-tab="children" style="flex:1;min-width:0;padding:6px 2px;background:none;border:none;border-bottom:2px solid ' + (activeTab==='children'?'var(--neon)':'transparent') + ';color:' + (activeTab==='children'?'var(--neon)':'var(--muted)') + ';cursor:pointer;font-size: 12px;" onclick="switchInspTab(\'children\')"><span>ðŸ§©</span><span style="font-size:8px;">Content</span></button>\
+          <button class="insp-tab-btn ' + (activeTab==='transform'?'active':'') + '" data-tab="transform" style="flex:1;min-width:0;padding:6px 2px;background:none;border:none;border-bottom:2px solid ' + (activeTab==='transform'?'var(--neon)':'transparent') + ';color:' + (activeTab==='transform'?'var(--neon)':'var(--muted)') + ';cursor:pointer;font-size: 12px;" onclick="switchInspTab(\'transform\')"><span>📐</span><span style="font-size:8px;">Transform</span></button>\
+          <button class="insp-tab-btn ' + (activeTab==='style'?'active':'') + '" data-tab="style" style="flex:1;min-width:0;padding:6px 2px;background:none;border:none;border-bottom:2px solid ' + (activeTab==='style'?'var(--neon)':'transparent') + ';color:' + (activeTab==='style'?'var(--neon)':'var(--muted)') + ';cursor:pointer;font-size: 12px;" onclick="switchInspTab(\'style\')"><span>🎨</span><span style="font-size:8px;">Style</span></button>\
+          <button class="insp-tab-btn ' + (activeTab==='bg'?'active':'') + '" data-tab="bg" style="flex:1;min-width:0;padding:6px 2px;background:none;border:none;border-bottom:2px solid ' + (activeTab==='bg'?'var(--neon)':'transparent') + ';color:' + (activeTab==='bg'?'var(--neon)':'var(--muted)') + ';cursor:pointer;font-size: 12px;" onclick="switchInspTab(\'bg\')"><span>🖼</span><span style="font-size:8px;">Bg</span></button>\
+          <button class="insp-tab-btn ' + (activeTab==='typography'?'active':'') + '" data-tab="typography" style="flex:1;min-width:0;padding:6px 2px;background:none;border:none;border-bottom:2px solid ' + (activeTab==='typography'?'var(--neon)':'transparent') + ';color:' + (activeTab==='typography'?'var(--neon)':'var(--muted)') + ';cursor:pointer;font-size: 12px;" onclick="switchInspTab(\'typography\')"><span>✏️</span><span style="font-size:8px;">Text</span></button>\
+          <button class="insp-tab-btn ' + (activeTab==='effects'?'active':'') + '" data-tab="effects" style="flex:1;min-width:0;padding:6px 2px;background:none;border:none;border-bottom:2px solid ' + (activeTab==='effects'?'var(--neon)':'transparent') + ';color:' + (activeTab==='effects'?'var(--neon)':'var(--muted)') + ';cursor:pointer;font-size: 12px;" onclick="switchInspTab(\'effects\')"><span>✨</span><span style="font-size:8px;">Effects</span></button>\
+          <button class="insp-tab-btn ' + (activeTab==='children'?'active':'') + '" data-tab="children" style="flex:1;min-width:0;padding:6px 2px;background:none;border:none;border-bottom:2px solid ' + (activeTab==='children'?'var(--neon)':'transparent') + ';color:' + (activeTab==='children'?'var(--neon)':'var(--muted)') + ';cursor:pointer;font-size: 12px;" onclick="switchInspTab(\'children\')"><span>🧩</span><span style="font-size:8px;">Content</span></button>\
           <button class="insp-tab-btn ' + (activeTab==='css'?'active':'') + '" data-tab="css" style="flex:1;min-width:0;padding:6px 2px;background:none;border:none;border-bottom:2px solid ' + (activeTab==='css'?'var(--neon)':'transparent') + ';color:' + (activeTab==='css'?'var(--neon)':'var(--muted)') + ';cursor:pointer;font-size: 12px;" onclick="switchInspTab(\'css\')"><span>&lt;/&gt;</span><span style="font-size:8px;">CSS</span></button>\
         </div>\
         <div style="flex:1;overflow-y:auto;padding:8px;" id="inspTabContent">\
@@ -2417,7 +2417,7 @@
     function renderInspTab(tab, key, d, t, children) {
       if (tab === 'transform') return '\
         <div class="inspector-section">\
-          <div class="inspector-label">ðŸ“ Vá»‹ trÃ­ & KÃ­ch thÆ°á»›c</div>\
+          <div class="inspector-label">📐 Vị trí & Kích thước</div>\
           <div class="inspector-row-4">\
             <div><label>X</label><input class="inspector-input insp-num" data-key="' + key + '" data-prop="x" type="number" value="' + (d.x||0) + '"></div>\
             <div><label>Y</label><input class="inspector-input insp-num" data-key="' + key + '" data-prop="y" type="number" value="' + (d.y||0) + '"></div>\
@@ -2425,19 +2425,19 @@
             <div><label>H</label><input class="inspector-input insp-num" data-key="' + key + '" data-prop="h" type="number" value="' + (d.h||100) + '" min="10"></div>\
           </div>\
           <div style="display:flex;gap:4px;margin-top:6px;">\
-            <button class="form-btn" style="flex:1;padding:4px 2px;font-size: 12px;" onclick="alignBoxes(\'' + key + '\',\'left\')">â¬…</button>\
-            <button class="form-btn" style="flex:1;padding:4px 2px;font-size: 12px;" onclick="alignBoxes(\'' + key + '\',\'center-h\')">â†”</button>\
-            <button class="form-btn" style="flex:1;padding:4px 2px;font-size: 12px;" onclick="alignBoxes(\'' + key + '\',\'right\')">âž¡</button>\
-            <button class="form-btn" style="flex:1;padding:4px 2px;font-size: 12px;" onclick="alignBoxes(\'' + key + '\',\'top\')">â¬†</button>\
-            <button class="form-btn" style="flex:1;padding:4px 2px;font-size: 12px;" onclick="alignBoxes(\'' + key + '\',\'center-v\')">â†•</button>\
-            <button class="form-btn" style="flex:1;padding:4px 2px;font-size: 12px;" onclick="alignBoxes(\'' + key + '\',\'bottom\')">â¬‡</button>\
+            <button class="form-btn" style="flex:1;padding:4px 2px;font-size: 12px;" onclick="alignBoxes(\'' + key + '\',\'left\')">⬅</button>\
+            <button class="form-btn" style="flex:1;padding:4px 2px;font-size: 12px;" onclick="alignBoxes(\'' + key + '\',\'center-h\')">↔</button>\
+            <button class="form-btn" style="flex:1;padding:4px 2px;font-size: 12px;" onclick="alignBoxes(\'' + key + '\',\'right\')">➡</button>\
+            <button class="form-btn" style="flex:1;padding:4px 2px;font-size: 12px;" onclick="alignBoxes(\'' + key + '\',\'top\')">⬆</button>\
+            <button class="form-btn" style="flex:1;padding:4px 2px;font-size: 12px;" onclick="alignBoxes(\'' + key + '\',\'center-v\')">↕</button>\
+            <button class="form-btn" style="flex:1;padding:4px 2px;font-size: 12px;" onclick="alignBoxes(\'' + key + '\',\'bottom\')">⬇</button>\
           </div>\
         </div>\
         <div class="inspector-section">\
-          <div class="inspector-label">ðŸ“ Padding & Margin</div>\
+          <div class="inspector-label">📏 Padding & Margin</div>\
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">\
             <div>\
-              <div style="font-size: 12px;color:var(--muted);margin-bottom:4px;">Padding (khoáº£ng cÃ¡ch trong)</div>\
+              <div style="font-size: 12px;color:var(--muted);margin-bottom:4px;">Padding (khoảng cách trong)</div>\
               <div class="inspector-row-4">\
                 <div><label>T</label><input class="inspector-input insp-num" data-key="' + key + '" data-prop="paddingT" type="number" value="' + (d.paddingT||0) + '" min="0"></div>\
                 <div><label>R</label><input class="inspector-input insp-num" data-key="' + key + '" data-prop="paddingR" type="number" value="' + (d.paddingR||0) + '" min="0"></div>\
@@ -2446,7 +2446,7 @@
               </div>\
             </div>\
             <div>\
-              <div style="font-size: 12px;color:var(--muted);margin-bottom:4px;">Margin (khoáº£ng cÃ¡ch ngoÃ i)</div>\
+              <div style="font-size: 12px;color:var(--muted);margin-bottom:4px;">Margin (khoảng cách ngoài)</div>\
               <div class="inspector-row-4">\
                 <div><label>T</label><input class="inspector-input insp-num" data-key="' + key + '" data-prop="marginT" type="number" value="' + (d.marginT||0) + '"></div>\
                 <div><label>R</label><input class="inspector-input insp-num" data-key="' + key + '" data-prop="marginR" type="number" value="' + (d.marginR||0) + '"></div>\
@@ -2457,7 +2457,7 @@
           </div>\
         </div>\
         <div class="inspector-section">\
-          <div class="inspector-label">ðŸ”„ Transform</div>\
+          <div class="inspector-label">🔄 Transform</div>\
           <div class="inspector-row-4">\
             <div><label>Rot</label><input class="inspector-input insp-num" data-key="' + key + '" data-prop="rotation" type="number" value="' + (d.rotation||0) + '" min="-360" max="360"></div>\
             <div><label>Scale</label><input class="inspector-input insp-num" data-key="' + key + '" data-prop="scale" type="number" value="' + (d.scale||1) + '" min="0.1" max="5" step="0.1"></div>\
@@ -2466,26 +2466,26 @@
           </div>\
         </div>\
         <div class="inspector-section">\
-          <div class="inspector-label">âœï¸ TiÃªu Ä‘á»</div>\
-          <input class="inspector-input" id="insp-title" value="' + escapeHtml(t.title || '') + '" placeholder="TiÃªu Ä‘á» khung..." style="width:100%;margin-bottom:6px;">\
+          <div class="inspector-label">✏️ Tiêu đề</div>\
+          <input class="inspector-input" id="insp-title" value="' + escapeHtml(t.title || '') + '" placeholder="Tiêu đề khung..." style="width:100%;margin-bottom:6px;">\
           <div class="inspector-pos-grid">\
             ' + ['top-left','top-center','top-right','center-left','center','center-right','bottom-left','bottom-center','bottom-right'].map(p => '<button data-pos="' + p + '" class="' + ((t.pos||'top-left')===p?'active':'') + '" title="' + p + '">' + pPosIcon(p) + '</button>').join('') + '\
           </div>\
         </div>\
         <div class="inspector-section">\
-          <div class="inspector-label">ðŸŽ­ Loáº¡i khung</div>\
+          <div class="inspector-label">🎭 Loại khung</div>\
           <select class="inspector-input" id="insp-type" style="width:100%;">\
             <option value="content" ' + ((d.type||'content')==='content'?'selected':'') + '>Content (border + bg)</option>\
-            <option value="side" ' + (d.type==='side'?'selected':'') + '>Side (trong suá»‘t)</option>\
-            <option value="overlay" ' + (d.type==='overlay'?'selected':'') + '>Overlay (khÃ´ng border)</option>\
+            <option value="side" ' + (d.type==='side'?'selected':'') + '>Side (trong suốt)</option>\
+            <option value="overlay" ' + (d.type==='overlay'?'selected':'') + '>Overlay (không border)</option>\
             <option value="glass" ' + (d.type==='glass'?'selected':'') + '>Glass morphism</option>\
-            <option value="card" ' + (d.type==='card'?'selected':'') + '>Card (bo trÃ²n)</option>\
+            <option value="card" ' + (d.type==='card'?'selected':'') + '>Card (bo tròn)</option>\
           </select>\
         </div>';
 
       if (tab === 'style') return '\
         <div class="inspector-section">\
-          <div class="inspector-label">â¬œ Border</div>\
+          <div class="inspector-label">⬜ Border</div>\
           <div class="inspector-row-4" style="margin-bottom:4px;">\
             <div><label>W</label><input class="inspector-input insp-num" data-key="' + key + '" data-prop="borderWidth" type="number" value="' + (d.borderWidth||1) + '" min="0"></div>\
             <div>\
@@ -2512,7 +2512,7 @@
             </div>\
           </div>\
           <div style="display:flex;align-items:center;gap:6px;margin-top:4px;">\
-            <label style="font-size: 12px;color:var(--muted);flex-shrink:0;">MÃ u:</label>\
+            <label style="font-size: 12px;color:var(--muted);flex-shrink:0;">Màu:</label>\
             <input type="color" value="' + (d.borderColor||'#39ff14') + '" data-key="' + key + '" data-prop="borderColor" class="color-swatch" style="width:28px;height:24px;border:none;cursor:pointer;padding:0;">\
             <div style="flex:1;display:flex;gap:4px;">\
               ' + ['#39ff14','#00f0ff','#ff006e','#ffbe0b','#ffffff','#000000'].map(c => '<div class="swatch' + (d.borderColor===c?' swatch-active':'') + '" data-color="' + c + '" data-key="' + key + '" data-prop="borderColor" style="width:18px;height:18px;background:' + c + ';border-radius:3px;cursor:pointer;border:1px solid rgba(255,255,255,0.2);"></div>').join('') + '\
@@ -2520,7 +2520,7 @@
           </div>\
         </div>\
         <div class="inspector-section">\
-          <div class="inspector-label">ðŸŒ‘ Box Shadow</div>\
+          <div class="inspector-label">🌑 Box Shadow</div>\
           <div class="inspector-row-4" style="margin-bottom:4px;">\
             <div><label>X</label><input class="inspector-input insp-num" data-key="' + key + '" data-prop="shadowX" type="number" value="' + (d.shadowX||0) + '"></div>\
             <div><label>Y</label><input class="inspector-input insp-num" data-key="' + key + '" data-prop="shadowY" type="number" value="' + (d.shadowY||4) + '"></div>\
@@ -2528,33 +2528,33 @@
             <div><label>Spread</label><input class="inspector-input insp-num" data-key="' + key + '" data-prop="shadowSpread" type="number" value="' + (d.shadowSpread||0) + '"></div>\
           </div>\
           <div style="display:flex;align-items:center;gap:6px;">\
-            <label style="font-size: 12px;color:var(--muted);flex-shrink:0;">MÃ u:</label>\
+            <label style="font-size: 12px;color:var(--muted);flex-shrink:0;">Màu:</label>\
             <input type="color" value="' + (d.shadowColor||'#000000') + '" data-key="' + key + '" data-prop="shadowColor" class="color-swatch" style="width:28px;height:24px;border:none;cursor:pointer;padding:0;">\
             <label style="font-size: 12px;margin-left:auto;"><input type="checkbox" ' + (d.shadowInset?'checked':'') + ' data-key="' + key + '" data-prop="shadowInset" class="insp-check"> Inset</label>\
           </div>\
           <div style="display:flex;gap:4px;margin-top:4px;">\
-            <button class="form-btn" style="flex:1;padding:3px;font-size: 12px;" onclick="applyPresetShadow(\'' + key + '\',\'none\')">Táº¯t</button>\
+            <button class="form-btn" style="flex:1;padding:3px;font-size: 12px;" onclick="applyPresetShadow(\'' + key + '\',\'none\')">Tắt</button>\
             <button class="form-btn" style="flex:1;padding:3px;font-size: 12px;" onclick="applyPresetShadow(\'' + key + '\',\'neon\')">Neon</button>\
             <button class="form-btn" style="flex:1;padding:3px;font-size: 12px;" onclick="applyPresetShadow(\'' + key + '\',\'subtle\')">Subtle</button>\
             <button class="form-btn" style="flex:1;padding:3px;font-size: 12px;" onclick="applyPresetShadow(\'' + key + '\',\'hard\')">Hard</button>\
           </div>\
         </div>\
         <div class="inspector-section">\
-          <div class="inspector-label">ðŸŒˆ Gradient Border</div>\
+          <div class="inspector-label">🌈 Gradient Border</div>\
           <div style="display:flex;gap:4px;margin-bottom:4px;">\
-            <button class="form-btn ' + (d.borderGradient&&d.borderGradient.dir==='tb'?'active':'') + '" style="flex:1;padding:3px;font-size: 12px;" onclick="setBorderGradient(\'' + key + '\',\'tb\')">â¬‡ TB</button>\
-            <button class="form-btn ' + (d.borderGradient&&d.borderGradient.dir==='lr'?'active':'') + '" style="flex:1;padding:3px;font-size: 12px;" onclick="setBorderGradient(\'' + key + '\',\'lr\')">âž¡ LR</button>\
-            <button class="form-btn ' + (d.borderGradient&&d.borderGradient.dir==='tlbr'?'active':'') + '" style="flex:1;padding:3px;font-size: 12px;" onclick="setBorderGradient(\'' + key + '\',\'tlbr\')">â†˜</button>\
-            <button class="form-btn" style="flex:1;padding:3px;font-size: 12px;" onclick="clearBorderGradient(\'' + key + '\')">âœ•</button>\
+            <button class="form-btn ' + (d.borderGradient&&d.borderGradient.dir==='tb'?'active':'') + '" style="flex:1;padding:3px;font-size: 12px;" onclick="setBorderGradient(\'' + key + '\',\'tb\')">⬇ TB</button>\
+            <button class="form-btn ' + (d.borderGradient&&d.borderGradient.dir==='lr'?'active':'') + '" style="flex:1;padding:3px;font-size: 12px;" onclick="setBorderGradient(\'' + key + '\',\'lr\')">➡ LR</button>\
+            <button class="form-btn ' + (d.borderGradient&&d.borderGradient.dir==='tlbr'?'active':'') + '" style="flex:1;padding:3px;font-size: 12px;" onclick="setBorderGradient(\'' + key + '\',\'tlbr\')">↘</button>\
+            <button class="form-btn" style="flex:1;padding:3px;font-size: 12px;" onclick="clearBorderGradient(\'' + key + '\')">✕</button>\
           </div>\
           ' + (d.borderGradient ? '<div style="display:flex;gap:4px;"><input type="color" value="' + (d.borderGradient.from||'#39ff14') + '" data-key="' + key + '" data-prop="borderGradientFrom" class="color-swatch" style="width:28px;height:24px;border:none;cursor:pointer;padding:0;"><input type="color" value="' + (d.borderGradient.to||'#00f0ff') + '" data-key="' + key + '" data-prop="borderGradientTo" class="color-swatch" style="width:28px;height:24px;border:none;cursor:pointer;padding:0;"></div>' : '') + '\
         </div>';
 
       if (tab === 'bg') return '\
         <div class="inspector-section">\
-          <div class="inspector-label">ðŸŽ¨ Background</div>\
+          <div class="inspector-label">🎨 Background</div>\
           <div style="margin-bottom:8px;">\
-            <div style="font-size: 12px;color:var(--muted);margin-bottom:4px;">MÃ u ná»n</div>\
+            <div style="font-size: 12px;color:var(--muted);margin-bottom:4px;">Màu nền</div>\
             <div style="display:flex;align-items:center;gap:6px;">\
               <input type="color" value="' + (d.bgColor||'#0a0f1a') + '" data-key="' + key + '" data-prop="bgColor" class="color-swatch" style="width:28px;height:24px;border:none;cursor:pointer;padding:0;">\
               <input class="inspector-input" data-key="' + key + '" data-prop="bgColor" value="' + (d.bgColor||'#0a0f1a') + '" style="flex:1;">\
@@ -2565,24 +2565,24 @@
           </div>\
         </div>\
         <div class="inspector-section">\
-          <div class="inspector-label">ðŸŒˆ Gradient</div>\
+          <div class="inspector-label">🌈 Gradient</div>\
           <div style="display:flex;gap:3px;margin-bottom:4px;flex-wrap:wrap;">\
-            <button class="form-btn ' + (!d.bgGradient?'active':'') + '" style="padding:2px 6px;font-size: 12px;" onclick="clearBgGradient(\'' + key + '\')">Táº¯t</button>\
-            <button class="form-btn ' + (d.bgGradient?.dir==='tb'?'active':'') + '" style="padding:2px 6px;font-size: 12px;" onclick="setBgGradient(\'' + key + '\',\'tb\')">â¬‡</button>\
-            <button class="form-btn ' + (d.bgGradient?.dir==='lr'?'active':'') + '" style="padding:2px 6px;font-size: 12px;" onclick="setBgGradient(\'' + key + '\',\'lr\')">âž¡</button>\
-            <button class="form-btn ' + (d.bgGradient?.dir==='radial'?'active':'') + '" style="padding:2px 6px;font-size: 12px;" onclick="setBgGradient(\'' + key + '\',\'radial\')">â—‰</button>\
-            <button class="form-btn ' + (d.bgGradient?.dir==='diag'?'active':'') + '" style="padding:2px 6px;font-size: 12px;" onclick="setBgGradient(\'' + key + '\',\'diag\')">â†˜</button>\
+            <button class="form-btn ' + (!d.bgGradient?'active':'') + '" style="padding:2px 6px;font-size: 12px;" onclick="clearBgGradient(\'' + key + '\')">Tắt</button>\
+            <button class="form-btn ' + (d.bgGradient?.dir==='tb'?'active':'') + '" style="padding:2px 6px;font-size: 12px;" onclick="setBgGradient(\'' + key + '\',\'tb\')">⬇</button>\
+            <button class="form-btn ' + (d.bgGradient?.dir==='lr'?'active':'') + '" style="padding:2px 6px;font-size: 12px;" onclick="setBgGradient(\'' + key + '\',\'lr\')">➡</button>\
+            <button class="form-btn ' + (d.bgGradient?.dir==='radial'?'active':'') + '" style="padding:2px 6px;font-size: 12px;" onclick="setBgGradient(\'' + key + '\',\'radial\')">◉</button>\
+            <button class="form-btn ' + (d.bgGradient?.dir==='diag'?'active':'') + '" style="padding:2px 6px;font-size: 12px;" onclick="setBgGradient(\'' + key + '\',\'diag\')">↘</button>\
           </div>\
           ' + (d.bgGradient ? '\
           <div style="display:flex;gap:4px;margin-bottom:4px;">\
             <input type="color" value="' + (d.bgGradient.from||'#39ff14') + '" data-key="' + key + '" data-prop="bgGradientFrom" class="color-swatch" style="width:28px;height:24px;border:none;cursor:pointer;padding:0;">\
             <input type="color" value="' + (d.bgGradient.to||'#000000') + '" data-key="' + key + '" data-prop="bgGradientTo" class="color-swatch" style="width:28px;height:24px;border:none;cursor:pointer;padding:0;">\
           </div>\
-          <div><label style="font-size: 12px;color:var(--muted);">Äá»™:</label><input type="range" min="0" max="360" value="' + (d.bgGradient.deg||90) + '" data-key="' + key + '" data-prop="bgGradientDeg" style="width:100%;accent-color:var(--neon);"></div>' : '') + '\
+          <div><label style="font-size: 12px;color:var(--muted);">Độ:</label><input type="range" min="0" max="360" value="' + (d.bgGradient.deg||90) + '" data-key="' + key + '" data-prop="bgGradientDeg" style="width:100%;accent-color:var(--neon);"></div>' : '') + '\
         </div>\
         <div class="inspector-section">\
-          <div class="inspector-label">ðŸ–¼ áº¢nh ná»n</div>\
-          <input class="inspector-input" data-key="' + key + '" data-prop="bgImage" value="' + (d.bgImage||'') + '" placeholder="URL áº£nh ná»n..." style="width:100%;">\
+          <div class="inspector-label">🖼 Ảnh nền</div>\
+          <input class="inspector-input" data-key="' + key + '" data-prop="bgImage" value="' + (d.bgImage||'') + '" placeholder="URL ảnh nền..." style="width:100%;">\
           ' + (d.bgImage ? '\
           <div style="margin-top:6px;display:flex;gap:4px;flex-wrap:wrap;">\
             <div><label style="font-size: 12px;color:var(--muted);">Size:</label><select class="inspector-input" data-key="' + key + '" data-prop="bgSize" style="padding:2px;font-size: 12px;width:80px;"><option value="cover" ' + ((d.bgSize||'cover')==='cover'?'selected':'') + '>cover</option><option value="contain" ' + (d.bgSize==='contain'?'selected':'') + '>contain</option><option value="100% 100%" ' + (d.bgSize==='100% 100%'?'selected':'') + '>stretch</option></select></div>\
@@ -2594,14 +2594,14 @@
 
       if (tab === 'typography') return '\
         <div class="inspector-section">\
-          <div class="inspector-label">âœï¸ TiÃªu Ä‘á» khung</div>\
-          <input class="inspector-input" id="insp-title" value="' + escapeHtml(t.title || '') + '" placeholder="TiÃªu Ä‘á»..." style="width:100%;margin-bottom:6px;">\
+          <div class="inspector-label">✏️ Tiêu đề khung</div>\
+          <input class="inspector-input" id="insp-title" value="' + escapeHtml(t.title || '') + '" placeholder="Tiêu đề..." style="width:100%;margin-bottom:6px;">\
           <div class="inspector-pos-grid">\
             ' + ['top-left','top-center','top-right','center-left','center','center-right','bottom-left','bottom-center','bottom-right'].map(p => '<button data-pos="' + p + '" class="' + ((t.pos||'top-left')===p?'active':'') + '" title="' + p + '">' + pPosIcon(p) + '</button>').join('') + '\
           </div>\
         </div>\
         <div class="inspector-section">\
-          <div class="inspector-label">ðŸ”¤ Font</div>\
+          <div class="inspector-label">🔤 Font</div>\
           <select class="inspector-input" data-key="' + key + '" data-prop="fontFamily" style="width:100%;padding:3px;">\
             <option value="monospace" ' + (d.fontFamily==='monospace'?'selected':'') + '>Monospace</option>\
             <option value="sans-serif" ' + (d.fontFamily==='sans-serif'?'selected':'') + '>Sans Serif</option>\
@@ -2613,7 +2613,7 @@
           </select>\
         </div>\
         <div class="inspector-section">\
-          <div class="inspector-label">ðŸ“ Font Size & Weight</div>\
+          <div class="inspector-label">📏 Font Size & Weight</div>\
           <div class="inspector-row-4">\
             <div><label>Size</label><input class="inspector-input insp-num" data-key="' + key + '" data-prop="fontSize" type="number" value="' + (d.fontSize||9) + '" min="4" max="72"></div>\
             <div><label>Weight</label><select class="inspector-input" data-key="' + key + '" data-prop="fontWeight" style="padding:3px;font-size: 12px;">\
@@ -2624,7 +2624,7 @@
           </div>\
         </div>\
         <div class="inspector-section">\
-          <div class="inspector-label">ðŸŽ¨ MÃ u chá»¯</div>\
+          <div class="inspector-label">🎨 Màu chữ</div>\
           <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">\
             <input type="color" value="' + (d.fontColor||'#39ff14') + '" data-key="' + key + '" data-prop="fontColor" class="color-swatch" style="width:28px;height:24px;border:none;cursor:pointer;padding:0;">\
             <input class="inspector-input" data-key="' + key + '" data-prop="fontColor" value="' + (d.fontColor||'#39ff14') + '" style="flex:1;">\
@@ -2634,30 +2634,30 @@
           </div>\
         </div>\
         <div class="inspector-section">\
-          <div class="inspector-label">â†” CÄƒn chá»‰nh & Line Height</div>\
+          <div class="inspector-label">↔ Căn chỉnh & Line Height</div>\
           <div style="display:flex;gap:4px;margin-bottom:4px;">\
-            <button class="form-btn ' + ((d.textAlign||'left')==='left'?'active':'') + '" style="flex:1;padding:4px 2px;font-size: 12px;" onclick="setTextProp(\'' + key + '\',\'textAlign\',\'left\')">â¬…</button>\
-            <button class="form-btn ' + (d.textAlign==='center'?'active':'') + '" style="flex:1;padding:4px 2px;font-size: 12px;" onclick="setTextProp(\'' + key + '\',\'textAlign\',\'center\')">â†”</button>\
-            <button class="form-btn ' + (d.textAlign==='right'?'active':'') + '" style="flex:1;padding:4px 2px;font-size: 12px;" onclick="setTextProp(\'' + key + '\',\'textAlign\',\'right\')">âž¡</button>\
-            <button class="form-btn ' + (d.textAlign==='justify'?'active':'') + '" style="flex:1;padding:4px 2px;font-size: 12px;" onclick="setTextProp(\'' + key + '\',\'textAlign\',\'justify\')">â‰£</button>\
+            <button class="form-btn ' + ((d.textAlign||'left')==='left'?'active':'') + '" style="flex:1;padding:4px 2px;font-size: 12px;" onclick="setTextProp(\'' + key + '\',\'textAlign\',\'left\')">⬅</button>\
+            <button class="form-btn ' + (d.textAlign==='center'?'active':'') + '" style="flex:1;padding:4px 2px;font-size: 12px;" onclick="setTextProp(\'' + key + '\',\'textAlign\',\'center\')">↔</button>\
+            <button class="form-btn ' + (d.textAlign==='right'?'active':'') + '" style="flex:1;padding:4px 2px;font-size: 12px;" onclick="setTextProp(\'' + key + '\',\'textAlign\',\'right\')">➡</button>\
+            <button class="form-btn ' + (d.textAlign==='justify'?'active':'') + '" style="flex:1;padding:4px 2px;font-size: 12px;" onclick="setTextProp(\'' + key + '\',\'textAlign\',\'justify\')">≣</button>\
           </div>\
           <div><label style="font-size: 12px;color:var(--muted);">Line Height: ' + (d.lineHeight||1.2) + '</label><input type="range" min="0.8" max="3" step="0.1" value="' + (d.lineHeight||1.2) + '" data-key="' + key + '" data-prop="lineHeight" style="width:100%;accent-color:var(--neon);"></div>\
           <div class="inspector-row-4" style="margin-top:4px;">\
             <div><label style="font-size: 12px;color:var(--muted);">Letter:</label><input class="inspector-input insp-num" data-key="' + key + '" data-prop="letterSpacing" type="number" value="' + (d.letterSpacing||0) + '" step="0.5"></div>\
             <div><label style="font-size: 12px;color:var(--muted);">Word:</label><input class="inspector-input insp-num" data-key="' + key + '" data-prop="wordSpacing" type="number" value="' + (d.wordSpacing||0) + '"></div>\
-            <div><label style="font-size: 12px;color:var(--muted);">Deco</label><select class="inspector-input" data-key="' + key + '" data-prop="textDecoration" style="padding:3px;font-size: 12px;"><option value="none" ' + ((d.textDecoration||'none')==='none'?'selected':'') + '>â€”</option><option value="underline" ' + (d.textDecoration==='underline'?'selected':'') + '>underline</option><option value="line-through" ' + (d.textDecoration==='line-through'?'selected':'') + '>line-through</option></select></div>\
+            <div><label style="font-size: 12px;color:var(--muted);">Deco</label><select class="inspector-input" data-key="' + key + '" data-prop="textDecoration" style="padding:3px;font-size: 12px;"><option value="none" ' + ((d.textDecoration||'none')==='none'?'selected':'') + '>—</option><option value="underline" ' + (d.textDecoration==='underline'?'selected':'') + '>underline</option><option value="line-through" ' + (d.textDecoration==='line-through'?'selected':'') + '>line-through</option></select></div>\
           </div>\
         </div>\
         <div class="inspector-section">\
-          <div class="inspector-label">ðŸŒ‘ Text Shadow</div>\
+          <div class="inspector-label">🌑 Text Shadow</div>\
           <div class="inspector-row-4" style="margin-bottom:4px;">\
             <div><label>X</label><input class="inspector-input insp-num" data-key="' + key + '" data-prop="textShadowX" type="number" value="' + (d.textShadowX||0) + '" min="-20" max="20"></div>\
             <div><label>Y</label><input class="inspector-input insp-num" data-key="' + key + '" data-prop="textShadowY" type="number" value="' + (d.textShadowY||2) + '" min="-20" max="20"></div>\
             <div><label>Blur</label><input class="inspector-input insp-num" data-key="' + key + '" data-prop="textShadowBlur" type="number" value="' + (d.textShadowBlur||4) + '" min="0" max="30"></div>\
-            <div><label>MÃ u</label><input type="color" value="' + (d.textShadowColor||'#000000') + '" data-key="' + key + '" data-prop="textShadowColor" class="color-swatch" style="width:28px;height:20px;border:none;cursor:pointer;padding:0;"></div>\
+            <div><label>Màu</label><input type="color" value="' + (d.textShadowColor||'#000000') + '" data-key="' + key + '" data-prop="textShadowColor" class="color-swatch" style="width:28px;height:20px;border:none;cursor:pointer;padding:0;"></div>\
           </div>\
           <div style="display:flex;gap:4px;margin-top:4px;">\
-            <button class="form-btn" style="flex:1;padding:3px;font-size: 12px;" onclick="applyPresetTextShadow(\'' + key + '\',\'none\')">Táº¯t</button>\
+            <button class="form-btn" style="flex:1;padding:3px;font-size: 12px;" onclick="applyPresetTextShadow(\'' + key + '\',\'none\')">Tắt</button>\
             <button class="form-btn" style="flex:1;padding:3px;font-size: 12px;" onclick="applyPresetTextShadow(\'' + key + '\',\'glow\')">Glow</button>\
             <button class="form-btn" style="flex:1;padding:3px;font-size: 12px;" onclick="applyPresetTextShadow(\'' + key + '\',\'hard\')">Hard</button>\
             <button class="form-btn" style="flex:1;padding:3px;font-size: 12px;" onclick="applyPresetTextShadow(\'' + key + '\',\'neon\')">Neon</button>\
@@ -2666,31 +2666,31 @@
 
       if (tab === 'effects') return '\
         <div class="inspector-section">\
-          <div class="inspector-label">ðŸŽ¬ Animation</div>\
+          <div class="inspector-label">🎬 Animation</div>\
           <select class="inspector-input" data-key="' + key + '" data-prop="animClass" style="width:100%;padding:3px;margin-bottom:4px;">\
-            <option value="">â€” KhÃ´ng cÃ³ â€”</option>\
-            <option value="anim-float" ' + (d.animClass==='anim-float'?'selected':'') + '>ðŸŒŠ Float</option>\
-            <option value="anim-pulse" ' + (d.animClass==='anim-pulse'?'selected':'') + '>ðŸ’“ Pulse</option>\
-            <option value="anim-spin" ' + (d.animClass==='anim-spin'?'selected':'') + '>ðŸ”„ Spin</option>\
-            <option value="anim-blink" ' + (d.animClass==='anim-blink'?'selected':'') + '>ðŸ’¡ Blink</option>\
-            <option value="anim-slide-in" ' + (d.animClass==='anim-slide-in'?'selected':'') + '>âž¡ Slide In</option>\
-            <option value="anim-glow" ' + (d.animClass==='anim-glow'?'selected':'') + '>âœ¨ Glow</option>\
-            <option value="anim-shake" ' + (d.animClass==='anim-shake'?'selected':'') + '>âš¡ Shake</option>\
-            <option value="anim-bounce" ' + (d.animClass==='anim-bounce'?'selected':'') + '>ðŸ€ Bounce</option>\
+            <option value="">— Không có —</option>\
+            <option value="anim-float" ' + (d.animClass==='anim-float'?'selected':'') + '>🌊 Float</option>\
+            <option value="anim-pulse" ' + (d.animClass==='anim-pulse'?'selected':'') + '>💓 Pulse</option>\
+            <option value="anim-spin" ' + (d.animClass==='anim-spin'?'selected':'') + '>🔄 Spin</option>\
+            <option value="anim-blink" ' + (d.animClass==='anim-blink'?'selected':'') + '>💡 Blink</option>\
+            <option value="anim-slide-in" ' + (d.animClass==='anim-slide-in'?'selected':'') + '>➡ Slide In</option>\
+            <option value="anim-glow" ' + (d.animClass==='anim-glow'?'selected':'') + '>✨ Glow</option>\
+            <option value="anim-shake" ' + (d.animClass==='anim-shake'?'selected':'') + '>⚡ Shake</option>\
+            <option value="anim-bounce" ' + (d.animClass==='anim-bounce'?'selected':'') + '>🏀 Bounce</option>\
           </select>\
           <div><label style="font-size: 12px;color:var(--muted);">Duration: ' + (d.animDuration||2) + 's</label><input type="range" min="0.5" max="5" step="0.5" value="' + (d.animDuration||2) + '" data-key="' + key + '" data-prop="animDuration" style="width:100%;accent-color:var(--neon);"></div>\
           <div><label style="font-size: 12px;color:var(--muted);">Delay: ' + (d.animDelay||0) + 's</label><input type="range" min="0" max="5" step="0.5" value="' + (d.animDelay||0) + '" data-key="' + key + '" data-prop="animDelay" style="width:100%;accent-color:var(--neon);"></div>\
         </div>\
         <div class="inspector-section">\
-          <div class="inspector-label">ðŸ” CSS Filters</div>\
+          <div class="inspector-label">🔍 CSS Filters</div>\
           <div><label style="font-size: 12px;color:var(--muted);">Blur: ' + (d.filterBlur||0) + 'px</label><input type="range" min="0" max="20" value="' + (d.filterBlur||0) + '" data-key="' + key + '" data-prop="filterBlur" style="width:100%;accent-color:var(--neon);"></div>\
           <div><label style="font-size: 12px;color:var(--muted);">Brightness: ' + (d.filterBrightness||100) + '%</label><input type="range" min="0" max="300" value="' + (d.filterBrightness||100) + '" data-key="' + key + '" data-prop="filterBrightness" style="width:100%;accent-color:var(--neon);"></div>\
           <div><label style="font-size: 12px;color:var(--muted);">Contrast: ' + (d.filterContrast||100) + '%</label><input type="range" min="0" max="300" value="' + (d.filterContrast||100) + '" data-key="' + key + '" data-prop="filterContrast" style="width:100%;accent-color:var(--neon);"></div>\
           <div><label style="font-size: 12px;color:var(--muted);">Saturate: ' + (d.filterSaturate||100) + '%</label><input type="range" min="0" max="300" value="' + (d.filterSaturate||100) + '" data-key="' + key + '" data-prop="filterSaturate" style="width:100%;accent-color:var(--neon);"></div>\
-          <div><label style="font-size: 12px;color:var(--muted);">Hue Rotate: ' + (d.filterHueRotate||0) + 'Â°</label><input type="range" min="0" max="360" value="' + (d.filterHueRotate||0) + '" data-key="' + key + '" data-prop="filterHueRotate" style="width:100%;accent-color:var(--neon);"></div>\
+          <div><label style="font-size: 12px;color:var(--muted);">Hue Rotate: ' + (d.filterHueRotate||0) + '°</label><input type="range" min="0" max="360" value="' + (d.filterHueRotate||0) + '" data-key="' + key + '" data-prop="filterHueRotate" style="width:100%;accent-color:var(--neon);"></div>\
         </div>\
         <div class="inspector-section">\
-          <div class="inspector-label">âœ‚ï¸ Clip Path</div>\
+          <div class="inspector-label">✂️ Clip Path</div>\
           <select class="inspector-input" data-key="' + key + '" data-prop="clipPath" style="width:100%;padding:3px;">\
             <option value="none" ' + ((d.clipPath||'none')==='none'?'selected':'') + '>none</option>\
             <option value="circle(50%)" ' + (d.clipPath==='circle(50%)'?'selected':'') + '>Circle</option>\
@@ -2702,12 +2702,12 @@
 
       if (tab === 'children') return '\
         <div class="inspector-section">\
-          <div class="inspector-label">ðŸ§© Ná»™i dung trong khung (' + children.length + ')</div>\
+          <div class="inspector-label">🧩 Nội dung trong khung (' + children.length + ')</div>\
           <div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:8px;">\
-            <button class="form-btn" style="padding:3px 6px;font-size: 12px;" onclick="addChildToSelected(\'image\')">ðŸ–¼ áº¢nh</button>\
-            <button class="form-btn" style="padding:3px 6px;font-size: 12px;" onclick="addChildToSelected(\'text\')">ðŸ“ Text</button>\
-            <button class="form-btn" style="padding:3px 6px;font-size: 12px;" onclick="addChildToSelected(\'tabs\')">ðŸ“‘ Tabs</button>\
-            <button class="form-btn" style="padding:3px 6px;font-size: 12px;" onclick="addChildToSelected(\'nested\')">â–­ Nested</button>\
+            <button class="form-btn" style="padding:3px 6px;font-size: 12px;" onclick="addChildToSelected(\'image\')">🖼 Ảnh</button>\
+            <button class="form-btn" style="padding:3px 6px;font-size: 12px;" onclick="addChildToSelected(\'text\')">📝 Text</button>\
+            <button class="form-btn" style="padding:3px 6px;font-size: 12px;" onclick="addChildToSelected(\'tabs\')">📑 Tabs</button>\
+            <button class="form-btn" style="padding:3px 6px;font-size: 12px;" onclick="addChildToSelected(\'nested\')">▭ Nested</button>\
           </div>\
           <div id="childrenList">' + children.map((c, idx) => renderChildInspector(c, idx)).join('') + '</div>\
         </div>';
@@ -2715,19 +2715,19 @@
       if (tab === 'css') return '\
         <div class="inspector-section">\
           <div class="inspector-label">&lt;/&gt; Custom CSS</div>\
-          <div style="font-size: 12px;color:var(--muted);margin-bottom:6px;">Viáº¿t CSS thuáº§n tÃºy, Ã¡p dá»¥ng vÃ o khung nÃ y</div>\
-          <textarea class="inspector-input" id="insp-css" rows="8" style="width:100%;font-family:monospace;font-size: 12px;resize:vertical;background:var(--panel-alt);" placeholder="/* VÃ­ dá»¥: */\ncolor: #fff;\nbackdrop-filter: blur(10px);\ntransition: all 0.3s ease;">' + (d.customCSS||'') + '</textarea>\
+          <div style="font-size: 12px;color:var(--muted);margin-bottom:6px;">Viết CSS thuần túy, áp dụng vào khung này</div>\
+          <textarea class="inspector-input" id="insp-css" rows="8" style="width:100%;font-family:monospace;font-size: 12px;resize:vertical;background:var(--panel-alt);" placeholder="/* Ví dụ: */\ncolor: #fff;\nbackdrop-filter: blur(10px);\ntransition: all 0.3s ease;">' + (d.customCSS||'') + '</textarea>\
           <div style="display:flex;gap:4px;margin-top:4px;">\
-            <button class="form-btn" style="flex:1;padding:4px;font-size: 12px;" onclick="applyCustomCSS(\'' + key + '\')">âœ… Ãp dá»¥ng CSS</button>\
-            <button class="form-btn" style="flex:1;padding:4px;font-size: 12px;" onclick="clearCustomCSS(\'' + key + '\')">âœ• XÃ³a</button>\
+            <button class="form-btn" style="flex:1;padding:4px;font-size: 12px;" onclick="applyCustomCSS(\'' + key + '\')">✅ Áp dụng CSS</button>\
+            <button class="form-btn" style="flex:1;padding:4px;font-size: 12px;" onclick="clearCustomCSS(\'' + key + '\')">✕ Xóa</button>\
           </div>\
           <div style="margin-top:8px;">\
             <div style="font-size: 12px;color:var(--muted);margin-bottom:4px;">Presets:</div>\
             <div style="display:flex;gap:4px;flex-wrap:wrap;">\
-              <button class="form-btn" style="padding:3px 6px;font-size: 12px;" onclick="applyCSSPreset(\'' + key + '\',\'backdrop\')">ðŸ”² Backdrop</button>\
-              <button class="form-btn" style="padding:3px 6px;font-size: 12px;" onclick="applyCSSPreset(\'' + key + '\',\'scanline\')">ðŸ“º Scanline</button>\
-              <button class="form-btn" style="padding:3px 6px;font-size: 12px;" onclick="applyCSSPreset(\'' + key + '\',\'noise\')">ðŸŒ€ Noise</button>\
-              <button class="form-btn" style="padding:3px 6px;font-size: 12px;" onclick="applyCSSPreset(\'' + key + '\',\'cyber\')">ðŸ’  Cyber</button>\
+              <button class="form-btn" style="padding:3px 6px;font-size: 12px;" onclick="applyCSSPreset(\'' + key + '\',\'backdrop\')">🔲 Backdrop</button>\
+              <button class="form-btn" style="padding:3px 6px;font-size: 12px;" onclick="applyCSSPreset(\'' + key + '\',\'scanline\')">📺 Scanline</button>\
+              <button class="form-btn" style="padding:3px 6px;font-size: 12px;" onclick="applyCSSPreset(\'' + key + '\',\'noise\')">🌀 Noise</button>\
+              <button class="form-btn" style="padding:3px 6px;font-size: 12px;" onclick="applyCSSPreset(\'' + key + '\',\'cyber\')">💠 Cyber</button>\
             </div>\
           </div>\
         </div>';
@@ -3082,7 +3082,7 @@
       if (!ta || !previewBoxesData[key]) return;
       previewBoxesData[key].customCSS = ta.value;
       applyBoxStyle(key);
-      showNotif('CSS Ä‘Ã£ Ã¡p dá»¥ng!');
+      showNotif('CSS đã áp dụng!');
     }
     function clearCustomCSS(key) {
       if (!previewBoxesData[key]) previewBoxesData[key] = {};
@@ -3102,7 +3102,7 @@
         previewBoxesData[key].customCSS = presets[preset];
         applyBoxStyle(key);
         renderInspector();
-        showNotif('Preset "' + preset + '" Ä‘Ã£ Ã¡p dá»¥ng!');
+        showNotif('Preset "' + preset + '" đã áp dụng!');
       }
     }
     // ============================================================
@@ -3157,7 +3157,7 @@
     }
 
     function pPosIcon(p) {
-      return { 'top-left':'â†–','top-center':'â†‘','top-right':'â†—','center-left':'â†','center':'â—','center-right':'â†’','bottom-left':'â†™','bottom-center':'â†“','bottom-right':'â†˜' }[p] || 'Â·';
+      return { 'top-left':'↖','top-center':'↑','top-right':'↗','center-left':'←','center':'●','center-right':'→','bottom-left':'↙','bottom-center':'↓','bottom-right':'↘' }[p] || '·';
     }
 
     function scrollToBox(key) {
@@ -3415,31 +3415,31 @@
     function togglePreviewEdit() {
       previewEditMode = !previewEditMode;
       const label = document.getElementById('editModeLabel');
-      label.textContent = previewEditMode ? 'Táº¯t chá»‰nh sá»­a' : 'Báº­t chá»‰nh sá»­a';
+      label.textContent = previewEditMode ? 'Tắt chỉnh sửa' : 'Bật chỉnh sửa';
       document.body.classList.toggle('canvas-pan-mode', false);
     }
 
     // ============ SYNC FROM FRONT REPO (Playwright) ============
     async function syncFromFrontRepo(btn) {
-      if (btn) { btn.disabled = true; btn.textContent = 'ðŸ”„ Äang sync...'; }
+      if (btn) { btn.disabled = true; btn.textContent = '🔄 Đang sync...'; }
       try {
         const r = await fetch('/api/scan-front-repo?vw=1280&vh=900');
         const data = await r.json();
-        if (!data.ok) { alert('Sync lá»—i: ' + (data.error || 'unknown')); return; }
-        // XoÃ¡ box cÅ© khÃ´ng cÃ³ flag isReal? â†’ giá»¯ láº¡i user-defined
+        if (!data.ok) { alert('Sync lỗi: ' + (data.error || 'unknown')); return; }
+        // Xoá box cũ không có flag isReal? → giữ lại user-defined
         const newBoxes = data.boxes;
-        if (!newBoxes.length) { alert('KhÃ´ng tÃ¬m tháº¥y khung nÃ o trÃªn Front repo.'); return; }
-        if (!confirm(`TÃ¬m tháº¥y ${newBoxes.length} khung trÃªn Front Repo. Báº¥m OK Ä‘á»ƒ thay tháº¿ cÃ¡c khung hiá»‡n táº¡i.`)) return;
+        if (!newBoxes.length) { alert('Không tìm thấy khung nào trên Front repo.'); return; }
+        if (!confirm(`Tìm thấy ${newBoxes.length} khung trên Front Repo. Bấm OK để thay thế các khung hiện tại.`)) return;
         // Clear canvas
         _stage.querySelectorAll('.prev-box').forEach(b => b.remove());
         previewTitles = {};
         previewBoxesData = {};
         previewSelectedKey = null;
-        // Update canvas size tá»« viewport scan
+        // Update canvas size từ viewport scan
         previewCanvasW = data.viewport.w;
         previewCanvasH = data.viewport.h;
         updateCanvasSize();
-        // Add boxes (naturalW/H dÃ¹ng luÃ´n w/h scan Ä‘Æ°á»£c)
+        // Add boxes (naturalW/H dùng luôn w/h scan được)
         newBoxes.forEach(b => createBoxOnCanvas({
           key: b.key,
           title: b.title || b.key,
@@ -3447,24 +3447,24 @@
           naturalW: b.w, naturalH: b.h,
           type: b.type,
         }));
-        // Inject ná»™i dung tháº­t tá»« iframe vÃ o tá»«ng box (sau khi iframe load xong)
+        // Inject nội dung thật từ iframe vào từng box (sau khi iframe load xong)
         const iframe = document.getElementById('previewIframe');
         const doInject = () => injectAllFrontRepoContent();
         if (iframe && iframe.contentDocument && iframe.contentDocument.readyState === 'complete') {
           doInject();
         } else if (iframe) {
           iframe.addEventListener('load', doInject, { once: true });
-          // Fallback: thá»­ láº¡i sau 1.5s náº¿u load event Ä‘Ã£ bá»‹ miss
+          // Fallback: thử lại sau 1.5s nếu load event đã bị miss
           setTimeout(doInject, 1500);
         }
         renderLayers();
         renderInspector();
         zoomFit();
-        showNotif(`ÄÃ£ sync ${newBoxes.length} khung tá»« Front Repo`);
+        showNotif(`Đã sync ${newBoxes.length} khung từ Front Repo`);
       } catch (e) {
-        alert('Sync lá»—i: ' + e.message);
+        alert('Sync lỗi: ' + e.message);
       } finally {
-        if (btn) { btn.disabled = false; btn.textContent = 'ðŸ”„ Sync vá»›i Front Repo'; }
+        if (btn) { btn.disabled = false; btn.textContent = '🔄 Sync với Front Repo'; }
       }
     }
 
@@ -3480,13 +3480,13 @@
       const w = parseInt(document.getElementById('newBoxW').value) || 300;
       const h = parseInt(document.getElementById('newBoxH').value) || 200;
       const type = document.getElementById('newBoxType').value;
-      if (!key) { alert('Vui lÃ²ng nháº­p tÃªn khung.'); return; }
-      if (!/^[a-z0-9-]+$/i.test(key)) { alert('Key chá»‰ chá»©a chá»¯ cÃ¡i, sá»‘ vÃ  gáº¡ch ngang.'); return; }
-      if (_stage.querySelector(`[data-box="${key}"]`)) { alert('Key Ä‘Ã£ tá»“n táº¡i.'); return; }
+      if (!key) { alert('Vui lòng nhập tên khung.'); return; }
+      if (!/^[a-z0-9-]+$/i.test(key)) { alert('Key chỉ chứa chữ cái, số và gạch ngang.'); return; }
+      if (_stage.querySelector(`[data-box="${key}"]`)) { alert('Key đã tồn tại.'); return; }
       createBoxOnCanvas({ key, title, x, y, w, h, type });
       selectBox(key);
       closeAddBoxModal();
-      showNotif('ÄÃ£ táº¡o khung "' + key + '"');
+      showNotif('Đã tạo khung "' + key + '"');
       document.getElementById('newBoxKey').value = '';
       document.getElementById('newBoxTitle').value = '';
     }
@@ -3500,7 +3500,7 @@
           x: b.offsetLeft, y: b.offsetTop, w: b.offsetWidth, h: b.offsetHeight,
         };
       });
-      // LÆ°u canvas size
+      // Lưu canvas size
       const data = {
         canvas: { w: previewCanvasW, h: previewCanvasH, zoom: previewZoom, panX: previewPanX, panY: previewPanY },
         boxes: boxesData,
@@ -3509,19 +3509,19 @@
       };
       localStorage.setItem('repo_previewLayout', JSON.stringify(data));
       const status = document.getElementById('saveStatus');
-      if (status) { status.textContent = 'âœ… ÄÃ£ lÆ°u lÃºc ' + new Date().toLocaleTimeString(); setTimeout(() => status.textContent = '', 3000); }
-      showNotif('ÄÃ£ lÆ°u layout!');
+      if (status) { status.textContent = '✅ Đã lưu lúc ' + new Date().toLocaleTimeString(); setTimeout(() => status.textContent = '', 3000); }
+      showNotif('Đã lưu layout!');
     }
 
     // ============ ADD LAYOUT TO FRONT (POST /api/apply-layout) ============
-    // Gá»­i toáº¡ Ä‘á»™ + title má»›i â†’ Front Repo reload sáº½ Ã¡p dá»¥ng.
+    // Gửi toạ độ + title mới → Front Repo reload sẽ áp dụng.
     async function applyLayoutToFront(btn) {
       const boxes = Array.from(_stage.querySelectorAll('.prev-box'));
-      if (!boxes.length) { alert('ChÆ°a cÃ³ khung nÃ o. HÃ£y Sync vá»›i Front Repo trÆ°á»›c.'); return; }
-      if (!confirm(`Ãp dá»¥ng ${boxes.length} khung layout cho trang Front Repo?`)) return;
-      if (btn) { btn.disabled = true; btn.textContent = 'ðŸ“¤ Äang Ã¡p dá»¥ng...'; }
+      if (!boxes.length) { alert('Chưa có khung nào. Hãy Sync với Front Repo trước.'); return; }
+      if (!confirm(`Áp dụng ${boxes.length} khung layout cho trang Front Repo?`)) return;
+      if (btn) { btn.disabled = true; btn.textContent = '📤 Đang áp dụng...'; }
       try {
-        // Thu tháº­p payload Ä‘Ãºng schema backend yÃªu cáº§u
+        // Thu thập payload đúng schema backend yêu cầu
         const payload = {
           canvas: { w: previewCanvasW, h: previewCanvasH },
           boxes: boxes.map(b => {
@@ -3549,22 +3549,22 @@
           body: JSON.stringify(payload),
         });
         const result = await r.json();
-        if (!result.ok) { alert('Lá»—i Ã¡p dá»¥ng: ' + (result.error || 'unknown')); return; }
-        showNotif(result.message || 'ÄÃ£ Ã¡p dá»¥ng layout!');
-        // Force reload iframe preview Ä‘á»ƒ user tháº¥y káº¿t quáº£ ngay
+        if (!result.ok) { alert('Lỗi áp dụng: ' + (result.error || 'unknown')); return; }
+        showNotif(result.message || 'Đã áp dụng layout!');
+        // Force reload iframe preview để user thấy kết quả ngay
         const iframe = document.getElementById('previewIframe');
         if (iframe) {
           iframe.src = iframe.src.split('?')[0] + '?t=' + Date.now();
         }
       } catch (e) {
-        alert('Lá»—i: ' + e.message);
+        alert('Lỗi: ' + e.message);
       } finally {
-        if (btn) { btn.disabled = false; btn.textContent = 'ðŸ“¤ Add Layout to Front'; }
+        if (btn) { btn.disabled = false; btn.textContent = '📤 Add Layout to Front'; }
       }
     }
     window.applyLayoutToFront = applyLayoutToFront;
     function resetPreviewLayout() {
-      if (!confirm('Reset toÃ n bá»™ layout + khung vá» máº·c Ä‘á»‹nh?')) return;
+      if (!confirm('Reset toàn bộ layout + khung về mặc định?')) return;
       localStorage.removeItem('repo_previewLayout');
       location.reload();
     }
@@ -3601,7 +3601,7 @@
                 applyTitleToBox(key);
               }
             });
-            // Inject ná»™i dung tháº­t tá»« iframe vÃ o cÃ¡c box (náº¿u iframe Ä‘Ã£ load)
+            // Inject nội dung thật từ iframe vào các box (nếu iframe đã load)
             const iframe = document.getElementById('previewIframe');
             const doInject = () => injectAllFrontRepoContent();
             if (iframe && iframe.contentDocument && iframe.contentDocument.readyState === 'complete') {
@@ -3645,7 +3645,7 @@
             e.preventDefault();
             window._copyBox = JSON.parse(JSON.stringify(previewBoxesData[previewSelectedKey]));
             if (previewTitles[previewSelectedKey]) window._copyTitle = JSON.parse(JSON.stringify(previewTitles[previewSelectedKey]));
-            showNotif('ÄÃ£ copy khung vÃ o clipboard');
+            showNotif('Đã copy khung vào clipboard');
           }
           // Ctrl+V = paste
           if ((e.ctrlKey || e.metaKey) && e.key === 'v' && window._copyBox && !inField) {
@@ -3664,7 +3664,7 @@
             Object.assign(previewBoxesData[newKey], d);
             selectBox(newKey);
             renderLayers();
-            showNotif('ÄÃ£ paste khung');
+            showNotif('Đã paste khung');
           }
           // Ctrl+Z = undo (basic, single step)
           if ((e.ctrlKey || e.metaKey) && e.key === 'z' && !inField) {
@@ -3685,7 +3685,7 @@
               }
               renderLayers();
               renderInspector();
-              showNotif('ÄÃ£ undo');
+              showNotif('Đã undo');
             }
           }
           // Arrow keys = move 1px, Shift+Arrow = 10px
@@ -3703,7 +3703,7 @@
             renderLayers();
             renderInspector();
           }
-          // Esc = bá» chá»n
+          // Esc = bỏ chọn
           if (e.key === 'Escape') selectBox(null);
         });
         document.addEventListener('keyup', (e) => {

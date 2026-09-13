@@ -511,7 +511,7 @@ def index():
     return render_template(
         "index.html",
         bootstrap_js=bootstrap_js,
-        cache_version=33,
+        cache_version=34,
     )
 
 

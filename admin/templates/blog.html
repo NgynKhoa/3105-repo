@@ -1,10 +1,10 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="vi">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0" />
-  <title>Blog â€” 3105 Mod Collection</title>
+  <title>Blog — 3105 Mod Collection</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Fira+Code:wght@400;500&family=Be+Vietnam+Pro:wght@300;400;500;600&family=VT323&display=swap" rel="stylesheet" />
   <style>
@@ -676,8 +676,8 @@
       document.querySelectorAll('.theme-btn').forEach(b => b.classList.remove('active'));
       document.querySelector(`.theme-btn[data-theme="${name}"]`).classList.add('active');
       localStorage.setItem('blog_theme', name);
-      // TÃCH BIá»†T: Blog chá»‰ ghi blog_theme.
-      // KHÃ”NG Ä‘á»¥ng repo_theme (Front repo) / dash_theme (Dashboard).
+      // TÁCH BIỆT: Blog chỉ ghi blog_theme.
+      // KHÔNG đụng repo_theme (Front repo) / dash_theme (Dashboard).
     }
 
     document.querySelectorAll('.theme-btn').forEach(btn => {
@@ -714,8 +714,8 @@
     document.getElementById('toggleDarkMode').addEventListener('change', e => {
       const isDark = e.target.checked;
       applyDarkMode(isDark);
-      // LÆ°u preference â€” chá»‰ ghi khi user chá»§ Ä‘á»™ng toggle.
-      // LÆ°u dáº¡ng string 'true'/'false' Ä‘á»ƒ nháº¥t quÃ¡n vá»›i transparency handler bÃªn dÆ°á»›i.
+      // Lưu preference — chỉ ghi khi user chủ động toggle.
+      // Lưu dạng string 'true'/'false' để nhất quán với transparency handler bên dưới.
       localStorage.setItem('blog_darkMode', isDark ? 'true' : 'false');
     });
 
@@ -740,12 +740,12 @@
       const savedTheme = localStorage.getItem('blog_theme') || localStorage.getItem('repo_theme') || 'green';
       applyTheme(savedTheme);
 
-      // Dark mode â€” DEFAULT DARK on first visit (no saved key).
-      // NgÆ°á»i dÃ¹ng chÆ°a chá»‰nh gÃ¬ â†’ blog_darkMode chÆ°a tá»“n táº¡i â†’ máº·c Ä‘á»‹nh dark.
-      // Chá»‰ sau khi user chá»§ Ä‘á»™ng toggle thÃ¬ má»›i lÆ°u vÃ o localStorage.
+      // Dark mode — DEFAULT DARK on first visit (no saved key).
+      // Người dùng chưa chỉnh gì → blog_darkMode chưa tồn tại → mặc định dark.
+      // Chỉ sau khi user chủ động toggle thì mới lưu vào localStorage.
       const savedDark = localStorage.getItem('blog_darkMode');
-      // savedDark cÃ³ thá»ƒ lÃ  'true', 'false', boolean true/false, hoáº·c null.
-      // Máº·c Ä‘á»‹nh dark (true). Chá»‰ light khi rÃµ rÃ ng lÃ  false.
+      // savedDark có thể là 'true', 'false', boolean true/false, hoặc null.
+      // Mặc định dark (true). Chỉ light khi rõ ràng là false.
       const initialDark = (savedDark !== false && savedDark !== 'false');
       document.getElementById('toggleDarkMode').checked = initialDark;
       applyDarkMode(initialDark);
