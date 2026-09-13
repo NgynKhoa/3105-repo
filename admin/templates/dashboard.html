@@ -800,6 +800,249 @@
       pointer-events: auto;
     }
 
+    /* ==================== PREVIEW SCOPED CSS ====================
+       Khi clone innerHTML từ Front Repo vào .prev-scale, các stylesheet
+       scope của Front Repo KHÔNG đi kèm. Nếu không cap lại ở đây, ảnh
+       package sẽ hiển thị kích thước gốc (vd 800×800) che hết row 56px
+       và che mất tên + version + meta của package.
+       → Reset layout + cap kích thước mọi ảnh package trong preview.
+       ============================================================ */
+    .prev-box .prev-scale,
+    .prev-box .prev-scale * {
+      box-sizing: border-box;
+    }
+
+    /* Box wrapper: 720px bên trong preview giống Front Repo */
+    .prev-box .prev-scale .box {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      box-shadow: 0 0 12px rgba(var(--neon-rgb), 0.06);
+      color: var(--text);
+      font-family: 'Be Vietnam Pro', system-ui, sans-serif;
+      font-size: 14px;
+      line-height: 1.5;
+      max-width: 720px;
+      overflow: hidden;
+      display: block;
+    }
+    .prev-box .prev-scale .box-header-wrap {
+      padding: 10px 16px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .prev-box .prev-scale .box-header-wrap .pkg-header {
+      margin: 0;
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--neon);
+      font-family: 'Press Start 2P', monospace;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .prev-box .prev-scale .section-title {
+      margin: 0;
+      font-size: 13px;
+      color: var(--neon);
+      font-family: 'Press Start 2P', monospace;
+      letter-spacing: 1px;
+    }
+    .prev-box .prev-scale #packageCount,
+    .prev-box .prev-scale #blogCount {
+      font-size: 11px;
+      color: var(--muted);
+      font-family: 'Fira Code', monospace;
+    }
+
+    /* Package list: grid scroll giống Front Repo */
+    .prev-box .prev-scale .package-list,
+    .prev-box .prev-scale .blog-list {
+      max-height: 286px;
+      overflow-y: auto;
+      scrollbar-width: thin;
+    }
+
+    /* Mỗi package row: cố định 56px để ảnh to không làm tràn row */
+    .prev-box .prev-scale .pkg-item {
+      padding: 11px 14px;
+      border-bottom: 1px solid var(--border);
+      display: flex !important;
+      align-items: center;
+      gap: 12px;
+      height: 56px;
+      min-height: 56px;
+      max-height: 56px;
+      box-sizing: border-box;
+      flex-shrink: 0;
+      overflow: hidden;
+      background: transparent;
+    }
+    .prev-box .prev-scale .pkg-item:hover {
+      background: rgba(var(--neon-rgb), 0.05);
+    }
+    /* Cap icon package trong preview — đây là FIX CHÍNH:
+       mọi <img> trong .pkg-item sẽ được ép về 36×36 với object-fit:cover
+       bất kể kích thước gốc (natural size). */
+    .prev-box .prev-scale .pkg-item img {
+      width: 36px !important;
+      height: 36px !important;
+      max-width: 36px !important;
+      max-height: 36px !important;
+      min-width: 36px !important;
+      min-height: 36px !important;
+      object-fit: cover;
+      flex-shrink: 0;
+      display: block;
+      border-radius: 6px;
+    }
+    .prev-box .prev-scale .pkg-item .pkg-icon-wrap,
+    .prev-box .prev-scale .pkg-item .pkg-icon {
+      width: 36px !important;
+      height: 36px !important;
+      min-width: 36px !important;
+      max-width: 36px !important;
+      max-height: 36px !important;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      border-radius: 6px;
+      font-size: 22px;
+      line-height: 1;
+    }
+    .prev-box .prev-scale .pkg-item .pkg-icon img,
+    .prev-box .prev-scale .pkg-item .pkg-icon-wrap img {
+      width: 36px !important;
+      height: 36px !important;
+      max-width: 100% !important;
+      max-height: 100% !important;
+      object-fit: cover;
+    }
+    .prev-box .prev-scale .pkg-item .pkg-info,
+    .prev-box .prev-scale .pkg-item .pkg-meta {
+      flex: 1;
+      min-width: 0;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .prev-box .prev-scale .pkg-item .pkg-name,
+    .prev-box .prev-scale .pkg-item .pkg-info-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-bright);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .prev-box .prev-scale .pkg-item .pkg-version,
+    .prev-box .prev-scale .pkg-item .pkg-meta-row {
+      font-size: 11px;
+      color: var(--muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* Blog row tương tự nhưng emoji icon */
+    .prev-box .prev-scale .blog-item {
+      padding: 11px 14px;
+      border-bottom: 1px solid var(--border);
+      display: flex !important;
+      align-items: center;
+      gap: 12px;
+      min-height: 56px;
+      box-sizing: border-box;
+      flex-shrink: 0;
+      overflow: hidden;
+    }
+    .prev-box .prev-scale .blog-item .blog-icon {
+      width: 36px !important;
+      height: 36px !important;
+      font-size: 22px;
+      line-height: 36px;
+      text-align: center;
+      flex-shrink: 0;
+    }
+    .prev-box .prev-scale .blog-item img {
+      width: 36px !important;
+      height: 36px !important;
+      max-width: 36px !important;
+      max-height: 36px !important;
+      object-fit: cover;
+      border-radius: 6px;
+      flex-shrink: 0;
+    }
+    .prev-box .prev-scale .blog-item .blog-info {
+      flex: 1;
+      min-width: 0;
+      overflow: hidden;
+    }
+    .prev-box .prev-scale .blog-item .blog-title,
+    .prev-box .prev-scale .blog-item .blog-info-title {
+      font-size: 13px;
+      color: var(--text-bright);
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .prev-box .prev-scale .blog-item .blog-summary,
+    .prev-box .prev-scale .blog-item .blog-info-summary {
+      font-size: 11px;
+      color: var(--muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* Pagination trong preview */
+    .prev-box .prev-scale .pagination,
+    .prev-box .prev-scale .pkg-pagination {
+      padding: 6px 10px;
+      display: flex;
+      gap: 4px;
+      justify-content: center;
+      border-top: 1px solid var(--border);
+      background: var(--panel-alt);
+    }
+    .prev-box .prev-scale .pagination button,
+    .prev-box .prev-scale .pkg-pagination button {
+      padding: 2px 8px;
+      font-size: 11px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text);
+      border-radius: 3px;
+      cursor: default;
+    }
+    .prev-box .prev-scale .pagination button.active,
+    .prev-box .prev-scale .pkg-pagination button.active {
+      border-color: var(--neon);
+      color: var(--neon);
+      background: rgba(var(--neon-rgb), 0.15);
+    }
+
+    /* Search input + nút tìm nếu có */
+    .prev-box .prev-scale input[type=search] {
+      background: var(--panel-alt);
+      border: 1px solid var(--border);
+      color: var(--text-bright);
+      padding: 4px 10px;
+      border-radius: 4px;
+      font-size: 12px;
+      max-width: 180px;
+      box-sizing: border-box;
+    }
+
     /* Inspector */
     .inspector-section {
       margin-bottom: 14px;
