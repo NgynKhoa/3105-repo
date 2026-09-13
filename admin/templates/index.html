@@ -67,7 +67,7 @@
     body {
       background: var(--bg-color);
       color: var(--text);
-      font-family: 'Be Vietnam Pro', 'Fira Code', 'Courier New', monospace;
+      font-family: 'Be Vietnam Pro', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       min-height: 100vh;
       text-shadow: 0 0 4px rgba(232,255,240,0.3), 0 0 8px rgba(var(--neon-rgb),0.1);
       overflow-x: hidden;
@@ -177,9 +177,11 @@
       right: 18px;
       bottom: 10px;
       color: rgba(122,154,134,0.38);
-      font-size: 0.68rem;
-      pointer-events: none;
       font-family: 'Press Start 2P', monospace;
+    }
+    /* Tăng HELLO neon size để dễ đọc */
+    #helloBanner {
+      font-size: 1.4rem !important;
     }
 
     /* ============================ LOGO ============================ */
@@ -192,7 +194,7 @@
 
     #logo-text {
       font-family: 'Press Start 2P', 'VT323', monospace;
-      font-size: 1.15rem;
+      font-size: 1.4rem;
       color: var(--neon);
       line-height: 1.4;
       letter-spacing: 2px;
@@ -428,7 +430,7 @@
     }
 
     #logo-sub {
-      font-size: 0.72rem;
+      font-size: 0.85rem;
       color: var(--muted);
       letter-spacing: 0.5px;
     }
@@ -482,7 +484,7 @@
     }
 
     .controls-label {
-      font-size: 0.72rem;
+      font-size: 0.85rem;
       color: var(--muted);
       letter-spacing: 0.03em;
       text-transform: uppercase;
@@ -529,7 +531,7 @@
     }
 
     .section-title {
-      font-size: 0.9rem !important;
+      font-size: 1rem !important;
       margin-bottom: 4px;
       display: flex;
       align-items: center;
@@ -548,7 +550,7 @@
     }
 
     .section-copy {
-      font-size: 0.75rem;
+      font-size: 0.88rem;
       color: var(--muted);
       margin-bottom: 12px;
       line-height: 1.5;
@@ -622,7 +624,7 @@
       color: var(--neon);
       border: 1.5px solid rgba(var(--neon-rgb),0.7);
       padding: 8px 13px;
-      font-size: 0.78rem;
+      font-size: 0.9rem;
       align-self: center; /* trÃ¡nh button trong flex row bá»‹ stretch báº¥t thÆ°á»ng */
       display: inline-flex;
       align-items: center;
@@ -639,13 +641,13 @@
     /* Button sizes */
     .btn-xs {
       padding: 4px 8px;
-      font-size: 0.7rem;
+      font-size: 0.85rem;
       min-height: 26px;
       gap: 4px;
     }
     .btn-sm {
       padding: 6px 10px;
-      font-size: 0.75rem;
+      font-size: 0.88rem;
       min-height: 30px;
       gap: 5px;
     }
@@ -730,7 +732,7 @@
       color: var(--text);
       border: 1px solid var(--border);
       padding: 4px 9px;
-      font-size: 0.72rem;
+      font-size: 0.85rem;
       min-height: 28px;
       opacity: 0.55;
     }
@@ -757,7 +759,7 @@
     }
 
     .field label {
-      font-size: 0.7rem;
+      font-size: 0.85rem;
       color: var(--muted);
       letter-spacing: 0.03em;
       text-transform: uppercase;
@@ -789,7 +791,7 @@
     /* Accent color input â€” mono font */
     #meta_accentColor {
       font-family: 'Press Start 2P', monospace;
-      font-size: 0.55rem;
+      font-size: 0.85rem;
       letter-spacing: 1px;
     }
 
@@ -840,12 +842,12 @@
     #pkgSearchInput {
       width: 90px;
       padding: 4px 8px;
-      font-size: 0.72rem;
+      font-size: 0.85rem;
     }
     #pkgSearchInput:focus { width: 130px; }
 
     #packageCount {
-      font-size: 0.7rem;
+      font-size: 0.85rem;
       color: rgba(122,154,134,0.5);
       white-space: nowrap;
     }
@@ -946,7 +948,7 @@
     }
     .pkg-identifier {
       color: var(--neon-lavender);
-      font-size: 0.7rem;
+      font-size: 0.85rem;
       opacity: 0.7;
     }
 
@@ -969,7 +971,7 @@
       align-items: center;
       justify-content: space-between;
       gap: 8px;
-      font-size: 0.72rem;
+      font-size: 0.85rem;
       color: var(--muted, rgba(122,154,134,0.65));
       position: sticky;
       bottom: 0;
@@ -1021,12 +1023,12 @@
       border-left: 3px solid var(--neon-yellow);
       border-radius: 3px;
       padding: 14px 16px;
-      font-size: 0.78rem;
+      font-size: 0.9rem;
       color: var(--text);
       line-height: 1.65;
     }
     .hint-box .hint-title {
-      font-size: 0.7rem;
+      font-size: 0.85rem;
       text-transform: uppercase;
       letter-spacing: 1px;
       color: var(--neon-yellow);
@@ -1037,7 +1039,7 @@
       background: rgba(0, 0, 0, 0.3);
       padding: 1px 5px;
       border-radius: 2px;
-      font-size: 0.75rem;
+      font-size: 0.88rem;
     }
     .hint-box .btn-hint {
       color: var(--neon);
@@ -1050,7 +1052,7 @@
     }
     .hint-box .tip {
       opacity: 0.6;
-      font-size: 0.72rem;
+      font-size: 0.85rem;
     }
 
     /* ============================ MODAL ============================ */
@@ -1118,7 +1120,7 @@
       background: transparent;
       border: 1px solid var(--border);
       color: var(--muted);
-      font-size: 0.78rem;
+      font-size: 0.9rem;
       padding: 4px 10px;
       border-radius: 3px;
       min-height: 28px;
@@ -1153,7 +1155,7 @@
     }
 
     #modalStatus {
-      font-size: 0.7rem;
+      font-size: 0.85rem;
       color: rgba(122,154,134,0.45);
     }
 
@@ -1217,7 +1219,7 @@
       width: 100%;
       text-align: left;
       padding: 7px 12px;
-      font-size: 0.78rem;
+      font-size: 0.9rem;
       background: transparent;
       border: none;
       color: var(--text);
@@ -1227,7 +1229,7 @@
       text-overflow: ellipsis;
     }
     #f_download_menu button:hover { background: rgba(var(--neon-rgb),0.07); color: var(--neon); }
-    #f_download_menu .no-match { padding: 7px 12px; font-size: 0.78rem; color: rgba(122,154,134,0.3); }
+    #f_download_menu .no-match { padding: 7px 12px; font-size: 0.9rem; color: rgba(122,154,134,0.3); }
 
     /* ============================ UPLOAD ZONE ============================ */
     #pkgUploadZone {
@@ -1236,7 +1238,7 @@
       border-radius: 3px;
       padding: 14px;
       text-align: center;
-      font-size: 0.75rem;
+      font-size: 0.88rem;
       color: rgba(122,154,134,0.4);
       cursor: pointer;
       transition: border-color 0.2s, background 0.2s;
@@ -1246,7 +1248,7 @@
       background: rgba(var(--neon-rgb),0.05);
       color: var(--text);
     }
-    #pkgUploadZone code { color: var(--neon-lavender); font-size: 0.72rem; }
+    #pkgUploadZone code { color: var(--neon-lavender); font-size: 0.85rem; }
 
     /* ============================ CHECKBOX ============================ */
     input[type="checkbox"] {
@@ -1264,7 +1266,7 @@
       right: 20px;
       padding: 10px 18px;
       border-radius: 3px;
-      font-size: 0.78rem;
+      font-size: 0.9rem;
       z-index: 50;
       display: none;
       backdrop-filter: blur(6px);
@@ -1296,7 +1298,7 @@
     .mt-6 { margin-top: 24px; }
     .mb-2 { margin-bottom: 8px; }
     .mb-3 { margin-bottom: 12px; }
-    .text-xs { font-size: 0.72rem; }
+    .text-xs { font-size: 0.85rem; }
     .text-sm { font-size: 0.82rem; }
     .min-h-screen { min-height: 100vh; }
     .min-w-0 { min-width: 0; }
@@ -1404,10 +1406,10 @@
     .text-center { text-align: center; }
     .text-left { text-align: left; }
     .text-right { text-align: right; }
-    .text-xs { font-size: 0.72rem !important; }
+    .text-xs { font-size: 0.85rem !important; }
     .text-sm { font-size: 0.82rem !important; }
-    .text-\[10px\] { font-size: 10px !important; }
-    .text-\[11px\] { font-size: 11px !important; }
+    .text-\[10px\] { font-size: 12px !important; }
+    .text-\[11px\] { font-size: 12px !important; }
     .font-mono { font-family: 'Courier New', monospace; }
     .font-medium { font-weight: 400; }
     .font-semibold { font-weight: 600; color: var(--text-bright); }
@@ -1628,7 +1630,7 @@
     }
     .star-divider {
       font-family: 'VT323', monospace;
-      font-size: 11px;
+      font-size: 12px;
       color: var(--muted);
       margin: 10px 0;
       opacity: 0.4;
@@ -1640,7 +1642,7 @@
       align-items: center;
       gap: 6px;
       font-family: 'VT323', monospace;
-      font-size: 11px;
+      font-size: 12px;
       color: var(--muted);
       opacity: 0.75;
       padding: 8px 10px;
@@ -1709,7 +1711,7 @@
       padding-right: 8px;
     }
     .blog-link:hover { color: var(--neon); text-shadow: 0 0 6px rgba(var(--neon-rgb),0.5); }
-    .blog-date { font-size: 0.7rem; color: var(--text-dim); flex-shrink: 0; }
+    .blog-date { font-size: 0.85rem; color: var(--text-dim); flex-shrink: 0; }
 
     /* ============================ BLOG PAGINATION ============================ */
     #blogPagination {
@@ -1719,7 +1721,7 @@
       align-items: center;
       justify-content: space-between;
       gap: 8px;
-      font-size: 0.72rem;
+      font-size: 0.85rem;
       color: var(--muted, rgba(122,154,134,0.65));
       position: sticky;
       bottom: 0;
@@ -1732,7 +1734,7 @@
       flex-shrink: 0;
     }
       gap: 8px;
-      font-size: 0.72rem;
+      font-size: 0.85rem;
       color: rgba(122,154,134,0.45);
     }
     #blogPagination.hidden { display: none; }
@@ -1767,7 +1769,7 @@
     }
     #blogPagination .page-nav:disabled { opacity: 0.3; cursor: not-allowed; }
     #blogPagination .page-nav svg { width: 10px; height: 10px; fill: currentColor; }
-    #blogCount { font-size: 0.72rem; color: rgba(122,154,134,0.45); }
+    #blogCount { font-size: 0.85rem; color: rgba(122,154,134,0.45); }
 
     /* ============================ MUSIC PLAYER ============================ */
     #music-player {
@@ -1859,7 +1861,7 @@
     .mp-times {
       display: flex;
       justify-content: space-between;
-      font-size: 11px;
+      font-size: 12px;
       color: var(--muted);
       margin-top: 4px;
       letter-spacing: 1px;
@@ -1877,7 +1879,7 @@
       color: var(--neon);
       border-radius: 50%;
       cursor: pointer;
-      font-size: 10px;
+      font-size: 12px;
       display: flex; align-items: center; justify-content: center;
       transition: all 0.15s;
       line-height: 1;
@@ -1920,7 +1922,7 @@
       line-height: 1.1;
     }
     .moon-illum {
-      font-size: 11px;
+      font-size: 12px;
       color: var(--muted);
       margin-top: 2px;
       letter-spacing: 1px;
@@ -1938,7 +1940,7 @@
       padding: 6px 8px;
     }
     .moon-key {
-      font-size: 10px;
+      font-size: 12px;
       color: var(--muted);
       letter-spacing: 1px;
       text-transform: uppercase;
@@ -2009,7 +2011,7 @@
     }
     .settings-title {
       font-family: 'Press Start 2P', monospace;
-      font-size: 10px;
+      font-size: 12px;
       color: var(--neon);
       text-shadow: 0 0 6px rgba(var(--neon-rgb), 0.4);
     }
@@ -2034,7 +2036,7 @@
     .settings-group:last-child { border-bottom: none; }
     .settings-label {
       display: block;
-      font-size: 11px;
+      font-size: 12px;
       font-weight: 600;
       color: var(--text-bright);
       margin-bottom: 10px;
@@ -2043,7 +2045,7 @@
     }
     .settings-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
     .settings-row:last-child { margin-bottom: 0; }
-    .settings-row-label { font-size: 11px; color: var(--text); }
+    .settings-row-label { font-size: 12px; color: var(--text); }
     .settings-nav-link {
       display: block;
       padding: 8px 12px;
@@ -2070,7 +2072,7 @@
     .settings-tab-btn {
       flex: 1;
       padding: 7px 8px;
-      font-size: 11px;
+      font-size: 12px;
       color: var(--muted);
       background: rgba(0,0,0,0.2);
       border: 1px solid var(--border);
@@ -2234,7 +2236,7 @@
       background: rgba(0,0,0,0.7);
       border: none;
       color: #ff5555;
-      font-size: 11px;
+      font-size: 12px;
       cursor: pointer;
       opacity: 0;
       transition: opacity 0.2s;
@@ -2277,8 +2279,8 @@
     }
     .bg-none-btn:hover { border-color: var(--neon); color: var(--neon); }
     .bg-none-btn.active { border-color: var(--neon); box-shadow: 0 0 12px rgba(var(--neon-rgb), 0.4); }
-    .bg-loading { grid-column: span 3; text-align: center; padding: 8px; font-size: 11px; color: var(--muted); }
-    .bg-error-msg { grid-column: span 3; text-align: center; padding: 6px 8px; font-size: 11px; color: #ff5555; background: rgba(255,50,50,0.1); border-radius: 6px; }
+    .bg-loading { grid-column: span 3; text-align: center; padding: 8px; font-size: 12px; color: var(--muted); }
+    .bg-error-msg { grid-column: span 3; text-align: center; padding: 6px 8px; font-size: 12px; color: #ff5555; background: rgba(255,50,50,0.1); border-radius: 6px; }
   </style>
 </head>
 
@@ -2346,11 +2348,11 @@
           <div id="bgUploadArea" class="bg-upload-area" style="margin-top:8px;">
             <div class="bg-upload-icon">ðŸ“¤</div>
             <div>Nháº¥n hoáº·c kÃ©o áº£nh vÃ o Ä‘Ã¢y Ä‘á»ƒ upload</div>
-            <div style="font-size:10px;margin-top:2px;color:var(--muted)">JPG, PNG, GIF, WebP Â· Tá»‘i Ä‘a 10MB</div>
+            <div style="font-size: 12px;margin-top:2px;color:var(--muted)">JPG, PNG, GIF, WebP Â· Tá»‘i Ä‘a 10MB</div>
             <input type="file" id="bgFileInput" accept="image/jpeg,image/png,image/gif,image/webp">
           </div>
           <div id="bgErrorMsg" class="bg-error-msg" style="display:none;margin-top:6px;"></div>
-          <div style="font-size:10px;margin-top:8px;padding:8px 10px;background:rgba(var(--neon-rgb),0.05);border:1px solid var(--border);border-radius:6px;color:var(--text);line-height:1.5;">
+          <div style="font-size: 12px;margin-top:8px;padding:8px 10px;background:rgba(var(--neon-rgb),0.05);border:1px solid var(--border);border-radius:6px;color:var(--text);line-height:1.5;">
             <div style="color:var(--neon);font-weight:600;margin-bottom:3px;">ðŸ’¡ Gá»£i Ã½ kÃ­ch thÆ°á»›c áº£nh</div>
             â€¢ Tá»‰ lá»‡ <b>16:9</b> sáº½ hiá»ƒn thá»‹ Ä‘áº¹p nháº¥t (vÃ­ dá»¥ <b>1920Ã—1080</b>, <b>2560Ã—1440</b>)<br>
             â€¢ Tá»‘i thiá»ƒu khuyáº¿n nghá»‹: <b>1280Ã—720</b> Â· Tá»‘i Ä‘a: <b>3840Ã—2160</b> (4K)<br>
@@ -2378,9 +2380,9 @@
         </div>
       </div>
       <div class="settings-group">
-        <span class="settings-label">Äá»™ Trong Suá»‘t <span style="float:right;font-weight:400;color:var(--muted);font-size:10px;"><span id="transValue">92</span>%</span></span>
+        <span class="settings-label">Äá»™ Trong Suá»‘t <span style="float:right;font-weight:400;color:var(--muted);font-size: 12px;"><span id="transValue">92</span>%</span></span>
         <input type="range" id="rangeTransparency" class="settings-range" min="0" max="100" value="92">
-        <div style="display:flex;justify-content:space-between;font-size:9px;color:var(--muted);margin-top:2px;padding:0 2px;">
+        <div style="display:flex;justify-content:space-between;font-size: 12px;color:var(--muted);margin-top:2px;padding:0 2px;">
           <span>ðŸªŸ Trong suá»‘t</span>
           <span>ðŸ·ï¸ Má» Ä‘áº·c</span>
         </div>
@@ -2424,7 +2426,7 @@
 
       <!-- Controls â€” bÃªn pháº£i, cÃ¹ng hÃ ng -->
       <div style="display:flex; align-items:center; gap:8px; flex-shrink:0;">
-        <label for="repoSelect" style="font-size:0.72rem; color:var(--muted); text-transform:uppercase; white-space:nowrap;">Repo:</label>
+        <label for="repoSelect" style="font-size: 0.85rem; color:var(--muted); text-transform:uppercase; white-space:nowrap;">Repo:</label>
         <select id="repoSelect" style="max-width:150px;"></select>
         <button id="btnReload" class="btn neon-edit" title="Reload"></button>
         <button id="btnAdd" class="btn neon-edit"></button>
@@ -3778,14 +3780,14 @@ document.querySelectorAll('.blog-card, .blog-item a, .blog-link').forEach(card =
         <div class="pkg-icon-wrap">
           ${pkg.icon
             ? `<img src="/repo-asset?repo=${encodeURIComponent(currentRepo)}&path=${encodeURIComponent(pkg.icon)}" loading="lazy" onerror="this.style.display='none'" />`
-            : '<span style="color:var(--muted);font-size:9px;">no img</span>'}
+            : '<span style="color:var(--muted);font-size: 12px;">no img</span>'}
         </div>
         <div class="pkg-info">
           <div style="display:flex;align-items:center;gap:6px;">
             <span style="font-weight:500;font-size:0.85rem;color:var(--text-bright);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;min-width:0;">${escapeHtml(pkg.name || '(chÆ°a cÃ³ tÃªn)')}</span>
-            ${pkg.featured ? '<span style="background:rgba(240,224,64,0.15);color:#f0e040;font-size:9px;padding:1px 6px;border-radius:8px;">featured</span>' : ''}
+            ${pkg.featured ? '<span style="background:rgba(240,224,64,0.15);color:#f0e040;font-size: 12px;padding:1px 6px;border-radius:8px;">featured</span>' : ''}
           </div>
-          <div style="font-size:0.7rem;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
+          <div style="font-size: 0.85rem;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
             ${escapeHtml(pkg.author || '')} ${pkg.version ? 'Â· v' + escapeHtml(pkg.version) : ''}
           </div>
         </div>
@@ -3952,7 +3954,7 @@ document.querySelectorAll('.blog-card, .blog-item a, .blog-link').forEach(card =
       <a href="/blog-post/${p.id}" class="blog-item" style="cursor:pointer;text-decoration:none;color:inherit;display:flex;">
         <span class="blog-icon">${p.icon || 'ðŸ“'}</span>
         <div class="blog-link" style="flex:1;">
-          <div class="blog-title" style="font-size:0.78rem;">${escapeHtml(p.title)}</div>
+          <div class="blog-title" style="font-size: 0.9rem;">${escapeHtml(p.title)}</div>
           <div class="blog-date">${escapeHtml(p.date || '')}</div>
         </div>
       </a>
