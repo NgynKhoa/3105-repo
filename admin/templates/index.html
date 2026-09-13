@@ -2613,7 +2613,7 @@
   <div id="toast"></div>
 
   <!-- App JS -->
-  <script src="/admin/static/app.js?v=34"></script>
+  <script src="/admin/static/app.js?v=35"></script>
   <!-- Bootstrap data -->
   <script>{{ bootstrap_js | safe }}</script>
 
@@ -3716,7 +3716,7 @@ document.querySelectorAll('.blog-card, .blog-item a, .blog-link').forEach(card =
     const itemH = 56; // .pkg-item height trong CSS
     const headerH = 60;
     const paginationH = 48;
-    const MAX_PKG = 5; // user yêu cầu: tối đa 5 packages/trang
+    const MAX_PKG = 5; // user yêu cầu: tối đa 5 packages/trang — CỐ ĐỊNH 5 (bỏ dynamic-fit co rút)
     const all = cache.packages;
     const boxH = box.clientHeight || 0;
     const availNoPag = boxH - headerH;
@@ -3724,9 +3724,11 @@ document.querySelectorAll('.blog-card, .blog-item a, .blog-link').forEach(card =
     const totalPagesIfNoPag = Math.max(1, Math.ceil(all.length / maxNoPag));
     const needPag = totalPagesIfNoPag > 1;
     const avail = needPag ? (boxH - headerH - paginationH) : availNoPag;
-    // Cap max = 5 (user yêu cầu); tối thiểu dynamic-fit nếu box quá nhỏ
-    const dynamicMax = Math.max(1, Math.floor(avail / itemH));
-    const max = Math.min(MAX_PKG, dynamicMax);
+    // CỐ ĐỊNH max = 5 (user yêu cầu); KHÔNG cap theo dynamic-fit.
+    // Nếu box quá nhỏ (dynamicMax < 5) vẫn hiện 5 — phần thừa sẽ được
+    // #packageList scroll (overflow-y: auto), pagination chia trang giúp 5
+    // packages mỗi lần.
+    const max = MAX_PKG;
     const totalPages = Math.max(1, Math.ceil(all.length / max));
     if (pageState.pkg > totalPages) pageState.pkg = totalPages;
     const start = (pageState.pkg - 1) * max;
@@ -3886,7 +3888,7 @@ document.querySelectorAll('.blog-card, .blog-item a, .blog-link').forEach(card =
     const itemH = 44; // blog-item height (compact)
     const headerH = 60; // box-header-wrap thật ~ 50px (padding 10+10 + line)
     const paginationH = 48; // blogPagination padding 10+10 + 28 button
-    const MAX_BLOG = 6; // user yêu cầu: tối đa 6 bài/trang
+    const MAX_BLOG = 6; // user yêu cầu: CỐ ĐỊNH 6 bài/trang
     const all = cache.blogPosts;
     const boxH = box.clientHeight || 0;
     // Khả dụng cho list sau khi trừ header + (pagination nếu nhiều trang)
@@ -3896,9 +3898,10 @@ document.querySelectorAll('.blog-card, .blog-item a, .blog-link').forEach(card =
     const needPag = totalPagesIfNoPag > 1;
     // Nếu cần pagination, trừ chiều cao pagination khỏi box
     const avail = needPag ? (boxH - headerH - paginationH) : availNoPag;
-    // Cap max = 5 (user yêu cầu); tối thiểu dynamic-fit nếu box quá nhỏ
-    const dynamicMax = Math.max(1, Math.floor(avail / itemH));
-    const max = Math.min(MAX_BLOG, dynamicMax);
+    // CỐ ĐỊNH max = 6 (user yêu cầu); KHÔNG cap theo dynamic-fit.
+    // Box nhỏ thì #blogList scroll (overflow-y: auto) — pagination đảm bảo
+    // mỗi lần chỉ hiện 6 bài.
+    const max = MAX_BLOG;
     const totalPages = Math.max(1, Math.ceil(all.length / max));
     if (pageState.blog > totalPages) pageState.blog = totalPages;
     const start = (pageState.blog - 1) * max;

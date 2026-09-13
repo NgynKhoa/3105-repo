@@ -489,6 +489,18 @@ def scan_files(directory: pathlib.Path, exts: set[str]) -> list[str]:
 # Routes - trang web
 # ---------------------------------------------------------------------------
 
+@app.after_request
+def add_no_cache_headers(response):
+    # Trang HTML cần luôn fresh — đặc biệt Front Repo có dynamic-fit JS
+    # chạy renderPackages/Blog với MAX_PKG/MAX_BLOG mới, nếu browser cache
+    # phiên bản cũ sẽ thấy sai số item/trang.
+    if response.content_type and 'text/html' in response.content_type:
+        response.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate, max-age=0'
+        response.headers['Pragma'] = 'no-cache'
+        response.headers['Expires'] = '0'
+    return response
+
+
 @app.route("/")
 def index():
     bootstrap_js = (
@@ -499,7 +511,7 @@ def index():
     return render_template(
         "index.html",
         bootstrap_js=bootstrap_js,
-        cache_version=25,
+        cache_version=26,
     )
 
 
