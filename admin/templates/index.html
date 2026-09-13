@@ -970,12 +970,15 @@
       justify-content: space-between;
       gap: 8px;
       font-size: 0.72rem;
-      color: rgba(122,154,134,0.45);
-      /* Sticky Ä‘á»ƒ pagination LUÃ”N á»Ÿ dÆ°á»›i cÃ¹ng packagesBox khi user scroll */
+      color: var(--muted, rgba(122,154,134,0.65));
       position: sticky;
       bottom: 0;
       z-index: 2;
-      background: var(--box-bg, #0e1320);
+      /* Dùng --panel-alt đã được applyTransparency cập nhật theo slider
+         + theo dark/light mode. backdrop-filter tạo hiệu ứng kính mờ. */
+      background: var(--panel-alt, #0e1320);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
       flex-shrink: 0;
     }
     #pkgPagination.hidden { display: none; }
@@ -1717,12 +1720,15 @@
       justify-content: space-between;
       gap: 8px;
       font-size: 0.72rem;
-      color: rgba(122,154,134,0.45);
-      /* Sticky Ä‘á»ƒ pagination LUÃ”N á»Ÿ dÆ°á»›i cÃ¹ng blog-section khi user scroll */
+      color: var(--muted, rgba(122,154,134,0.65));
       position: sticky;
       bottom: 0;
       z-index: 2;
-      background: var(--box-bg, #0e1320);
+      /* Dùng --panel-alt đã được applyTransparency cập nhật theo slider
+         + theo dark/light mode. backdrop-filter tạo hiệu ứng kính mờ. */
+      background: var(--panel-alt, #0e1320);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
       flex-shrink: 0;
     }
       gap: 8px;
