@@ -1690,7 +1690,11 @@
       border-top: 1px solid var(--border);
       display: flex;
       align-items: center;
-      justify-content: flex-end;
+      justify-content: space-between;
+      gap: 8px;
+      font-size: 0.72rem;
+      color: rgba(122,154,134,0.45);
+    }
       gap: 8px;
       font-size: 0.72rem;
       color: rgba(122,154,134,0.45);
@@ -2445,11 +2449,11 @@
         <div id="pkgPagination" class="hidden">
           <span id="pkgPaginationInfo"></span>
           <div class="pages">
-            <button id="pkgPagePrev" class="page-nav" title="Trang trước" aria-label="Trang trước">
+            <button id="pkgPagePrev" class="page-nav" data-pkg-nav="prev" title="Trang trước" aria-label="Trang trước">
               <svg viewBox="0 0 8 8" xmlns="http://www.w3.org/2000/svg"><path d="M5 1 L1.5 4 L5 7 Z"/></svg>
             </button>
             <span id="pkgPageNumbers"></span>
-            <button id="pkgPageNext" class="page-nav" title="Trang sau" aria-label="Trang sau">
+            <button id="pkgPageNext" class="page-nav" data-pkg-nav="next" title="Trang sau" aria-label="Trang sau">
               <svg viewBox="0 0 8 8" xmlns="http://www.w3.org/2000/svg"><path d="M3 1 L6.5 4 L3 7 Z"/></svg>
             </button>
           </div>
@@ -2468,12 +2472,13 @@
         </div>
         <div id="blogList" class="blog-list"></div>
         <div id="blogPagination">
+          <span id="blogPaginationInfo"></span>
           <div class="pages">
-            <button id="blogPagePrev" class="page-nav" title="Trang trước" aria-label="Trang trước">
+            <button id="blogPagePrev" class="page-nav" data-blog-nav="prev" title="Trang trước" aria-label="Trang trước">
               <svg viewBox="0 0 8 8" xmlns="http://www.w3.org/2000/svg"><path d="M5 1 L1.5 4 L5 7 Z"/></svg>
             </button>
             <span id="blogPageNumbers"></span>
-            <button id="blogPageNext" class="page-nav" title="Trang sau" aria-label="Trang sau">
+            <button id="blogPageNext" class="page-nav" data-blog-nav="next" title="Trang sau" aria-label="Trang sau">
               <svg viewBox="0 0 8 8" xmlns="http://www.w3.org/2000/svg"><path d="M3 1 L6.5 4 L3 7 Z"/></svg>
             </button>
           </div>
@@ -2608,7 +2613,7 @@
   <div id="toast"></div>
 
   <!-- App JS -->
-  <script src="/admin/static/app.js?v=32"></script>
+  <script src="/admin/static/app.js?v=33"></script>
   <!-- Bootstrap data -->
   <script>{{ bootstrap_js | safe }}</script>
 
@@ -3785,8 +3790,8 @@ document.querySelectorAll('.blog-card, .blog-item a, .blog-link').forEach(card =
           for (let p = sp; p <= ep; p++) {
             const b = document.createElement('button');
             b.className = `page-num ${p === pageState.pkg ? 'active' : ''}`;
+            b.dataset.pkgPage = p;
             b.textContent = p;
-            b.addEventListener('click', () => { pageState.pkg = p; renderPackages(); });
             pagNums.appendChild(b);
           }
         }
@@ -3798,14 +3803,32 @@ document.querySelectorAll('.blog-card, .blog-item a, .blog-link').forEach(card =
   function wirePkgPagination() {
     if (pkgWired) return;
     pkgWired = true;
-    const btnPrev = document.getElementById('pkgPagePrev');
-    const btnNext = document.getElementById('pkgPageNext');
-    if (btnPrev) btnPrev.addEventListener('click', () => {
-      if (pageState.pkg > 1) { pageState.pkg--; renderPackages(); }
-    });
-    if (btnNext) btnNext.addEventListener('click', () => {
-      const totalPages = Math.max(1, Math.ceil(cache.packages.length / Math.max(1, fitCount(document.getElementById('packagesBox'), 56, 92))));
-      if (pageState.pkg < totalPages) { pageState.pkg++; renderPackages(); }
+    // Dùng event delegation trên #pkgPagination để đảm bảo totalPages được
+    // tính từ renderPackages() (logic dynamic-fit: trừ paginationH) thay vì
+    // dùng fitCount() riêng trong handler (đã deprecated, gây bug hiển thị
+    // sai số trang khi click Prev/Next).
+    const pag = document.getElementById('pkgPagination');
+    if (!pag) return;
+    pag.addEventListener('click', (e) => {
+      const navBtn = e.target.closest('[data-pkg-nav]');
+      const numBtn = e.target.closest('[data-pkg-page]');
+      if (navBtn) {
+        const nav = navBtn.dataset.pkgNav;
+        if (nav === 'prev' && pageState.pkg > 1) {
+          pageState.pkg--;
+          renderPackages();
+        } else if (nav === 'next') {
+          // totalPages tính lại từ renderPackages() (sẽ clamp)
+          pageState.pkg++;
+          renderPackages();
+        }
+      } else if (numBtn) {
+        const p = parseInt(numBtn.dataset.pkgPage, 10);
+        if (!Number.isNaN(p) && p !== pageState.pkg) {
+          pageState.pkg = p;
+          renderPackages();
+        }
+      }
     });
   }
 
@@ -3860,17 +3883,19 @@ document.querySelectorAll('.blog-card, .blog-item a, .blog-link').forEach(card =
     const itemH = 44; // blog-item height (compact)
     const headerH = 60; // box-header-wrap thật ~ 50px (padding 10+10 + line)
     const paginationH = 48; // blogPagination padding 10+10 + 28 button
+    const MAX_BLOG = 5; // user yêu cầu: tối đa 5 bài/trang
     const all = cache.blogPosts;
     const boxH = box.clientHeight || 0;
     // Khả dụng cho list sau khi trừ header + (pagination nếu nhiều trang)
-    // Tính total giả định chưa có pagination: xem nếu chia 1 lần thì cần bao nhiêu pag
     const availNoPag = boxH - headerH;
     const maxNoPag = Math.max(1, Math.floor(availNoPag / itemH));
     const totalPagesIfNoPag = Math.max(1, Math.ceil(all.length / maxNoPag));
     const needPag = totalPagesIfNoPag > 1;
     // Nếu cần pagination, trừ chiều cao pagination khỏi box
     const avail = needPag ? (boxH - headerH - paginationH) : availNoPag;
-    const max = Math.max(1, Math.floor(avail / itemH));
+    // Cap max = 5 (user yêu cầu); tối thiểu dynamic-fit nếu box quá nhỏ
+    const dynamicMax = Math.max(1, Math.floor(avail / itemH));
+    const max = Math.min(MAX_BLOG, dynamicMax);
     const totalPages = Math.max(1, Math.ceil(all.length / max));
     if (pageState.blog > totalPages) pageState.blog = totalPages;
     const start = (pageState.blog - 1) * max;
@@ -3914,8 +3939,8 @@ document.querySelectorAll('.blog-card, .blog-item a, .blog-link').forEach(card =
           for (let p = sp; p <= ep; p++) {
             const b = document.createElement('button');
             b.className = `page-num ${p === pageState.blog ? 'active' : ''}`;
+            b.dataset.blogPage = p;
             b.textContent = p;
-            b.addEventListener('click', () => { pageState.blog = p; renderBlog(); });
             pagNums.appendChild(b);
           }
         }
@@ -3923,19 +3948,34 @@ document.querySelectorAll('.blog-card, .blog-item a, .blog-link').forEach(card =
     }
   }
 
-  // Wire prev/next 1 lần (idempotent)
+  // Wire prev/next 1 lần (idempotent) — dùng event delegation để tránh bug
+  // hiển thị sai số trang (cũ: tính totalPages sai do dùng headerH=92 + không
+  // trừ paginationH → click Next có thể nhảy sang totalPages cao hơn thực tế)
   let blogWired = false;
   function wireBlogPagination() {
     if (blogWired) return;
     blogWired = true;
-    const btnPrev = document.getElementById('blogPagePrev');
-    const btnNext = document.getElementById('blogPageNext');
-    if (btnPrev) btnPrev.addEventListener('click', () => {
-      if (pageState.blog > 1) { pageState.blog--; renderBlog(); }
-    });
-    if (btnNext) btnNext.addEventListener('click', () => {
-      const totalPages = Math.max(1, Math.ceil(cache.blogPosts.length / Math.max(1, fitCount(document.getElementById('blog-section'), 44, 92))));
-      if (pageState.blog < totalPages) { pageState.blog++; renderBlog(); }
+    const pag = document.getElementById('blogPagination');
+    if (!pag) return;
+    pag.addEventListener('click', (e) => {
+      const navBtn = e.target.closest('[data-blog-nav]');
+      const numBtn = e.target.closest('[data-blog-page]');
+      if (navBtn) {
+        const nav = navBtn.dataset.blogNav;
+        if (nav === 'prev' && pageState.blog > 1) {
+          pageState.blog--;
+          renderBlog();
+        } else if (nav === 'next') {
+          pageState.blog++;
+          renderBlog();
+        }
+      } else if (numBtn) {
+        const p = parseInt(numBtn.dataset.blogPage, 10);
+        if (!Number.isNaN(p) && p !== pageState.blog) {
+          pageState.blog = p;
+          renderBlog();
+        }
+      }
     });
   }
 
