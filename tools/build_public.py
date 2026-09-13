@@ -48,7 +48,7 @@ REPOS = ROOT / "repositories"
 
 # Cache version cho public build — bump khi Front Repo thay đổi để bust browser cache.
 # KHÔNG cần sync với admin cache_version; 2 hệ thống hoàn toàn độc lập.
-_CACHE_VERSION = 4
+_CACHE_VERSION = 5
 
 
 # ---------------------------------------------------------------------------
@@ -202,19 +202,61 @@ def build(repo_slug: str = "demo", clean: bool = True) -> int:
     # Patch JS template literal `/repo-asset?repo=...&path=...` → relative
     # `<img src="/repo-asset?...">` trong dynamicFit render packages.
     # Public build đã mirror assets/ của repo vào public/assets/ → đổi path
-    # sang `./assets/<path>` cho trực tiếp, không qua Flask endpoint.
+    # sang `./assets/<basename>` cho trực tiếp, không qua Flask endpoint.
+    # pkg.icon có thể là path tương đối ("assets/icon/test.png") hoặc chỉ
+    # basename ("test.png") → lấy basename qua split('/').pop().
     html = html.replace(
         '<img src="/repo-asset?repo=${encodeURIComponent(currentRepo)}&path=${encodeURIComponent(pkg.icon)}"',
-        '<img src="${"./assets/" + encodeURIComponent(pkg.icon)}"',
+        '<img src="${"./assets/" + encodeURIComponent((pkg.icon || "").split("/").pop())}"',
     )
     # Ghi file bằng bytes mode để newline JSON đã escape KHÔNG bị convert
     # thành platform newline (Windows = \r\n làm vỡ JSON string).
     (PUBLIC / "index.html").write_bytes(html.encode("utf-8"))
     log(f"✓ Render index.html ({len(html):,} bytes, cache v={_CACHE_VERSION})")
 
-    # 3) Copy static files (admin/static → public/static)
+    # 3) Copy static files (admin/static → public/static) rồi patch app.js
+    # để mọi URL `/repo-asset?repo=...&path=...` → `./assets/<basename>`.
+    # pkg.icon có thể là path đầy đủ ("assets/icon/test.png") hoặc basename.
     n = copy_tree(ADMIN / "static", PUBLIC / "static")
-    log(f"✓ Mirror admin/static → public/static ({n} files)")
+    appjs = PUBLIC / "static" / "app.js"
+    if appjs.exists():
+        text = appjs.read_text(encoding="utf-8")
+        before = text.count("/repo-asset")
+        # Match cả 2 dạng:
+        #   /repo-asset?repo=${encodeURIComponent(repo)}&path=${encodeURIComponent(iconPath)}
+        #   /repo-asset?repo=${state.currentRepo}&path=${encodeURIComponent(path)}
+        text = re.sub(
+            r'<img src="/repo-asset\?repo=\$\{encodeURIComponent\(([^)]+)\)\}&path=\$\{encodeURIComponent\(([^)]+)\)\}"',
+            lambda m: f'<img src="${{"./assets/" + encodeURIComponent((({m.group(2)} || "").split("/").pop()))}}"',
+            text,
+        )
+        text = re.sub(
+            r'<img src="/repo-asset\?repo=\$\{(state\.currentRepo)\}&path=\$\{encodeURIComponent\(([^)]+)\)\}"',
+            lambda m: f'<img src="${{"./assets/" + encodeURIComponent((({m.group(2)} || "").split("/").pop()))}}"',
+            text,
+        )
+        # Cuối cùng, nếu vẫn còn /repo-asset (chỗ state.currentRepo không wrap encodeURIComponent
+        # và đã được convert thành object) → fallback dùng state.currentRepo?.name || "demo"
+        text = text.replace(
+            '<img src="/repo-asset?repo=${state.currentRepo}&path=${encodeURIComponent(path)}"',
+            '<img src="${"./assets/" + encodeURIComponent((path || "").split("/").pop())}"',
+        )
+        text = text.replace(
+            '<img src="/repo-asset?repo=${state.currentRepo}&path=${encodeURIComponent(pkg.icon)}"',
+            '<img src="${"./assets/" + encodeURIComponent((pkg.icon || "").split("/").pop())}"',
+        )
+        # Fallback cho mọi URL /repo-asset còn sót
+        text = re.sub(
+            r'<img src="/repo-asset\?[^"]*"',
+            '<img src="${"./assets/" + encodeURIComponent(icon.split("/").pop())}"',
+            text,
+        )
+        after = text.count("/repo-asset")
+        appjs.write_text(text, encoding="utf-8")
+        log(f"✓ Mirror admin/static → public/static ({n} files, "
+            f"patched app.js: {before}→{after} /repo-asset URLs)")
+    else:
+        log(f"✓ Mirror admin/static → public/static ({n} files)")
 
     # 4) Snapshot repo.json
     (PUBLIC / "repo.json").write_text(
