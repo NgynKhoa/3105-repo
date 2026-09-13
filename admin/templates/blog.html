@@ -945,14 +945,19 @@
 
     async function loadPosts() {
       try {
-        // Try localStorage first (from dashboard edits), then API
-        const savedPosts = localStorage.getItem('repo_blogPosts');
-        if (savedPosts) {
-          allPosts = JSON.parse(savedPosts);
+        // GH Pages / public mode: dùng data bake-in trong window.PUBLIC_REPO_DATA
+        if (window.PUBLIC_MODE && window.PUBLIC_REPO_DATA) {
+          allPosts = window.PUBLIC_REPO_DATA.blog || [];
         } else {
-          const res = await fetch('/api/blog/posts');
-          const data = await res.json();
-          allPosts = data.posts;
+          // Try localStorage first (from dashboard edits), then API
+          const savedPosts = localStorage.getItem('repo_blogPosts');
+          if (savedPosts) {
+            allPosts = JSON.parse(savedPosts);
+          } else {
+            const res = await fetch('/api/blog/posts');
+            const data = await res.json();
+            allPosts = data.posts;
+          }
         }
         renderBlog();
       } catch (e) {
@@ -961,9 +966,15 @@
     }
 
     function getUrlPostId() {
-      // Accept both /blog/<id> and /blog-post/<id>
-      const m = location.pathname.match(/\/blog(?:-post)?\/(\d+)/);
-      return m ? parseInt(m[1]) : null;
+      // Accept 3 dạng URL:
+      //  - /blog-post/<id>         (Flask admin route, local)
+      //  - /blog/<id>              (Flask admin alias)
+      //  - blog.html?id=<id>       (GH Pages — Flask không có, query string thay thế)
+      let m = location.pathname.match(/\/blog(?:-post)?\/(\d+)/);
+      if (m) return parseInt(m[1]);
+      const qs = new URLSearchParams(location.search);
+      const id = qs.get('id');
+      return id ? parseInt(id, 10) : null;
     }
 
     function renderBlog() {

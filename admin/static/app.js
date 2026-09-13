@@ -371,6 +371,40 @@ async function loadRepo() {
   $('#pkgSearchInput').value = '';
 
   try {
+    // GH Pages / public mode: dùng data bake-in trong window.PUBLIC_REPO_DATA
+    if (window.PUBLIC_MODE && window.PUBLIC_REPO_DATA) {
+      const d = window.PUBLIC_REPO_DATA;
+      state.repoMeta = {
+        identifier: d.identifier || '',
+        name: d.name || '',
+        description: d.description || '',
+        icon: d.icon || '',
+        accentColor: d.accentColor || '#FF3B30',
+      };
+      state.sharedScreens = d._shared_screens || window.DEFAULT_SCREENSHOTS || [];
+      state.sharedOS = d._shared_os_rules || window.DEFAULT_OS_RULES || [];
+      state.packagesMeta = [];
+      state.packages = (d.packages || []).map(normalizePackage);
+      state.assets = []; // public mode không có file listing
+      state.blogPosts = (d.blog || []);
+      // Apply accent color từ meta để mọi nơi dùng CSS var --neon đồng bộ
+      if (state.repoMeta.accentColor) {
+        const c = state.repoMeta.accentColor;
+        document.documentElement.style.setProperty('--neon', c);
+      }
+      // Fill logo text + meta inputs từ bake-in data
+      if (state.repoMeta.name && document.getElementById('logo-text')) {
+        document.getElementById('logo-text').textContent = state.repoMeta.name;
+      }
+      renderMeta();
+      renderPackageList();
+      // Re-apply Boxes layout (nếu có) SAU khi packages render xong
+      if (typeof window.__reapplyLayout === 'function') {
+        window.__reapplyLayout();
+      }
+      return;
+    }
+
     // Load packages + meta
     const data = await api(`/api/repo/${repo}/packages`);
     state.repoMeta = data.repoMeta || {};
@@ -406,8 +440,18 @@ function updateAvatar() {
   if (!el) return;
   const iconPath = state.repoMeta.icon;
   if (iconPath) {
-    const repo = state.currentRepo;
-    el.innerHTML = `<img src="/repo-asset?repo=${encodeURIComponent(repo)}&path=${encodeURIComponent(iconPath)}" alt="repo icon" style="width:100%;height:100%;object-fit:cover;display:block;" onerror="this.style.display='none';this.nextElementSibling&&(this.nextElementSibling.style.display='')"/>` +
+    // GH Pages / public mode: load trực tiếp từ ./assets/<basename>
+    // vì Flask /repo-asset endpoint không tồn tại trên static hosting.
+    // Local admin: dùng /repo-asset?repo=...&path=... qua Flask.
+    let imgSrc;
+    if (window.PUBLIC_MODE) {
+      const basename = (iconPath.split('assets/').pop() || iconPath.split('/').pop() || '');
+      imgSrc = './assets/' + basename;
+    } else {
+      const repo = state.currentRepo;
+      imgSrc = `/repo-asset?repo=${encodeURIComponent(repo)}&path=${encodeURIComponent(iconPath)}`;
+    }
+    el.innerHTML = `<img src="${imgSrc}" alt="repo icon" style="width:100%;height:100%;object-fit:cover;display:block;" onerror="this.style.display='none';this.nextElementSibling&&(this.nextElementSibling.style.display='')"/>` +
       `<svg viewBox="0 0 52 52" xmlns="http://www.w3.org/2000/svg" style="display:none;position:absolute;inset:0;width:100%;height:100%;">` +
       `<rect x="0" y="0" width="52" height="52" rx="4" fill="rgba(10,14,26,0.95)"/>` +
       `<text x="26" y="34" text-anchor="middle" font-family="'Press Start 2P',monospace" font-size="12" fill="#39ff14">?</text>` +

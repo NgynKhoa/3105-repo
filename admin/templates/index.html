@@ -786,6 +786,20 @@
       grid-column: 1 / -1;
     }
 
+    /* RBAC: khoá meta box cho user thường (read-only).
+       Làm mờ + tắt pointer events + readonly attribute. */
+    #metaSection.meta-readonly {
+      opacity: 0.55;
+      pointer-events: none;
+      user-select: none;
+    }
+    #metaSection.meta-readonly input,
+    #metaSection.meta-readonly select,
+    #metaSection.meta-readonly textarea {
+      cursor: not-allowed;
+      background: var(--panel-alt);
+    }
+
     /* Accent color input — mono font */
     #meta_accentColor {
       font-family: 'Press Start 2P', monospace;
@@ -2322,7 +2336,12 @@
       </div>
       <div class="settings-group">
         <span class="settings-label">Điều hướng nhanh</span>
-        <a href="/dashboard" class="settings-nav-link">⚙️ Admin Dashboard</a>
+        <!--
+          Admin Dashboard link chỉ hiện cho CHỦ REPO (window.PUBLIC_REPO_OWNER=true).
+          User thường (read-only) sẽ thấy ẩn — vì không có backend Flask /dashboard
+          trên GH Pages để xử lý, link sẽ 404. JS dưới đây set display.
+        -->
+        <a href="/dashboard" class="settings-nav-link" id="navAdmin" data-owner-only="1">⚙️ Admin Dashboard</a>
         <a href="/blog" class="settings-nav-link">📝 Blog</a>
       </div>
     </div>
@@ -2376,7 +2395,12 @@
       <section class="box" data-box="meta">
         <div class="section-title">Thông tin chung</div>
         <div class="section-copy">Sửa trực tiếp — sẽ ghi vào repo.yml khi bấm Lưu.</div>
-        <div class="field-row">
+        <!--
+          Toàn bộ field meta sẽ bị khoá (readonly) cho user thường qua JS,
+          đồng thời áp dụng class .meta-readonly để làm mờ + không cho click.
+          Chỉ chủ repo (window.PUBLIC_REPO_OWNER=true) mới sửa được.
+        -->
+        <div class="field-row" id="metaSection">
           <div class="field">
             <label for="meta_identifier">Identifier (com.xxx)</label>
             <input id="meta_identifier" />
@@ -2586,7 +2610,7 @@
   <!-- Bootstrap data (PHẢI trước app.js để window.PUBLIC_MODE được set trước khi api() chạy) -->
   <script>{{ bootstrap_js | safe }}</script>
   <!-- App JS -->
-  <script src="/admin/static/app.js?v=44"></script>
+  <script src="/admin/static/app.js?v=45"></script>
 
   <script>
     /* ========================================
@@ -3670,6 +3694,14 @@ document.querySelectorAll('.blog-card, .blog-item a, .blog-link').forEach(card =
   // === Packages ===
   async function loadPackages() {
     if (!currentRepo) return;
+    // GH Pages / public mode: data đã bake-in trong window.PUBLIC_REPO_DATA
+    if (window.PUBLIC_MODE && window.PUBLIC_REPO_DATA) {
+      cache.repo = currentRepo;
+      cache.packages = (window.PUBLIC_REPO_DATA.packages || []).filter(p => p && p.name);
+      pageState.pkg = 1;
+      console.log('[public] loadPackages from bake-in: total=' + cache.packages.length);
+      return;
+    }
     try {
       const res = await fetch(`/api/repo/${encodeURIComponent(currentRepo)}/packages`);
       const data = await res.json();
@@ -3710,6 +3742,13 @@ document.querySelectorAll('.blog-card, .blog-item a, .blog-link').forEach(card =
     if (currentRepo) window.__frontRepoName = currentRepo;
     list.innerHTML = shown.map(pkg => {
       const idEsc = escapeHtml(pkg.identifier || '');
+      // Nút Sửa/Xóa chỉ hiện cho CHỦ REPO. User thường (read-only)
+      // không có backend Flask /api/repo/.../packages để xử lý, ẩn luôn.
+      const ownerActions = (window.PUBLIC_REPO_OWNER ? `
+        <div class="pkg-actions" style="flex-shrink:0;display:flex;gap:4px;">
+          <button class="btn btn-xs neon-edit" data-action="edit" data-id="${idEsc}" title="Sửa package ${idEsc}">Sửa</button>
+          <button class="btn btn-xs neon-delete" data-action="delete" data-id="${idEsc}" title="Xóa package ${idEsc}">✕</button>
+        </div>` : '');
       return `
       <div class="pkg-item" data-id="${idEsc}">
         <div class="pkg-icon-wrap">
@@ -3725,11 +3764,7 @@ document.querySelectorAll('.blog-card, .blog-item a, .blog-link').forEach(card =
           <div style="font-size: 0.85rem;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
             ${escapeHtml(pkg.author || '')} ${pkg.version ? '· v' + escapeHtml(pkg.version) : ''}
           </div>
-        </div>
-        <div class="pkg-actions" style="flex-shrink:0;display:flex;gap:4px;">
-          <button class="btn btn-xs neon-edit" data-action="edit" data-id="${idEsc}" title="Sửa package ${idEsc}">Sửa</button>
-          <button class="btn btn-xs neon-delete" data-action="delete" data-id="${idEsc}" title="Xóa package ${idEsc}">✕</button>
-        </div>
+        </div>${ownerActions}
       </div>
     `;}).join('');
     // Wire nút Sửa/Xóa (idempotent qua delegation)
@@ -3847,6 +3882,14 @@ document.querySelectorAll('.blog-card, .blog-item a, .blog-link').forEach(card =
 
   // === Blog ===
   async function loadBlog() {
+    // GH Pages / public mode: data đã bake-in
+    if (window.PUBLIC_MODE && window.PUBLIC_REPO_DATA) {
+      cache.blogPosts = (window.PUBLIC_REPO_DATA.blog || []);
+      pageState.blog = 1;
+      console.log('[public] loadBlog from bake-in: total=' + cache.blogPosts.length
+        + ' ids=' + cache.blogPosts.map(p => p.id).join(','));
+      return;
+    }
     try {
       const res = await fetch('/api/blog/posts');
       const data = await res.json();
@@ -3880,8 +3923,13 @@ document.querySelectorAll('.blog-card, .blog-item a, .blog-link').forEach(card =
     if (pageState.blog > totalPages) pageState.blog = totalPages;
     const start = (pageState.blog - 1) * max;
     const shown = all.slice(start, start + max);
+    // Link sang trang Blog detail:
+    //  - Local admin (/blog-post/<id>) → Flask endpoint trả HTML.
+    //  - Public mode (GH Pages) → ./blog.html?id=<id> vì Flask không có.
+    //    blog.html tự đọc ?id= để render bài viết.
+    const blogLink = (p) => (window.PUBLIC_MODE ? `./blog.html?id=${encodeURIComponent(p.id)}` : `/blog-post/${encodeURIComponent(p.id)}`);
     list.innerHTML = shown.map(p => `
-      <a href="/blog-post/${p.id}" class="blog-item" style="cursor:pointer;text-decoration:none;color:inherit;display:flex;">
+      <a href="${blogLink(p)}" class="blog-item" style="cursor:pointer;text-decoration:none;color:inherit;display:flex;">
         <span class="blog-icon">${p.icon || '📝'}</span>
         <div class="blog-link" style="flex:1;">
           <div class="blog-title" style="font-size: 0.9rem;">${escapeHtml(p.title)}</div>
@@ -3992,10 +4040,15 @@ document.querySelectorAll('.blog-card, .blog-item a, .blog-link').forEach(card =
     // Blog load trước (không phụ thuộc repo)
     await loadBlog();
 
-    // Lấy repo mặc định: ưu tiên localStorage('currentRepo') → /api/repositories[0]
+    // Lấy repo mặc định:
+    //  - Public mode (GH Pages): dùng slug từ window.PUBLIC_REPO_SLUG
+    //  - Local admin: ưu tiên localStorage('currentRepo') → /api/repositories[0]
     // /api/repositories trả { repositories: [...], sources: [...] } (object)
     const saved = (() => { try { return localStorage.getItem('currentRepo'); } catch (e) { return null; } })();
-    if (saved) {
+    if (window.PUBLIC_MODE && window.PUBLIC_REPO_SLUG) {
+      // GH Pages: repo slug được bake-in, không cần fetch API
+      currentRepo = window.PUBLIC_REPO_SLUG;
+    } else if (saved) {
       currentRepo = saved;
     } else {
       try {
@@ -4038,6 +4091,34 @@ document.querySelectorAll('.blog-card, .blog-item a, .blog-link').forEach(card =
     document.addEventListener('DOMContentLoaded', boot);
   } else {
     boot();
+  }
+
+  // === RBAC: áp dụng khoá/ẩn UI theo window.PUBLIC_REPO_OWNER ===
+  // - Owner (true): hiện Admin link, Sửa/Xóa pkg (render qua template), meta editable
+  // - User thường (false): ẩn Admin link, ẩn Sửa/Xóa, meta readonly + mờ
+  // Áp dụng SỚM (không đợi boot) để tránh flash unhidden UI.
+  function applyRbac() {
+    const isOwner = window.PUBLIC_REPO_OWNER === true;
+    // 1) Ẩn/hiện các element có data-owner-only
+    document.querySelectorAll('[data-owner-only="1"]').forEach(el => {
+      el.style.display = isOwner ? '' : 'none';
+    });
+    // 2) Khoá meta section cho user thường
+    const meta = document.getElementById('metaSection');
+    if (meta) {
+      if (isOwner) {
+        meta.classList.remove('meta-readonly');
+        meta.querySelectorAll('input, select, textarea').forEach(el => el.removeAttribute('readonly'));
+      } else {
+        meta.classList.add('meta-readonly');
+        meta.querySelectorAll('input, select, textarea').forEach(el => el.setAttribute('readonly', 'readonly'));
+      }
+    }
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', applyRbac);
+  } else {
+    applyRbac();
   }
 })();
 

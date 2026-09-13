@@ -48,7 +48,7 @@ REPOS = ROOT / "repositories"
 
 # Cache version cho public build — bump khi Front Repo thay đổi để bust browser cache.
 # KHÔNG cần sync với admin cache_version; 2 hệ thống hoàn toàn độc lập.
-_CACHE_VERSION = 6
+_CACHE_VERSION = 8
 
 
 # ---------------------------------------------------------------------------
@@ -77,7 +77,7 @@ def copy_tree(src: Path, dst: Path, excludes: tuple[str, ...] = (".DS_Store",)) 
     return n
 
 
-def render_index_html(repo_slug: str, repo_data: dict[str, Any]) -> str:
+def render_index_html(repo_slug: str, repo_data: dict[str, Any], owner: bool = False) -> str:
     """Render admin/templates/index.html với bootstrap data baked-in.
 
     Inject 1 <script> ngay sau <head>:
@@ -113,6 +113,7 @@ def render_index_html(repo_slug: str, repo_data: dict[str, Any]) -> str:
     bootstrap = (
         f"window.PUBLIC_REPO_SLUG = {json.dumps(repo_slug)};\n"
         f"window.PUBLIC_REPO_DATA = {repo_json};\n"
+        f"window.PUBLIC_REPO_OWNER = {json.dumps(bool(owner))};\n"
         f"window.PUBLIC_MODE = true;  // dùng data tĩnh thay vì fetch /api/*\n"
     )
     # Replace cụm {{ bootstrap_js | safe }} (Flask template) bằng script tag.
@@ -139,7 +140,7 @@ def render_index_html(repo_slug: str, repo_data: dict[str, Any]) -> str:
 # Build
 # ---------------------------------------------------------------------------
 
-def build(repo_slug: str = "demo", clean: bool = True) -> int:
+def build(repo_slug: str = "demo", clean: bool = True, owner: bool = False) -> int:
     if clean and PUBLIC.exists():
         # Xoá mọi thứ trừ README + .nojekyll + 404.html
         for f in PUBLIC.iterdir():
@@ -161,7 +162,7 @@ def build(repo_slug: str = "demo", clean: bool = True) -> int:
     log(f"✓ Load {repo_yml.name} (keys: {list(repo_data.keys())})")
 
     # 2) Render index.html
-    html = render_index_html(repo_slug, repo_data)
+    html = render_index_html(repo_slug, repo_data, owner=owner)
     # Patch hardcoded /admin/static/* → /static/* (chỉ áp dụng cho public build).
     # Dùng relative path `./static/` thay vì absolute `/static/` vì GitHub Pages
     # thường serve ở subpath (vd /3105-repo/) — absolute path sẽ 404.
@@ -286,6 +287,54 @@ def build(repo_slug: str = "demo", clean: bool = True) -> int:
             copied += 1
     log(f"✓ Mirror referenced assets ({copied} files copied từ {src_assets.name}/)")
 
+    # 6) Render blog.html (trang bài viết chi tiết) cho public mode.
+    # User click blog item trên public site → sang ./blog.html?id=<id>
+    # vì Flask /blog-post/<id> không có trên GH Pages.
+    blog_html_src = ADMIN / "templates" / "blog.html"
+    if blog_html_src.exists():
+        blog_html = blog_html_src.read_text(encoding="utf-8")
+        # Inject PUBLIC_MODE + PUBLIC_REPO_DATA bootstrap đầu trang
+        # (loadPosts() cần window.PUBLIC_REPO_DATA.blog để render).
+        # Check bằng <script>PUBLIC_MODE để tránh false-positive với comment
+        # trong source (vd "// GH Pages: window.PUBLIC_MODE...").
+        if "<script>window.PUBLIC_MODE" not in blog_html:
+            # Tái tạo bootstrap từ repo_data (đã load ở bước 1).
+            # Escape JSON string an toàn: dùng json.dumps đã chuẩn hoá.
+            blog_bootstrap = (
+                f"window.PUBLIC_REPO_SLUG = {json.dumps(repo_slug)};\n"
+                f"window.PUBLIC_REPO_DATA = {json.dumps(repo_data, ensure_ascii=False)};\n"
+                f"window.PUBLIC_REPO_OWNER = {json.dumps(bool(owner))};\n"
+                f"window.PUBLIC_MODE = true;\n"
+            )
+            blog_html = blog_html.replace(
+                "</head>",
+                f"<script>{blog_bootstrap}</script>\n</head>",
+                1,
+            )
+        # Patch URLs tương tự index.html
+        blog_html = re.sub(r"/admin/static/", lambda _m: "./static/", blog_html)
+        if "<base" not in blog_html.lower():
+            blog_html = blog_html.replace(
+                "<head>",
+                '<head>\n  <base href="./">',
+                1,
+            )
+        blog_html = re.sub(r'(href="|src=")/(static|assets)/', _to_relative, blog_html)
+        # Patch /api/* fetch sang noop (không tồn tại trên GH Pages)
+        blog_html = blog_html.replace(
+            "fetch('/api/blog/posts')",
+            "(window.PUBLIC_MODE ? Promise.resolve({posts: (window.PUBLIC_REPO_DATA?.blog || [])}) : fetch('/api/blog/posts'))",
+        )
+        # Link trong blog list: /blog-post/X → ./blog.html?id=X ở public mode
+        blog_html = blog_html.replace(
+            '<a href="/blog-post/${p.id}"',
+            '<a href="${window.PUBLIC_MODE ? `./blog.html?id=${p.id}` : `/blog-post/${p.id}`}"',
+        )
+        (PUBLIC / "blog.html").write_text(blog_html, encoding="utf-8")
+        log("✓ Render blog.html (public mode)")
+    else:
+        log("⚠ blog.html not found, skipping")
+
     log("✅ Build xong. Test: cd public && python -m http.server 8000")
     return 0
 
@@ -319,8 +368,12 @@ def main() -> int:
     p = argparse.ArgumentParser(description="Build public/ read-only site cho GitHub Pages")
     p.add_argument("--repo", default="demo", help="slug repo trong repositories/ (default: demo)")
     p.add_argument("--no-clean", action="store_true", help="Không xoá public/ trước khi build")
+    p.add_argument("--owner", action="store_true",
+                   help="Đánh dấu build này là của chủ repo: hiện theme/shadow/logo color "
+                        "picker, Admin Dashboard link, nút Sửa/Xóa packages, cho phép "
+                        "sửa Thông tin chung. Mặc định KHÔNG bật → user thường chỉ xem.")
     args = p.parse_args()
-    return build(repo_slug=args.repo, clean=not args.no_clean)
+    return build(repo_slug=args.repo, clean=not args.no_clean, owner=args.owner)
 
 
 if __name__ == "__main__":
