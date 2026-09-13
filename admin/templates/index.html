@@ -1663,8 +1663,18 @@
     }
 
     /* ============================ BLOG ITEMS ============================ */
-    #blog-section { height: 290px; overflow: hidden; }
-    #blogList { height: 100%; min-height: 0; overflow: visible; }
+    #blog-section {
+      height: 320px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    #blogList {
+      flex: 1 1 auto;
+      min-height: 0;
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
     #blogPagination { padding: 10px 14px; display: flex; gap: 4px; align-items: center; border-top: 1px solid var(--border); }
     .blog-item {
       display: flex;
@@ -3906,22 +3916,17 @@ document.querySelectorAll('.blog-card, .blog-item a, .blog-link').forEach(card =
     console.log('[blog] renderBlog: boxH=' + box.clientHeight + ' total=' + cache.blogPosts.length);
     const itemH = 44; // blog-item height (compact)
     const headerH = 60; // box-header-wrap thật ~ 50px (padding 10+10 + line)
-    const paginationH = 48; // blogPagination padding 10+10 + 28 button
-    const MAX_BLOG = 6; // user yêu cầu: CỐ ĐỊNH 6 bài/trang
+    const paginationH = 51; // blogPagination padding 10+10 + 30 button + 1 border
+    const MAX_BLOG = 6; // user yêu cầu: tối đa 6 bài/trang
     const all = cache.blogPosts;
     const boxH = box.clientHeight || 0;
-    // Khả dụng cho list sau khi trừ header + (pagination nếu nhiều trang)
-    const availNoPag = boxH - headerH;
-    const maxNoPag = Math.max(1, Math.floor(availNoPag / itemH));
-    const totalPagesIfNoPag = Math.max(1, Math.ceil(all.length / maxNoPag));
-    const needPag = totalPagesIfNoPag > 1;
-    // Nếu cần pagination, trừ chiều cao pagination khỏi box
-    const avail = needPag ? (boxH - headerH - paginationH) : availNoPag;
-    // CỐ ĐỊNH max = 6 (user yêu cầu); KHÔNG cap theo dynamic-fit.
-    // Box nhỏ thì #blogList scroll (overflow-y: auto) — pagination đảm bảo
-    // mỗi lần chỉ hiện 6 bài.
-    const max = MAX_BLOG;
-    const totalPages = Math.max(1, Math.ceil(all.length / max));
+    // Tính dynamic max dựa trên box thực (sau khi trừ header + pagination nếu có).
+    // Đảm bảo KHÔNG BAO GIỜ vượt box, kể cả khi user chỉnh height.
+    const availForList = Math.max(itemH, boxH - headerH - paginationH);
+    const dynamicMax = Math.max(1, Math.floor(availForList / itemH));
+    // max = min(MAX_BLOG, dynamicMax) → không bao giờ tràn box
+    const totalPages = Math.max(1, Math.ceil(all.length / Math.min(MAX_BLOG, dynamicMax)));
+    const max = Math.min(MAX_BLOG, dynamicMax);
     if (pageState.blog > totalPages) pageState.blog = totalPages;
     const start = (pageState.blog - 1) * max;
     const shown = all.slice(start, start + max);
