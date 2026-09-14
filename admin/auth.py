@@ -203,10 +203,12 @@ def auth_me():
     # Tìm repo trùng với slug đang xem (nếu Front Repo truyền slug qua query)
     current_slug = request.args.get("slug")
     is_owner_of = None
+    current_repo_data = None
     if current_slug:
         for r in repos:
             if r.get("slug") == current_slug:
                 is_owner_of = current_slug
+                current_repo_data = r
                 break
 
     return jsonify({
@@ -214,6 +216,11 @@ def auth_me():
         "user": user,
         "is_owner_of": is_owner_of,
         "repos": repos,
+        "current_repo": current_repo_data,
+        # releases[] từ repo.json của repo đang xem (nếu có)
+        # Front Repo dùng để map package_id → download_url cho nút Tải xuống.
+        "releases": (current_repo_data or {}).get("releases", []),
+        "repo_json_path": (current_repo_data or {}).get("repo_json_path", ""),
     })
 
 

@@ -3125,6 +3125,7 @@
     var activeBtn = document.querySelector('.theme-btn[data-theme="' + name + '"]');
     if (activeBtn) activeBtn.classList.add('active');
     localStorage.setItem('theme', name);
+    if (window.Settings) Settings.set('theme', name);
     // TÁCH BIỆT: Front repo chỉ ghi repo_theme (+ theme alias cũ).
     // KHÔNG đụng dash_theme (Dashboard) / blog_theme (Blog).
     localStorage.setItem('repo_theme', name);
@@ -3152,6 +3153,7 @@
     if (activeShadow) activeShadow.classList.add('active');
     localStorage.setItem('shadowTheme', name);
     localStorage.setItem('repo_shadowTheme', name);
+    if (window.Settings) Settings.set('shadowTheme', name);
     // Re-apply logo shadow styles immediately so logo updates without reload
     if (typeof window.reapplyLogoShadow === 'function') window.reapplyLogoShadow();
   };
@@ -3170,6 +3172,7 @@
     toggleRain.addEventListener('change', function(e) {
       window.rainEnabled = e.target.checked;
       localStorage.setItem('rainEnabled', window.rainEnabled);
+      if (window.Settings) Settings.set('rainEnabled', window.rainEnabled);
     });
   }
   var toggleHeavyRain = document.getElementById('toggleHeavyRain');
@@ -3178,6 +3181,7 @@
       window.heavyRain = e.target.checked;
       if (window.initRain) window.initRain();
       localStorage.setItem('heavyRain', window.heavyRain);
+      if (window.Settings) Settings.set('heavyRain', window.heavyRain);
     });
   }
 
@@ -3188,6 +3192,7 @@
       var isDark = e.target.checked;
       // Ghi darkMode vào localStorage TRƯỚC
       localStorage.setItem('darkMode', isDark ? 'true' : 'false');
+      if (window.Settings) Settings.set('darkMode', isDark ? 'true' : 'false');
       // Lấy transparency đã lưu cho MODE MỚI (không phải slider hiện tại)
       var newMode = isDark ? 'dark' : 'light';
       var transVal = window._getTransparencyForMode ? window._getTransparencyForMode(newMode) : 92;
@@ -3290,6 +3295,7 @@
       // Backward compat: cũng ghi key chung (lần cuối user chỉnh)
       localStorage.setItem('transparency', String(val));
       localStorage.setItem('repo_transparency', String(val));
+      if (window.Settings) Settings.set('transparency', String(val));
     });
   }
   // Expose for applyDarkMode() to pick up alpha + current slider value
@@ -3773,6 +3779,26 @@ document.querySelectorAll('.blog-card, .blog-item a, .blog-link').forEach(card =
     const shown = all.slice(start, start + max);
     // Cập nhật currentRepo cho app.js (để openModal/deletePackage dùng đúng repo)
     if (currentRepo) window.__frontRepoName = currentRepo;
+    // releases[] từ /auth/me (admin login) — map identifier → release URL.
+    // Front Repo lưu trong window.__packageReleases (fetchAuthState cập nhật).
+    const releaseMap = {};
+    (window.__packageReleases || []).forEach(r => {
+      if (r && r.package_id) releaseMap[r.package_id] = r;
+    });
+    // Anonymous users dùng public API lookup (lazy)
+    async function lookupPublicRelease(identifier) {
+      if (!currentRepo || !identifier) return null;
+      // Cần owner_github của admin — lấy từ window.PUBLIC_REPO_OWNER_GITHUB (set bởi build)
+      const owner = window.PUBLIC_REPO_OWNER_GITHUB || window.__currentRepoOwner;
+      if (!owner) return null;
+      try {
+        const r = await fetch(`/api/public/release/${encodeURIComponent(owner)}/${encodeURIComponent(currentRepo)}/${encodeURIComponent(identifier)}`, {credentials: 'same-origin'});
+        if (!r.ok) return null;
+        const data = await r.json();
+        return data.ok ? data : null;
+      } catch (e) { return null; }
+    }
+
     list.innerHTML = shown.map(pkg => {
       const idEsc = escapeHtml(pkg.identifier || '');
       // Nút Sửa/Xóa chỉ hiện cho CHỦ REPO. User thường (read-only)
@@ -3782,6 +3808,27 @@ document.querySelectorAll('.blog-card, .blog-item a, .blog-link').forEach(card =
           <button class="btn btn-xs neon-edit" data-action="edit" data-id="${idEsc}" title="Sửa package ${idEsc}">Sửa</button>
           <button class="btn btn-xs neon-delete" data-action="delete" data-id="${idEsc}" title="Xóa package ${idEsc}">✕</button>
         </div>` : '');
+      // Tìm release URL (cho nút Tải xuống)
+      const rel = releaseMap[idEsc];
+      const dl = rel ? rel.download_url : null;
+      const downloadBtn = dl ? `
+        <a href="${escapeHtml(dl)}" target="_blank" rel="noopener"
+           class="btn btn-xs neon-download"
+           data-id="${idEsc}"
+           title="Tải xuống ${escapeHtml(rel.asset_name || '')}${rel.size_bytes ? ' (' + (rel.size_bytes / 1024).toFixed(1) + ' KB)' : ''}"
+           style="flex-shrink:0;text-decoration:none;">⬇ Tải</a>`
+        // Nếu chưa có release trong cache → hiện nút "Tìm" cho user thường
+        // (lazy lookup qua public API)
+        : (idEsc ? `<button class="btn btn-xs neon-download-ghost"
+                data-action="lookup-release" data-id="${idEsc}"
+                title="Tìm release cho ${idEsc}"
+                style="flex-shrink:0;background:transparent;color:var(--muted);">⬇ Tìm</button>` : '');
+      // Upload release (chỉ admin)
+      const uploadBtn = (window.PUBLIC_REPO_OWNER || window.__isAuthOwner) ? `
+        <button class="btn btn-xs neon-upload"
+                data-action="upload-release" data-id="${idEsc}"
+                title="Upload .3105 release cho package này"
+                style="flex-shrink:0;">📦 Upload</button>` : '';
       return `
       <div class="pkg-item" data-id="${idEsc}">
         <div class="pkg-icon-wrap">
@@ -3797,9 +3844,17 @@ document.querySelectorAll('.blog-card, .blog-item a, .blog-link').forEach(card =
           <div style="font-size: 0.85rem;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
             ${escapeHtml(pkg.author || '')} ${pkg.version ? '· v' + escapeHtml(pkg.version) : ''}
           </div>
-        </div>${ownerActions}
+        </div>
+        ${downloadBtn}${uploadBtn}${ownerActions}
       </div>
     `;}).join('');
+
+    // Lazy: cho user thường (không có __packageReleases), gọi public API
+    // lấy release URL cho từng package có data-id.
+    // Chỉ chạy khi không phải admin + chưa có map.
+    if (!window.__isAuthOwner && Object.keys(releaseMap).length === 0 && currentRepo) {
+      // Sẽ được fill khi user click nút "Tìm" — đỡ spam API
+    }
     // Wire nút Sửa/Xóa (idempotent qua delegation)
     wirePkgRowActions(list);
     // Count
@@ -3909,8 +3964,119 @@ document.querySelectorAll('.blog-card, .blog-item a, .blog-link').forEach(card =
         } else {
           console.warn('window.deletePackageByIdentifier chưa sẵn sàng');
         }
+      } else if (action === 'upload-release') {
+        openUploadReleaseModal(id);
+      } else if (action === 'lookup-release') {
+        lookupReleaseAndUpdate(id, btn);
       }
     });
+  }
+
+  // Public lookup cho anonymous user — gọi /api/public/release/.../.../{id}
+  async function lookupReleaseAndUpdate(identifier, btn) {
+    const owner = window.PUBLIC_REPO_OWNER_GITHUB || window.__currentRepoOwner;
+    if (!owner || !currentRepo) {
+      alert('Không xác định được owner của repo này.');
+      return;
+    }
+    btn.disabled = true;
+    const oldText = btn.textContent;
+    btn.textContent = '⏳';
+    try {
+      const r = await fetch(`/api/public/release/${encodeURIComponent(owner)}/${encodeURIComponent(currentRepo)}/${encodeURIComponent(identifier)}`, {credentials: 'same-origin'});
+      const data = await r.json();
+      if (data.ok && data.download_url) {
+        // Update window.__packageReleases + re-render
+        window.__packageReleases = window.__packageReleases || [];
+        window.__packageReleases.push({
+          package_id: identifier,
+          version: data.version,
+          tag: data.tag,
+          asset_name: data.asset_name,
+          download_url: data.download_url,
+          size_bytes: data.size_bytes,
+          sha256: data.sha256,
+        });
+        // Re-render
+        if (typeof renderPackages === 'function') renderPackages();
+      } else {
+        alert(`❌ ${data.error || 'Không tìm thấy release'}`);
+        btn.textContent = oldText;
+        btn.disabled = false;
+      }
+    } catch (e) {
+      alert('❌ Lỗi network: ' + e);
+      btn.textContent = oldText;
+      btn.disabled = false;
+    }
+  }
+
+  // === Upload Release Modal ===
+  function openUploadReleaseModal(packageId) {
+    // Tạo modal đơn giản
+    const existing = document.getElementById('uploadReleaseModal');
+    if (existing) existing.remove();
+    const pkg = (cache.packages || []).find(p => p.identifier === packageId) || {};
+    const html = `
+      <div id="uploadReleaseModal" class="modal-overlay" style="position:fixed;inset:0;background:rgba(0,0,0,0.7);display:flex;align-items:center;justify-content:center;z-index:999999;">
+        <div style="background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:24px;max-width:480px;width:90%;">
+          <h3 style="margin:0 0 16px;color:var(--text-bright);">📦 Upload .3105 release</h3>
+          <div style="font-size:13px;color:var(--muted);margin-bottom:16px;">Package: <code style="color:var(--neon-green);">${escapeHtml(packageId)}</code></div>
+          <form id="uploadReleaseForm" enctype="multipart/form-data">
+            <label style="display:block;margin-bottom:8px;font-size:13px;">Version (vd "1.2.0"):</label>
+            <input type="text" name="version" required placeholder="${escapeHtml(pkg.version || '1.2.0')}"
+                   style="width:100%;padding:8px;background:var(--bg);color:var(--text-bright);border:1px solid var(--border);border-radius:4px;margin-bottom:12px;font-family:'Fira Code',monospace;">
+            <label style="display:block;margin-bottom:8px;font-size:13px;">File .3105:</label>
+            <input type="file" name="file" accept=".3105" required
+                   style="width:100%;padding:8px;background:var(--bg);color:var(--text-bright);border:1px solid var(--border);border-radius:4px;margin-bottom:12px;">
+            <label style="display:block;margin-bottom:8px;font-size:13px;">Release notes (optional):</label>
+            <textarea name="notes" rows="3" placeholder="What's new..."
+                      style="width:100%;padding:8px;background:var(--bg);color:var(--text-bright);border:1px solid var(--border);border-radius:4px;margin-bottom:12px;font-family:'Be Vietnam Pro',sans-serif;resize:vertical;"></textarea>
+            <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:16px;">
+              <button type="button" id="uploadReleaseCancel" style="padding:8px 16px;background:transparent;color:var(--text);border:1px solid var(--border);border-radius:4px;cursor:pointer;">Huỷ</button>
+              <button type="submit" id="uploadReleaseSubmit" style="padding:8px 16px;background:var(--neon-green);color:#000;border:none;border-radius:4px;cursor:pointer;font-weight:600;">Upload & Release</button>
+            </div>
+          </form>
+        </div>
+      </div>`;
+    const wrapper = document.createElement('div');
+    wrapper.innerHTML = html;
+    document.body.appendChild(wrapper.firstElementChild);
+    document.getElementById('uploadReleaseCancel').onclick = () => document.getElementById('uploadReleaseModal').remove();
+    document.getElementById('uploadReleaseForm').onsubmit = async (e) => {
+      e.preventDefault();
+      const form = e.target;
+      const fd = new FormData(form);
+      const slug = window.PUBLIC_REPO_SLUG;
+      fd.set('slug', slug || '');
+      fd.set('package_id', packageId);
+      fd.set('mode', 'pr');
+      const submitBtn = document.getElementById('uploadReleaseSubmit');
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Uploading...';
+      try {
+        const r = await fetch('/api/github/release', {
+          method: 'POST',
+          credentials: 'same-origin',
+          body: fd,
+        });
+        const data = await r.json();
+        if (data.ok) {
+          alert(`✅ Release thành công!\n\nTag: ${data.release.tag}\nDownload URL: ${data.download_url}\n\nPR: ${data.pr_url || 'Direct push'}`);
+          document.getElementById('uploadReleaseModal').remove();
+          // Reload auth state để cập nhật __packageReleases
+          await fetchAuthState();
+        } else {
+          alert('❌ Lỗi: ' + (data.error || 'Unknown'));
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Upload & Release';
+        }
+      } catch (err) {
+        alert('❌ Lỗi network: ' + err);
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Upload & Release';
+      }
+    };
   }
 
   // === Blog ===
@@ -4131,7 +4297,57 @@ document.querySelectorAll('.blog-card, .blog-item a, .blog-link').forEach(card =
     boot();
   }
 
-  // === RBAC: áp dụng khoá/ẩn UI theo role ===
+  // === Settings Namespace (user vs admin) ===
+  // Mục tiêu: tách biệt settings giữa user thường và admin:
+  //   - user thường (no repo, chưa login): settings lưu localStorage['user_*']
+  //   - admin (login GitHub + owner of repo): settings lưu localStorage['admin_*']
+  //     + đồng bộ sang GitHub repo của admin (file .3105/admin-settings.json).
+  //
+  // Khi user truy cập Front Repo:
+  //   1. init(role) dựa trên PUBLIC_REPO_OWNER || __isAuthOwner
+  //   2. Mỗi lần user đổi setting qua UI → Settings.set(key, value) tự route
+  //      theo namespace hiện tại.
+  //
+  // Lý do tách: nếu admin mở Front Repo + chỉnh theme, KHÔNG muốn user thường
+  // (vào trang này sau) thấy theme admin đã chỉnh. Mỗi role có view riêng.
+  const Settings = {
+    role: 'user',
+    prefix: 'user_',
+
+    init(role) {
+      this.role = role;
+      this.prefix = (role === 'admin') ? 'admin_' : 'user_';
+    },
+
+    get(key) {
+      try {
+        // Ưu tiên namespace (admin_* hoặc user_*), fallback về key cũ.
+        const ns = localStorage.getItem(this.prefix + key);
+        if (ns !== null) return ns;
+        return localStorage.getItem(key);
+      } catch (e) { return null; }
+    },
+
+    set(key, value) {
+      try {
+        localStorage.setItem(this.prefix + key, String(value));
+        // Cũng ghi alias key cũ (back-compat với code đang dùng key cũ).
+        // Khi role=user, admin_ alias KHÔNG ghi → tránh nhầm.
+        localStorage.setItem(key, String(value));
+      } catch (e) {}
+      if (this.role === 'admin' && window.__adminSettingsSync) {
+        window.__adminSettingsSync(key, value);
+      }
+    },
+  };
+  window.Settings = Settings;
+
+  // Helper để Settings.set từ các handler UI cũ (vd localStorage.setItem('theme', name)
+  // có thể được wrap bằng cách thay localStorage.setItem bằng Settings.set qua Proxy).
+  // Cách tiếp cận đơn giản hơn: patch 6 chỗ gọi trực tiếp.
+  // (Settings.set sẽ được gọi trong các handler onChange bên dưới.)
+
+
   // 2 nguồn "owner" được merge:
   //   1) window.PUBLIC_REPO_OWNER (true nếu build với --owner flag) — tĩnh.
   //   2) window.__authOwner (true nếu user OAuth login + repo.json match) — dynamic.
@@ -4200,13 +4416,47 @@ document.querySelectorAll('.blog-card, .blog-item a, .blog-link').forEach(card =
         }
         // Cập nhật RBAC
         window.__isAuthOwner = !!owned;
-        // Re-render packages để hiện/ẩn nút Sửa/Xóa
+        // === INIT Settings namespace theo role ===
+        // Admin: settings riêng → localStorage admin_* + sync GitHub
+        // User: settings chung → localStorage user_*
+        const role = window.__isAuthOwner ? 'admin' : 'user';
+        if (window.Settings) {
+          window.Settings.init(role);
+          if (role === 'admin' && owned) {
+            // Load admin settings từ GitHub (server) → apply
+            loadAdminSettingsFromGitHub(owned);
+            // Set up sync handler: mỗi lần Settings.set → push lên GitHub
+            window.__adminSettingsSync = (key, value) => {
+              const syncKey = {
+                'rainEnabled': 'rain_enabled',
+                'heavyRain': 'heavy_rain',
+                'darkMode': 'dark_mode',
+                'theme': 'theme',
+                'transparency': 'transparency',
+                'shadowTheme': 'shadow_theme',
+              }[key] || key;
+              postAdminSettingToGitHub(owned, syncKey, value);
+            };
+          } else {
+            window.__adminSettingsSync = null;
+          }
+        }
+        // Re-render packages để hiện/ẩn nút Sửa/Xóa + Release upload UI
         if (window.__dynamicFit && window.__dynamicFit.renderPackages) {
           window.__dynamicFit.renderPackages();
+        }
+        // Lưu releases để render Tải xuống button
+        if (Array.isArray(data.releases)) {
+          window.__packageReleases = data.releases;
         }
       } else {
         if (loginBtn) loginBtn.style.display = 'flex';
         if (userInfo) userInfo.style.display = 'none';
+        // Anonymous → init Settings as 'user'
+        if (window.Settings) {
+          window.Settings.init('user');
+          window.__adminSettingsSync = null;
+        }
       }
       applyRbac();
       return data;
@@ -4214,6 +4464,57 @@ document.querySelectorAll('.blog-card, .blog-item a, .blog-link').forEach(card =
       console.warn('fetchAuthState failed', e);
       hideLoginForStatic();
       return null;
+    }
+  }
+
+  // Debounce admin settings sync — gộp nhiều set liên tiếp thành 1 POST
+  let __adminSyncTimer = null;
+  let __adminSyncPending = {};
+  function postAdminSettingToGitHub(slug, key, value) {
+    __adminSyncPending[key] = value;
+    if (__adminSyncTimer) clearTimeout(__adminSyncTimer);
+    __adminSyncTimer = setTimeout(async () => {
+      const payload = Object.assign({}, __adminSyncPending);
+      __adminSyncPending = {};
+      try {
+        const r = await fetch('/api/admin-settings', {
+          method: 'POST',
+          credentials: 'same-origin',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({slug, settings: payload, mode: 'pr'}),
+        });
+        const data = await r.json().catch(() => null);
+        if (!data || !data.ok) {
+          console.warn('admin-settings sync failed', data);
+        }
+      } catch (e) {
+        console.warn('admin-settings sync error', e);
+      }
+    }, 1500);  // 1.5s debounce
+  }
+
+  async function loadAdminSettingsFromGitHub(slug) {
+    try {
+      const r = await fetch(`/api/admin-settings?slug=${encodeURIComponent(slug)}`, {
+        credentials: 'same-origin',
+      });
+      if (!r.ok) return;
+      const data = await r.json();
+      if (!data.ok || !data.settings) return;
+      const map = {
+        rain_enabled: 'rainEnabled',
+        heavy_rain: 'heavyRain',
+        dark_mode: 'darkMode',
+        theme: 'theme',
+        transparency: 'transparency',
+        shadow_theme: 'shadowTheme',
+      };
+      Object.entries(data.settings).forEach(([k, v]) => {
+        const localKey = map[k] || k;
+        try { localStorage.setItem('admin_' + localKey, String(v)); } catch(e) {}
+      });
+    } catch (e) {
+      console.warn('loadAdminSettings failed', e);
     }
   }
 

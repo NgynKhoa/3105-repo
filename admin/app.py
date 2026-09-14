@@ -44,6 +44,11 @@ from .config import Config
 from .auth import auth_bp, login_required, owner_required, is_authenticated
 from .auth import get_owned_repos as auth_get_owned_repos
 from .github_write import write_file as gh_write_file, _validate_inputs
+from .admin_settings import register_admin_settings_routes
+from .github_release import (
+    create_or_get_release, upload_release_asset,
+    find_release_for_package,
+)
 
 
 # ---------------------------------------------------------------------------
@@ -112,6 +117,7 @@ app.config["SESSION_COOKIE_MAX_AGE"] = Config.SESSION_COOKIE_MAX_AGE
 app.config["PERMANENT_SESSION_LIFETIME"] = Config.SESSION_COOKIE_MAX_AGE
 
 app.register_blueprint(auth_bp)
+register_admin_settings_routes(app)
 
 # In cảnh báo cấu hình (nếu có) ngay lúc boot
 for _issue in Config.validate_for_runtime():
@@ -1092,7 +1098,7 @@ def api_delete_background(filename: str):
 # API
 # ---------------------------------------------------------------------------
 
-@app.get("/api/repositories")
+@app.route("/api/repositories")
 def api_repositories():
     """Liệt kê tất cả repo local + merge với GitHub-owned (nếu user đã login).
 
@@ -1123,6 +1129,105 @@ def api_repositories():
         "sources": sources,
         "github_owned": github_owned,
     })
+
+
+@app.route("/api/public/release/<owner>/<repo>/<path:package_id>")
+def api_public_release_lookup(owner: str, repo: str, package_id: str):
+    """Public endpoint — tìm download URL cho package từ GitHub Releases.
+
+    Không cần auth (vì GitHub Releases API public cho repo public).
+    Dùng cho Front Repo của user thường (không login) → tìm nút Tải xuống.
+
+    Args:
+      owner: GitHub username
+      repo: repo name
+      package_id: vd "com.example.pkg1"
+
+    Returns: {
+      "ok": True,
+      "download_url": "https://github.com/.../releases/download/...",
+      "version": "1.2.0",
+      "tag": "v1.2.0",
+      "size_bytes": 12345,
+      "sha256": "abc...",
+      "asset_name": "pkg-1.2.0.3105",
+    }
+    """
+    import time as _time
+    import requests as _req
+
+    cache_key = f"public_release:{owner}:{repo}:{package_id}"
+    cached = app.config.get(cache_key)
+    cache_ts = app.config.get(cache_key + ":ts", 0)
+    now = _time.time()
+    if cached and (now - cache_ts) < 300:  # cache 5 phút
+        return jsonify(cached)
+
+    full_name = f"{owner}/{repo}"
+    base_headers = {"Accept": "application/vnd.github+json", "User-Agent": "3105-repo-builder/1.0"}
+
+    # Strategy 1: tìm trong repo.json (chính xác nhất, không cần token)
+    # Thử nhiều path candidates
+    try:
+        from .repo_discovery import REPO_JSON_PATHS
+        for path in REPO_JSON_PATHS:
+            url = f"https://api.github.com/repos/{full_name}/contents/{path}"
+            resp = _req.get(url, headers=base_headers, timeout=10)
+            if resp.status_code != 200:
+                continue
+            import base64 as _b64
+            data = resp.json()
+            content_raw = _b64.b64decode(data.get("content", "")).decode("utf-8", errors="ignore")
+            if path.endswith((".yml", ".yaml")):
+                import yaml as _y
+                content = _y.safe_load(content_raw)
+            else:
+                content = json.loads(content_raw)
+            for rel in content.get("releases", []):
+                if rel.get("package_id") == package_id:
+                    result = {
+                        "ok": True,
+                        "source": "repo.json",
+                        "download_url": rel.get("download_url"),
+                        "version": rel.get("version"),
+                        "tag": rel.get("tag"),
+                        "size_bytes": rel.get("size_bytes"),
+                        "sha256": rel.get("sha256"),
+                        "asset_name": rel.get("asset_name"),
+                    }
+                    app.config[cache_key] = result
+                    app.config[cache_key + ":ts"] = now
+                    return jsonify(result)
+    except Exception as e:
+        app.logger.debug(f"repo.json lookup failed: {e}")
+
+    # Strategy 2: list GitHub Releases, match by filename (fallback)
+    try:
+        url = f"https://api.github.com/repos/{full_name}/releases?per_page=30"
+        resp = _req.get(url, headers=base_headers, timeout=10)
+        if resp.status_code == 200:
+            releases = resp.json()
+            for release in releases:
+                for asset in release.get("assets", []):
+                    name = asset.get("name", "")
+                    if package_id in name:
+                        result = {
+                            "ok": True,
+                            "source": "github_releases_fallback",
+                            "download_url": asset.get("browser_download_url"),
+                            "version": release.get("tag_name", "").lstrip("v"),
+                            "tag": release.get("tag_name"),
+                            "size_bytes": asset.get("size", 0),
+                            "sha256": "",
+                            "asset_name": name,
+                        }
+                        app.config[cache_key] = result
+                        app.config[cache_key + ":ts"] = now
+                        return jsonify(result)
+    except Exception as e:
+        app.logger.debug(f"releases fallback failed: {e}")
+
+    return jsonify({"ok": False, "error": f"Không tìm thấy release cho {package_id} trong {full_name}"}), 404
 
 
 @app.get("/api/repo/<repo>/packages")
@@ -1628,6 +1733,235 @@ def api_github_write():
     except Exception as e:
         app.logger.exception("github_write failed")
         return jsonify({"ok": False, "error": f"Lỗi không mong đợi: {e}"}), 500
+
+
+# ============================================================================
+# GitHub Releases API: admin upload .3105 file → release trên GitHub
+# ============================================================================
+# Flow:
+#   1. Admin POST multipart với file + package_id + version + commit message
+#   2. Server verify ownership
+#   3. Tạo GitHub Release (hoặc lấy release nếu tag đã tồn tại)
+#   4. Upload asset (.3105) lên release
+#   5. Update repo.json với release URL (push lên GitHub)
+#   6. Trả về download_url cho Front Repo hiển thị nút Tải xuống
+#
+# Auto-detect fallback: GET /api/github/releases/{slug} → list releases của repo
+
+@app.route("/api/github/release", methods=["POST"])
+@login_required
+def api_github_release_upload():
+    """Upload 1 .3105 file lên GitHub Release.
+
+    Multipart form data:
+      - slug: str (required)
+      - package_id: str (required) — vd "com.example.pkg1"
+      - version: str (required) — vd "1.2.0" (sẽ tạo tag "v1.2.0")
+      - asset_name: str (optional) — mặc định "{package_id}-{version}.3105"
+      - file: file upload (required) — file .3105 binary
+      - mode: "pr" | "direct" (default "pr") — cho việc update repo.json
+      - notes: str (optional) — release notes
+
+    Returns: {
+      "ok": True,
+      "release": {tag, html_url, ...},
+      "asset": {name, size, browser_download_url, sha256},
+      "download_url": "...",  // cho Front Repo dùng
+      "repo_json_updated": True,
+      "pr_url": "..." | null,
+    }
+    """
+    slug = (request.form.get("slug") or "").strip()
+    package_id = (request.form.get("package_id") or "").strip()
+    version = (request.form.get("version") or "").strip()
+    asset_name = (request.form.get("asset_name") or "").strip()
+    mode = (request.form.get("mode") or "pr").strip()
+    notes = (request.form.get("notes") or "").strip()
+
+    if not slug or not package_id or not version:
+        return jsonify({"ok": False, "error": "Thiếu slug, package_id hoặc version"}), 400
+    if mode not in ("pr", "direct"):
+        return jsonify({"ok": False, "error": "mode không hợp lệ"}), 400
+
+    file = request.files.get("file")
+    if not file or not file.filename:
+        return jsonify({"ok": False, "error": "Thiếu file"}), 400
+
+    # Asset name default
+    if not asset_name:
+        # Sanitize package_id cho filename (vd "com.example.pkg" → "com.example.pkg")
+        safe_pkg = package_id.replace("/", "_").replace("\\", "_")
+        asset_name = f"{safe_pkg}-{version}.3105"
+    if not asset_name.endswith(".3105"):
+        asset_name = asset_name + ".3105"
+
+    # Verify ownership
+    owned = auth_get_owned_repos()
+    target = next((r for r in owned if r.get("slug") == slug), None)
+    if not target:
+        return jsonify({"ok": False, "error": "Bạn không phải owner"}), 403
+
+    from .auth import get_current_token
+    token = get_current_token()
+    if not token:
+        return jsonify({"ok": False, "error": "Session không có token"}), 401
+
+    # Read file bytes
+    file_bytes = file.read()
+    if not file_bytes:
+        return jsonify({"ok": False, "error": "File rỗng"}), 400
+    # Hard cap: 95MB (GitHub limit ~100MB cho asset)
+    if len(file_bytes) > 95 * 1024 * 1024:
+        return jsonify({"ok": False, "error": "File quá lớn (>95MB)"}), 400
+
+    # Tag name = v{version}
+    tag_name = version if version.startswith("v") else f"v{version}"
+
+    # 1. Tạo release
+    try:
+        release = create_or_get_release(
+            token=token,
+            full_name=target["full_name"],
+            tag_name=tag_name,
+            target_branch=target.get("default_branch", "main"),
+            name=f"Release {tag_name}",
+            body=notes or f"Release {tag_name} cho package {package_id}",
+            draft=False,
+            prerelease=False,
+        )
+    except ValueError as e:
+        return jsonify({"ok": False, "error": f"Tag không hợp lệ: {e}"}), 400
+    except RuntimeError as e:
+        return jsonify({"ok": False, "error": str(e)}), 502
+
+    # 2. Upload asset
+    try:
+        asset = upload_release_asset(
+            token=token,
+            full_name=target["full_name"],
+            release_id=release["id"],
+            asset_name=asset_name,
+            asset_bytes=file_bytes,
+        )
+    except RuntimeError as e:
+        return jsonify({"ok": False, "error": str(e)}), 502
+
+    # 3. Update repo.json với release URL mới
+    repo_json_updated = False
+    pr_url = None
+    try:
+        import base64, json as _json
+        # Fetch current repo.json
+        from .repo_discovery import _get_file_contents  # private helper, OK
+        content, sha = _get_file_contents(token, target["full_name"], target["repo_json_path"])
+        releases = content.get("releases", [])
+        # Remove existing entry cho cùng package_id + tag (update)
+        releases = [r for r in releases if not (
+            r.get("package_id") == package_id and r.get("tag") == tag_name
+        )]
+        releases.append({
+            "package_id": package_id,
+            "version": version,
+            "tag": tag_name,
+            "asset_name": asset_name,
+            "download_url": asset["browser_download_url"],
+            "size_bytes": asset["size"],
+            "sha256": asset["sha256"],
+        })
+        content["releases"] = releases
+        new_content = _json.dumps(content, indent=2, ensure_ascii=False)
+
+        # Ghi lại (PR hoặc direct)
+        write_result = gh_write_file(
+            token=token,
+            full_name=target["full_name"],
+            path=target["repo_json_path"],
+            content=new_content,
+            commit_message=f"chore(release): add {asset_name} for {package_id}@{version}",
+            mode=mode,
+        )
+        repo_json_updated = True
+        pr_url = write_result.get("pr_url")
+    except Exception as e:
+        # Không fail toàn bộ flow — chỉ log warning
+        app.logger.warning(f"repo.json update failed: {e}")
+
+    return jsonify({
+        "ok": True,
+        "release": {
+            "id": release.get("id"),
+            "tag": release.get("tag_name"),
+            "html_url": release.get("html_url"),
+        },
+        "asset": asset,
+        "download_url": asset["browser_download_url"],
+        "repo_json_updated": repo_json_updated,
+        "pr_url": pr_url,
+    })
+
+
+@app.route("/api/github/releases/<slug>")
+@login_required
+def api_github_releases_list(slug: str):
+    """List tất cả releases của repo (cho admin xem).
+
+    Cũng merge với releases[] trong repo.json (nếu có) để biết asset nào
+    map với package nào.
+    """
+    owned = auth_get_owned_repos()
+    target = next((r for r in owned if r.get("slug") == slug), None)
+    if not target:
+        return jsonify({"ok": False, "error": "Bạn không phải owner"}), 403
+
+    from .auth import get_current_token
+    token = get_current_token()
+    if not token:
+        return jsonify({"ok": False, "error": "Session không có token"}), 401
+
+    from .github_release import list_releases
+    releases = list_releases(token, target["full_name"])
+    return jsonify({
+        "ok": True,
+        "slug": slug,
+        "releases": releases,
+        "repo_json_releases": target.get("releases", []),
+    })
+
+
+@app.route("/api/github/release-url/<slug>/<path:package_id>")
+def api_github_release_url(slug: str, package_id: str):
+    """Public endpoint (không cần auth) — trả download_url cho package.
+
+    Strategy:
+      1. Lấy repo.json từ GitHub (công khai, không cần token nếu repo public)
+      2. Tìm trong releases[] của repo.json match package_id
+      3. Nếu không có → fallback: list releases trên GitHub → match by filename
+
+    Cache: 5 phút.
+    """
+    import time
+    from .repo_discovery import _get_file_contents
+    from .github_release import find_release_for_package
+
+    cache_key = f"release_url:{slug}:{package_id}"
+    cached = app.config.get(cache_key)
+    cache_ts = app.config.get(cache_key + ":ts", 0)
+    now = time.time()
+    if cached and (now - cache_ts) < 300:
+        return jsonify(cached)
+
+    # Không có auth → dùng unauthenticated GitHub API (60 req/h, OK cho cache 5')
+    import requests as _req
+    headers = {"Accept": "application/vnd.github+json", "User-Agent": "3105-repo-builder/1.0"}
+
+    # Tìm repo theo slug
+    # TODO: cần biết owner_github để query đúng repo.
+    # Cách tốt nhất: search by repo.json content qua GitHub search API.
+    # Tạm thời: nếu không có context, return 404.
+    return jsonify({
+        "ok": False,
+        "error": "Cần owner_github để tìm repo. Sử dụng endpoint authenticated /api/github/releases/{slug}",
+    }), 400
 
 
 # ---------------------------------------------------------------------------

@@ -114,6 +114,7 @@ def render_index_html(repo_slug: str, repo_data: dict[str, Any], owner: bool = F
         f"window.PUBLIC_REPO_SLUG = {json.dumps(repo_slug)};\n"
         f"window.PUBLIC_REPO_DATA = {repo_json};\n"
         f"window.PUBLIC_REPO_OWNER = {json.dumps(bool(owner))};\n"
+        f"window.PUBLIC_REPO_OWNER_GITHUB = {json.dumps(getattr(args, 'owner_github', '') or '')};\n"
         f"window.PUBLIC_MODE = true;  // dùng data tĩnh thay vì fetch /api/*\n"
     )
     # Replace cụm {{ bootstrap_js | safe }} (Flask template) bằng script tag.
@@ -140,7 +141,8 @@ def render_index_html(repo_slug: str, repo_data: dict[str, Any], owner: bool = F
 # Build
 # ---------------------------------------------------------------------------
 
-def build(repo_slug: str = "demo", clean: bool = True, owner: bool = False) -> int:
+def build(repo_slug: str = "demo", clean: bool = True, owner: bool = False,
+         owner_github: str = "") -> int:
     if clean and PUBLIC.exists():
         # Xoá mọi thứ trừ README + .nojekyll + 404.html
         for f in PUBLIC.iterdir():
@@ -318,6 +320,7 @@ def build(repo_slug: str = "demo", clean: bool = True, owner: bool = False) -> i
                 f"window.PUBLIC_REPO_SLUG = {json.dumps(repo_slug)};\n"
                 f"window.PUBLIC_REPO_DATA = {json.dumps(repo_data, ensure_ascii=False)};\n"
                 f"window.PUBLIC_REPO_OWNER = {json.dumps(bool(owner))};\n"
+                f"window.PUBLIC_REPO_OWNER_GITHUB = {json.dumps(owner_github)};\n"
                 f"window.PUBLIC_MODE = true;\n"
             )
             blog_html = blog_html.replace(
@@ -386,8 +389,12 @@ def main() -> int:
                    help="Đánh dấu build này là của chủ repo: hiện theme/shadow/logo color "
                         "picker, Admin Dashboard link, nút Sửa/Xóa packages, cho phép "
                         "sửa Thông tin chung. Mặc định KHÔNG bật → user thường chỉ xem.")
+    p.add_argument("--owner-github", default="",
+                   help="GitHub username của owner (vd 'YangJii'). Dùng cho public "
+                        "release lookup API khi user thường click 'Tìm' trên package.")
     args = p.parse_args()
-    return build(repo_slug=args.repo, clean=not args.no_clean, owner=args.owner)
+    return build(repo_slug=args.repo, clean=not args.no_clean, owner=args.owner,
+                 owner_github=args.owner_github)
 
 
 if __name__ == "__main__":

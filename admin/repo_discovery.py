@@ -42,12 +42,40 @@ import requests
 from flask import current_app
 
 
-# Path candidates để tìm repo.json — thứ tự ưu tiên giảm dần
-REPO_JSON_PATHS = (
+# Path candidates để tìm repo.json — thứ tự ưu tiên giảm dần.
+#
+# Mục đích: cho phép admin tự do cấu trúc repo, đặc biệt:
+#  - Standard fork: repo.json ở root
+#  - YangJii 3105 fork: 3105-repo/repositories/demo/repo.json (theo format cũ)
+#  - Hidden: .3105/repo.json
+#  - Subpath: config/ hoặc src/
+#
+# LƯU Ý QUAN TRỌNG:
+#  - GitHub Contents API yêu cầu exact path. Nếu path sai → 404.
+#  - Thứ tự ưu tiên: path nào phổ biến nhất → check trước (tiết kiệm rate).
+#  - Mỗi path được cache 1 lần — nếu path đầu fail, không cache fail (check path sau).
+#
+REPO_JSON_PATHS: tuple[str, ...] = (
+    # === Standard (phổ biến nhất) ===
     "repo.json",
     ".3105/repo.json",
+
+    # === YangJii/3105 fork (legacy structure) ===
+    # Repo gốc của YangJii: https://github.com/YangJii/3105
+    # Admin thường fork về và fork có cấu trúc: 3105-repo/repositories/demo/...
+    "3105-repo/repositories/demo/repo.json",
+    "3105-repo/repositories/demo/repo.yml",
+    "repositories/demo/repo.json",
+    "repositories/demo/repo.yml",
+
+    # === Config / source subpaths ===
     "config/repo.json",
     "src/repo.json",
+    "docs/repo.json",
+
+    # === Old variants ===
+    "repo.yml",
+    "repository.json",
 )
 
 
@@ -65,9 +93,10 @@ class RepoCandidate:
     updated_at: str                 # ISO 8601
     repo_json_path: str             # path nào đã tìm thấy file repo.json
     private: bool
+    releases: list[dict]            # list release cho packages (admin upload)
 
     def to_dict(self) -> dict[str, Any]:
-        return {k: v for k, v in asdict(self).items() if v is not None}
+        return {k: v for k, v in asdict(self).items() if v is not None or k == "releases"}
 
 
 # -----------------------------------------------------------------------------
@@ -178,17 +207,21 @@ def _try_discover_repo_json(token: str, repo: dict[str, Any]) -> RepoCandidate |
             updated_at=repo.get("updated_at", ""),
             repo_json_path=path,
             private=repo.get("private", False),
+            releases=parsed.get("releases", []),
         )
 
     return None
 
 
 def _get_file_contents(token: str, full_name: str, path: str) -> tuple[dict, str]:
-    """GET /repos/{owner}/{repo}/contents/{path} → (parsed JSON, sha).
+    """GET /repos/{owner}/{repo}/contents/{path} → (parsed dict, sha).
+
+    Supports cả `.json` và `.yml` (auto-detect theo extension).
 
     Raises:
       FileNotFoundError: 404 (path không tồn tại)
       requests.RequestException: network errors
+      ValueError: content không parse được
     """
     url = f"https://api.github.com/repos/{full_name}/contents/{path}"
     resp = requests.get(url, headers=_gh_headers(token), timeout=10)
@@ -196,20 +229,46 @@ def _get_file_contents(token: str, full_name: str, path: str) -> tuple[dict, str
         raise FileNotFoundError(f"{full_name}/{path}")
     resp.raise_for_status()
     data = resp.json()
-    # GitHub trả content base64-encoded. Decode để parse JSON.
+    # GitHub trả content base64-encoded. Decode để parse.
     encoded = data.get("content", "")
     if not encoded:
         raise FileNotFoundError(f"{full_name}/{path} empty")
     try:
         raw = base64.b64decode(encoded).decode("utf-8")
-        parsed = json.loads(raw)
+        # Auto-detect: .yml/.yaml → YAML, .json → JSON
+        if path.endswith((".yml", ".yaml")):
+            import yaml  # PyYAML (đã có trong requirements)
+            parsed = yaml.safe_load(raw)
+        else:
+            parsed = json.loads(raw)
     except (ValueError, UnicodeDecodeError) as e:
-        raise ValueError(f"{full_name}/{path} not valid JSON: {e}")
+        raise ValueError(f"{full_name}/{path} not parseable: {e}")
     return parsed, data.get("sha", "")
 
 
 def _parse_and_validate_repo_json(raw: dict) -> dict | None:
-    """Validate schema. Trả về dict normalized hoặc None nếu invalid."""
+    """Validate schema. Trả về dict normalized hoặc None nếu invalid.
+
+    Schema:
+      {
+        "slug": str,               # required
+        "identifier": str,         # required
+        "name": str,               # optional
+        "owner_github": str,       # optional
+        "releases": [              # optional — danh sách release cho packages
+          {
+            "package_id": str,     # identifier của package
+            "version": str,       # vd "1.2.0"
+            "tag": str,           # git tag, vd "v1.2.0"
+            "asset_name": str,    # tên file .3105
+            "download_url": str,  # URL release (rawgithub/GitHub Releases)
+            "size_bytes": int,
+            "sha256": str,
+          },
+          ...
+        ],
+      }
+    """
     if not isinstance(raw, dict):
         return None
     slug = raw.get("slug")
@@ -218,12 +277,38 @@ def _parse_and_validate_repo_json(raw: dict) -> dict | None:
         return None
     if not isinstance(identifier, str) or not identifier.strip():
         return None
-    # Normalize
+
+    # Validate releases[] nếu có (không bắt buộc, nhưng nếu có phải đúng format)
+    releases = raw.get("releases", [])
+    if not isinstance(releases, list):
+        releases = []
+    else:
+        # Filter chỉ giữ entry hợp lệ
+        valid_releases = []
+        for r in releases:
+            if not isinstance(r, dict):
+                continue
+            pkg_id = r.get("package_id")
+            dl = r.get("download_url")
+            if not isinstance(pkg_id, str) or not isinstance(dl, str):
+                continue
+            valid_releases.append({
+                "package_id": pkg_id,
+                "version": r.get("version", ""),
+                "tag": r.get("tag", ""),
+                "asset_name": r.get("asset_name", ""),
+                "download_url": dl,
+                "size_bytes": int(r.get("size_bytes", 0)),
+                "sha256": r.get("sha256", ""),
+            })
+        releases = valid_releases
+
     return {
         "slug": slug.strip(),
         "identifier": identifier.strip(),
         "name": raw.get("name"),
         "owner_github": raw.get("owner_github"),
+        "releases": releases,
     }
 
 
