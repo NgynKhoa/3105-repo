@@ -49,6 +49,7 @@ from .github_release import (
     create_or_get_release, upload_release_asset,
     find_release_for_package,
 )
+from .github_raw import register_raw_routes
 
 
 # ---------------------------------------------------------------------------
@@ -118,6 +119,7 @@ app.config["PERMANENT_SESSION_LIFETIME"] = Config.SESSION_COOKIE_MAX_AGE
 
 app.register_blueprint(auth_bp)
 register_admin_settings_routes(app)
+register_raw_routes(app)
 
 # In cảnh báo cấu hình (nếu có) ngay lúc boot
 for _issue in Config.validate_for_runtime():
@@ -1129,6 +1131,61 @@ def api_repositories():
         "sources": sources,
         "github_owned": github_owned,
     })
+
+
+@app.route("/api/public/admin-settings/<owner>/<repo>")
+def api_public_admin_settings(owner: str, repo: str):
+    """Public endpoint — fetch `.3105/admin-settings.json` từ repo GitHub.
+
+    Dùng cho anonymous user (không login) để lấy admin defaults:
+      - User mở Front Repo lần đầu
+      - localStorage empty → fetch admin-settings → fill user namespace
+      - Sau đó user chỉnh riêng → KHÔNG bị override bởi admin settings nữa
+    """
+    import time as _time
+    import requests as _req
+
+    cache_key = f"public_admin_settings:{owner}:{repo}"
+    cached = app.config.get(cache_key)
+    cache_ts = app.config.get(cache_key + ":ts", 0)
+    now = _time.time()
+    if cached is not None and (now - cache_ts) < 300:
+        return jsonify(cached)
+
+    full_name = f"{owner}/{repo}"
+    url = f"{Config.GITHUB_API_BASE}/repos/{full_name}/contents/.3105/admin-settings.json"
+    headers = {
+        "Accept": "application/vnd.github+json",
+        "User-Agent": "3105-repo-builder/1.0",
+    }
+    try:
+        resp = _req.get(url, headers=headers, timeout=10)
+    except _req.RequestException as e:
+        return jsonify({"ok": False, "error": f"GitHub request failed: {e}"}), 502
+
+    if resp.status_code == 404:
+        # Không có file → trả default empty, vẫn ok
+        result = {"ok": True, "settings": {}, "source": "default"}
+        app.config[cache_key] = result
+        app.config[cache_key + ":ts"] = now
+        return jsonify(result)
+
+    if resp.status_code != 200:
+        return jsonify({"ok": False, "error": f"GitHub returned {resp.status_code}"}), 502
+
+    try:
+        import base64 as _b64
+        import json as _json
+        data = resp.json()
+        raw = _b64.b64decode(data.get("content", "")).decode("utf-8")
+        settings = _json.loads(raw)
+    except (ValueError, UnicodeDecodeError) as e:
+        return jsonify({"ok": False, "error": f"Invalid JSON: {e}"}), 502
+
+    result = {"ok": True, "settings": settings, "source": "github"}
+    app.config[cache_key] = result
+    app.config[cache_key + ":ts"] = now
+    return jsonify(result)
 
 
 @app.route("/api/public/release/<owner>/<repo>/<path:package_id>")

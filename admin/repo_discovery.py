@@ -93,10 +93,12 @@ class RepoCandidate:
     updated_at: str                 # ISO 8601
     repo_json_path: str             # path nào đã tìm thấy file repo.json
     private: bool
-    releases: list[dict]            # list release cho packages (admin upload)
+    releases: list[dict]            # GitHub Releases mapping package_id → download_url
+    download_paths: list[dict]      # raw file .3105 mapping package_id → raw_url
+    download_mode: str              # "raw" | "releases" | "auto"
 
     def to_dict(self) -> dict[str, Any]:
-        return {k: v for k, v in asdict(self).items() if v is not None or k == "releases"}
+        return {k: v for k, v in asdict(self).items() if v is not None or k in ("releases", "download_paths", "download_mode")}
 
 
 # -----------------------------------------------------------------------------
@@ -208,6 +210,8 @@ def _try_discover_repo_json(token: str, repo: dict[str, Any]) -> RepoCandidate |
             repo_json_path=path,
             private=repo.get("private", False),
             releases=parsed.get("releases", []),
+            download_paths=parsed.get("download_paths", []),
+            download_mode=parsed.get("download_mode", "auto"),
         )
 
     return None
@@ -255,18 +259,30 @@ def _parse_and_validate_repo_json(raw: dict) -> dict | None:
         "identifier": str,         # required
         "name": str,               # optional
         "owner_github": str,       # optional
-        "releases": [              # optional — danh sách release cho packages
+        "releases": [              # optional — GitHub Releases cho packages
           {
-            "package_id": str,     # identifier của package
-            "version": str,       # vd "1.2.0"
-            "tag": str,           # git tag, vd "v1.2.0"
-            "asset_name": str,    # tên file .3105
-            "download_url": str,  # URL release (rawgithub/GitHub Releases)
+            "package_id": str,
+            "version": str,
+            "tag": str,
+            "asset_name": str,
+            "download_url": str,    # URL release (browser_download_url)
             "size_bytes": int,
             "sha256": str,
           },
           ...
         ],
+        "download_paths": [        # optional — override raw URL cho file .3105
+          {
+            "package_id": str,
+            "path": str,           # exact path trong repo
+            "raw_url": str,        # full URL raw.githubusercontent.com
+            "asset_name": str,     # filename
+            "size_bytes": int,
+            "sha": str,            # git blob sha
+          },
+          ...
+        ],
+        "download_mode": str,      # optional — "raw" | "releases" | "auto" (default "auto")
       }
     """
     if not isinstance(raw, dict):
@@ -278,12 +294,11 @@ def _parse_and_validate_repo_json(raw: dict) -> dict | None:
     if not isinstance(identifier, str) or not identifier.strip():
         return None
 
-    # Validate releases[] nếu có (không bắt buộc, nhưng nếu có phải đúng format)
+    # Validate releases[]
     releases = raw.get("releases", [])
     if not isinstance(releases, list):
         releases = []
     else:
-        # Filter chỉ giữ entry hợp lệ
         valid_releases = []
         for r in releases:
             if not isinstance(r, dict):
@@ -303,12 +318,42 @@ def _parse_and_validate_repo_json(raw: dict) -> dict | None:
             })
         releases = valid_releases
 
+    # Validate download_paths[]
+    download_paths = raw.get("download_paths", [])
+    if not isinstance(download_paths, list):
+        download_paths = []
+    else:
+        valid_paths = []
+        for dp in download_paths:
+            if not isinstance(dp, dict):
+                continue
+            pkg_id = dp.get("package_id")
+            raw_url = dp.get("raw_url")
+            if not isinstance(pkg_id, str) or not isinstance(raw_url, str):
+                continue
+            valid_paths.append({
+                "package_id": pkg_id,
+                "path": dp.get("path", ""),
+                "raw_url": raw_url,
+                "asset_name": dp.get("asset_name", ""),
+                "size_bytes": int(dp.get("size_bytes", 0)),
+                "sha": dp.get("sha", ""),
+            })
+        download_paths = valid_paths
+
+    # Validate download_mode
+    download_mode = raw.get("download_mode", "auto")
+    if download_mode not in ("raw", "releases", "auto"):
+        download_mode = "auto"
+
     return {
         "slug": slug.strip(),
         "identifier": identifier.strip(),
         "name": raw.get("name"),
         "owner_github": raw.get("owner_github"),
         "releases": releases,
+        "download_paths": download_paths,
+        "download_mode": download_mode,
     }
 
 

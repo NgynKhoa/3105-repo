@@ -220,6 +220,10 @@ def auth_me():
         # releases[] từ repo.json của repo đang xem (nếu có)
         # Front Repo dùng để map package_id → download_url cho nút Tải xuống.
         "releases": (current_repo_data or {}).get("releases", []),
+        # download_paths[] từ repo.json (raw file .3105 trong repo)
+        "download_paths": (current_repo_data or {}).get("download_paths", []),
+        # download_mode: "raw" | "releases" | "auto"
+        "download_mode": (current_repo_data or {}).get("download_mode", "auto"),
         "repo_json_path": (current_repo_data or {}).get("repo_json_path", ""),
     })
 

@@ -2300,13 +2300,37 @@
     </div>
     <div class="settings-body">
       <!--
-        Theme picker (Màu Theme, Màu Shadow, Hình nền) đã bị ẩn theo yêu cầu:
-        "người dùng không thể tùy chỉnh ảnh theme nhé chỉ có thể đổi
-         Darkmode và lightmode thôi không được đổi ảnh theme và màu
-         theme trong setting."
-        Theme giữ nguyên mặc định (green), background giữ nguyên mặc định.
-        Markup cũ được giữ lại dạng comment để dễ khôi phục nếu sau này cần.
+        Theme picker (Màu Theme, Màu Shadow, Hình nền) CHỈ hiện cho admin.
+        User thường KHÔNG thể tùy chỉnh — họ dùng admin defaults hoặc tự chỉnh
+        các setting cơ bản (mưa, dark mode, trong suốt) phía dưới.
       -->
+      <div class="settings-group" id="adminThemeGroup" data-owner-only="1" style="display:none;">
+        <span class="settings-label">🎨 Theme (chỉ Admin)</span>
+        <div class="theme-grid" id="themeGrid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:6px 0;">
+          <!-- Theme buttons rendered by JS (applyTheme) -->
+        </div>
+        <span class="settings-label" style="font-size:12px;">Shadow Logo</span>
+        <div class="theme-grid" id="shadowGrid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:6px 0;">
+          <!-- Shadow buttons rendered by JS (applyShadowTheme) -->
+        </div>
+        <span class="settings-label" style="font-size:12px;">Hình nền</span>
+        <div id="bgManager" style="font-size:12px;">
+          <button id="btnPickBg" class="settings-nav-link" style="background:transparent;border:1px solid var(--border);text-align:center;cursor:pointer;width:100%;">
+            🖼️ Upload / Chọn ảnh nền
+          </button>
+          <input type="file" id="bgFileInput" accept="image/*" style="display:none;" />
+          <div id="bgCurrentInfo" style="font-size:11px;color:var(--muted);margin-top:4px;"></div>
+        </div>
+        <span class="settings-label" style="font-size:12px;margin-top:12px;display:block;">📦 Cách phát hành packages</span>
+        <select id="downloadModePicker" style="width:100%;padding:6px;background:var(--bg);color:var(--text-bright);border:1px solid var(--border);border-radius:4px;">
+          <option value="auto">Auto (raw trước, fallback Releases)</option>
+          <option value="raw">Raw file .3105 trong repo</option>
+          <option value="releases">GitHub Releases (cần upload qua web)</option>
+        </select>
+        <div style="font-size:11px;color:var(--muted);margin-top:4px;">
+          <a href="#" id="lnkReleaseGuide" style="color:var(--neon-cyan);">📖 Hướng dẫn setup GitHub Releases</a>
+        </div>
+      </div>
 
       <div class="settings-group">
         <span class="settings-label">Hiệu ứng Mưa</span>
@@ -2332,6 +2356,28 @@
         <div style="display:flex;justify-content:space-between;font-size: 12px;color:var(--muted);margin-top:2px;padding:0 2px;">
           <span>🪟 Trong suốt</span>
           <span>🏷️ Mờ đặc</span>
+        </div>
+      </div>
+
+      <!-- "Tắt ảnh nền" cho user thường (nếu admin đã set bg image) -->
+      <div class="settings-group" id="bgOverrideGroup" style="display:none;">
+        <span class="settings-label">Ảnh nền Theme</span>
+        <div class="settings-row">
+          <span class="settings-row-label" style="font-size:12px;">Tắt ảnh nền của admin</span>
+          <label class="toggle-switch"><input type="checkbox" id="toggleHideAdminBg"><span class="toggle-slider"></span></label>
+        </div>
+        <div style="font-size:11px;color:var(--muted);margin-top:4px;">
+          Bật = dùng theme admin. Tắt = dùng nền mặc định.
+        </div>
+      </div>
+
+      <!-- Reset về admin defaults (chỉ hiện cho user thường, khi đã chỉnh riêng) -->
+      <div class="settings-group" id="resetGroup" style="display:none;">
+        <button id="btnResetToAdmin" class="settings-nav-link" style="background:transparent;border:1px dashed var(--border);text-align:center;width:100%;cursor:pointer;">
+          ↺ Reset về theme mặc định của admin
+        </button>
+        <div style="font-size:11px;color:var(--muted);margin-top:4px;text-align:center;">
+          Xóa các tùy chỉnh cá nhân của bạn.
         </div>
       </div>
       <div class="settings-group">
@@ -3094,6 +3140,142 @@
   if (closeSettings) closeSettings.addEventListener('click', toggleMenu);
   if (settingsOverlay) settingsOverlay.addEventListener('click', toggleMenu);
 
+  // === Reset về admin theme (chỉ user thường) ===
+  const btnResetToAdmin = document.getElementById('btnResetToAdmin');
+  if (btnResetToAdmin) {
+    btnResetToAdmin.addEventListener('click', () => {
+      if (!window.Settings) return;
+      if (!confirm('Reset tất cả settings (mưa, theme, dark mode, trong suốt...) về mặc định của admin?')) return;
+      window.Settings.resetToAdminDefaults();
+      // Reload page để áp dụng defaults mới
+      location.reload();
+    });
+  }
+
+  // === Tắt ảnh nền admin ===
+  const toggleHideAdminBg = document.getElementById('toggleHideAdminBg');
+  if (toggleHideAdminBg) {
+    // Restore state
+    if (localStorage.getItem('hideAdminBg') === 'true') toggleHideAdminBg.checked = true;
+    toggleHideAdminBg.addEventListener('change', (e) => {
+      const hide = e.target.checked;
+      try { localStorage.setItem('hideAdminBg', String(hide)); } catch(e) {}
+      // Force hide / show bg image
+      const bg = document.querySelector('.bg-image, body > .bg');
+      if (hide) {
+        document.body.classList.add('no-admin-bg');
+      } else {
+        document.body.classList.remove('no-admin-bg');
+      }
+    });
+    // Apply initial state
+    if (localStorage.getItem('hideAdminBg') === 'true') {
+      document.body.classList.add('no-admin-bg');
+    }
+  }
+
+  // === Show/hide reset + bg override dựa trên role ===
+  function refreshSettingsPanel() {
+    const resetGroup = document.getElementById('resetGroup');
+    const bgGroup = document.getElementById('bgOverrideGroup');
+    const adminThemeGroup = document.getElementById('adminThemeGroup');
+    if (window.Settings) {
+      // Reset button: chỉ user thường + đã có localStorage 'user_*' value
+      if (resetGroup) {
+        const hasUserSet = ['user_rainEnabled', 'user_darkMode', 'user_transparency']
+          .some(k => localStorage.getItem(k) !== null);
+        resetGroup.style.display = (window.Settings.role === 'user' && hasUserSet) ? 'block' : 'none';
+      }
+      // Bg override: chỉ user thường + admin đã set bg_image
+      if (bgGroup) {
+        const adminBg = (window.__adminDefaults || {}).bg_image;
+        bgGroup.style.display = (window.Settings.role === 'user' && adminBg) ? 'block' : 'none';
+      }
+      // Admin theme group: chỉ admin
+      if (adminThemeGroup) {
+        adminThemeGroup.style.display = (window.Settings.role === 'admin') ? 'block' : 'none';
+      }
+      // Sync download mode picker với admin-settings.json
+      const dmPicker = document.getElementById('downloadModePicker');
+      if (dmPicker && window.Settings.role === 'admin') {
+        dmPicker.value = window.__downloadMode || 'auto';
+      }
+    }
+  }
+  // Expose để fetchAuthState gọi
+  window.refreshSettingsPanel = refreshSettingsPanel;
+
+  // Wire download mode picker → save to admin settings
+  const dmPicker = document.getElementById('downloadModePicker');
+  if (dmPicker) {
+    dmPicker.addEventListener('change', (e) => {
+      window.__downloadMode = e.target.value;
+      // Save through admin settings sync
+      if (window.__adminSettingsSync) {
+        window.__adminSettingsSync('download_mode', e.target.value);
+      }
+      // Also re-render packages để áp dụng mode mới
+      if (typeof renderPackages === 'function') renderPackages();
+    });
+  }
+
+  // Release guide modal
+  function openReleaseGuideModal() {
+    const existing = document.getElementById('releaseGuideModal');
+    if (existing) existing.remove();
+    const html = `
+      <div id="releaseGuideModal" class="modal-overlay" style="position:fixed;inset:0;background:rgba(0,0,0,0.8);display:flex;align-items:center;justify-content:center;z-index:999999;">
+        <div style="background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:24px;max-width:640px;width:92%;max-height:85vh;overflow-y:auto;">
+          <h3 style="margin:0 0 12px;color:var(--text-bright);">📦 Hướng dẫn phát hành packages</h3>
+          <p style="font-size:13px;color:var(--muted);margin:0 0 16px;">3 cách để user download file <code>.3105</code>:</p>
+
+          <div style="border:1px solid var(--border);border-radius:6px;padding:12px;margin-bottom:12px;">
+            <h4 style="margin:0 0 6px;color:var(--neon-green);font-size:14px;">1️⃣ Raw file trong repo (MẶC ĐỊNH — khuyến nghị)</h4>
+            <p style="font-size:12px;color:var(--text);margin:0 0 6px;">Đặt file vào folder packages theo convention:</p>
+            <pre style="background:var(--bg);padding:8px;border-radius:4px;font-size:11px;color:var(--neon-cyan);overflow-x:auto;">3105-repo/repositories/demo/packages/
+  └── com.example.pkg1-1.2.0.3105</pre>
+            <p style="font-size:11px;color:var(--muted);margin:0;">Đổi tên folder <code>3105-repo</code> thành bất kỳ → server vẫn detect qua 8 path candidates.</p>
+          </div>
+
+          <div style="border:1px solid var(--border);border-radius:6px;padding:12px;margin-bottom:12px;">
+            <h4 style="margin:0 0 6px;color:var(--neon-pink);font-size:14px;">2️⃣ GitHub Releases (version tracking chuyên nghiệp)</h4>
+            <p style="font-size:12px;color:var(--text);margin:0 0 6px;">Setup workflow GitHub Actions:</p>
+            <pre style="background:var(--bg);padding:8px;border-radius:4px;font-size:11px;color:var(--neon-cyan);overflow-x:auto;">.github/workflows/release.yml
+# Xem docs/RELEASE_SETUP.md để biết chi tiết</pre>
+            <p style="font-size:11px;color:var(--muted);margin:0;">Hoặc upload trực tiếp: click nút <strong>📦 Upload</strong> trên mỗi package.</p>
+          </div>
+
+          <div style="border:1px solid var(--border);border-radius:6px;padding:12px;margin-bottom:16px;">
+            <h4 style="margin:0 0 6px;color:var(--neon-yellow);font-size:14px;">3️⃣ Auto (Hybrid)</h4>
+            <p style="font-size:12px;color:var(--text);margin:0;">Mặc định. Thử raw trước (từ folder packages/), nếu không có → fallback GitHub Releases.</p>
+          </div>
+
+          <div style="display:flex;gap:8px;justify-content:flex-end;">
+            <a href="https://github.com/NgynKhoa/3105-repo/blob/main/docs/RELEASE_SETUP.md" target="_blank" rel="noopener"
+               class="settings-nav-link" style="background:var(--neon-cyan);color:#000;border:none;border-radius:4px;padding:8px 16px;text-decoration:none;font-weight:600;">📖 Mở docs đầy đủ</a>
+            <button id="releaseGuideClose" style="padding:8px 16px;background:transparent;color:var(--text);border:1px solid var(--border);border-radius:4px;cursor:pointer;">Đóng</button>
+          </div>
+        </div>
+      </div>`;
+    const wrapper = document.createElement('div');
+    wrapper.innerHTML = html;
+    document.body.appendChild(wrapper.firstElementChild);
+    document.getElementById('releaseGuideClose').onclick = () => document.getElementById('releaseGuideModal').remove();
+    // Close on overlay click
+    document.getElementById('releaseGuideModal').addEventListener('click', (e) => {
+      if (e.target.id === 'releaseGuideModal') e.target.remove();
+    });
+  }
+
+  // Wire release guide link → modal
+  const lnkReleaseGuide = document.getElementById('lnkReleaseGuide');
+  if (lnkReleaseGuide) {
+    lnkReleaseGuide.addEventListener('click', (e) => {
+      e.preventDefault();
+      openReleaseGuideModal();
+    });
+  }
+
   // Theme - applies to dashboard, blog, repo
   const themes = {
     green: { neon: '#80ff40', neonRgb: '57, 255, 20', neonPink: '#ff2d7b', neonPinkRgb: '255, 45, 123', neonCyan: '#00f0ff', neonCyanRgb: '0, 240, 255', neonYellow: '#f0e040', neonLavender: '#b388ff', bg: '#06060e' },
@@ -3105,6 +3287,41 @@
     orange: { neon: '#ff8800', neonRgb: '255, 136, 0', neonPink: '#ff2d7b', neonPinkRgb: '255, 45, 123', neonCyan: '#00f0ff', neonCyanRgb: '0, 240, 255', neonYellow: '#f0e040', neonLavender: '#b388ff', bg: '#0e0a06' },
     white: { neon: '#eeeeee', neonRgb: '238, 238, 238', neonPink: '#ff2d7b', neonPinkRgb: '255, 45, 123', neonCyan: '#00f0ff', neonCyanRgb: '0, 240, 255', neonYellow: '#f0e040', neonLavender: '#b388ff', bg: '#111111' }
   };
+
+  // Render theme grid cho admin
+  (function renderAdminThemeGrid() {
+    const grid = document.getElementById('themeGrid');
+    if (!grid) return;
+    grid.innerHTML = Object.entries(themes).map(([k, t]) => `
+      <button class="theme-btn" data-theme="${k}" title="${k}"
+              style="height:32px;border-radius:4px;border:2px solid transparent;background:${t.neon};cursor:pointer;"></button>
+    `).join('');
+    grid.querySelectorAll('.theme-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        if (typeof window.applyTheme === 'function') window.applyTheme(btn.dataset.theme);
+      });
+    });
+  })();
+
+  // Render shadow grid cho admin
+  const shadowThemes = ['default', 'cyan', 'pink', 'lavender', 'yellow', 'red', 'orange', 'white'];
+  (function renderAdminShadowGrid() {
+    const grid = document.getElementById('shadowGrid');
+    if (!grid) return;
+    const swatchMap = {
+      default: '#80ff40', cyan: '#00f0ff', pink: '#ff2d7b', lavender: '#b388ff',
+      yellow: '#f0e040', red: '#ff4444', orange: '#ff8800', white: '#eeeeee',
+    };
+    grid.innerHTML = shadowThemes.map(k => `
+      <button class="shadow-btn" data-shadow="${k}" title="${k}"
+              style="height:32px;border-radius:4px;border:2px solid transparent;background:${swatchMap[k]};cursor:pointer;"></button>
+    `).join('');
+    grid.querySelectorAll('.shadow-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        if (typeof window.applyShadowTheme === 'function') window.applyShadowTheme(btn.dataset.shadow);
+      });
+    });
+  })();
 
   window.applyTheme = function(name) {
     const t = themes[name];
@@ -3779,12 +3996,16 @@ document.querySelectorAll('.blog-card, .blog-item a, .blog-link').forEach(card =
     const shown = all.slice(start, start + max);
     // Cập nhật currentRepo cho app.js (để openModal/deletePackage dùng đúng repo)
     if (currentRepo) window.__frontRepoName = currentRepo;
-    // releases[] từ /auth/me (admin login) — map identifier → release URL.
-    // Front Repo lưu trong window.__packageReleases (fetchAuthState cập nhật).
+    // releases[] + download_paths[] + download_mode từ /auth/me (admin login)
     const releaseMap = {};
     (window.__packageReleases || []).forEach(r => {
       if (r && r.package_id) releaseMap[r.package_id] = r;
     });
+    const rawPathMap = {};
+    (window.__packageDownloadPaths || []).forEach(dp => {
+      if (dp && dp.package_id) rawPathMap[dp.package_id] = dp;
+    });
+    const downloadMode = window.__downloadMode || 'auto';
     // Anonymous users dùng public API lookup (lazy)
     async function lookupPublicRelease(identifier) {
       if (!currentRepo || !identifier) return null;
@@ -3808,20 +4029,36 @@ document.querySelectorAll('.blog-card, .blog-item a, .blog-link').forEach(card =
           <button class="btn btn-xs neon-edit" data-action="edit" data-id="${idEsc}" title="Sửa package ${idEsc}">Sửa</button>
           <button class="btn btn-xs neon-delete" data-action="delete" data-id="${idEsc}" title="Xóa package ${idEsc}">✕</button>
         </div>` : '');
-      // Tìm release URL (cho nút Tải xuống)
-      const rel = releaseMap[idEsc];
-      const dl = rel ? rel.download_url : null;
+      // Tìm download URL theo download_mode:
+      //   - "raw"     → rawPathMap (file .3105 trong repo)
+      //   - "releases"→ releaseMap (GitHub Releases)
+      //   - "auto"    → raw trước, fallback releases
+      let dl = null;
+      let dlMeta = null;
+      if (downloadMode === 'raw') {
+        dlMeta = rawPathMap[idEsc];
+        dl = dlMeta ? dlMeta.raw_url : null;
+      } else if (downloadMode === 'releases') {
+        dlMeta = releaseMap[idEsc];
+        dl = dlMeta ? dlMeta.download_url : null;
+      } else {  // auto
+        dlMeta = rawPathMap[idEsc];
+        dl = dlMeta ? dlMeta.raw_url : null;
+        if (!dl) {
+          dlMeta = releaseMap[idEsc];
+          dl = dlMeta ? dlMeta.download_url : null;
+        }
+      }
       const downloadBtn = dl ? `
         <a href="${escapeHtml(dl)}" target="_blank" rel="noopener"
            class="btn btn-xs neon-download"
            data-id="${idEsc}"
-           title="Tải xuống ${escapeHtml(rel.asset_name || '')}${rel.size_bytes ? ' (' + (rel.size_bytes / 1024).toFixed(1) + ' KB)' : ''}"
+           title="Tải xuống ${escapeHtml(dlMeta.asset_name || '')}${dlMeta.size_bytes ? ' (' + (dlMeta.size_bytes / 1024).toFixed(1) + ' KB)' : ''}"
            style="flex-shrink:0;text-decoration:none;">⬇ Tải</a>`
-        // Nếu chưa có release trong cache → hiện nút "Tìm" cho user thường
-        // (lazy lookup qua public API)
+        // Nếu chưa có URL → hiện nút "Tìm" cho user thường (lazy lookup)
         : (idEsc ? `<button class="btn btn-xs neon-download-ghost"
                 data-action="lookup-release" data-id="${idEsc}"
-                title="Tìm release cho ${idEsc}"
+                title="Tìm file .3105 cho ${idEsc}"
                 style="flex-shrink:0;background:transparent;color:var(--muted);">⬇ Tìm</button>` : '');
       // Upload release (chỉ admin)
       const uploadBtn = (window.PUBLIC_REPO_OWNER || window.__isAuthOwner) ? `
@@ -3973,20 +4210,46 @@ document.querySelectorAll('.blog-card, .blog-item a, .blog-link').forEach(card =
   }
 
   // Public lookup cho anonymous user — gọi /api/public/release/.../.../{id}
+  // hoặc /api/public/raw-asset/{owner}/{repo}/{slug}/{id}
   async function lookupReleaseAndUpdate(identifier, btn) {
     const owner = window.PUBLIC_REPO_OWNER_GITHUB || window.__currentRepoOwner;
-    if (!owner || !currentRepo) {
-      alert('Không xác định được owner của repo này.');
+    const slug = window.PUBLIC_REPO_SLUG || window.__frontRepoName;
+    if (!owner || !slug) {
+      alert('Không xác định được owner/repo của Front Repo này. Build với --owner-github.');
       return;
     }
     btn.disabled = true;
     const oldText = btn.textContent;
     btn.textContent = '⏳';
+    // Thử raw-asset trước (file .3105 trong repo)
     try {
-      const r = await fetch(`/api/public/release/${encodeURIComponent(owner)}/${encodeURIComponent(currentRepo)}/${encodeURIComponent(identifier)}`, {credentials: 'same-origin'});
+      const r = await fetch(`/api/public/raw-asset/${encodeURIComponent(owner)}/${encodeURIComponent(slug)}/${encodeURIComponent(slug)}/${encodeURIComponent(identifier)}`, {credentials: 'same-origin'});
       const data = await r.json();
       if (data.ok && data.download_url) {
-        // Update window.__packageReleases + re-render
+        // Save vào download_paths + re-render
+        window.__packageDownloadPaths = window.__packageDownloadPaths || [];
+        // Tránh duplicate
+        if (!window.__packageDownloadPaths.find(d => d.package_id === identifier)) {
+          window.__packageDownloadPaths.push({
+            package_id: identifier,
+            raw_url: data.download_url,
+            asset_name: data.asset_name || '',
+            size_bytes: data.size_bytes || 0,
+            path: data.path || '',
+            sha: data.sha || '',
+          });
+        }
+        if (typeof renderPackages === 'function') renderPackages();
+        return;
+      }
+    } catch (e) {
+      console.warn('raw-asset lookup failed', e);
+    }
+    // Fallback: GitHub Releases
+    try {
+      const r = await fetch(`/api/public/release/${encodeURIComponent(owner)}/${encodeURIComponent(slug)}/${encodeURIComponent(identifier)}`, {credentials: 'same-origin'});
+      const data = await r.json();
+      if (data.ok && data.download_url) {
         window.__packageReleases = window.__packageReleases || [];
         window.__packageReleases.push({
           package_id: identifier,
@@ -3997,18 +4260,16 @@ document.querySelectorAll('.blog-card, .blog-item a, .blog-link').forEach(card =
           size_bytes: data.size_bytes,
           sha256: data.sha256,
         });
-        // Re-render
         if (typeof renderPackages === 'function') renderPackages();
+        return;
       } else {
-        alert(`❌ ${data.error || 'Không tìm thấy release'}`);
-        btn.textContent = oldText;
-        btn.disabled = false;
+        alert(`❌ ${data.error || 'Không tìm thấy file .3105 / release'}`);
       }
     } catch (e) {
       alert('❌ Lỗi network: ' + e);
-      btn.textContent = oldText;
-      btn.disabled = false;
     }
+    btn.textContent = oldText;
+    btn.disabled = false;
   }
 
   // === Upload Release Modal ===
@@ -4313,6 +4574,9 @@ document.querySelectorAll('.blog-card, .blog-item a, .blog-link').forEach(card =
   const Settings = {
     role: 'user',
     prefix: 'user_',
+    // 'initial' = chưa có user value, có thể lấy từ admin default
+    // 'user-set' = user đã chỉnh riêng, KHÔNG đụng nữa
+    state: 'initial',
 
     init(role) {
       this.role = role;
@@ -4321,7 +4585,6 @@ document.querySelectorAll('.blog-card, .blog-item a, .blog-link').forEach(card =
 
     get(key) {
       try {
-        // Ưu tiên namespace (admin_* hoặc user_*), fallback về key cũ.
         const ns = localStorage.getItem(this.prefix + key);
         if (ns !== null) return ns;
         return localStorage.getItem(key);
@@ -4331,13 +4594,47 @@ document.querySelectorAll('.blog-card, .blog-item a, .blog-link').forEach(card =
     set(key, value) {
       try {
         localStorage.setItem(this.prefix + key, String(value));
-        // Cũng ghi alias key cũ (back-compat với code đang dùng key cũ).
-        // Khi role=user, admin_ alias KHÔNG ghi → tránh nhầm.
         localStorage.setItem(key, String(value));
       } catch (e) {}
+      // User đã chỉnh → KHÔNG bị admin default ghi đè nữa
+      if (this.role === 'user') {
+        this.state = 'user-set';
+      }
       if (this.role === 'admin' && window.__adminSettingsSync) {
         window.__adminSettingsSync(key, value);
       }
+    },
+
+    // Áp dụng admin default vào user namespace (chỉ khi user chưa set).
+    // Gọi 1 lần ở boot sau khi fetch admin settings.
+    applyAdminDefaults(adminSettings) {
+      if (!adminSettings || this.role !== 'user' || this.state === 'user-set') return;
+      const map = {
+        rain_enabled: 'rainEnabled',
+        heavy_rain: 'heavyRain',
+        dark_mode: 'darkMode',
+        theme: 'theme',
+        transparency: 'transparency',
+        shadow_theme: 'shadowTheme',
+        bg_image: 'bgImage',
+      };
+      Object.entries(adminSettings).forEach(([k, v]) => {
+        const localKey = map[k] || k;
+        // CHỈ set khi user namespace chưa có giá trị
+        if (!localStorage.getItem('user_' + localKey) && localStorage.getItem('user_' + localKey) !== '') {
+          try { localStorage.setItem('user_' + localKey, String(v)); } catch(e) {}
+        }
+      });
+    },
+
+    resetToAdminDefaults() {
+      ['rainEnabled', 'heavyRain', 'darkMode', 'theme', 'transparency', 'shadowTheme', 'bgImage'].forEach(k => {
+        try {
+          localStorage.removeItem('user_' + k);
+          localStorage.removeItem(k);
+        } catch(e) {}
+      });
+      this.state = 'initial';
     },
   };
   window.Settings = Settings;
@@ -4427,6 +4724,7 @@ document.querySelectorAll('.blog-card, .blog-item a, .blog-link').forEach(card =
             loadAdminSettingsFromGitHub(owned);
             // Set up sync handler: mỗi lần Settings.set → push lên GitHub
             window.__adminSettingsSync = (key, value) => {
+              // Map local keys → GitHub admin-settings keys
               const syncKey = {
                 'rainEnabled': 'rain_enabled',
                 'heavyRain': 'heavy_rain',
@@ -4434,6 +4732,8 @@ document.querySelectorAll('.blog-card, .blog-item a, .blog-link').forEach(card =
                 'theme': 'theme',
                 'transparency': 'transparency',
                 'shadowTheme': 'shadow_theme',
+                'bgImage': 'bg_image',
+                'download_mode': 'download_mode',
               }[key] || key;
               postAdminSettingToGitHub(owned, syncKey, value);
             };
@@ -4445,20 +4745,31 @@ document.querySelectorAll('.blog-card, .blog-item a, .blog-link').forEach(card =
         if (window.__dynamicFit && window.__dynamicFit.renderPackages) {
           window.__dynamicFit.renderPackages();
         }
-        // Lưu releases để render Tải xuống button
+        // Lưu releases + download_paths + download_mode để render Tải xuống button
         if (Array.isArray(data.releases)) {
           window.__packageReleases = data.releases;
         }
+        if (Array.isArray(data.download_paths)) {
+          window.__packageDownloadPaths = data.download_paths;
+        }
+        window.__downloadMode = data.download_mode || 'auto';
       } else {
         if (loginBtn) loginBtn.style.display = 'flex';
         if (userInfo) userInfo.style.display = 'none';
-        // Anonymous → init Settings as 'user'
+        // Anonymous → init Settings as 'user' + try load public admin defaults
         if (window.Settings) {
           window.Settings.init('user');
           window.__adminSettingsSync = null;
         }
+        // Anonymous user: thử fetch admin settings (nếu owner_github biết) → apply defaults
+        const anonOwner = window.PUBLIC_REPO_OWNER_GITHUB || window.__currentRepoOwner;
+        const anonRepo = window.PUBLIC_REPO_SLUG || window.__frontRepoName;
+        if (anonOwner && anonRepo) {
+          loadPublicAdminSettings(anonOwner, anonRepo);
+        }
       }
       applyRbac();
+      if (window.refreshSettingsPanel) window.refreshSettingsPanel();
       return data;
     } catch (e) {
       console.warn('fetchAuthState failed', e);
@@ -4498,23 +4809,61 @@ document.querySelectorAll('.blog-card, .blog-item a, .blog-link').forEach(card =
       const r = await fetch(`/api/admin-settings?slug=${encodeURIComponent(slug)}`, {
         credentials: 'same-origin',
       });
-      if (!r.ok) return;
+      if (!r.ok) return null;
       const data = await r.json();
-      if (!data.ok || !data.settings) return;
-      const map = {
-        rain_enabled: 'rainEnabled',
-        heavy_rain: 'heavyRain',
-        dark_mode: 'darkMode',
-        theme: 'theme',
-        transparency: 'transparency',
-        shadow_theme: 'shadowTheme',
-      };
-      Object.entries(data.settings).forEach(([k, v]) => {
-        const localKey = map[k] || k;
-        try { localStorage.setItem('admin_' + localKey, String(v)); } catch(e) {}
-      });
+      if (!data.ok || !data.settings) return null;
+      // Save admin defaults cho UI (refreshSettingsPanel check bg_image, v.v.)
+      window.__adminDefaults = data.settings;
+      // Lưu download_mode cho package rendering
+      if (data.settings.download_mode) {
+        window.__downloadMode = data.settings.download_mode;
+      }
+      // Admin: lưu vào admin_ namespace + apply defaults cho user (nếu chưa có)
+      if (window.Settings) {
+        // Apply admin settings cho ADMIN role (admin namespace)
+        Settings.applyAdminDefaults(data.settings);  // CHỈ fill user nếu user chưa set
+        // Apply cho admin namespace luôn
+        const map = {
+          rain_enabled: 'rainEnabled',
+          heavy_rain: 'heavyRain',
+          dark_mode: 'darkMode',
+          theme: 'theme',
+          transparency: 'transparency',
+          shadow_theme: 'shadowTheme',
+          bg_image: 'bgImage',
+        };
+        Object.entries(data.settings).forEach(([k, v]) => {
+          const localKey = map[k] || k;
+          try { localStorage.setItem('admin_' + localKey, String(v)); } catch(e) {}
+        });
+      }
+      return data.settings;
     } catch (e) {
       console.warn('loadAdminSettings failed', e);
+      return null;
+    }
+  }
+
+  // Public version cho anonymous user — không cần auth
+  async function loadPublicAdminSettings(owner, repo) {
+    if (!owner || !repo) return null;
+    try {
+      // Dùng /api/public/admin-settings/<owner>/<repo>
+      const r = await fetch(`/api/public/admin-settings/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}`, {
+        credentials: 'same-origin',
+      });
+      if (!r.ok) return null;
+      const data = await r.json();
+      if (!data.ok || !data.settings) return null;
+      window.__adminDefaults = data.settings;
+      if (window.Settings) {
+        Settings.applyAdminDefaults(data.settings);
+      }
+      // Re-render settings panel (nếu đang mở)
+      if (window.refreshSettingsPanel) window.refreshSettingsPanel();
+      return data.settings;
+    } catch (e) {
+      return null;
     }
   }
 
