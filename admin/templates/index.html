@@ -4209,26 +4209,46 @@ document.querySelectorAll('.blog-card, .blog-item a, .blog-link').forEach(card =
     });
   }
 
-  // Public lookup cho anonymous user — gọi /api/public/release/.../.../{id}
-  // hoặc /api/public/raw-asset/{owner}/{repo}/{slug}/{id}
+  // Public lookup cho anonymous user — gọi /api/fetch-repo-json/... để lấy mọi download paths
   async function lookupReleaseAndUpdate(identifier, btn) {
-    const owner = window.PUBLIC_REPO_OWNER_GITHUB || window.__currentRepoOwner;
-    const slug = window.PUBLIC_REPO_SLUG || window.__frontRepoName;
+    const owner = window.PUBLIC_REPO_OWNER_GITHUB || window.__currentRepoOwner || '';
+    const slug = window.PUBLIC_REPO_SLUG || window.__frontRepoName || '';
     if (!owner || !slug) {
-      alert('Không xác định được owner/repo của Front Repo này. Build với --owner-github.');
+      alert('Không xác định được owner/repo của Front Repo này.\n\nBuild với: python tools/build_public.py --repo demo --owner-github YOUR_USERNAME');
       return;
     }
     btn.disabled = true;
     const oldText = btn.textContent;
     btn.textContent = '⏳';
-    // Thử raw-asset trước (file .3105 trong repo)
+
+    // Strategy 1: fetch full repo.json → get ALL download paths (includes mapping package → file)
     try {
-      const r = await fetch(`/api/public/raw-asset/${encodeURIComponent(owner)}/${encodeURIComponent(slug)}/${encodeURIComponent(slug)}/${encodeURIComponent(identifier)}`, {credentials: 'same-origin'});
+      const r = await fetch(`/api/fetch-repo-json/${encodeURIComponent(owner)}/${encodeURIComponent(slug)}/${encodeURIComponent(slug)}`, {credentials:'same-origin'});
+      if (r.ok) {
+        const data = await r.json();
+        if (data.ok) {
+          // Update window state
+          if (Array.isArray(data.download_paths)) {
+            window.__packageDownloadPaths = data.download_paths;
+          }
+          if (data.download_mode) {
+            window.__downloadMode = data.download_mode;
+          }
+          // Re-render all packages
+          if (typeof renderPackages === 'function') renderPackages();
+          return;
+        }
+      }
+    } catch (e) {
+      console.warn('fetch-repo-json lookup failed', e);
+    }
+
+    // Strategy 2: raw-asset (file .3105 trong repo)
+    try {
+      const r = await fetch(`/api/public/raw-asset/${encodeURIComponent(owner)}/${encodeURIComponent(slug)}/${encodeURIComponent(slug)}/${encodeURIComponent(identifier)}`, {credentials:'same-origin'});
       const data = await r.json();
       if (data.ok && data.download_url) {
-        // Save vào download_paths + re-render
         window.__packageDownloadPaths = window.__packageDownloadPaths || [];
-        // Tránh duplicate
         if (!window.__packageDownloadPaths.find(d => d.package_id === identifier)) {
           window.__packageDownloadPaths.push({
             package_id: identifier,
@@ -4245,9 +4265,10 @@ document.querySelectorAll('.blog-card, .blog-item a, .blog-link').forEach(card =
     } catch (e) {
       console.warn('raw-asset lookup failed', e);
     }
-    // Fallback: GitHub Releases
+
+    // Strategy 3: GitHub Releases (fallback)
     try {
-      const r = await fetch(`/api/public/release/${encodeURIComponent(owner)}/${encodeURIComponent(slug)}/${encodeURIComponent(identifier)}`, {credentials: 'same-origin'});
+      const r = await fetch(`/api/public/release/${encodeURIComponent(owner)}/${encodeURIComponent(slug)}/${encodeURIComponent(identifier)}`, {credentials:'same-origin'});
       const data = await r.json();
       if (data.ok && data.download_url) {
         window.__packageReleases = window.__packageReleases || [];
@@ -4502,12 +4523,21 @@ document.querySelectorAll('.blog-card, .blog-item a, .blog-link').forEach(card =
 
     // Lấy repo mặc định:
     //  - Public mode (GH Pages): dùng slug từ window.PUBLIC_REPO_SLUG
-    //  - Local admin: ưu tiên localStorage('currentRepo') → /api/repositories[0]
-    // /api/repositories trả { repositories: [...], sources: [...] } (object)
+    //  - Local admin: ưu tiên URL slug (?slug=demo) → localStorage → /api/repositories[0]
+    //
+    // ?slug=X trong URL: cho phép admin test local với repo cụ thể.
+    // VD: http://localhost:5050/?slug=demo → load repo "demo" từ GitHub của user.
+    const urlParams = new URLSearchParams(location.search);
+    const urlSlug = urlParams.get('slug') || '';
+
     const saved = (() => { try { return localStorage.getItem('currentRepo'); } catch (e) { return null; } })();
     if (window.PUBLIC_MODE && window.PUBLIC_REPO_SLUG) {
       // GH Pages: repo slug được bake-in, không cần fetch API
       currentRepo = window.PUBLIC_REPO_SLUG;
+    } else if (urlSlug) {
+      // URL slug (VD: ?slug=demo) — dùng trực tiếp
+      currentRepo = urlSlug;
+      window.PUBLIC_REPO_SLUG = urlSlug;  // sync cho các hàm khác dùng
     } else if (saved) {
       currentRepo = saved;
     } else {
@@ -4522,16 +4552,26 @@ document.querySelectorAll('.blog-card, .blog-item a, .blog-link').forEach(card =
       } catch (e) { console.warn('dynamicFit: load /api/repositories failed', e); }
     }
     if (currentRepo) {
+      window.__frontRepoName = currentRepo;
+    }
+
+    // fetchAuthState PHẢI gọi TRƯỚC loadPackages vì:
+    //   1. Set __isAuthOwner (RBAC: theme picker, sửa/xóa package)
+    //   2. Set __packageReleases + __downloadMode (Tải xuống button)
+    //   3. Set __currentRepoOwner (lookupReleaseAndUpdate cần cho anonymous)
+    //   4. Load admin settings (default-from-admin cho anonymous user)
+    // Anonymous user: gọi trước để apply admin defaults sớm.
+    // Login user: gọi trước để RBAC đúng ngay lần render đầu tiên.
+    await fetchAuthState();
+
+    // Bây giờ mới load packages (dùng __isAuthOwner đã được set)
+    if (currentRepo) {
       await loadPackages();
     } else {
       console.warn('dynamicFit: no currentRepo — packages sẽ trống');
     }
     wireBlogPagination();
     wirePkgPagination();
-    refitAll();
-    // Watch resize
-    watchResize(document.getElementById('packagesBox'), renderPackages);
-    watchResize(document.getElementById('blog-section'), renderBlog);
     // Re-fit khi layout áp xong (boxes thay đổi left/top/w/h)
     if (typeof window.__reapplyLayout === 'function') {
       const orig = window.__reapplyLayout;
@@ -4753,6 +4793,8 @@ document.querySelectorAll('.blog-card, .blog-item a, .blog-link').forEach(card =
           window.__packageDownloadPaths = data.download_paths;
         }
         window.__downloadMode = data.download_mode || 'auto';
+        // Set __currentRepoOwner để lookupReleaseAndUpdate dùng
+        window.__currentRepoOwner = (data.current_repo || {}).owner_github || window.PUBLIC_REPO_OWNER_GITHUB || '';
       } else {
         if (loginBtn) loginBtn.style.display = 'flex';
         if (userInfo) userInfo.style.display = 'none';
@@ -4762,10 +4804,12 @@ document.querySelectorAll('.blog-card, .blog-item a, .blog-link').forEach(card =
           window.__adminSettingsSync = null;
         }
         // Anonymous user: thử fetch admin settings (nếu owner_github biết) → apply defaults
-        const anonOwner = window.PUBLIC_REPO_OWNER_GITHUB || window.__currentRepoOwner;
-        const anonRepo = window.PUBLIC_REPO_SLUG || window.__frontRepoName;
+        const anonOwner = window.PUBLIC_REPO_OWNER_GITHUB || window.__currentRepoOwner || '';
+        const anonRepo = window.PUBLIC_REPO_SLUG || window.__frontRepoName || '';
         if (anonOwner && anonRepo) {
+          // Load admin settings + repo.json (download paths) — song song
           loadPublicAdminSettings(anonOwner, anonRepo);
+          fetchRepoJsonForAnon(anonOwner, anonRepo);
         }
       }
       applyRbac();
@@ -4873,6 +4917,34 @@ document.querySelectorAll('.blog-card, .blog-item a, .blog-link').forEach(card =
     if (window.PUBLIC_MODE && !window.PUBLIC_REPO_OWNER) {
       const group = document.getElementById('authGroup');
       if (group) group.style.display = 'none';
+    }
+  }
+
+  // Fetch repo.json từ GitHub (public API) → lấy download paths cho anonymous user.
+  // Gọi khi: user anonymous vào trang + có owner_github.
+  // Kết quả: populate window.__packageDownloadPaths + window.__downloadMode.
+  async function fetchRepoJsonForAnon(owner, repo) {
+    try {
+      const r = await fetch(`/api/fetch-repo-json/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/${encodeURIComponent(window.PUBLIC_REPO_SLUG || window.__frontRepoName || '')}`, {
+        credentials: 'same-origin',
+      });
+      if (!r.ok) return;
+      const data = await r.json();
+      if (!data.ok) return;
+      // download_paths[]
+      if (Array.isArray(data.download_paths)) {
+        window.__packageDownloadPaths = data.download_paths;
+      }
+      // download_mode
+      if (data.download_mode) {
+        window.__downloadMode = data.download_mode;
+      }
+      // Set owner_github để lookupReleaseAndUpdate hoạt động
+      window.__currentRepoOwner = owner;
+      // Re-render packages để hiện nút Tải
+      if (typeof renderPackages === 'function') renderPackages();
+    } catch (e) {
+      console.warn('fetchRepoJsonForAnon failed', e);
     }
   }
 

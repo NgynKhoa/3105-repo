@@ -50,6 +50,7 @@ from .github_release import (
     find_release_for_package,
 )
 from .github_raw import register_raw_routes
+from .fetch_repo_json import register_fetch_repo_json
 
 
 # ---------------------------------------------------------------------------
@@ -120,6 +121,7 @@ app.config["PERMANENT_SESSION_LIFETIME"] = Config.SESSION_COOKIE_MAX_AGE
 app.register_blueprint(auth_bp)
 register_admin_settings_routes(app)
 register_raw_routes(app)
+register_fetch_repo_json(app)
 
 # In cảnh báo cấu hình (nếu có) ngay lúc boot
 for _issue in Config.validate_for_runtime():

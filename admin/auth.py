@@ -95,9 +95,20 @@ def github_login():
             "error": "OAuth chưa cấu hình. Set GITHUB_CLIENT_ID và GITHUB_CLIENT_SECRET trong .env",
         }), 503
 
-    # State: chống CSRF, chỉ dùng 1 lần
+      # State: chống CSRF, chỉ dùng 1 lần
     state = secrets.token_urlsafe(32)
     session[_SESSION_OAUTH_STATE] = state
+
+    # Lưu query string gốc (vd ?slug=demo&theme=dark) để sau login redirect về đúng trang.
+    # Chỉ giữ slug ( quan trọng nhất ), bỏ auth/logout/query params khác.
+    from urllib.parse import urlencode, parse_qs
+    raw_qs = request.query_string.decode()
+    safe_params = {}
+    for k, v in parse_qs(raw_qs).items():
+        # Chỉ giữ các param an toàn (slug là quan trọng nhất)
+        if k not in ('auth', 'logout', 'code', 'state') and v:
+            safe_params[k] = v[0]
+    session['oauth_return_params'] = safe_params
 
     params = {
         "client_id": Config.GITHUB_CLIENT_ID,
@@ -172,8 +183,12 @@ def github_callback():
 
     # Redirect về Front Repo — sử dụng URL an toàn (chỉ path, không host)
     # để tránh open redirect nếu OAUTH_CALLBACK_URL bị spoof.
+    # Đồng thời restore query params đã lưu trước login (vd ?slug=demo).
     base = Config.FRONTEND_BASE_URL.rstrip("/")
-    return redirect(f"{base}/?auth=ok&user={urllib.parse.quote(user.login)}")
+    safe_params = session.pop('oauth_return_params', {})
+    qs = ("?" + urllib.parse.urlencode(safe_params)) if safe_params else ""
+    auth_qs = f"auth=ok&user={urllib.parse.quote(user.login)}"
+    return redirect(f"{base}/{qs}{('&' if qs else '?')}{auth_qs}")
 
 
 @auth_bp.route("/me")
