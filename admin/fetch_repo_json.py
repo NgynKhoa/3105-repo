@@ -55,6 +55,9 @@ def api_fetch_repo_json(owner: str, repo: str, slug: str):
         "Accept": "application/vnd.github+json",
         "User-Agent": "3105-repo-builder/1.0",
     }
+    # Use PAT for read requests to bypass 60/hr rate limit.
+    if Config.GITHUB_PAT:
+        headers["Authorization"] = f"Bearer {Config.GITHUB_PAT}"
 
     # Get default branch
     branch = "main"
@@ -83,6 +86,10 @@ def api_fetch_repo_json(owner: str, repo: str, slug: str):
                     repo_json_data = _json.loads(raw)
                 repo_json_path = path
                 break
+            # 403 = rate limit / 404 = not found → both treated as "không tìm thấy"
+            # để user có thể tiếp tục dùng (vd: manual upload).
+            if resp.status_code in (403, 404):
+                continue
         except (_req.RequestException, _json.JSONDecodeError, _b64.binascii.Error):
             continue
 

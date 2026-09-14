@@ -552,10 +552,15 @@ def add_no_cache_headers(response):
 
 @app.route("/")
 def index():
+    import os as _os
     bootstrap_js = (
         f"window.CATEGORIES = {json.dumps(CATEGORY_OPTIONS)};\n"
         f"window.DEFAULT_OS_RULES = {json.dumps(DEFAULT_OS_RULES)};\n"
         f"window.DEFAULT_SCREENSHOTS = {json.dumps(DEFAULT_SCREENSHOTS)};\n"
+        # Inject owner + repo cho local dev — anonymous user cần biết
+        # để fetch raw-asset / admin-settings từ GitHub.
+        f"window.PUBLIC_REPO_OWNER_GITHUB = {_os.environ.get('GITHUB_DEFAULT_OWNER', 'NgynKhoa')!r};\n"
+        f"window.PUBLIC_REPO_NAME = {_os.environ.get('GITHUB_REPO_NAME', '3105-repo')!r};\n"
     )
     return render_template(
         "index.html",
@@ -1160,6 +1165,9 @@ def api_public_admin_settings(owner: str, repo: str):
         "Accept": "application/vnd.github+json",
         "User-Agent": "3105-repo-builder/1.0",
     }
+    # Use PAT for read requests to bypass 60/hr rate limit.
+    if Config.GITHUB_PAT:
+        headers["Authorization"] = f"Bearer {Config.GITHUB_PAT}"
     try:
         resp = _req.get(url, headers=headers, timeout=10)
     except _req.RequestException as e:

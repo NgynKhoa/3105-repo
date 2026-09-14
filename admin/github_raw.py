@@ -65,6 +65,9 @@ def _get_default_branch(token: str | None, owner: str, repo: str) -> str:
     headers = {"Accept": "application/vnd.github+json", "User-Agent": "3105-repo-builder/1.0"}
     if token:
         headers["Authorization"] = f"Bearer {token}"
+    elif Config.GITHUB_PAT:
+        # Use server PAT cho public reads (rate limit)
+        headers["Authorization"] = f"Bearer {Config.GITHUB_PAT}"
     try:
         resp = requests.get(url, headers=headers, timeout=10)
         if resp.status_code == 200:
@@ -80,6 +83,8 @@ def _list_contents(token: str | None, owner: str, repo: str, path: str) -> list[
     headers = {"Accept": "application/vnd.github+json", "User-Agent": "3105-repo-builder/1.0"}
     if token:
         headers["Authorization"] = f"Bearer {token}"
+    elif Config.GITHUB_PAT:
+        headers["Authorization"] = f"Bearer {Config.GITHUB_PAT}"
     try:
         resp = requests.get(url, headers=headers, params={"ref": "HEAD"}, timeout=10)
         if resp.status_code == 404:

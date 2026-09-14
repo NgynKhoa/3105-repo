@@ -34,8 +34,10 @@ from __future__ import annotations
 
 import base64
 import json
+import os
 import time
 from dataclasses import dataclass, asdict
+from pathlib import Path
 from typing import Any
 
 import requests
@@ -248,6 +250,57 @@ def _get_file_contents(token: str, full_name: str, path: str) -> tuple[dict, str
     except (ValueError, UnicodeDecodeError) as e:
         raise ValueError(f"{full_name}/{path} not parseable: {e}")
     return parsed, data.get("sha", "")
+
+
+def find_repo_file_for_slug(slug: str) -> dict | None:
+    """Tìm repo data local (repositories/<slug>/repo.json hoặc repo.yml).
+
+    Trả về dict normalized với keys:
+      - slug, identifier, name, owner_github, default_branch, repo_json_path
+
+    Dùng cho anonymous /auth/me để biết owner_github mà không cần login.
+    """
+    import os
+    base = Path(__file__).resolve().parents[1] / "repositories"
+    if not base.exists():
+        return None
+
+    repo_dir = base / slug
+    if not repo_dir.exists() or not repo_dir.is_dir():
+        return None
+
+    # Thử repo.json trước, fallback repo.yml
+    json_path = repo_dir / "repo.json"
+    yml_path = repo_dir / "repo.yml"
+    target_path = None
+    raw = None
+    if json_path.exists():
+        target_path = json_path
+        try:
+            raw = json.loads(json_path.read_text(encoding="utf-8"))
+        except (ValueError, UnicodeDecodeError):
+            raw = None
+    elif yml_path.exists():
+        target_path = yml_path
+        try:
+            import yaml
+            raw = yaml.safe_load(yml_path.read_text(encoding="utf-8"))
+        except ImportError:
+            return None
+    if not target_path or not isinstance(raw, dict):
+        return None
+
+    # owner_github: ưu tiên từ env, fallback "NgynKhoa" (default cho local dev)
+    owner = os.environ.get("GITHUB_DEFAULT_OWNER", "NgynKhoa")
+    rel_path = str(target_path.relative_to(base.parent))
+    return {
+        "slug": raw.get("slug", slug),
+        "identifier": raw.get("identifier", ""),
+        "name": raw.get("name"),
+        "owner_github": raw.get("owner_github") or owner,
+        "default_branch": "main",
+        "repo_json_path": rel_path,
+    }
 
 
 def _parse_and_validate_repo_json(raw: dict) -> dict | None:

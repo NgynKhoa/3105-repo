@@ -206,11 +206,35 @@ def auth_me():
     Front Repo dùng `is_owner_of` để apply RBAC (hiện nút Sửa/Xóa, Admin link).
     """
     if not is_authenticated():
+        # Anonymous: vẫn trả current_repo từ local repo file (nếu có)
+        # để Front Repo biết owner_github cho lookup raw-asset / admin-settings.
+        current_slug = request.args.get("slug")
+        current_repo_data = None
+        if current_slug:
+            try:
+                # Lazy import tránh circular
+                from .repo_discovery import find_repo_file_for_slug
+                info = find_repo_file_for_slug(current_slug)
+                if info:
+                    current_repo_data = {
+                        "slug": info.get("slug"),
+                        "identifier": info.get("identifier"),
+                        "owner_github": info.get("owner_github"),
+                        "repo_json_path": info.get("repo_json_path"),
+                        "default_branch": info.get("default_branch", "main"),
+                    }
+            except Exception as e:
+                current_app.logger.debug(f"anon current_repo lookup failed: {e}")
+
         return jsonify({
             "authenticated": False,
             "user": None,
             "is_owner_of": None,
             "repos": [],
+            "current_repo": current_repo_data,
+            "releases": [],
+            "download_paths": [],
+            "download_mode": "auto",
         })
 
     user = session.get(_SESSION_USER) or {}

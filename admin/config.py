@@ -67,6 +67,11 @@ class Config:
     GITHUB_API_BASE: str = os.environ.get(
         "GITHUB_API_BASE", "https://api.github.com"
     ).strip()
+    # Personal Access Token cho READ-ONLY requests (tăng rate limit từ 60/hr lên 5000/hr).
+    # Set trong .env: GITHUB_PAT=ghp_xxxx
+    # Dùng cho các public API: /api/public/admin-settings, /api/fetch-repo-json,
+    # /api/public/raw-asset, /api/public/release — KHÔNG cần user OAuth login.
+    GITHUB_PAT: str = os.environ.get("GITHUB_PAT", "").strip()
     OAUTH_SCOPES: str = "read:user public_repo"
     # - read:user: lấy username, avatar, email
     # - public_repo: push vào repo public (theo lựa chọn user)

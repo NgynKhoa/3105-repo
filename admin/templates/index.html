@@ -4011,9 +4011,10 @@ document.querySelectorAll('.blog-card, .blog-item a, .blog-link').forEach(card =
       if (!currentRepo || !identifier) return null;
       // Cần owner_github của admin — lấy từ window.PUBLIC_REPO_OWNER_GITHUB (set bởi build)
       const owner = window.PUBLIC_REPO_OWNER_GITHUB || window.__currentRepoOwner;
+      const fullRepoName = window.PUBLIC_REPO_NAME || currentRepo;
       if (!owner) return null;
       try {
-        const r = await fetch(`/api/public/release/${encodeURIComponent(owner)}/${encodeURIComponent(currentRepo)}/${encodeURIComponent(identifier)}`, {credentials: 'same-origin'});
+        const r = await fetch(`/api/public/release/${encodeURIComponent(owner)}/${encodeURIComponent(fullRepoName)}/${encodeURIComponent(identifier)}`, {credentials: 'same-origin'});
         if (!r.ok) return null;
         const data = await r.json();
         return data.ok ? data : null;
@@ -4212,8 +4213,9 @@ document.querySelectorAll('.blog-card, .blog-item a, .blog-link').forEach(card =
   // Public lookup cho anonymous user — gọi /api/fetch-repo-json/... để lấy mọi download paths
   async function lookupReleaseAndUpdate(identifier, btn) {
     const owner = window.PUBLIC_REPO_OWNER_GITHUB || window.__currentRepoOwner || '';
+    const fullRepoName = window.PUBLIC_REPO_NAME || window.__frontRepoName || '';
     const slug = window.PUBLIC_REPO_SLUG || window.__frontRepoName || '';
-    if (!owner || !slug) {
+    if (!owner || !fullRepoName) {
       alert('Không xác định được owner/repo của Front Repo này.\n\nBuild với: python tools/build_public.py --repo demo --owner-github YOUR_USERNAME');
       return;
     }
@@ -4223,7 +4225,7 @@ document.querySelectorAll('.blog-card, .blog-item a, .blog-link').forEach(card =
 
     // Strategy 1: fetch full repo.json → get ALL download paths (includes mapping package → file)
     try {
-      const r = await fetch(`/api/fetch-repo-json/${encodeURIComponent(owner)}/${encodeURIComponent(slug)}/${encodeURIComponent(slug)}`, {credentials:'same-origin'});
+      const r = await fetch(`/api/fetch-repo-json/${encodeURIComponent(owner)}/${encodeURIComponent(fullRepoName)}/${encodeURIComponent(slug)}`, {credentials:'same-origin'});
       if (r.ok) {
         const data = await r.json();
         if (data.ok) {
@@ -4245,7 +4247,7 @@ document.querySelectorAll('.blog-card, .blog-item a, .blog-link').forEach(card =
 
     // Strategy 2: raw-asset (file .3105 trong repo)
     try {
-      const r = await fetch(`/api/public/raw-asset/${encodeURIComponent(owner)}/${encodeURIComponent(slug)}/${encodeURIComponent(slug)}/${encodeURIComponent(identifier)}`, {credentials:'same-origin'});
+      const r = await fetch(`/api/public/raw-asset/${encodeURIComponent(owner)}/${encodeURIComponent(fullRepoName)}/${encodeURIComponent(slug)}/${encodeURIComponent(identifier)}`, {credentials:'same-origin'});
       const data = await r.json();
       if (data.ok && data.download_url) {
         window.__packageDownloadPaths = window.__packageDownloadPaths || [];
@@ -4268,7 +4270,7 @@ document.querySelectorAll('.blog-card, .blog-item a, .blog-link').forEach(card =
 
     // Strategy 3: GitHub Releases (fallback)
     try {
-      const r = await fetch(`/api/public/release/${encodeURIComponent(owner)}/${encodeURIComponent(slug)}/${encodeURIComponent(identifier)}`, {credentials:'same-origin'});
+      const r = await fetch(`/api/public/release/${encodeURIComponent(owner)}/${encodeURIComponent(fullRepoName)}/${encodeURIComponent(identifier)}`, {credentials:'same-origin'});
       const data = await r.json();
       if (data.ok && data.download_url) {
         window.__packageReleases = window.__packageReleases || [];
@@ -4723,7 +4725,7 @@ document.querySelectorAll('.blog-card, .blog-item a, .blog-link').forEach(card =
     try {
       const url = new URL('/auth/me', location.origin);
       // Gửi slug hiện tại để server check ownership
-      const slug = (window.PUBLIC_REPO_SLUG || '').toString();
+      const slug = (window.PUBLIC_REPO_SLUG || window.__frontRepoName || '').toString();
       if (slug) url.searchParams.set('slug', slug);
       const r = await fetch(url.toString(), { credentials: 'same-origin' });
       if (!r.ok) {
@@ -4804,12 +4806,23 @@ document.querySelectorAll('.blog-card, .blog-item a, .blog-link').forEach(card =
           window.__adminSettingsSync = null;
         }
         // Anonymous user: thử fetch admin settings (nếu owner_github biết) → apply defaults
-        const anonOwner = window.PUBLIC_REPO_OWNER_GITHUB || window.__currentRepoOwner || '';
+        // owner_github được /auth/me trả về current_repo.owner_github (từ local repo file).
+        const anonOwner = (data.current_repo || {}).owner_github
+                        || window.PUBLIC_REPO_OWNER_GITHUB
+                        || window.__currentRepoOwner
+                        || '';
         const anonRepo = window.PUBLIC_REPO_SLUG || window.__frontRepoName || '';
+        // Save owner cho lookupReleaseAndUpdate dùng sau này
+        if (anonOwner) window.__currentRepoOwner = anonOwner;
         if (anonOwner && anonRepo) {
           // Load admin settings + repo.json (download paths) — song song
           loadPublicAdminSettings(anonOwner, anonRepo);
           fetchRepoJsonForAnon(anonOwner, anonRepo);
+        }
+        // Re-render để hiện nút Tải xuống (anonymous không cần release,
+        // download paths sẽ từ fetchRepoJsonForAnon hoặc manual lookup).
+        if (window.__dynamicFit && window.__dynamicFit.renderPackages) {
+          window.__dynamicFit.renderPackages();
         }
       }
       applyRbac();
@@ -4925,23 +4938,21 @@ document.querySelectorAll('.blog-card, .blog-item a, .blog-link').forEach(card =
   // Kết quả: populate window.__packageDownloadPaths + window.__downloadMode.
   async function fetchRepoJsonForAnon(owner, repo) {
     try {
-      const r = await fetch(`/api/fetch-repo-json/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/${encodeURIComponent(window.PUBLIC_REPO_SLUG || window.__frontRepoName || '')}`, {
-        credentials: 'same-origin',
-      });
-      if (!r.ok) return;
+      const fullRepoName = window.PUBLIC_REPO_NAME || repo;
+      const slug = window.PUBLIC_REPO_SLUG || window.__frontRepoName || '';
+      const url = `/api/fetch-repo-json/${encodeURIComponent(owner)}/${encodeURIComponent(fullRepoName)}/${encodeURIComponent(slug)}`;
+      console.log('[fetchRepoJsonForAnon] GET', url);
+      const r = await fetch(url, {credentials: 'same-origin'});
       const data = await r.json();
+      console.log('[fetchRepoJsonForAnon] response:', data.ok, 'paths:', (data.download_paths || []).length);
       if (!data.ok) return;
-      // download_paths[]
       if (Array.isArray(data.download_paths)) {
         window.__packageDownloadPaths = data.download_paths;
       }
-      // download_mode
       if (data.download_mode) {
         window.__downloadMode = data.download_mode;
       }
-      // Set owner_github để lookupReleaseAndUpdate hoạt động
       window.__currentRepoOwner = owner;
-      // Re-render packages để hiện nút Tải
       if (typeof renderPackages === 'function') renderPackages();
     } catch (e) {
       console.warn('fetchRepoJsonForAnon failed', e);
