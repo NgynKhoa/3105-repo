@@ -46,6 +46,25 @@ PUBLIC = ROOT / "public"
 ADMIN = ROOT / "admin"
 REPOS = ROOT / "repositories"
 
+
+def load_admin_settings(repo_slug: str) -> dict:
+    """Load .3105/admin-settings.json từ repo (dùng cho build public).
+
+    Returns dict rỗng nếu không tìm thấy (admin chưa từng lưu settings).
+    """
+    p = REPOS / repo_slug / ".3105" / "admin-settings.json"
+    if not p.is_file():
+        alt = ROOT / "3105-repo" / "repositories" / repo_slug / ".3105" / "admin-settings.json"
+        if alt.is_file():
+            p = alt
+        else:
+            return {}
+    try:
+        return json.loads(p.read_text(encoding="utf-8"))
+    except (json.JSONDecodeError, OSError):
+        return {}
+
+
 # Cache version cho public build — bump khi Front Repo thay đổi để bust browser cache.
 # KHÔNG cần sync với admin cache_version; 2 hệ thống hoàn toàn độc lập.
 _CACHE_VERSION = 8
@@ -77,12 +96,16 @@ def copy_tree(src: Path, dst: Path, excludes: tuple[str, ...] = (".DS_Store",)) 
     return n
 
 
-def render_index_html(repo_slug: str, repo_data: dict[str, Any], owner: bool = False) -> str:
+def render_index_html(repo_slug: str, repo_data: dict[str, Any], owner: bool = False,
+                     owner_github: str = "", nav_links: list | None = None,
+                     public_playlist: list | None = None,
+                     admin_settings: dict | None = None) -> str:
     """Render admin/templates/index.html với bootstrap data baked-in.
 
     Inject 1 <script> ngay sau <head>:
       - window.PUBLIC_REPO_DATA = { ... }   ← snapshot repo.yml
       - window.PUBLIC_REPO_SLUG = "demo"
+      - window.PUBLIC_NAV_LINKS = [...]    ← admin links (tùy chọn)
     """
     src = ADMIN / "templates" / "index.html"
     content = src.read_text(encoding="utf-8")
@@ -110,12 +133,26 @@ def render_index_html(repo_slug: str, repo_data: dict[str, Any], owner: bool = F
                             lambda m: m.group(0).replace('\n', '\\n').replace('\r', '\\r'),
                             repo_json)
 
+    # Theme-related settings từ admin-settings.json → bake vào public
+    # để user bình thường (không phải admin) cũng thấy theme admin đã chọn.
+    public_theme = None
+    if isinstance(admin_settings, dict):
+        _theme_keys = ("theme", "shadow_theme", "bg_image", "dark_mode", "transparency")
+        _extracted = {k: admin_settings.get(k) for k in _theme_keys if k in admin_settings}
+        if _extracted:
+            public_theme = _extracted
+
     bootstrap = (
         f"window.PUBLIC_REPO_SLUG = {json.dumps(repo_slug)};\n"
         f"window.PUBLIC_REPO_DATA = {repo_json};\n"
         f"window.PUBLIC_REPO_OWNER = {json.dumps(bool(owner))};\n"
-        f"window.PUBLIC_REPO_OWNER_GITHUB = {json.dumps(getattr(args, 'owner_github', '') or '')};\n"
+        f"window.PUBLIC_REPO_OWNER_GITHUB = {json.dumps(owner_github or '')};\n"
         f"window.PUBLIC_MODE = true;  // dùng data tĩnh thay vì fetch /api/*\n"
+        f"window.PUBLIC_NAV_LINKS = {json.dumps(nav_links or [], ensure_ascii=False)};\n"
+        # Playlist từ admin-settings.json (cho người dùng ẩn danh xem được trên GH Pages)
+        f"window.PUBLIC_PLAYLIST = {json.dumps(public_playlist or [], ensure_ascii=False)};\n"
+        # Theme/shadow/bg/dark/transparency từ admin-settings.json → user thấy
+        f"window.PUBLIC_ADMIN_THEME = {json.dumps(public_theme or {}, ensure_ascii=False)};\n"
     )
     # Replace cụm {{ bootstrap_js | safe }} (Flask template) bằng script tag.
     # QUAN TRỌNG: phải dùng lambda callback thay vì string replacement — vì
@@ -163,8 +200,26 @@ def build(repo_slug: str = "demo", clean: bool = True, owner: bool = False,
     repo_data = yaml.safe_load(repo_yml.read_text(encoding="utf-8")) or {}
     log(f"✓ Load {repo_yml.name} (keys: {list(repo_data.keys())})")
 
+    # 1b) Load admin settings (chứa nav_links nếu admin đã cấu hình)
+    admin_settings = load_admin_settings(repo_slug)
+    nav_links = admin_settings.get("nav_links") if isinstance(admin_settings, dict) else None
+    if isinstance(nav_links, list) and nav_links:
+        log(f"✓ Load {len(nav_links)} nav_links từ admin-settings.json")
+    else:
+        nav_links = None  # dùng default trong index.html
+
+    # 1c) Load playlist (cho Now Playing trên GH Pages)
+    public_playlist = None
+    if isinstance(admin_settings, dict):
+        pl = admin_settings.get("playlist")
+        if isinstance(pl, list) and pl:
+            public_playlist = pl
+            log(f"✓ Load {len(public_playlist)} tracks từ admin-settings.json")
+
     # 2) Render index.html
-    html = render_index_html(repo_slug, repo_data, owner=owner)
+    html = render_index_html(repo_slug, repo_data, owner=owner, owner_github=owner_github,
+                             nav_links=nav_links, public_playlist=public_playlist,
+                             admin_settings=admin_settings)
     # Patch hardcoded /admin/static/* → /static/* (chỉ áp dụng cho public build).
     # Dùng relative path `./static/` thay vì absolute `/static/` vì GitHub Pages
     # thường serve ở subpath (vd /3105-repo/) — absolute path sẽ 404.

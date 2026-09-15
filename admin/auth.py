@@ -34,6 +34,7 @@ from __future__ import annotations
 
 import functools
 import json
+import os
 import secrets
 import time
 import urllib.parse
@@ -361,6 +362,15 @@ def get_owned_repos(force_refresh: bool = False) -> list[dict[str, Any]]:
     if not force_refresh and cached is not None and (now - cached_ts) < Config.REPO_DISCOVERY_CACHE_TTL:
         return cached
 
+    # === Disk cache (persist qua server restart) ===
+    # Tránh scan lại 20-30s khi user vừa đăng nhập mà session bị mất do restart.
+    if not force_refresh:
+        disk_cached, disk_ts = _load_disk_repo_cache(user.login)
+        if disk_cached is not None and (now - disk_ts) < Config.REPO_DISCOVERY_CACHE_TTL:
+            session[_SESSION_OWNED_REPOS] = disk_cached
+            session[cache_age_key] = disk_ts
+            return disk_cached
+
     # Refresh
     from .repo_discovery import scan_user_repos  # local import để tránh circular
     token = get_current_token()
@@ -370,6 +380,7 @@ def get_owned_repos(force_refresh: bool = False) -> list[dict[str, Any]]:
         repos = scan_user_repos(token, login=user.login)
         session[_SESSION_OWNED_REPOS] = repos
         session[cache_age_key] = now
+        _save_disk_repo_cache(user.login, repos, now)
         return repos
     except Exception as e:
         current_app.logger.warning(f"repo discovery failed for {user.login}: {e}")
@@ -406,6 +417,48 @@ def _fetch_github_user(token: str) -> tuple[GitHubUser | None, str | None]:
         avatar_url=data.get("avatar_url"),
         email=data.get("email"),
     ), None
+
+
+# -----------------------------------------------------------------------------
+# Disk cache cho repo discovery (persist qua server restart)
+# -----------------------------------------------------------------------------
+import json as _json_disk
+import os
+import hashlib
+
+_HASHLIB = hashlib
+
+_DISK_CACHE_DIR = os.path.join(os.path.dirname(__file__), "..", ".oauth_cache")
+
+
+def _disk_cache_path(login: str) -> str:
+    """Trả về path file cache cho user (hash login để safe filename)."""
+    os.makedirs(_DISK_CACHE_DIR, exist_ok=True)
+    h = hashlib.sha1(login.lower().encode("utf-8")).hexdigest()[:16]
+    return os.path.join(_DISK_CACHE_DIR, f"repos_{h}.json")
+
+
+def _load_disk_repo_cache(login: str):
+    """Đọc cache từ disk. Trả về (repos, ts) hoặc (None, 0) nếu không có."""
+    path = _disk_cache_path(login)
+    if not os.path.exists(path):
+        return None, 0
+    try:
+        with open(path, encoding="utf-8") as f:
+            payload = _json_disk.load(f)
+        return payload.get("repos"), float(payload.get("ts", 0))
+    except Exception:
+        return None, 0
+
+
+def _save_disk_repo_cache(login: str, repos, ts: float) -> None:
+    """Lưu cache xuống disk (best-effort, fail silent)."""
+    try:
+        path = _disk_cache_path(login)
+        with open(path, "w", encoding="utf-8") as f:
+            _json_disk.dump({"repos": repos, "ts": ts, "login": login}, f)
+    except Exception:
+        pass
 
 
 def _oauth_error_page(message: str):

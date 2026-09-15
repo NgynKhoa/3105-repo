@@ -398,12 +398,14 @@
     .box-name { font-size: 12px; font-weight: 600; color: var(--text-bright); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .box-id { font-size: 12px; color: var(--muted); margin-top: 2px; }
     .box-actions { display: flex; gap: 5px; flex-shrink: 0; }
-    .box-btn-sm {
+    /* Shared base cho cả .box-btn-sm và .box-btn-sm-tip — đồng bộ 100% style */
+    .box-btn-sm,
+    .box-btn-sm-tip {
       width: 26px;
       height: 26px;
       border: 1px solid var(--border);
       border-radius: 6px;
-      background: transparent;
+      background: var(--panel);   /* theo theme box + độ trong suốt (transparency slider) */
       color: var(--text);
       cursor: pointer;
       font-size: 12px;
@@ -411,9 +413,15 @@
       align-items: center;
       justify-content: center;
       transition: all 0.2s;
+      padding: 0;
+      line-height: 1;
     }
-    .box-btn-sm:hover { border-color: var(--neon); color: var(--neon); }
+    .box-btn-sm:hover,
+    .box-btn-sm-tip:hover { border-color: var(--neon); color: var(--neon); }
     .box-btn-sm.danger:hover { border-color: var(--neon-pink); color: var(--neon-pink); }
+    /* box-btn-sm-tip: tooltip text qua title=, span bên trong (nếu có) được ẩn */
+    .box-btn-sm-tip { overflow: hidden; }
+    .box-btn-sm-tip > span { display: none; }
 
     /* ====================== BLOG LIST ====================== */
     .blog-item {
@@ -1216,12 +1224,14 @@
   <div class="page-wrapper">
     <!-- Header -->
     <header class="dash-header">
-      <a href="/" class="dash-back">&#8592;</a>
+      <a href="#" class="dash-back" id="dashBackBtn" title="Quay lại trang Front Repo">&#8592;</a>
       <h1 class="dash-title">ADMIN DASHBOARD</h1>
       <div class="dash-tabs">
         <button class="dash-tab active" data-tab="general">&#127968; General</button>
         <button class="dash-tab" data-tab="boxes">&#128230; Boxes</button>
         <button class="dash-tab" data-tab="blog">&#128221; Blog</button>
+        <button class="dash-tab" data-tab="music">&#127911; Music</button>
+        <button class="dash-tab" data-tab="links">🔗 Links</button>
         <button class="dash-tab" data-tab="fonts">&#128291; Fonts</button>
         <button class="dash-tab" data-tab="style">&#127912; Style</button>
         <a class="dash-tab" href="/fe-checklist" target="_blank" style="text-decoration:none;">🗂 FE-Checklist</a>
@@ -1305,9 +1315,25 @@
             <span class="range-val" id="logoGlowAlphaVal">65%</span>
           </div>
           <div class="form-group">
-            <label class="form-label">Tốc độ nhấp nháy (Blink Speed - giây/vòng)</label>
-            <input type="range" class="form-range" id="logoBlink" min="0" max="20" step="1" value="6" oninput="updateDashLogoPreview()">
-            <span class="range-val" id="logoBlinkVal">6s</span>
+            <label class="form-label">Tốc độ nhấp nháy (Blink Speed - 0.1 giây/vòng)</label>
+            <input type="range" class="form-range" id="logoBlink" min="0" max="20" step="0.1" value="6" oninput="updateDashLogoPreview()">
+            <span class="range-val" id="logoBlinkVal">6.0s</span>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Chữ nhấp nháy (Blink Letters - vị trí, phân cách dấu phẩy, 0 = chữ đầu)</label>
+            <input type="text" class="form-input" id="logoBlinkLetters" placeholder="vd: 0,4,7 hoặc để trống = toàn bộ" oninput="updateDashLogoPreview()">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Màu riêng cho chữ cái (Accent Letters - vị trí)</label>
+            <input type="text" class="form-input" id="logoAccentLetters" placeholder="vd: 1,2 (đổi màu chữ O,W trong OWEN)" oninput="updateDashLogoPreview()">
+            <div style="display:flex;align-items:center;gap:6px;margin-top:6px;">
+              <label style="font-size:0.85rem;opacity:0.8;">Accent color:</label>
+              <input type="color" id="logoAccentColor" value="#FF3B30" style="width:36px;height:28px;border:1px solid var(--border);border-radius:4px;background:transparent;padding:2px;cursor:pointer;" oninput="updateDashLogoPreview()">
+              <span class="range-val" id="logoAccentColorVal">#FF3B30</span>
+            </div>
           </div>
         </div>
 
@@ -1491,11 +1517,139 @@
             <input type="text" class="form-input" id="postExcerpt" placeholder="Mô tả ngắn...">
         </div>
         <div class="form-group">
+          <label class="form-label">&#128444; Ảnh đại diện (cover) — đường dẫn tương đối hoặc URL đầy đủ</label>
+          <div style="display:flex;gap:6px;align-items:center;">
+            <input type="text" class="form-input" id="postImage" placeholder="assets/blog/cover.png hoặc https://...">
+            <button class="box-btn-sm" type="button" onclick="document.getElementById('postImageFile').click()" title="Chọn file">&#128194;</button>
+            <input type="file" id="postImageFile" accept="image/*" style="display:none" onchange="uploadBlogImage('cover', this)">
+          </div>
+          <div id="postImagePreview" style="margin-top:6px;font-size:11px;color:var(--muted);"></div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">&#128444; Ảnh trong bài viết (gallery — mỗi dòng 1 URL)</label>
+          <textarea class="form-textarea" id="postGallery" rows="3" placeholder="assets/blog/01.png&#10;assets/blog/02.png"></textarea>
+          <div style="margin-top:6px;display:flex;gap:6px;align-items:center;">
+            <button class="box-btn-sm-tip" type="button" title="Chọn nhiều ảnh" onclick="document.getElementById('postGalleryFiles').click()">&#128194;</button>
+            <input type="file" id="postGalleryFiles" accept="image/*" multiple style="display:none" onchange="uploadBlogImage('gallery', this)">
+            <span id="postGalleryHint" style="font-size:11px;color:var(--muted);">Mỗi dòng 1 URL ảnh. Hỗ trợ JPG, PNG, GIF, WEBP.</span>
+          </div>
+        </div>
+        <div class="form-group">
           <label class="form-label">Nội dung (HTML)</label>
           <textarea class="form-textarea" id="postContent" placeholder="<h2>Tiêu đề</h2><p>Nội dung...</p>"></textarea>
         </div>
         <button class="form-btn success" onclick="savePost()">&#128190; Lưu bài viết</button>
         <button class="form-btn" onclick="clearPostForm()">&#128260; Reset</button>
+      </div>
+    </div>
+
+    <!-- ===================== LINKS PANEL ===================== -->
+    <div class="dash-panel" id="panel-links">
+      <div class="section-card">
+        <div class="section-title">🔗 Quản lý Links (Nav Star)</div>
+        <p style="font-size:12px;color:var(--muted);margin-bottom:14px;">
+          Thêm, sửa, xóa hoặc đổi tên các liên kết hiển thị trong khung <b>✩ Links</b> ở góc phải của trang Front Repo.
+        </p>
+
+        <div class="form-row">
+          <div class="form-group" style="flex:2;">
+            <label class="form-label">Tên hiển thị</label>
+            <input type="text" class="form-input" id="linkNameInput" placeholder="VD: Home / GitHub / Telegram">
+          </div>
+          <div class="form-group" style="flex:3;">
+            <label class="form-label">URL (đường dẫn)</label>
+            <input type="text" class="form-input" id="linkUrlInput" placeholder="VD: https://github.com/user hoặc /admin">
+          </div>
+          <div class="form-group" style="flex:0 0 140px;">
+            <label class="form-label">Mở tab mới</label>
+            <select class="form-select" id="linkTargetInput">
+              <option value="_self">Cùng tab</option>
+              <option value="_blank">Tab mới</option>
+            </select>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;margin-bottom:18px;">
+          <button class="form-btn success" onclick="addLink()">➕ Thêm Link</button>
+          <button class="form-btn" onclick="updateLink()">💾 Cập nhật</button>
+          <button class="form-btn" onclick="clearLinkForm()">🔄 Reset</button>
+          <input type="hidden" id="editLinkId">
+          <span id="linkEditHint" style="font-size:11px;color:var(--muted);align-self:center;display:none;">Đang sửa link <b id="linkEditTarget"></b></span>
+        </div>
+
+        <div style="font-size:13px;font-weight:600;color:var(--text-bright);margin:14px 0 8px;">Danh sách Links</div>
+        <div id="linksList" style="display:flex;flex-direction:column;gap:8px;"></div>
+      </div>
+    </div>
+
+    <!-- ===================== MUSIC PANEL ===================== -->
+    <div class="dash-panel" id="panel-music">
+      <div class="section-card">
+        <div class="section-title">🎵 Quản lý Playlist (Music Player)</div>
+        <p style="font-size:12px;color:var(--muted);margin-bottom:14px;">
+          Thêm các bài hát vào playlist để phát trong khung <b>♫ Now Playing</b> ở góc phải trang Front Repo.
+          Hỗ trợ file audio trực tiếp (.mp3, .ogg, .wav) hoặc URL stream.
+        </p>
+
+        <div class="form-row">
+          <div class="form-group" style="flex:2;">
+            <label class="form-label">Tên bài hát</label>
+            <input type="text" class="form-input" id="trackTitleInput" placeholder="VD: Synthwave Drift">
+          </div>
+          <div class="form-group" style="flex:2;">
+            <label class="form-label">Nghệ sĩ / Album</label>
+            <input type="text" class="form-input" id="trackArtistInput" placeholder="VD: Owen · 80s Mix">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group" style="flex:3;">
+            <label class="form-label">URL bài hát <small style="color:var(--muted);">(mp3 / YouTube / Spotify / SoundCloud)</small></label>
+            <input type="text" class="form-input" id="trackUrlInput" placeholder="https://...track.mp3 — hoặc — https://youtu.be/xxxx — hoặc — https://open.spotify.com/track/xxxx" oninput="onTrackUrlInput()">
+            <div id="trackUrlHint" style="font-size:11px;margin-top:4px;color:var(--muted);min-height:16px;"></div>
+          </div>
+          <div class="form-group" style="flex:2;">
+            <label class="form-label">Cover (URL ảnh, tùy chọn)</label>
+            <div style="display:flex;gap:6px;align-items:center;">
+              <input type="text" class="form-input" id="trackCoverInput" placeholder="https://.../cover.jpg">
+              <button class="box-btn-sm" type="button" onclick="document.getElementById('trackCoverFile').click()" title="Chọn ảnh">📁</button>
+              <input type="file" id="trackCoverFile" accept="image/*" style="display:none" onchange="uploadTrackCover(this)">
+            </div>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;margin-bottom:18px;">
+          <button class="form-btn success" onclick="addTrack()">➕ Thêm bài</button>
+          <button class="form-btn" onclick="updateTrack()">💾 Cập nhật</button>
+          <button class="form-btn" onclick="clearTrackForm()">🔄 Reset</button>
+          <input type="hidden" id="editTrackId">
+          <span id="trackEditHint" style="font-size:11px;color:var(--muted);align-self:center;display:none;">Đang sửa <b id="trackEditTarget"></b></span>
+        </div>
+
+        <div style="font-size:13px;font-weight:600;color:var(--text-bright);margin:14px 0 8px;">Playlist (<span id="trackCount">0</span> bài)</div>
+        <div id="tracksList" style="display:flex;flex-direction:column;gap:8px;"></div>
+
+        <!-- ===================== RAIN AUDIO URLs ===================== -->
+        <div style="margin-top:24px;padding-top:18px;border-top:1px dashed rgba(57,255,20,0.18);">
+          <div style="font-size:13px;font-weight:600;color:var(--text-bright);margin-bottom:6px;">🌧️ Âm thanh mưa (Rain Audio - luôn loop)</div>
+          <p style="font-size:11px;color:var(--muted);margin-bottom:12px;line-height:1.5;">
+            Cấu hình URL cho tiếng mưa nền. Hỗ trợ <b>mp3 / YouTube / Spotify</b>. Track sẽ <b>tự động loop vô hạn</b>. Khi bật cả "Bật mưa" + "Mưa nặng" → phát đồng thời 2 track (cộng âm lượng).
+          </p>
+          <div class="form-row">
+            <div class="form-group" style="flex:1;">
+              <label class="form-label">🌦️ URL Mưa nhẹ (Light Rain)</label>
+              <input type="text" class="form-input" id="rainLightUrlInput" placeholder="https://...rain-light.mp3 — hoặc — YouTube/Spotify URL">
+            </div>
+            <div class="form-group" style="flex:1;">
+              <label class="form-label">⛈️ URL Mưa nặng (Heavy Rain)</label>
+              <input type="text" class="form-input" id="rainHeavyUrlInput" placeholder="https://...rain-heavy.mp3 — hoặc — YouTube/Spotify URL">
+            </div>
+          </div>
+          <div style="display:flex;gap:8px;margin-top:8px;">
+            <button class="form-btn success" onclick="saveRainAudioUrls()">💾 Lưu URL âm thanh mưa</button>
+            <button class="form-btn" onclick="testRainAudio('light')">▶ Test Mưa nhẹ</button>
+            <button class="form-btn" onclick="testRainAudio('heavy')">▶ Test Mưa nặng</button>
+            <button class="form-btn" onclick="stopTestRain()">⏹ Dừng test</button>
+            <span id="rainAudioStatus" style="font-size:11px;color:var(--muted);align-self:center;"></span>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -1599,6 +1753,12 @@
     </div>
   </div>
 
+  <!-- Hidden hosts cho multi-source player (YouTube / Spotify) — trong dashboard cũng có preview -->
+  <div id="dashboard-yt-host" style="position:fixed;left:-9999px;top:-9999px;width:1px;height:1px;pointer-events:none;"></div>
+  <div id="dashboard-spotify-host" style="position:fixed;left:-9999px;top:-9999px;width:1px;height:1px;pointer-events:none;"></div>
+  <audio id="dashboard-preview-audio" style="display:none;"></audio>
+
+  <script src="/static/multi_player.js"></script>
   <script>
     /* ========================================
        RAIN EFFECT (from front repo)
@@ -1894,6 +2054,16 @@
       document.getElementById('postTitle').value = p.title;
       document.getElementById('postExcerpt').value = p.excerpt || '';
       document.getElementById('postContent').value = p.content || '';
+      document.getElementById('postImage').value = p.image || '';
+      document.getElementById('postGallery').value =
+        Array.isArray(p.images) ? p.images.join('\n') : (p.images || '');
+      // Cover preview
+      const previewEl = document.getElementById('postImagePreview');
+      if (previewEl) {
+        previewEl.innerHTML = p.image
+          ? `Preview: <a href="${p.image}" target="_blank">${p.image}</a>`
+          : '';
+      }
       // Switch to form
       document.querySelectorAll('.dash-tab').forEach(t => t.classList.remove('active'));
       document.querySelectorAll('.dash-panel').forEach(p => p.classList.remove('active'));
@@ -1902,13 +2072,54 @@
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
+    // Upload ảnh cho blog (cover hoặc gallery) — lưu local dạng base64 tạm,
+    // hoặc upload lên server qua /api/blog/image-upload (xem savePost bên dưới).
+    async function uploadBlogImage(mode, fileInput) {
+      const files = mode === 'gallery' ? Array.from(fileInput.files || []) : [fileInput.files[0]].filter(Boolean);
+      if (!files.length) return;
+      const fd = new FormData();
+      fd.append('mode', mode);
+      files.forEach(f => fd.append('file', f));
+      try {
+        const r = await fetch('/api/blog/image-upload', { method: 'POST', body: fd, credentials: 'same-origin' });
+        const data = await r.json();
+        if (data.error) { showNotif('Upload lỗi: ' + data.error, 'danger'); return; }
+        if (mode === 'cover') {
+          const coverUrl = data.url || data.path || '';
+          document.getElementById('postImage').value = coverUrl;
+          document.getElementById('postImagePreview').innerHTML =
+            `Preview: <a href="${coverUrl}" target="_blank">${coverUrl}</a>`;
+          showNotif('Đã upload ảnh cover!');
+        } else {
+          // Gallery: gộp các url trả về vào textarea (mỗi dòng 1 url)
+          const ta = document.getElementById('postGallery');
+          const urls = (data.urls || data.paths || []).filter(Boolean);
+          if (!urls.length && data.url) urls.push(data.url);
+          if (urls.length) {
+            const existing = (ta.value || '').split('\n').filter(Boolean);
+            ta.value = existing.concat(urls).join('\n');
+            showNotif(`Đã upload ${urls.length} ảnh vào gallery!`);
+          }
+        }
+      } catch (e) {
+        showNotif('Upload thất bại: ' + e.message, 'danger');
+      } finally {
+        // Reset input để có thể chọn lại cùng file
+        fileInput.value = '';
+      }
+    }
+
     function savePost() {
       const id = document.getElementById('editPostId').value;
+      const galleryRaw = document.getElementById('postGallery').value || '';
+      const galleryArr = galleryRaw.split('\n').map(s => s.trim()).filter(Boolean);
       const post = {
         icon: document.getElementById('postIcon').value || '&#128221;',
         title: document.getElementById('postTitle').value,
         excerpt: document.getElementById('postExcerpt').value,
         content: document.getElementById('postContent').value,
+        image: document.getElementById('postImage').value || '',
+        images: galleryArr,
         date: 'Vua cap nhat'
       };
       if (!post.title) { showNotif('Vui lòng nhập tiêu đề!', 'danger'); return; }
@@ -1941,6 +2152,719 @@
       document.getElementById('postTitle').value = '';
       document.getElementById('postExcerpt').value = '';
       document.getElementById('postContent').value = '';
+      document.getElementById('postImage').value = '';
+      document.getElementById('postGallery').value = '';
+      const previewEl = document.getElementById('postImagePreview');
+      if (previewEl) previewEl.innerHTML = '';
+    }
+
+    // ====================== LINKS MANAGEMENT (Nav Star) ======================
+    let navLinks = [];
+    let navLinksCurrentRepo = null;
+
+    async function loadNavLinks() {
+      try {
+        const slug = (typeof currentRepo !== 'undefined' && currentRepo) ? currentRepo : 'demo';
+        navLinksCurrentRepo = slug;
+        const r = await fetch(`/api/admin-settings?slug=${encodeURIComponent(slug)}`);
+        if (r.ok) {
+          const data = await r.json();
+          navLinks = (data.settings && data.settings.nav_links) || defaultNavLinks();
+        } else {
+          navLinks = defaultNavLinks();
+        }
+        renderLinksList();
+      } catch (e) {
+        console.error('loadNavLinks failed', e);
+        navLinks = defaultNavLinks();
+        renderLinksList();
+      }
+    }
+
+    function defaultNavLinks() {
+      return [
+        { id: 1, name: 'Home', url: '/', target: '_self' },
+        { id: 2, name: 'Admin', url: '/admin', target: '_self' },
+        { id: 3, name: 'GitHub', url: 'https://github.com', target: '_blank' },
+        { id: 4, name: 'E-mail', url: 'mailto:nk@example.com', target: '_self' },
+      ];
+    }
+
+    function renderLinksList() {
+      const el = document.getElementById('linksList');
+      if (!el) return;
+      if (!navLinks.length) {
+        el.innerHTML = '<div style="color:var(--muted);font-size:12px;text-align:center;padding:20px;">Chưa có link nào — bấm “Thêm Link” để bắt đầu.</div>';
+        return;
+      }
+      el.innerHTML = navLinks.map((l, idx) => `
+        <div class="box-item" style="display:flex;align-items:center;gap:8px;padding:10px 12px;background:var(--panel-alt);border:1px solid var(--border);border-radius:8px;">
+          <div style="flex:0 0 30px;text-align:center;color:var(--muted);font-size:11px;">#${idx + 1}</div>
+          <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:2px;">
+            <div style="font-size:13px;font-weight:600;color:var(--text-bright);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escapeHtml(l.name)}</div>
+            <div style="font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+              <a href="${escapeAttr(l.url)}" target="_blank" style="color:var(--neon-cyan);text-decoration:none;">${escapeHtml(l.url)}</a>
+              ${l.target === '_blank' ? ' <span style="color:var(--neon-pink);">(tab mới)</span>' : ''}
+            </div>
+          </div>
+          <div style="display:flex;gap:4px;flex-shrink:0;">
+            <button class="box-btn-sm" onclick="editLink(${l.id})" title="Sửa">✎</button>
+            <button class="box-btn-sm danger" onclick="removeLink(${l.id})" title="Xóa">✕</button>
+            <button class="box-btn-sm" onclick="moveLink(${l.id}, -1)" title="Lên" ${idx === 0 ? 'disabled' : ''}>↑</button>
+            <button class="box-btn-sm" onclick="moveLink(${l.id}, 1)" title="Xuống" ${idx === navLinks.length - 1 ? 'disabled' : ''}>↓</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function escapeHtml(s) {
+      return String(s || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    }
+    function escapeAttr(s) { return escapeHtml(s); }
+
+    function collectLinkForm() {
+      return {
+        name: document.getElementById('linkNameInput').value.trim(),
+        url: document.getElementById('linkUrlInput').value.trim(),
+        target: document.getElementById('linkTargetInput').value,
+      };
+    }
+
+    function fillLinkForm(link) {
+      document.getElementById('linkNameInput').value = link.name || '';
+      document.getElementById('linkUrlInput').value = link.url || '';
+      document.getElementById('linkTargetInput').value = link.target || '_self';
+    }
+
+    async function persistNavLinks() {
+      try {
+        // Lưu vào admin-settings repository (file .3105/admin-settings.json)
+        const slug = navLinksCurrentRepo || 'demo';
+        const r = await fetch(`/api/admin-settings?slug=${encodeURIComponent(slug)}`);
+        let cur = {};
+        if (r.ok) {
+          const data = await r.json();
+          cur = data.settings || {};
+        }
+        cur.nav_links = navLinks;
+        await fetch(`/api/admin-settings?slug=${encodeURIComponent(slug)}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ settings: cur }),
+          credentials: 'same-origin',
+        });
+        // Đồng thời lưu localStorage để Front Repo đọc lại ngay (nếu reload)
+        localStorage.setItem('admin_nav_links', JSON.stringify(navLinks));
+        showNotif('Đã lưu danh sách Links!');
+      } catch (e) {
+        console.error('persistNavLinks failed', e);
+        // Fallback: chỉ lưu local
+        localStorage.setItem('admin_nav_links', JSON.stringify(navLinks));
+        showNotif('Lưu local (server fail): ' + e.message, 'danger');
+      }
+    }
+
+    function addLink() {
+      const link = collectLinkForm();
+      if (!link.name) { showNotif('Vui lòng nhập tên link!', 'danger'); return; }
+      if (!link.url) { showNotif('Vui lòng nhập URL!', 'danger'); return; }
+      // Tự tạo ID
+      const maxId = navLinks.reduce((m, l) => Math.max(m, l.id || 0), 0);
+      link.id = maxId + 1;
+      navLinks.push(link);
+      renderLinksList();
+      clearLinkForm();
+      persistNavLinks();
+    }
+
+    function editLink(id) {
+      const link = navLinks.find(l => l.id === id);
+      if (!link) return;
+      fillLinkForm(link);
+      document.getElementById('editLinkId').value = id;
+      const hint = document.getElementById('linkEditHint');
+      const target = document.getElementById('linkEditTarget');
+      if (hint && target) {
+        hint.style.display = '';
+        target.textContent = link.name;
+      }
+    }
+
+    function updateLink() {
+      const idStr = document.getElementById('editLinkId').value;
+      if (!idStr) { showNotif('Bấm vào nút ✎ trên link muốn sửa trước!', 'danger'); return; }
+      const id = parseInt(idStr);
+      const link = navLinks.find(l => l.id === id);
+      if (!link) return;
+      const upd = collectLinkForm();
+      if (!upd.name) { showNotif('Vui lòng nhập tên link!', 'danger'); return; }
+      if (!upd.url) { showNotif('Vui lòng nhập URL!', 'danger'); return; }
+      Object.assign(link, upd);
+      renderLinksList();
+      clearLinkForm();
+      persistNavLinks();
+    }
+
+    function removeLink(id) {
+      if (!confirm('Xóa link này?')) return;
+      navLinks = navLinks.filter(l => l.id !== id);
+      renderLinksList();
+      persistNavLinks();
+    }
+
+    function moveLink(id, delta) {
+      const idx = navLinks.findIndex(l => l.id === id);
+      if (idx < 0) return;
+      const newIdx = idx + delta;
+      if (newIdx < 0 || newIdx >= navLinks.length) return;
+      const [item] = navLinks.splice(idx, 1);
+      navLinks.splice(newIdx, 0, item);
+      renderLinksList();
+      persistNavLinks();
+    }
+
+    function clearLinkForm() {
+      fillLinkForm({ name: '', url: '', target: '_self' });
+      document.getElementById('editLinkId').value = '';
+      const hint = document.getElementById('linkEditHint');
+      if (hint) hint.style.display = 'none';
+    }
+
+    // Tải Links + Playlist khi admin dashboard load xong
+    document.addEventListener('DOMContentLoaded', () => {
+      if (document.getElementById('linksList')) loadNavLinks();
+      if (document.getElementById('tracksList')) loadPlaylist();
+      // Wire dash-back: nếu có history thì back() để giữ nguyên trạng thái Front
+      // (tránh reload gây mất các thay đổi admin vừa chỉnh trên Front trước khi save).
+      // Nếu không có history (mở dashboard trực tiếp) → fallback về "/".
+      const backBtn = document.getElementById('dashBackBtn');
+      if (backBtn) {
+        backBtn.addEventListener('click', (e) => {
+          e.preventDefault();
+          try {
+            if (document.referrer && document.referrer.includes(window.location.host)) {
+              history.back();
+            } else {
+              window.location.href = '/';
+            }
+          } catch (_) {
+            window.location.href = '/';
+          }
+        });
+      }
+    });
+    // Fallback nếu DOMContentLoaded đã fire trước khi listener đăng ký
+    if (document.readyState !== 'loading') {
+      if (document.getElementById('linksList')) loadNavLinks();
+      if (document.getElementById('tracksList')) loadPlaylist();
+      const backBtn = document.getElementById('dashBackBtn');
+      if (backBtn) {
+        backBtn.addEventListener('click', (e) => {
+          e.preventDefault();
+          try {
+            if (document.referrer && document.referrer.includes(window.location.host)) {
+              history.back();
+            } else {
+              window.location.href = '/';
+            }
+          } catch (_) {
+            window.location.href = '/';
+          }
+        });
+      }
+    }
+
+    // ====================== PLAYLIST MANAGEMENT (Music Player) ======================
+    let playlist = [];
+    let playlistCurrentRepo = null;
+
+    const DEFAULT_PLAYLIST = [
+      { id: 1, title: 'Synthwave Drift', artist: 'Owen · 80s Mix', src: '', cover: '' },
+      { id: 2, title: 'Neon Rain',       artist: 'Cyber Lo-fi',     src: '', cover: '' },
+      { id: 3, title: 'Hanoi Midnight',  artist: 'Phase FM',        src: '', cover: '' },
+      { id: 4, title: 'CRT Memories',    artist: 'Analog Tape',     src: '', cover: '' },
+    ];
+
+    async function loadPlaylist() {
+      try {
+        const slug = (typeof currentRepo !== 'undefined' && currentRepo) ? currentRepo : 'demo';
+        playlistCurrentRepo = slug;
+        const r = await fetch(`/api/admin-settings?slug=${encodeURIComponent(slug)}`);
+        if (r.ok) {
+          const data = await r.json();
+          const fromServer = data.settings && data.settings.playlist;
+          if (Array.isArray(fromServer) && fromServer.length) {
+            playlist = fromServer;
+          } else {
+            // localStorage fallback
+            const raw = localStorage.getItem('admin_playlist');
+            if (raw) {
+              const parsed = JSON.parse(raw);
+              if (Array.isArray(parsed) && parsed.length) playlist = parsed;
+            } else {
+              playlist = JSON.parse(JSON.stringify(DEFAULT_PLAYLIST));
+            }
+          }
+        } else {
+          playlist = JSON.parse(JSON.stringify(DEFAULT_PLAYLIST));
+        }
+        renderTracksList();
+      } catch (e) {
+        console.error('loadPlaylist failed', e);
+        playlist = JSON.parse(JSON.stringify(DEFAULT_PLAYLIST));
+        renderTracksList();
+      }
+      restoreRainAudioInputs();
+    }
+
+    function renderTracksList() {
+      const el = document.getElementById('tracksList');
+      const cnt = document.getElementById('trackCount');
+      if (!el) return;
+      if (cnt) cnt.textContent = playlist.length;
+      if (!playlist.length) {
+        el.innerHTML = '<div style="color:var(--muted);font-size:12px;text-align:center;padding:20px;">Playlist trống — bấm “Thêm bài” để bắt đầu.</div>';
+        return;
+      }
+      el.innerHTML = playlist.map((t, idx) => {
+        const parsed = window.MultiPlayer ? window.MultiPlayer.parseTrackUrl(t.src) : { type: 'mp3' };
+        const badge = _typeBadge(parsed.type);
+        const coverEl = t.cover
+          ? `<img src="${escapeAttr(t.cover)}" alt="" style="width:36px;height:36px;border-radius:50%;object-fit:cover;border:1px solid var(--border);flex-shrink:0;">`
+          : '<div style="width:36px;height:36px;border-radius:50%;background:var(--panel);border:1px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:14px;">♪</div>';
+        return `
+        <div class="box-item" style="display:flex;align-items:center;gap:8px;padding:10px 12px;background:var(--panel-alt);border:1px solid var(--border);border-radius:8px;">
+          ${coverEl}
+          <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:2px;">
+            <div style="display:flex;align-items:center;gap:6px;">
+              <div style="font-size:13px;font-weight:600;color:var(--text-bright);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escapeHtml(t.title || 'Untitled')}</div>
+              ${badge}
+            </div>
+            <div style="font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+              ${escapeHtml(t.artist || '—')} ${t.src ? '· <a href="'+escapeAttr(t.src)+'" target="_blank" style="color:var(--neon-cyan);text-decoration:none;">mở audio</a>' : '<span style="color:var(--neon-pink);">(chưa có audio)</span>'}
+            </div>
+          </div>
+          <div style="display:flex;gap:4px;flex-shrink:0;">
+            <button class="box-btn-sm" onclick="playTrack(${t.id})" title="Nghe thử">▶</button>
+            <button class="box-btn-sm" onclick="editTrack(${t.id})" title="Sửa">✎</button>
+            <button class="box-btn-sm danger" onclick="removeTrack(${t.id})" title="Xóa">✕</button>
+            <button class="box-btn-sm" onclick="moveTrack(${t.id}, -1)" title="Lên" ${idx === 0 ? 'disabled' : ''}>↑</button>
+            <button class="box-btn-sm" onclick="moveTrack(${t.id}, 1)" title="Xuống" ${idx === playlist.length - 1 ? 'disabled' : ''}>↓</button>
+          </div>
+        </div>
+      `;}).join('');
+    }
+
+    function _typeBadge(type) {
+      const map = {
+        youtube:    { label: 'YouTube',    color: '#FF0033', icon: '▶' },
+        spotify:    { label: 'Spotify',    color: '#1DB954', icon: '♫' },
+        soundcloud: { label: 'SoundCloud', color: '#FF8800', icon: '☁' },
+        mp3:        { label: 'MP3',        color: '#3B82F6', icon: '♪' },
+      };
+      const info = map[type] || map.mp3;
+      return `<span title="${info.label}" style="display:inline-flex;align-items:center;gap:3px;padding:2px 6px;font-size:10px;font-weight:600;border-radius:4px;background:${info.color}22;color:${info.color};border:1px solid ${info.color}55;">${info.icon} ${info.label}</span>`;
+    }
+
+    function collectTrackForm() {
+      return {
+        title: document.getElementById('trackTitleInput').value.trim(),
+        artist: document.getElementById('trackArtistInput').value.trim(),
+        src: document.getElementById('trackUrlInput').value.trim(),
+        cover: document.getElementById('trackCoverInput').value.trim(),
+      };
+    }
+
+    function fillTrackForm(t) {
+      document.getElementById('trackTitleInput').value = t.title || '';
+      document.getElementById('trackArtistInput').value = t.artist || '';
+      document.getElementById('trackUrlInput').value = t.src || '';
+      document.getElementById('trackCoverInput').value = t.cover || '';
+      // Trigger hint re-render nếu là YouTube/Spotify
+      if (typeof onTrackUrlInput === 'function') onTrackUrlInput();
+    }
+
+    async function uploadTrackCover(fileInput) {
+      const file = fileInput.files[0];
+      if (!file) return;
+      const fd = new FormData();
+      fd.append('mode', 'cover');
+      fd.append('file', file);
+      try {
+        const r = await fetch('/api/blog/image-upload', { method: 'POST', body: fd, credentials: 'same-origin' });
+        const data = await r.json();
+        if (data.error) { showNotif('Upload lỗi: ' + data.error, 'danger'); return; }
+        const url = data.url || data.path || '';
+        document.getElementById('trackCoverInput').value = url;
+        showNotif('Đã upload cover!');
+      } catch (e) {
+        showNotif('Upload thất bại: ' + e.message, 'danger');
+      } finally {
+        fileInput.value = '';
+      }
+    }
+
+    async function persistPlaylist() {
+      try {
+        const slug = playlistCurrentRepo || 'demo';
+        const r = await fetch(`/api/admin-settings?slug=${encodeURIComponent(slug)}`);
+        let cur = {};
+        if (r.ok) {
+          const data = await r.json();
+          cur = data.settings || {};
+        }
+        cur.playlist = playlist;
+        await fetch(`/api/admin-settings?slug=${encodeURIComponent(slug)}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ settings: cur }),
+          credentials: 'same-origin',
+        });
+        localStorage.setItem('admin_playlist', JSON.stringify(playlist));
+        // Đồng bộ cho Front Repo nếu đang mở cùng tab
+        if (window.__adminPlaylist) window.__adminPlaylist = playlist;
+        // Bắn BroadcastChannel + storage event để tab khác cập nhật
+        try {
+          if (window.BroadcastChannel) {
+            new BroadcastChannel('admin_playlist_sync').postMessage({ type: 'updated', playlist, __origin: '__self__' });
+          }
+          window.dispatchEvent(new StorageEvent('storage', { key: 'admin_playlist', newValue: JSON.stringify(playlist) }));
+        } catch(e) {}
+        showNotif('Đã lưu playlist!');
+      } catch (e) {
+        console.error('persistPlaylist failed', e);
+        localStorage.setItem('admin_playlist', JSON.stringify(playlist));
+        showNotif('Lưu local (server fail): ' + e.message, 'danger');
+      }
+    }
+
+    function addTrack() {
+      const t = collectTrackForm();
+      if (!t.title) { showNotif('Vui lòng nhập tên bài!', 'danger'); return; }
+      const maxId = playlist.reduce((m, x) => Math.max(m, x.id || 0), 0);
+      t.id = maxId + 1;
+      playlist.push(t);
+      renderTracksList();
+      clearTrackForm();
+      persistPlaylist();
+    }
+
+    function editTrack(id) {
+      const t = playlist.find(x => x.id === id);
+      if (!t) return;
+      fillTrackForm(t);
+      document.getElementById('editTrackId').value = id;
+      const hint = document.getElementById('trackEditHint');
+      const target = document.getElementById('trackEditTarget');
+      if (hint && target) {
+        hint.style.display = '';
+        target.textContent = t.title;
+      }
+    }
+
+    function updateTrack() {
+      const idStr = document.getElementById('editTrackId').value;
+      if (!idStr) { showNotif('Bấm vào nút ✎ trên bài muốn sửa trước!', 'danger'); return; }
+      const id = parseInt(idStr);
+      const t = playlist.find(x => x.id === id);
+      if (!t) return;
+      const upd = collectTrackForm();
+      if (!upd.title) { showNotif('Vui lòng nhập tên bài!', 'danger'); return; }
+      Object.assign(t, upd);
+      renderTracksList();
+      clearTrackForm();
+      persistPlaylist();
+    }
+
+    function removeTrack(id) {
+      if (!confirm('Xóa bài hát này?')) return;
+      playlist = playlist.filter(x => x.id !== id);
+      renderTracksList();
+      persistPlaylist();
+    }
+
+    function moveTrack(id, delta) {
+      const idx = playlist.findIndex(x => x.id === id);
+      if (idx < 0) return;
+      const newIdx = idx + delta;
+      if (newIdx < 0 || newIdx >= playlist.length) return;
+      const [item] = playlist.splice(idx, 1);
+      playlist.splice(newIdx, 0, item);
+      renderTracksList();
+      persistPlaylist();
+    }
+
+    function playTrack(id) {
+      const t = playlist.find(x => x.id === id);
+      if (!t) return;
+      if (!t.src) { showNotif('Bài này chưa có URL audio!', 'danger'); return; }
+      const info = window.MultiPlayer ? window.MultiPlayer.parseTrackUrl(t.src) : { type: 'mp3' };
+      // MP3 / direct stream: mở trong tab mới cho rõ.
+      if (info.type === 'mp3') {
+        window.open(t.src, '_blank');
+        return;
+      }
+      // YouTube / Spotify / SoundCloud: mở link gốc (hoặc embed URL) trong iframe preview
+      let embedUrl = t.src;
+      if (info.type === 'youtube' && info.providerId) {
+        embedUrl = 'https://www.youtube.com/embed/' + info.providerId + '?autoplay=1';
+      } else if (info.type === 'spotify' && info.providerId) {
+        embedUrl = `https://open.spotify.com/embed/${info.subType || 'track'}/${info.providerId}?autoplay=1`;
+      }
+      // Modal preview
+      let modal = document.getElementById('trackPreviewModal');
+      if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'trackPreviewModal';
+        modal.style.cssText = 'position:fixed;left:0;top:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:99999;display:flex;align-items:center;justify-content:center;';
+        modal.innerHTML = `
+          <div style="background:var(--panel);border:1px solid var(--border);border-radius:12px;width:min(560px,92vw);max-height:90vh;display:flex;flex-direction:column;overflow:hidden;">
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--border);">
+              <div style="display:flex;align-items:center;gap:8px;">
+                <img id="previewCover" style="width:48px;height:48px;border-radius:50%;object-fit:cover;background:#000;" />
+                <div style="min-width:0;">
+                  <div id="previewTitle" style="font-weight:700;color:var(--text-bright);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:380px;"></div>
+                  <div id="previewArtist" style="font-size:12px;color:var(--muted);"></div>
+                </div>
+              </div>
+              <button class="box-btn-sm" onclick="closeTrackPreview()" title="Đóng">✕</button>
+            </div>
+            <div style="position:relative;width:100%;height:0;padding-bottom:56.25%;background:#000;">
+              <iframe id="previewFrame" style="position:absolute;left:0;top:0;width:100%;height:100%;border:0;" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" allowfullscreen></iframe>
+            </div>
+          </div>`;
+        document.body.appendChild(modal);
+        modal.addEventListener('click', (e) => { if (e.target === modal) closeTrackPreview(); });
+      }
+      document.getElementById('previewCover').src = t.cover || (info.type === 'youtube' ? window.MultiPlayer.ytThumb(info.providerId) : '');
+      document.getElementById('previewTitle').textContent = t.title || 'Preview';
+      document.getElementById('previewArtist').textContent = t.artist || info.type.toUpperCase();
+      document.getElementById('previewFrame').src = embedUrl;
+      modal.style.display = 'flex';
+    }
+
+    function closeTrackPreview() {
+      const modal = document.getElementById('trackPreviewModal');
+      if (modal) {
+        modal.style.display = 'none';
+        const frame = document.getElementById('previewFrame');
+        if (frame) frame.src = ''; // dừng phát
+      }
+    }
+
+    // ========== Rain Audio URLs (light + heavy) ==========
+    async function saveRainAudioUrls() {
+      const light = (document.getElementById('rainLightUrlInput').value || '').trim();
+      const heavy = (document.getElementById('rainHeavyUrlInput').value || '').trim();
+      try {
+        const slug = playlistCurrentRepo || 'demo';
+        const r = await fetch(`/api/admin-settings?slug=${encodeURIComponent(slug)}`);
+        let cur = {};
+        if (r.ok) {
+          const data = await r.json();
+          cur = data.settings || {};
+        }
+        cur.rainAudio = { light: light, heavy: heavy };
+        await fetch(`/api/admin-settings?slug=${encodeURIComponent(slug)}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ settings: cur }),
+          credentials: 'same-origin',
+        });
+        localStorage.setItem('repo_rainAudioLight', light);
+        localStorage.setItem('repo_rainAudioHeavy', heavy);
+        // Sync Front đang mở qua BroadcastChannel (gửi tới tab khác + cùng tab)
+        try {
+          if (window.BroadcastChannel) {
+            const bc = new BroadcastChannel('repo_rain_audio');
+            bc.postMessage({ type: 'updated', light, heavy });
+            // Đóng ngay để message dispatch đến các listeners khác
+            setTimeout(function() { bc.close(); }, 100);
+          }
+        } catch(e) {}
+        // Fallback cho cùng tab: dispatch storage event manually
+        try {
+          window.dispatchEvent(new StorageEvent('storage', { key: 'repo_rainAudioLight', newValue: light }));
+          window.dispatchEvent(new StorageEvent('storage', { key: 'repo_rainAudioHeavy', newValue: heavy }));
+        } catch(e) {}
+        // Đợi 1 frame để message dispatch rồi mới hiện notif
+        await new Promise(r => setTimeout(r, 50));
+        showNotif('Đã lưu URL âm thanh mưa! Front sẽ tự áp dụng nếu đang mở.');
+        // Refresh các tab Front đang mở (cùng origin) qua opener nếu có
+        try {
+          if (window.opener && !window.opener.closed) {
+            try { window.opener.dispatchEvent(new StorageEvent('storage', { key: 'repo_rainAudioLight', newValue: light })); } catch(e) {}
+            try { window.opener.dispatchEvent(new StorageEvent('storage', { key: 'repo_rainAudioHeavy', newValue: heavy })); } catch(e) {}
+            if (window.opener._syncRainAudio) try { window.opener._syncRainAudio(); } catch(e) {}
+          }
+        } catch(e) {}
+      } catch (e) {
+        console.error('saveRainAudioUrls failed', e);
+        showNotif('Lưu thất bại: ' + e.message, 'danger');
+      }
+    }
+
+    // Lắng nghe BroadcastChannel để apply local (cùng tab)
+    try {
+      if (window.BroadcastChannel && !window.__rainBcSelf) {
+        window.__rainBcSelf = new BroadcastChannel('repo_rain_audio');
+        window.__rainBcSelf.addEventListener('message', function(ev) {
+          if (ev.data && ev.data.type === 'updated') {
+            showNotif('🌧️ Rain URLs đã sync — reload trang Front để nghe.');
+          }
+        });
+      }
+    } catch(e) {}
+
+    // Test rain audio trực tiếp trong dashboard qua iframe ẩn trỏ về Front
+    function testRainAudio(kind) {
+      const status = document.getElementById('rainAudioStatus');
+      const url = kind === 'light'
+        ? document.getElementById('rainLightUrlInput').value
+        : document.getElementById('rainHeavyUrlInput').value;
+      if (!url) { showNotif('Chưa có URL cho mưa ' + (kind === 'light' ? 'nhẹ' : 'nặng') + '!', 'danger'); return; }
+      if (status) status.textContent = 'Testing ' + kind + '...';
+      stopTestRain(); // clear previous
+      // Detect loại URL
+      const info = (window.MultiPlayer && window.MultiPlayer.parseTrackUrl)
+        ? window.MultiPlayer.parseTrackUrl(url)
+        : { type: 'mp3' };
+      if (info.type === 'mp3') {
+        // MP3 / direct stream — dùng <audio>
+        const testAudio = document.createElement('audio');
+        testAudio.id = '__testRainAudio';
+        testAudio.loop = true;
+        testAudio.style.cssText = 'position:fixed;left:-9999px;top:-9999px;width:1px;height:1px;';
+        testAudio.crossOrigin = 'anonymous';
+        testAudio.src = url;
+        testAudio.volume = 0.4;
+        document.body.appendChild(testAudio);
+        // Cleanup on error
+        testAudio.addEventListener('error', function() {
+          const code = testAudio.error ? testAudio.error.code : 0;
+          const msgs = {
+            1: 'MEDIA_ERR_ABORTED',
+            2: 'MEDIA_ERR_NETWORK',
+            3: 'MEDIA_ERR_DECODE',
+            4: '❌ URL không hợp lệ hoặc server không cho phép truy cập (CORS/404). Hãy dùng URL .mp3/.ogg/.wav trực tiếp (không phải YouTube/Spotify/watch URL).'
+          };
+          if (status) status.textContent = msgs[code] || ('Lỗi: code ' + code);
+          if (testAudio.parentNode) testAudio.parentNode.removeChild(testAudio);
+        });
+        testAudio.play().then(function() {
+          if (status) status.textContent = '▶ Đang phát (' + kind + ') — bấm Dừng test để tắt';
+        }).catch(function(err) {
+          if (status) status.textContent = '❌ ' + err.message;
+          if (testAudio.parentNode) testAudio.parentNode.removeChild(testAudio);
+        });
+      } else if (info.type === 'youtube') {
+        // YouTube → embed iframe ẩn
+        const ytId = info.providerId;
+        const div = document.createElement('div');
+        div.id = '__testRainAudio';
+        div.style.cssText = 'position:fixed;left:-9999px;top:-9999px;width:1px;height:1px;';
+        document.body.appendChild(div);
+        if (!window.YT || !window.YT.Player) {
+          const tag = document.createElement('script');
+          tag.src = 'https://www.youtube.com/iframe_api';
+          document.head.appendChild(tag);
+          window.onYouTubeIframeAPIReady = function() { testRainAudioPlayYT(div, ytId, kind, status); };
+        } else {
+          testRainAudioPlayYT(div, ytId, kind, status);
+        }
+      } else if (info.type === 'spotify') {
+        // Spotify → embed iframe ẩn
+        const spId = info.providerId;
+        const subType = info.subType || 'track';
+        const iframe = document.createElement('iframe');
+        iframe.id = '__testRainAudio';
+        iframe.src = `https://open.spotify.com/embed/${subType}/${spId}?utm_source=oembed&theme=0&autoplay=1`;
+        iframe.allow = 'autoplay; encrypted-media';
+        iframe.style.cssText = 'position:fixed;left:-2px;bottom:-2px;width:1px;height:1px;opacity:0.01;pointer-events:none;border:0;';
+        document.body.appendChild(iframe);
+        if (status) status.textContent = '▶ Đang phát Spotify (' + kind + ') — bấm Dừng test để tắt';
+      } else {
+        if (status) status.textContent = '❌ Loại URL không hỗ trợ: ' + info.type;
+      }
+    }
+    function testRainAudioPlayYT(host, ytId, kind, status) {
+      try {
+        const p = new window.YT.Player(host, {
+          videoId: ytId,
+          playerVars: { autoplay: 1, controls: 0 },
+          events: {
+            onReady: function(ev) { try { ev.target.playVideo(); } catch(e) {} },
+            onError: function() { if (status) status.textContent = '❌ YouTube error'; }
+          }
+        });
+        host.__ytPlayer = p;
+        if (status) status.textContent = '▶ Đang phát YouTube (' + kind + ') — bấm Dừng test để tắt';
+      } catch(e) {
+        if (status) status.textContent = '❌ Lỗi YT: ' + e.message;
+      }
+    }
+    function stopTestRain() {
+      // Stop <audio>
+      const testAudios = document.querySelectorAll('audio#__testRainAudio');
+      testAudios.forEach(function(a) {
+        try { a.pause(); a.currentTime = 0; } catch(e) {}
+        if (a.parentNode) a.parentNode.removeChild(a);
+      });
+      // Stop <iframe> Spotify
+      const iframes = document.querySelectorAll('iframe#__testRainAudio');
+      iframes.forEach(function(f) {
+        if (f.parentNode) f.parentNode.removeChild(f);
+      });
+      // Stop YouTube player div
+      const divs = document.querySelectorAll('div#__testRainAudio');
+      divs.forEach(function(d) {
+        if (d.__ytPlayer) { try { d.__ytPlayer.destroy(); } catch(e) {} d.__ytPlayer = null; }
+        if (d.parentNode) d.parentNode.removeChild(d);
+      });
+      const status = document.getElementById('rainAudioStatus');
+      if (status) status.textContent = '⏹ Đã dừng';
+    }
+
+    function restoreRainAudioInputs() {
+      const light = localStorage.getItem('repo_rainAudioLight') || '';
+      const heavy = localStorage.getItem('repo_rainAudioHeavy') || '';
+      const lEl = document.getElementById('rainLightUrlInput');
+      const hEl = document.getElementById('rainHeavyUrlInput');
+      if (lEl) lEl.value = light;
+      if (hEl) hEl.value = heavy;
+    }
+
+    // Auto-detect URL khi user paste/sửa ô URL trong form
+    function onTrackUrlInput() {
+      const urlInput = document.getElementById('trackUrlInput');
+      const hint = document.getElementById('trackUrlHint');
+      const coverInput = document.getElementById('trackCoverInput');
+      if (!urlInput || !hint || !window.MultiPlayer) return;
+      const url = urlInput.value.trim();
+      if (!url) { hint.innerHTML = ''; return; }
+      const info = window.MultiPlayer.parseTrackUrl(url);
+      const labels = {
+        youtube:    '<span style="color:#FF0033;font-weight:600;">▶ YouTube</span>',
+        spotify:    '<span style="color:#1DB954;font-weight:600;">♫ Spotify</span> (' + (info.subType || 'track') + ')',
+        soundcloud: '<span style="color:#FF8800;font-weight:600;">☁ SoundCloud</span>',
+        mp3:        '<span style="color:#3B82F6;font-weight:600;">♪ MP3 / direct stream</span>',
+      };
+      let html = '🔎 Nhận diện: ' + (labels[info.type] || '?');
+      if (info.type === 'youtube' && info.providerId) {
+        const ytCover = window.MultiPlayer.ytThumb(info.providerId);
+        if (!coverInput.value.trim()) {
+          coverInput.value = ytCover;
+          html += ' — đã tự điền thumbnail YouTube';
+        }
+      }
+      hint.innerHTML = html;
+    }
+
+    function clearTrackForm() {
+      fillTrackForm({ title: '', artist: '', src: '', cover: '' });
+      document.getElementById('editTrackId').value = '';
+      const hint = document.getElementById('trackEditHint');
+      if (hint) hint.style.display = 'none';
     }
 
     // ====================== BOX DRAG & DROP ======================
@@ -2038,6 +2962,10 @@
 
     // ====================== SAVE FUNCTIONS ======================
     // Logo preview live update
+    function _parseIndexList(s) {
+      if (!s) return [];
+      return String(s).split(/[,\s]+/).map(function(x){return parseInt(x,10);}).filter(function(n){return !isNaN(n) && n>=0;});
+    }
     function updateDashLogoPreview() {
       var t = document.getElementById('logoText').value || 'OWEN';
       var fs = parseInt(document.getElementById('logoFontSize').value);
@@ -2048,7 +2976,12 @@
       var holo = parseInt(document.getElementById('logoHoloIntensity').value);
       var glowRadius = parseInt(document.getElementById('logoGlowRadius').value);
       var glowAlpha = parseInt(document.getElementById('logoGlowAlpha').value);
-      var blink = parseInt(document.getElementById('logoBlink').value);
+      var blink = parseFloat(document.getElementById('logoBlink').value);
+      var blinkLettersRaw = document.getElementById('logoBlinkLetters') ? document.getElementById('logoBlinkLetters').value : '';
+      var accentLettersRaw = document.getElementById('logoAccentLetters') ? document.getElementById('logoAccentLetters').value : '';
+      var accentColorVal = (document.getElementById('logoAccentColor') && document.getElementById('logoAccentColor').value) || '#FF3B30';
+      var blinkLetters = _parseIndexList(blinkLettersRaw);
+      var accentLetters = _parseIndexList(accentLettersRaw);
 
       document.getElementById('logoFontSizeVal').textContent = fs + 'px';
       document.getElementById('logoFontWeightVal').textContent = fw;
@@ -2057,22 +2990,62 @@
       document.getElementById('logoHoloIntensityVal').textContent = holo + '%';
       document.getElementById('logoGlowRadiusVal').textContent = glowRadius + 'px';
       document.getElementById('logoGlowAlphaVal').textContent = glowAlpha + '%';
-      document.getElementById('logoBlinkVal').textContent = blink + 's';
+      document.getElementById('logoBlinkVal').textContent = blink.toFixed(1) + 's';
+      var accentVal = document.getElementById('logoAccentColorVal');
+      if (accentVal) accentVal.textContent = accentColorVal;
 
       var el = document.getElementById('dashLogoText');
       if (!el) return;
-      el.textContent = t;
+      // Render per-letter spans
+      el.innerHTML = '';
       el.style.fontFamily = ff;
       el.style.fontSize = fs + 'px';
       el.style.fontWeight = fw;
-      el.style.animationDuration = blink + 's';
+      var onlyBlinkSome = blinkLetters.length > 0;
+      var blinkSet = {};
+      blinkLetters.forEach(function(i){ blinkSet[i] = true; });
+      var accentSet = {};
+      accentLetters.forEach(function(i){ accentSet[i] = true; });
 
-      // Read CURRENT shadow theme color from CSS var (live, updates when applyShadowTheme runs)
+      for (var i = 0; i < t.length; i++) {
+        var ch = t[i];
+        if (ch === ' ') {
+          var sp = document.createElement('span');
+          sp.className = 'lt space-sep';
+          sp.style.display = 'inline-block';
+          sp.style.width = '0.35em';
+          sp.textContent = '\u00A0';
+          el.appendChild(sp);
+        } else {
+          var s = document.createElement('span');
+          s.className = 'lt';
+          s.textContent = ch;
+          // Blink: nếu có danh sách → chỉ những index đó mới blink; nếu rỗng → blink tất cả
+          if (blink > 0 && (!onlyBlinkSome || blinkSet[i])) {
+            s.style.animation = 'neonFlickerLetter ' + blink.toFixed(1) + 's infinite steps(60)';
+          } else {
+            s.style.animation = 'none';
+            s.style.opacity = '1';
+          }
+          // Accent color — chỉ đổi màu chữ, GIỮ shadow theo neon
+          if (accentSet[i]) {
+            s.style.color = accentColorVal;
+            // KHÔNG ghi đè textShadow/stroke — giữ nguyên neon shadow mặc định
+          }
+          el.appendChild(s);
+        }
+      }
+
+      // Compute shadow vars from current shadow theme
       var rgb = getComputedStyle(document.documentElement).getPropertyValue('--logo-shadow-rgb').trim() || '57,255,20';
       var hFrac = holo / 100;
       var aFrac = glowAlpha / 100;
+      // base text-shadow applied via CSS to .lt via class
+      el.style.setProperty('--logo-depth', String(depth));
+      el.style.setProperty('--logo-stroke', stroke + 'px');
+      // Live preview cũng hỗ trợ depth layers như applyLogoSettings
       var layers = '';
-      for (var i = 1; i <= depth; i++) layers += (i) + 'px ' + (i) + 'px 0 rgba(' + rgb + ', 1), ';
+      for (var k = 1; k <= depth; k++) layers += (k) + 'px ' + (k) + 'px 0 rgba(' + rgb + ', 1), ';
       var glow = '0 0 4px rgba(' + rgb + ',' + (0.95 * hFrac) + '),'
                + '0 0 ' + Math.round(glowRadius * 0.15) + 'px rgba(' + rgb + ',' + (0.8 * hFrac) + '),'
                + '0 0 ' + Math.round(glowRadius * 0.3) + 'px rgba(' + rgb + ',' + (0.65 * aFrac) + '),'
@@ -2093,7 +3066,27 @@
       localStorage.setItem('repo_logoGlowRadius', document.getElementById('logoGlowRadius').value);
       localStorage.setItem('repo_logoGlowAlpha', document.getElementById('logoGlowAlpha').value);
       localStorage.setItem('repo_logoBlink', document.getElementById('logoBlink').value);
+      localStorage.setItem('repo_logoBlinkLetters', document.getElementById('logoBlinkLetters').value || '');
+      localStorage.setItem('repo_logoAccentLetters', document.getElementById('logoAccentLetters').value || '');
+      localStorage.setItem('repo_logoAccentColor', document.getElementById('logoAccentColor').value || '#FF3B30');
+      // Broadcast cho các tab khác (Front) sync
+      try {
+        var bc = new BroadcastChannel('repo_logo_settings');
+        bc.postMessage({ type: 'updated', ts: Date.now() });
+        bc.close();
+      } catch(e) {}
+      // Sync ngay tại dashboard để Front preview khớp khi user save
+      syncLogoToFrontIframe();
       showNotif('Đã lưu cấu hình LOGO!');
+    }
+
+    // Push logo settings vào iframe Front (nếu đang mở) để user thấy thay đổi ngay
+    function syncLogoToFrontIframe() {
+      var iframe = document.querySelector('iframe[name="preview-frame"], iframe[src*="?"]');
+      if (!iframe || !iframe.contentWindow) return;
+      try {
+        iframe.contentWindow.postMessage({ type: 'repo_logo_sync', source: 'dashboard' }, '*');
+      } catch(e) {}
     }
 
     function saveBoxSizes() {
@@ -2247,6 +3240,24 @@
         btn.addEventListener('click', function() { window.applyShadowTheme(btn.dataset.shadow); });
       });
 
+      if (typeof updateDashLogoPreview === 'function') updateDashLogoPreview();
+
+      // Restore General state (Logo settings)
+      function _setVal(id, v) { var el = document.getElementById(id); if (el && v !== null && v !== undefined) el.value = v; }
+      _setVal('logoText', localStorage.getItem('repo_logoText'));
+      _setVal('logoFont', localStorage.getItem('repo_logoFont'));
+      _setVal('logoFontSize', localStorage.getItem('repo_logoFontSize'));
+      _setVal('logoFontWeight', localStorage.getItem('repo_logoFontWeight'));
+      _setVal('logoDepth', localStorage.getItem('repo_logoDepth'));
+      _setVal('logoStroke', localStorage.getItem('repo_logoStroke'));
+      _setVal('logoHoloIntensity', localStorage.getItem('repo_logoHoloIntensity'));
+      _setVal('logoGlowRadius', localStorage.getItem('repo_logoGlowRadius'));
+      _setVal('logoGlowAlpha', localStorage.getItem('repo_logoGlowAlpha'));
+      _setVal('logoBlink', localStorage.getItem('repo_logoBlink'));
+      _setVal('logoBlinkLetters', localStorage.getItem('repo_logoBlinkLetters'));
+      _setVal('logoAccentLetters', localStorage.getItem('repo_logoAccentLetters'));
+      _setVal('logoAccentColor', localStorage.getItem('repo_logoAccentColor'));
+      // Render preview lại sau khi load state
       if (typeof updateDashLogoPreview === 'function') updateDashLogoPreview();
 
       // Box sizes

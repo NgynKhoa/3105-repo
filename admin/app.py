@@ -39,6 +39,43 @@ from typing import Any
 import yaml
 from flask import Flask, abort, jsonify, render_template, request, send_from_directory, session
 
+# Load .env file (nếu có) — đọc trước khi import Config
+# Try python-dotenv first, fallback to manual parser
+_env_loaded = False
+try:
+    from dotenv import load_dotenv as _load_dotenv
+    _env_path = pathlib.Path(__file__).resolve().parent.parent / ".env"
+    if _env_path.exists():
+        _load_dotenv(_env_path, override=False)
+        _env_loaded = True
+        print(f"[env] Loaded .env via python-dotenv from {_env_path}")
+except ImportError:
+    # Fallback: manual parser (simple KEY=VALUE format)
+    _env_path = pathlib.Path(__file__).resolve().parent.parent / ".env"
+    if _env_path.exists():
+        try:
+            for _line in _env_path.read_text(encoding="utf-8").splitlines():
+                _line = _line.strip()
+                if not _line or _line.startswith("#"):
+                    continue
+                if "=" not in _line:
+                    continue
+                _k, _v = _line.split("=", 1)
+                _k = _k.strip()
+                _v = _v.strip()
+                # Strip surrounding quotes
+                if (_v.startswith('"') and _v.endswith('"')) or (_v.startswith("'") and _v.endswith("'")):
+                    _v = _v[1:-1]
+                if _k and _k not in os.environ:  # process env wins
+                    os.environ[_k] = _v
+            _env_loaded = True
+            print(f"[env] Loaded .env manually (no python-dotenv) from {_env_path}")
+        except Exception as _e:
+            print(f"[env] Failed to load .env: {_e}")
+
+if not _env_loaded:
+    print("[env] No .env loaded; relying on process env vars")
+
 # Import config + auth blueprint
 from .config import Config
 from .auth import auth_bp, login_required, owner_required, is_authenticated
@@ -877,6 +914,70 @@ def api_blog_post(post_id: int):
     abort(404, description="Post not found")
 
 
+@app.route("/api/blog/image-upload", methods=["POST"])
+def api_blog_image_upload():
+    """Upload ảnh cho Blog post (cover hoặc gallery).
+
+    Form fields:
+      - mode: 'cover' | 'gallery'
+      - file: 1 file (cover) hoặc nhiều file (gallery)
+
+    Response: {
+      ok: True,
+      url: 'assets/blog/<uuid>.png',     # cover
+      urls: ['assets/blog/<uuid>.png'],   # gallery
+    }
+    """
+    import uuid as _uuid
+    from pathlib import Path
+    from werkzeug.utils import secure_filename as _sec
+
+    ALLOWED_EXT = {".png", ".jpg", ".jpeg", ".gif", ".webp", ".bmp"}
+    MAX_SIZE = 5 * 1024 * 1024  # 5MB
+
+    mode = request.form.get("mode", "cover")
+    files = request.files.getlist("file")
+    if not files:
+        return jsonify({"ok": False, "error": "Không có file nào được chọn"}), 400
+
+    save_dir = ROOT / "assets" / "blog"
+    save_dir.mkdir(parents=True, exist_ok=True)
+
+    saved = []
+    for f in files:
+        if not f or not f.filename:
+            continue
+        ext = Path(f.filename).suffix.lower()
+        if ext not in ALLOWED_EXT:
+            return jsonify({"ok": False, "error": f"Định dạng không hỗ trợ: {ext}"}), 400
+        try:
+            f.seek(0, 2)
+            size = f.tell()
+            f.seek(0)
+        except Exception:
+            size = 0
+        if size and size > MAX_SIZE:
+            return jsonify({"ok": False, "error": f"File quá lớn (tối đa 5MB). File: {f.filename}"}), 400
+
+        unique_name = f"{_uuid.uuid4().hex[:12]}{ext}"
+        out_path = save_dir / unique_name
+        try:
+            f.save(str(out_path))
+            saved.append(f"assets/blog/{unique_name}")
+        except Exception as exc:
+            return jsonify({"ok": False, "error": f"Không ghi được file: {exc}"}), 500
+
+    if not saved:
+        return jsonify({"ok": False, "error": "Không có file hợp lệ nào"}), 400
+
+    # Trả URL public để browser load được
+    base = request.host_url.rstrip("/")
+    public_urls = [f"{base}/assets/blog/{pathlib.Path(s).name}" for s in saved]
+    if mode == "cover":
+        return jsonify({"ok": True, "url": public_urls[0], "path": saved[0]})
+    return jsonify({"ok": True, "urls": public_urls, "paths": saved})
+
+
 # ---------------------------------------------------------------------------
 # Front-End-Checklist MCP integration
 # ---------------------------------------------------------------------------
@@ -1000,6 +1101,17 @@ def admin_static(filename: str):
     return send_from_directory(app.static_folder, filename)
 
 
+@app.route("/assets/<path:filename>")
+def serve_assets(filename: str):
+    """Phục vụ file tĩnh từ thư mục assets/ ở repo root (rain.mp3, test_tone.mp3, ...).
+    Dùng cho music player + các file media không nằm trong assets/<repo>/..."""
+    safe = pathlib.Path(filename).name  # chống path traversal
+    asset_path = ROOT / "assets" / safe
+    if not asset_path.is_file():
+        abort(404, description=f"Asset not found: {filename}")
+    return send_from_directory(str(asset_path.parent), asset_path.name)
+
+
 @app.get("/repo-asset")
 def repo_asset():
     """Phục vụ ảnh asset (icon/banner/screenshot) từ repo để hiển thị thumbnail."""
@@ -1091,6 +1203,25 @@ def api_serve_background(filename: str):
     if not path.is_file():
         abort(404, description="Background not found")
     return send_from_directory(str(BG_UPLOAD_DIR), filename)
+
+
+# ---------------------------------------------------------------------------
+# Blog image serving
+# ---------------------------------------------------------------------------
+
+BLOG_UPLOAD_DIR = ROOT / "assets" / "blog"
+
+
+@app.get("/assets/blog/<filename>")
+def api_serve_blog_image(filename: str):
+    """Phục vụ ảnh blog đã upload (cover/gallery)."""
+    safe = pathlib.Path(filename).name  # chống path traversal
+    if safe != filename or "/" in safe or ".." in safe:
+        abort(404, description="Invalid filename")
+    path = BLOG_UPLOAD_DIR / safe
+    if not path.is_file():
+        abort(404, description="Blog image not found")
+    return send_from_directory(str(BLOG_UPLOAD_DIR), safe)
 
 
 @app.delete("/api/backgrounds/<filename>")

@@ -81,11 +81,11 @@ class Config:
     # Flask
     SECRET_KEY: str = os.environ.get("SECRET_KEY", "").strip()
     FRONTEND_BASE_URL: str = os.environ.get(
-        "FRONTEND_BASE_URL", "http://localhost:5050"
+        "FRONTEND_BASE_URL", "http://127.0.0.1:5050"
     ).strip()
 
     # Cache
-    REPO_DISCOVERY_CACHE_TTL: int = int(os.environ.get("REPO_DISCOVERY_CACHE_TTL", "300"))
+    REPO_DISCOVERY_CACHE_TTL: int = int(os.environ.get("REPO_DISCOVERY_CACHE_TTL", "1800"))  # 30 min
 
     # Cookie
     SESSION_COOKIE_NAME: str = "oauth_session"

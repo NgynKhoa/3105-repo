@@ -107,6 +107,7 @@ def find_packages_in_repo(
     *,
     token: str | None = None,
     package_ids: list[str] | None = None,
+    download_map: dict[str, str] | None = None,
 ) -> dict[str, str]:
     """Scan repo, tìm file `.3105` cho mỗi package_id.
 
@@ -119,12 +120,24 @@ def find_packages_in_repo(
         a) Exact: `{package_id}.3105`
         b) Versioned: `{package_id}-{version}.3105`
         c) Folder: `{package_id}/latest.3105` hoặc `{package_id}/any.3105`
+        d) Reverse lookup (download_map): {filename: package_id} - nếu file
+           trong folder packages/ tên là "PATCH_FREE_V2_GLOBAL.3105" nhưng
+           package_id là "owen-003", dùng download_map từ repo.json để map.
     """
     if not owner or not repo:
         return {}
 
     branch = _get_default_branch(token, owner, repo)
     found: dict[str, str] = {}
+    # Reverse map: filename → package_id (lowercase basename)
+    rev_map: dict[str, str] = {}
+    if download_map:
+        for pkg_id, dl_path in download_map.items():
+            if not dl_path:
+                continue
+            base = dl_path.replace("\\", "/").split("/")[-1].lower()
+            if base:
+                rev_map[base] = pkg_id
 
     # Thử từng path candidate
     for dir_template in PACKAGES_DIR_CANDIDATES:
@@ -138,10 +151,23 @@ def find_packages_in_repo(
             for pkg_id in package_ids:
                 if pkg_id in found:
                     continue  # Đã tìm thấy ở path trước rồi
+                # Strategy A: Nếu có download_map, tìm filename basename
+                # tương ứng với package_id này rồi match exact.
+                target_basename = None
+                if download_map:
+                    dl = download_map.get(pkg_id, "")
+                    if dl:
+                        target_basename = dl.replace("\\", "/").split("/")[-1]
                 for entry in entries:
                     name = entry.get("name", "")
                     if not name.endswith(".3105"):
                         continue
+                    # 1) Exact match basename từ download_map
+                    if target_basename and name.lower() == target_basename.lower():
+                        file_path = f"{dir_path}/{name}".replace("//", "/")
+                        found[pkg_id] = build_raw_url(owner, repo, branch, file_path)
+                        break
+                    # 2) Fallback: convention-based match
                     if _match_package_entry(pkg_id, name):
                         file_path = f"{dir_path}/{name}".replace("//", "/")
                         found[pkg_id] = build_raw_url(owner, repo, branch, file_path)
@@ -152,7 +178,10 @@ def find_packages_in_repo(
                 name = entry.get("name", "")
                 if not name.endswith(".3105"):
                     continue
-                pkg_id = _extract_package_id(name)
+                # Prefer rev_map (download_map từ repo.json)
+                pkg_id = rev_map.get(name.lower())
+                if not pkg_id:
+                    pkg_id = _extract_package_id(name)
                 if pkg_id and pkg_id not in found:
                     file_path = f"{dir_path}/{name}".replace("//", "/")
                     found[pkg_id] = build_raw_url(owner, repo, branch, file_path)
@@ -263,26 +292,41 @@ def register_raw_routes(app):
                         app.config[cache_key + ":ts"] = now
                         return jsonify(result)
 
-                # Sau khi có repo.json, dùng thông tin package_ids từ đó
-                package_ids = [p.get("identifier") for p in content.get("packages", []) if p.get("identifier")]
-                if package_ids:
-                    found = find_packages_in_repo(
-                        owner, repo, slug,
-                        token=None, package_ids=[package_id])
-                    if found.get(package_id):
-                        url = found[package_id]
-                        # Try to get file size/sha
-                        size, sha = _head_file_size_sha(None, owner, repo, _path_from_raw_url(url))
-                        result = {
-                            "ok": True,
-                            "download_url": url,
-                            "source": "auto_detect_with_repo_json",
-                            "size_bytes": size,
-                            "sha": sha,
-                        }
-                        app.config[cache_key] = result
-                        app.config[cache_key + ":ts"] = now
-                        return jsonify(result)
+                # Build download_map từ packages[] trong repo.json:
+                # {package_id: download_field_basename}
+                # Đây là cách fork YangJii/3105 hoạt động: file .3105 có tên
+                # khác với identifier (vd "PATCH_FREE_V2_GLOBAL.3105" cho
+                # package_id="owen-003"), nhưng repo.json ghi rõ trong field
+                # "download": "packages/PATCH_FREE_V2_GLOBAL.3105".
+                download_map: dict[str, str] = {}
+                for pkg in content.get("packages", []):
+                    pid = pkg.get("identifier")
+                    dl = pkg.get("download") or ""
+                    if pid and dl:
+                        download_map[pid] = dl
+
+                # Tìm package này trong folder packages/ qua reverse-mapping
+                # từ repo.json (KHÔNG cần dựa vào filename convention).
+                found = find_packages_in_repo(
+                    owner, repo, slug,
+                    token=None,
+                    package_ids=[package_id],
+                    download_map=download_map,
+                )
+                if found.get(package_id):
+                    url = found[package_id]
+                    # Try to get file size/sha
+                    size, sha = _head_file_size_sha(None, owner, repo, _path_from_raw_url(url))
+                    result = {
+                        "ok": True,
+                        "download_url": url,
+                        "source": "auto_detect_with_repo_json",
+                        "size_bytes": size,
+                        "sha": sha,
+                    }
+                    app.config[cache_key] = result
+                    app.config[cache_key + ":ts"] = now
+                    return jsonify(result)
 
             # Không có repo.json nào khớp → fallback scan toàn repo
             found = find_packages_in_repo(

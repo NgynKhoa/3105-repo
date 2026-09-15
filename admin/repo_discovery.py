@@ -132,7 +132,12 @@ def scan_user_repos(token: str, login: str) -> list[dict[str, Any]]:
 # -----------------------------------------------------------------------------
 
 def _list_user_repos(token: str, login: str) -> list[dict[str, Any]]:
-    """GET /users/{login}/repos — pagination, filter owner-only + non-archived."""
+    """GET /users/{login}/repos — pagination, include forks + non-archived.
+
+    Note: Include forks vì nhiều user fork repo gốc (`3105-repo`) về tài khoản
+    của họ rồi edit trên đó. Skipping forks → không phát hiện repo.json
+    trong fork → is_owner_of=null → không có quyền admin.
+    """
     repos: list[dict[str, Any]] = []
     page = 1
     headers = _gh_headers(token)
@@ -140,7 +145,7 @@ def _list_user_repos(token: str, login: str) -> list[dict[str, Any]]:
     while page <= 10:  # safety cap: 10 pages × 100 = 1000 repos
         url = f"https://api.github.com/users/{login}/repos"
         params = {
-            "type": "owner",         # skip forks
+            "type": "all",          # include forks (fix: 3105-repo là fork)
             "sort": "updated",
             "per_page": 100,
             "page": page,
@@ -164,11 +169,8 @@ def _list_user_repos(token: str, login: str) -> list[dict[str, Any]]:
             break
 
         for r in batch:
-            # Skip archived (không còn maintain), skip forks (đã có type=owner
-            # nhưng check lại cho chắc)
+            # Chỉ skip archived (không còn maintain). Cho phép fork.
             if r.get("archived"):
-                continue
-            if r.get("fork"):
                 continue
             repos.append(r)
 
@@ -199,8 +201,19 @@ def _try_discover_repo_json(token: str, repo: dict[str, Any]) -> RepoCandidate |
         if parsed is None:
             continue
 
+        # Prefer explicit slug trong JSON. Nếu validator đã derive từ identifier
+        # mà path có chứa tên folder (vd `repositories/demo/repo.json`),
+        # thì dùng folder name làm slug cho khớp với ?slug=X của admin.
+        slug = parsed["slug"]
+        if "/" in path:
+            parts = path.rsplit("/", 2)
+            if len(parts) >= 2 and parts[-1] in ("repo.json", "repo.yml"):
+                folder = parts[-2]
+                if folder and folder not in ("repositories", "3105-repo", ".3105", "config", "src", "docs"):
+                    slug = folder
+
         return RepoCandidate(
-            slug=parsed["slug"],
+            slug=slug,
             identifier=parsed["identifier"],
             name=parsed.get("name") or repo.get("name"),
             owner_github=parsed.get("owner_github") or repo.get("owner", {}).get("login", ""),
@@ -340,12 +353,18 @@ def _parse_and_validate_repo_json(raw: dict) -> dict | None:
     """
     if not isinstance(raw, dict):
         return None
+    # slug: required, but if missing → derive from identifier (common in field-deployed repos).
     slug = raw.get("slug")
     identifier = raw.get("identifier")
-    if not isinstance(slug, str) or not slug.strip():
-        return None
     if not isinstance(identifier, str) or not identifier.strip():
         return None
+    if not isinstance(slug, str) or not slug.strip():
+        # Derive slug from identifier (com.owen.mod → owen.mod → demo fallback)
+        derived = identifier.strip().split(".", 1)[-1] if "." in identifier else identifier.strip()
+        if derived and derived != identifier.strip():
+            slug = derived.lower()
+        else:
+            slug = identifier.strip().lower()
 
     # Validate releases[]
     releases = raw.get("releases", [])
@@ -410,10 +429,21 @@ def _parse_and_validate_repo_json(raw: dict) -> dict | None:
     }
 
 
-def _gh_headers(token: str) -> dict[str, str]:
+def _gh_headers(token: str | None) -> dict[str, str]:
+    # Nếu có token truyền vào → dùng token đó. Nếu không → fallback sang
+    # server-side GITHUB_PAT (rate-limit bypass cho public reads).
+    effective = token or _get_server_pat()
     return {
-        "Authorization": f"Bearer {token}",
+        "Authorization": f"Bearer {effective}" if effective else "",
         "Accept": "application/vnd.github+json",
         "X-GitHub-Api-Version": "2022-11-28",
         "User-Agent": "3105-repo-builder/1.0",
     }
+
+
+def _get_server_pat() -> str | None:
+    try:
+        from .config import Config
+        return Config.GITHUB_PAT or None
+    except Exception:
+        return None

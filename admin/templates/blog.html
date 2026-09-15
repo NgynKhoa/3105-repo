@@ -277,13 +277,62 @@
       color: var(--muted);
     }
     .post-body {
-      padding: 26px;
+      padding: 32px 40px 36px;
       line-height: 1.85;
       font-size: 16px;
       font-weight: 400;
       letter-spacing: 0.2px;
       /* KHÔNG dùng text-shadow ở body chính — gây nhòe khó đọc */
       text-shadow: none;
+    }
+    .post-body > *:first-child { margin-top: 0; }
+    .post-body > *:last-child { margin-bottom: 0; }
+    /* Khi post.content được paste từ textarea thẳng (không có HTML block),
+       text thường bị wrap sát mép trái → bỏ text-indent và cho padding-left
+       dư phòng các block chưa được wrap bởi <p> khi user save từ dashboard. */
+    .post-body { padding-left: max(40px, 6%); }
+    @media (max-width: 600px) {
+      .post-body { padding: 22px 18px 26px; }
+    }
+    .post-body img,
+    .post-body figure {
+      max-width: 100%;
+      height: auto;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      margin: 18px 0;
+      display: block;
+    }
+    .post-body figure { margin: 22px 0; }
+    .post-body figure img { margin: 0; }
+    .post-body figcaption {
+      margin-top: 8px;
+      font-size: 13px;
+      color: var(--muted);
+      text-align: center;
+      font-style: italic;
+    }
+    .post-body .image-gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 10px;
+      margin: 18px 0;
+    }
+    .post-body .image-gallery img {
+      margin: 0;
+      width: 100%;
+      object-fit: cover;
+      aspect-ratio: 16 / 10;
+    }
+    .post-hero-img {
+      width: 100%;
+      max-height: 360px;
+      object-fit: cover;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      margin: 0 0 18px;
+      display: block;
+      background: var(--panel-alt);
     }
     .post-body h2 {
       color: var(--neon);
@@ -649,24 +698,40 @@
   </div>
 
   <script>
-    // ====================== FPS Counter ======================
-    (function() {
-      let last = performance.now();
-      let frames = 0;
-      const fpsBox = document.getElementById('fps-box');
-      if (fpsBox) {
-        function loop() {
-          frames++;
-          const now = performance.now();
-          if (now - last >= 1000) {
-            fpsBox.textContent = 'FPS: ' + frames;
-            frames = 0;
-            last = now;
-          }
-          requestAnimationFrame(loop);
+    // ====================== FPS Counter (gộp chung 1 box duy nhất) ======================
+    (function () {
+      // Bỏ qua nếu đã có #fps-box từ markup tĩnh <div id="fps-box"> ở body
+      let box = document.getElementById('fps-box');
+      if (!box) {
+        box = document.createElement('div');
+        box.id = 'fps-box';
+        box.title = 'FPS';
+        document.body.appendChild(box);
+      }
+      var alpha = 0.1;
+      var lastTime = performance.now();
+      var smoothedFps = 60;
+      var lastTextUpdate = 0;
+
+      function loop(now) {
+        var dt = now - lastTime;
+        lastTime = now;
+        if (dt > 0) {
+          // EMA smoothing với alpha=0.1 → phản hồi nhanh nhưng ổn định
+          var instant = 1000 / dt;
+          smoothedFps = smoothedFps + alpha * (instant - smoothedFps);
+        }
+        if (now - lastTextUpdate >= 200) {
+          // Clamp về [0, 144] để tránh hiển thị 600+ khi tab inactive rồi refocus
+          var fps = Math.max(0, Math.min(144, Math.round(smoothedFps)));
+          var color = fps >= 55 ? '#39ff14' : fps >= 30 ? '#ffdd00' : '#ff4040';
+          box.style.color = color;
+          box.textContent = 'FPS ' + fps;
+          lastTextUpdate = now;
         }
         requestAnimationFrame(loop);
       }
+      requestAnimationFrame(loop);
     })();
 
     // ====================== Rain Effect ======================
@@ -705,7 +770,9 @@
         ctx.beginPath();
         ctx.moveTo(this.x, this.y);
         ctx.lineTo(this.x + 1, this.y + this.len);
-        ctx.strokeStyle = `rgba(57, 255, 20, ${this.opacity})`;
+        // Đọc theme color động từ --neon-rgb (Front theme)
+        var rgb = getComputedStyle(document.documentElement).getPropertyValue('--neon-rgb').trim() || '57, 255, 20';
+        ctx.strokeStyle = 'rgba(' + rgb + ', ' + this.opacity + ')';
         ctx.lineWidth = this.thick;
         ctx.stroke();
       }
@@ -723,38 +790,6 @@
     }
     initRain();
     animateRain();
-
-    // === FPS Overlay (góc trái trên) — đồng bộ style + logic với Front Repo ===
-    (function () {
-      var box = document.createElement('div');
-      box.id = 'fps-box';
-      box.title = 'FPS';
-      box.textContent = 'FPS --';
-      document.body.appendChild(box);
-
-      var alpha = 0.1;
-      var lastTime = performance.now();
-      var smoothedFps = 60;
-      var lastTextUpdate = 0;
-
-      function loop(now) {
-        var dt = now - lastTime;
-        lastTime = now;
-        if (dt > 0) {
-          var instant = 1000 / dt;
-          smoothedFps = smoothedFps + alpha * (instant - smoothedFps);
-        }
-        if (now - lastTextUpdate >= 100) {
-          var fps = Math.round(smoothedFps);
-          var color = fps >= 55 ? '#39ff14' : fps >= 30 ? '#ffdd00' : '#ff4040';
-          box.style.color = color;
-          box.textContent = 'FPS ' + fps;
-          lastTextUpdate = now;
-        }
-        requestAnimationFrame(loop);
-      }
-      requestAnimationFrame(loop);
-    })();
 
     // ====================== Settings ======================
     const settingsBtn = document.getElementById('settingsBtn');
@@ -809,11 +844,23 @@
       // KHÔNG đụng repo_theme (Front repo) / dash_theme (Dashboard).
     }
 
-    // Theme picker đã bị ẩn — KHÔNG bind event listener. Theme giữ nguyên
-    // mặc định (green) từ :root CSS variables. Xóa localStorage cũ để đảm bảo
-    // theme luôn là green.
-    localStorage.removeItem('blog_theme');
-    localStorage.removeItem('repo_theme');
+    // ĐỒNG BỘ theme với Front Repo: Blog sẽ đọc `repo_theme` từ localStorage
+    // (key mà Front Repo sử dụng) và apply theme tương ứng.
+    // Mặc định là 'green' nếu chưa có.
+    (function syncFrontThemeOnBlog() {
+      const frontTheme = localStorage.getItem('repo_theme') || 'green';
+      if (themes[frontTheme]) {
+        applyTheme(frontTheme);
+      } else {
+        applyTheme('green');
+      }
+      // Lắng nghe thay đổi theme từ Front tab khác
+      window.addEventListener('storage', function(e) {
+        if (e.key === 'repo_theme' && e.newValue && themes[e.newValue]) {
+          applyTheme(e.newValue);
+        }
+      });
+    })();
     // Migrate key cũ sang key chung để sync với Front Repo.
     if (localStorage.getItem('blog_rainEnabled') !== null && localStorage.getItem('rainEnabled') === null) {
       localStorage.setItem('rainEnabled', localStorage.getItem('blog_rainEnabled'));
@@ -1038,10 +1085,22 @@
           </div>`;
         return;
       }
+      // Render hero image (cover) nếu post.image tồn tại
+      const heroImg = post.image
+        ? `<img class="post-hero-img" src="${post.image}" alt="${post.title}" loading="lazy">`
+        : '';
+      // Render gallery: post.images là array các URL ảnh phụ trong bài viết
+      let galleryHtml = '';
+      if (Array.isArray(post.images) && post.images.length) {
+        galleryHtml = '<div class="image-gallery">' +
+          post.images.map(src => `<img src="${src}" alt="" loading="lazy">`).join('') +
+          '</div>';
+      }
       document.getElementById('blogContent').innerHTML = `
         <div class="post-detail">
           <div class="post-header">
             <a href="/blog" class="post-back-link">&#8592; Quay lai danh sach bai viet</a>
+            ${heroImg}
             <div class="post-icon-big">${post.icon}</div>
             <h1 class="post-title">${post.title}</h1>
             <div class="post-meta">
@@ -1049,7 +1108,10 @@
               <span>&#128221; ${allPosts.length} bai viet</span>
             </div>
           </div>
-          <div class="post-body">${post.content || '<p>Noi dung dang duoc cap nhat...</p>'}</div>
+          <div class="post-body">
+            ${galleryHtml}
+            ${post.content || '<p>Noi dung dang duoc cap nhat...</p>'}
+          </div>
         </div>`;
     }
 

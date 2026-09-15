@@ -116,22 +116,64 @@ def api_fetch_repo_json(owner: str, repo: str, slug: str):
         if not identifier:
             continue
 
-        # "download" field: relative path trong repo (vd "packages/PATCH_FREE_V2_VNG.3105")
+        # "download" field: relative path trong repo. Có thể là:
+        #  - "packages/PATCH_FREE_V2_VNG.3105"        (YangJii fork: thực ra nằm ở
+        #                                              repositories/demo/packages/)
+        #  - "repositories/demo/packages/PATCH.3105" (path tuyệt đối từ root)
+        #  - "assets/file.png"                         (cho screenshot/icon)
+        #
+        # Vì cấu trúc repo là "repositories/<slug>/packages/<file>", ta thử các
+        # path candidate và dùng path đầu tiên tồn tại qua GitHub Contents API.
         download_rel = pkg.get("download")
         if download_rel:
-            # Resolve relative path → raw URL
-            raw_url = (
-                f"https://raw.githubusercontent.com/{owner}/{repo}/{branch}/"
-                f"{download_rel.lstrip('/')}"
-            )
-            download_paths.append({
-                "package_id": identifier,
-                "path": download_rel,
-                "raw_url": raw_url,
-                "asset_name": download_rel.split("/")[-1] if "/" in download_rel else download_rel,
-                "size_bytes": 0,  # không fetch metadata để tiết kiệm request
-                "sha": "",
-            })
+            rel_path = download_rel.lstrip("/")
+            # Bỏ qua các file không phải .3105 (vd: icon thường nằm ở assets/)
+            if rel_path.lower().endswith((".3105", ".3105pass")):
+                # Thử path trực tiếp trước
+                candidates = [rel_path]
+                # Nếu path chỉ là "packages/<file>" → thử prefix slug
+                if rel_path.startswith("packages/") and slug:
+                    candidates.append(f"repositories/{slug}/{rel_path}")
+                # Nếu path là "repositories/demo/..." mà slug khác → adapt
+                if rel_path.startswith("repositories/") and slug:
+                    # Chuẩn hoá lại slug đúng
+                    parts = rel_path.split("/", 2)
+                    if len(parts) >= 3 and parts[0] == "repositories":
+                        # Thay phần slug bằng slug hiện tại
+                        rest = "/".join(parts[2:])
+                        candidates.append(f"repositories/{slug}/{rest}")
+
+                raw_url = None
+                asset_name = rel_path.split("/")[-1]
+                for cand in candidates:
+                    head_url = (
+                        f"https://raw.githubusercontent.com/{owner}/{repo}/{branch}/"
+                        f"{cand}"
+                    )
+                    # HEAD check: GitHub raw returns 200 nếu file tồn tại, 404 nếu không
+                    try:
+                        head_resp = _req.head(head_url, timeout=4, allow_redirects=True)
+                        if head_resp.status_code == 200:
+                            raw_url = head_url
+                            rel_path = cand  # dùng path đã được resolve
+                            break
+                    except _req.RequestException:
+                        continue
+                # Fallback nếu không tìm được qua HEAD: dùng path đầu tiên
+                if not raw_url:
+                    raw_url = (
+                        f"https://raw.githubusercontent.com/{owner}/{repo}/{branch}/"
+                        f"{rel_path}"
+                    )
+
+                download_paths.append({
+                    "package_id": identifier,
+                    "path": rel_path,
+                    "raw_url": raw_url,
+                    "asset_name": asset_name,
+                    "size_bytes": 0,
+                    "sha": "",
+                })
 
     # Also include explicit download_paths from repo.json (admin override)
     for dp in repo_json_data.get("download_paths") or []:

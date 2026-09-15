@@ -361,6 +361,27 @@ async function loadRepositories() {
   }
 }
 
+// ---- Apply accent color to CSS variables (--neon + --neon-rgb) ----
+// Cả admin mode (Flask API) và public mode (PUBLIC_REPO_DATA) đều dùng.
+function applyAccentColor(hex) {
+  if (!hex || typeof hex !== 'string') return;
+  const h = hex.trim();
+  if (!/^#[0-9a-fA-F]{3}([0-9a-fA-F]{3})?$/.test(h)) return;
+  document.documentElement.style.setProperty('--neon', h);
+  // Derive --neon-rgb dạng "r, g, b" để CSS dùng rgba(var(--neon-rgb), a) đổi màu theo accent
+  let r, g, b;
+  if (h.length === 4) {
+    r = parseInt(h[1] + h[1], 16);
+    g = parseInt(h[2] + h[2], 16);
+    b = parseInt(h[3] + h[3], 16);
+  } else {
+    r = parseInt(h.slice(1, 3), 16);
+    g = parseInt(h.slice(3, 5), 16);
+    b = parseInt(h.slice(5, 7), 16);
+  }
+  document.documentElement.style.setProperty('--neon-rgb', `${r}, ${g}, ${b}`);
+}
+
 async function loadRepo() {
   const repo = state.currentRepo;
   if (!repo) return;
@@ -388,10 +409,7 @@ async function loadRepo() {
       state.assets = []; // public mode không có file listing
       state.blogPosts = (d.blog || []);
       // Apply accent color từ meta để mọi nơi dùng CSS var --neon đồng bộ
-      if (state.repoMeta.accentColor) {
-        const c = state.repoMeta.accentColor;
-        document.documentElement.style.setProperty('--neon', c);
-      }
+      applyAccentColor(state.repoMeta.accentColor);
       // Fill logo text + meta inputs từ bake-in data
       if (state.repoMeta.name && document.getElementById('logo-text')) {
         document.getElementById('logo-text').textContent = state.repoMeta.name;
@@ -408,6 +426,15 @@ async function loadRepo() {
     // Load packages + meta
     const data = await api(`/api/repo/${repo}/packages`);
     state.repoMeta = data.repoMeta || {};
+    // Apply accent color (cả admin lẫn user view — Flask serve cùng template)
+    // CHỈ apply nếu user chưa chọn theme preset — vì theme preset đã set
+    // --neon và applyAccentColor sẽ đè lên.
+    const _hasTheme = (() => {
+      try { return !!localStorage.getItem('theme') || !!localStorage.getItem('repo_theme'); } catch(e) { return false; }
+    })();
+    if (!_hasTheme) {
+      applyAccentColor(state.repoMeta.accentColor);
+    }
     state.sharedScreens = data.sharedScreens || (window.DEFAULT_SCREENSHOTS || []);
     state.sharedOS = data.sharedOS || (window.DEFAULT_OS_RULES || []);
     // packagesMeta đi kèm từ backend — dùng để ghi lại YAML đúng anchor
@@ -1861,14 +1888,20 @@ function readFormToPackage() {
 
 function savePackageFromForm() {
   const pkg = readFormToPackage();
-  // Validate
-  if (!pkg.identifier) return toast('Thiếu identifier.', 'error');
-  if (!/^[a-z0-9][a-z0-9._-]{1,63}$/.test(pkg.identifier)) return toast('Identifier không hợp lệ.', 'error');
-  if (!pkg.name) return toast('Thiếu tên.', 'error');
-  if (!pkg.download) return toast('Thiếu file .3105.', 'error');
-  if (!pkg.sha256) return toast('Thiếu SHA-256 (bấm "Tự động điền").', 'error');
-  if (!/^[0-9A-F]{64}$/.test(pkg.sha256)) return toast('SHA-256 phải là hex 64 ký tự.', 'error');
-  if (!pkg.size || pkg.size <= 0) return toast('Size không hợp lệ.', 'error');
+  // Validate — collect ALL errors first so user sees everything at once
+  const errors = [];
+  if (!pkg.identifier) errors.push('Thiếu identifier.');
+  else if (!/^[a-z0-9][a-z0-9._-]{1,63}$/.test(pkg.identifier)) errors.push('Identifier không hợp lệ (chỉ chứa a-z, 0-9, ., _, -; 2-64 ký tự).');
+  if (!pkg.name) errors.push('Thiếu tên.');
+  if (!pkg.download) errors.push('Thiếu file .3105 (URL tải về).');
+  if (errors.length > 0) { errors.forEach(e => toast(e, 'error')); return; }
+  // SHA-256 is optional — if not provided or invalid, use placeholder for manual computation later
+  if (pkg.sha256 && !/^[0-9A-F]{64}$/.test(pkg.sha256)) {
+    toast('SHA-256 phải là hex 64 ký tự. Đã bỏ qua — sẽ tự động tính khi tải lên.', 'warning');
+    pkg.sha256 = '';
+  }
+  // Size is optional — default to 0 if not provided
+  pkg.size = parseInt(pkg.size, 10) || 0;
 
   // Trùng identifier với package khác?
   const dup = state.packages.findIndex((p, i) =>
