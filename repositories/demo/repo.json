@@ -11,20 +11,6 @@
     "assets/preview/preview-third.png",
     "assets/preview/preview-fourth.png"
   ],
-  "_shared_os_rules": [
-    {
-      "minimum": "17.0",
-      "maximum": "18.7.1"
-    },
-    {
-      "minimum": "26.0",
-      "maximum": "26.6.1"
-    },
-    {
-      "minimum": "27.0",
-      "maximum": "27.0"
-    }
-  ],
   "packages": [
     {
       "identifier": "owen-trial",
@@ -53,19 +39,11 @@
         {
           "minimum": "17.0",
           "maximum": "18.7.1"
-        },
-        {
-          "minimum": "26.0",
-          "maximum": "26.6.1"
-        },
-        {
-          "minimum": "27.0",
-          "maximum": "27.0"
         }
       ],
       "featured": true,
       "isPrivate": false,
-      "description": "🔥 PUBG CUSTOM FREE\n\n✨ TÍNH NĂNG\n\n• Bộ Skin tùy chỉnh\n• Hỗ trợ ngắm & tùy chỉnh súng\n• Dễ Dàng Cài Đặt\n• Thường Xuyên Cập Nhật\n\n⚠️ LƯU Ý QUAN TRỌNG\n\n• Hãy xóa gói tùy chỉnh cũ trước khi áp dụng.\n• Nên sao lưu dữ liệu trước khi cài đặt.\n\n💬 HỖ TRỢ\n\nNếu gặp bất kỳ vấn đề nào, hãy liên hệ @owenindahouse.\nHoặc liên hệ admin Mod @Thanhdat1690.\n\n❤️ Chúc bạn chơi game vui vẻ và hãy đón chờ những bản cập nhật tiếp theo!\n",
+      "description": "🔥 PUBG CUSTOM FREE\n\n✨ TÍNH NĂNG\n\n• Bộ Skin tùy chỉnh\n• Hỗ trợ ngắm & tùy chỉnh súng\n• Dễ Dàng Cài Đặt\n• Thường Xuyên Cập Nhật\n\n⚠️ LƯU Ý QUAN TRỌNG\n\n• Hãy xóa gói tùy chỉnh cũ trước khi áp dụng.\n• Nên sao lưu dữ liệu trước khi cài đặt.\n\n💬 HỖ TRỢ\n\nNếu gặp bất kỳ vấn đề nào, hãy liên hệ @owenindahouse.\nhttps://t.me/owenindahouse_repo để nhận thông báo mới nhất khi update lên app\nHoặc liên hệ admin Mod @Thanhdat1690.\n\n❤️ Chúc bạn chơi game vui vẻ và hãy đón chờ những bản cập nhật tiếp theo!\n",
       "changelog": "🎉 v1.0.0 — Phát hành lần đầu\n\n✨ Bản thử nghiệm công khai đầu tiên\n\n🛠️ Vui lòng báo lỗi cho @owenindahouse nếu gặp sự cố\n\n⚠️ Đây là phiên bản thử nghiệm ban đầu và có thể vẫn còn một số lỗi.\n"
     },
     {
@@ -92,19 +70,11 @@
         {
           "minimum": "17.0",
           "maximum": "18.7.1"
-        },
-        {
-          "minimum": "26.0",
-          "maximum": "26.6.1"
-        },
-        {
-          "minimum": "27.0",
-          "maximum": "27.0"
         }
       ],
       "featured": true,
       "isPrivate": false,
-      "description": "⚡ TÙY CHỈNH HIỂN THỊ\n\n⚠️ LƯU Ý QUAN TRỌNG\n\n• Sau khi áp dụng gói vào game không được thay đổi phần ĐỒ HỌA.\n• Muốn về gốc chỉ cần thay đổi ĐỒ HỌA.\n\n💬 HỖ TRỢ\n\nNếu gặp bất kỳ vấn đề nào, hãy liên hệ @owenindahouse.\nHoặc liên hệ admin Mod @Thanhdat1690.\n\n❤️ Chúc bạn chơi game vui vẻ và đón chờ những bản cập nhật tiếp theo!\n",
+      "description": "⚡ TÙY CHỈNH HIỂN THỊ\n\n⚠️ LƯU Ý QUAN TRỌNG\n\n• Sau khi áp dụng gói vào game không được thay đổi phần ĐỒ HỌA.\n• Muốn về gốc chỉ cần thay đổi ĐỒ HỌA.\n\n💬 HỖ TRỢ\n\nNếu gặp bất kỳ vấn đề nào, hãy liên hệ @owenindahouse.\nhttps://t.me/owenindahouse_repo để nhận thông báo mới nhất khi update lên app\nHoặc liên hệ admin Mod @Thanhdat1690.\n\n❤️ Chúc bạn chơi game vui vẻ và đón chờ những bản cập nhật tiếp theo!\n",
       "changelog": "🛠️ Vui lòng báo lỗi cho @owenindahouse nếu gặp sự cố. "
     },
     {
@@ -133,19 +103,11 @@
         {
           "minimum": "17.0",
           "maximum": "18.7.1"
-        },
-        {
-          "minimum": "26.0",
-          "maximum": "26.6.1"
-        },
-        {
-          "minimum": "27.0",
-          "maximum": "27.0"
         }
       ],
       "featured": false,
       "isPrivate": false,
-      "description": "💎 ADVANCED CUSTOM BUILD\n\n╭──────────────────╮\n ✨ FEATURES\n╰──────────────────╯\n\n🔥 Online Compatibility\n🎯 Aim Assistance\n👁️ iPad View\n🚗 Vehicle Enhancement\n⚡ Additional Features\n\n╭──────────────────╮\n ⚠️ IMPORTANT\n╰──────────────────╯\n\n• Remove any previous customization package before applying.\n• Backup your game data before installation.\n\n╭──────────────────╮\n 💬 SUPPORT\n╰──────────────────╯\n\n@owenindahouse\nadmin Mod @Thanhdat1690.\n",
+      "description": "💎 ADVANCED CUSTOM BUILD\n\n╭──────────────────╮\n ✨ FEATURES\n╰──────────────────╯\n\n🔥 Online Compatibility\n🎯 Aim Assistance\n👁️ iPad View\n🚗 Vehicle Enhancement\n⚡ Additional Features\n\n╭──────────────────╮\n ⚠️ IMPORTANT\n╰──────────────────╯\n\n• Remove any previous customization package before applying.\n• Backup your game data before installation.\n\n╭──────────────────╮\n 💬 SUPPORT\n╰──────────────────╯\n\n@owenindahouse\nhttps://t.me/owenindahouse_repo để nhận thông báo mới nhất khi update lên app\nadmin Mod @Thanhdat1690.\n",
       "changelog": "╭──────────────────╮\n 🚀 FUTURE UPDATE\n╰──────────────────╯\n\n✨ Many new features will be added.\n🔄 Continuous updates and optimizations in future releases.\n\n❤️ Thank you for your support!\n"
     },
     {
@@ -174,19 +136,11 @@
         {
           "minimum": "17.0",
           "maximum": "18.7.1"
-        },
-        {
-          "minimum": "26.0",
-          "maximum": "26.6.1"
-        },
-        {
-          "minimum": "27.0",
-          "maximum": "27.0"
         }
       ],
       "featured": false,
       "isPrivate": false,
-      "description": "💎 ADVANCED CUSTOM BUILD\n\n╭──────────────────╮\n ✨ FEATURES\n╰──────────────────╯\n\n🔥 Online Compatibility\n🎯 Aim Assistance\n👁️ iPad View\n🚗 Vehicle Enhancement\n⚡ Additional Features\n\n╭──────────────────╮\n ⚠️ IMPORTANT\n╰──────────────────╯\n\n• Remove any previous customization package before applying.\n• Backup your game data before installation.\n\n╭──────────────────╮\n 💬 SUPPORT\n╰──────────────────╯\n\n@owenindahouse\n@Thanhdat1690.\n",
+      "description": "💎 ADVANCED CUSTOM BUILD\n\n╭──────────────────╮\n ✨ FEATURES\n╰──────────────────╯\n\n🔥 Online Compatibility\n🎯 Aim Assistance\n👁️ iPad View\n🚗 Vehicle Enhancement\n⚡ Additional Features\n\n╭──────────────────╮\n ⚠️ IMPORTANT\n╰──────────────────╯\n\n• Remove any previous customization package before applying.\n• Backup your game data before installation.\n\n╭──────────────────╮\n 💬 SUPPORT\n╰──────────────────╯\n\n@owenindahouse\nhttps://t.me/owenindahouse_repo Group Repo Owen\n@Thanhdat1690.\n",
       "changelog": "╭──────────────────╮\n 🚀 FUTURE UPDATE\n╰──────────────────╯\n\n✨ Many new features will be added.\n🔄 Continuous updates and optimizations in future releases.\n\n❤️ Thank you for your support!\n"
     },
     {
@@ -214,19 +168,11 @@
         {
           "minimum": "17.0",
           "maximum": "18.7.1"
-        },
-        {
-          "minimum": "26.0",
-          "maximum": "26.6.1"
-        },
-        {
-          "minimum": "27.0",
-          "maximum": "27.0"
         }
       ],
       "featured": true,
       "isPrivate": false,
-      "description": "✨ TÍNH NĂNG NỔI BẬT / FEATURES\n\n• Giao diện bàn phím gọi điện mang phong cách hoài cổ.\n• Thiết kế tối giản, phím bấm rõ ràng và dễ nhìn.\n• Tương thích tốt với chế độ sáng/tối (Light/Dark mode).\n\n⚠️ LƯU Ý QUAN TRỌNG / IMPORTANT NOTES\n\n• Hãy mở bàn phím điện thoại lên trước và nhấn 1 vài phím\n• Sau đó, vào 3105 mở Setting ở góc bên phải trên cùng\n• Nhấn vào mục \"Lấy dữ liệu Dialer\" -> hiện Đã lấy\n• Quay lại mục đã cài, nhấn vào Dialer đã tải về chọn \"Áp dụng Dialer\"\n• Muốn quay về mặc định thì nhấn \"Khôi phục Dialer gốc\"\n───────────────\n• First, open your phone's dialpad and press a few keys.\n• Then, open the 3105 app and tap Settings in the top-right corner.\n• Tap on \"Fetch Dialer Data\" -> it will display \"Fetched\" (or \"Data Fetched\").\n• Go back to the installed items section, select the downloaded Dialer, and tap \"Apply Dialer\".\n• To return to the default look, simply tap \"Restore Original Dialer\".\n\n💬 HỖ TRỢ / SUPPORT\n\nNếu gặp bất kỳ vấn đề nào về hiển thị, hãy liên hệ @owenindahouse.\nContact me @owenindahouse if you encounter any display issues.\n❤️ Cảm ơn bạn đã sử dụng. Đừng quên đón chờ những bản cập nhật tiếp theo!\nThank you for using this theme. Stay tuned for future updates!\n",
+      "description": "✨ TÍNH NĂNG NỔI BẬT / FEATURES\n\n• Giao diện bàn phím gọi điện mang phong cách hoài cổ.\n• Thiết kế tối giản, phím bấm rõ ràng và dễ nhìn.\n• Tương thích tốt với chế độ sáng/tối (Light/Dark mode).\n\n⚠️ LƯU Ý QUAN TRỌNG / IMPORTANT NOTES\n\n• Hãy mở bàn phím điện thoại lên trước và nhấn 1 vài phím\n• Sau đó, vào 3105 mở Setting ở góc bên phải trên cùng\n• Nhấn vào mục \"Lấy dữ liệu Dialer\" -> hiện Đã lấy\n• Quay lại mục đã cài, nhấn vào Dialer đã tải về chọn \"Áp dụng Dialer\"\n• Muốn quay về mặc định thì nhấn \"Khôi phục Dialer gốc\"\n───────────────\n• First, open your phone's dialpad and press a few keys.\n• Then, open the 3105 app and tap Settings in the top-right corner.\n• Tap on \"Fetch Dialer Data\" -> it will display \"Fetched\" (or \"Data Fetched\").\n• Go back to the installed items section, select the downloaded Dialer, and tap \"Apply Dialer\".\n• To return to the default look, simply tap \"Restore Original Dialer\".\n\n💬 HỖ TRỢ / SUPPORT\n\nNếu gặp bất kỳ vấn đề nào về hiển thị, hãy liên hệ @owenindahouse.\nContact me @owenindahouse if you encounter any display issues.\nhttps://t.me/owenindahouse_repo Group Repo Owen\n❤️ Cảm ơn bạn đã sử dụng. Đừng quên đón chờ những bản cập nhật tiếp theo!\nThank you for using this theme. Stay tuned for future updates!\n",
       "changelog": "🎉 v1.0.0 — Phát hành lần đầu."
     },
     {
@@ -254,19 +200,11 @@
         {
           "minimum": "17.0",
           "maximum": "18.7.1"
-        },
-        {
-          "minimum": "26.0",
-          "maximum": "26.6.1"
-        },
-        {
-          "minimum": "27.0",
-          "maximum": "27.0"
         }
       ],
       "featured": true,
       "isPrivate": false,
-      "description": "✨ TÍNH NĂNG NỔI BẬT / FEATURES\n\n• Giao diện bàn phím gọi điện mang phong Tối giản, hiện đại.\n• Thiết kế tối giản, phím bấm rõ ràng và dễ nhìn.\n• Tương thích tốt với chế độ sáng/tối (Light/Dark mode).\n\n⚠️ LƯU Ý QUAN TRỌNG / IMPORTANT NOTES\n\n• Hãy mở bàn phím điện thoại lên trước và nhấn 1 vài phím\n• Sau đó, vào 3105 mở Setting ở góc bên phải trên cùng\n• Nhấn vào mục \"Lấy dữ liệu Dialer\" -> hiện Đã lấy\n• Quay lại mục đã cài, nhấn vào Dialer đã tải về chọn \"Áp dụng Dialer\"\n• Muốn quay về mặc định thì nhấn \"Khôi phục Dialer gốc\"\n───────────────\n• First, open your phone's dialpad and press a few keys.\n• Then, open the 3105 app and tap Settings in the top-right corner.\n• Tap on \"Fetch Dialer Data\" -> it will display \"Fetched\" (or \"Data Fetched\").\n• Go back to the installed items section, select the downloaded Dialer, and tap \"Apply Dialer\".\n• To return to the default look, simply tap \"Restore Original Dialer\".\n\n💬 HỖ TRỢ / SUPPORT\n\nNếu gặp bất kỳ vấn đề nào về hiển thị, hãy liên hệ @owenindahouse.\nContact me @owenindahouse if you encounter any display issues.\n❤️ Cảm ơn bạn đã sử dụng. Đừng quên đón chờ những bản cập nhật tiếp theo!\nThank you for using this theme. Stay tuned for future updates!\n",
+      "description": "✨ TÍNH NĂNG NỔI BẬT / FEATURES\n\n• Giao diện bàn phím gọi điện mang phong Tối giản, hiện đại.\n• Thiết kế tối giản, phím bấm rõ ràng và dễ nhìn.\n• Tương thích tốt với chế độ sáng/tối (Light/Dark mode).\n\n⚠️ LƯU Ý QUAN TRỌNG / IMPORTANT NOTES\n\n• Hãy mở bàn phím điện thoại lên trước và nhấn 1 vài phím\n• Sau đó, vào 3105 mở Setting ở góc bên phải trên cùng\n• Nhấn vào mục \"Lấy dữ liệu Dialer\" -> hiện Đã lấy\n• Quay lại mục đã cài, nhấn vào Dialer đã tải về chọn \"Áp dụng Dialer\"\n• Muốn quay về mặc định thì nhấn \"Khôi phục Dialer gốc\"\n───────────────\n• First, open your phone's dialpad and press a few keys.\n• Then, open the 3105 app and tap Settings in the top-right corner.\n• Tap on \"Fetch Dialer Data\" -> it will display \"Fetched\" (or \"Data Fetched\").\n• Go back to the installed items section, select the downloaded Dialer, and tap \"Apply Dialer\".\n• To return to the default look, simply tap \"Restore Original Dialer\".\n\n💬 HỖ TRỢ / SUPPORT\n\nNếu gặp bất kỳ vấn đề nào về hiển thị, hãy liên hệ @owenindahouse.\nContact me @owenindahouse if you encounter any display issues.\nhttps://t.me/owenindahouse_repo Group Repo Owen\n❤️ Cảm ơn bạn đã sử dụng. Đừng quên đón chờ những bản cập nhật tiếp theo!\nThank you for using this theme. Stay tuned for future updates!\n",
       "changelog": "🎉 v1.0.0 — Phát hành lần đầu."
     },
     {
@@ -294,19 +232,11 @@
         {
           "minimum": "17.0",
           "maximum": "18.7.1"
-        },
-        {
-          "minimum": "26.0",
-          "maximum": "26.6.1"
-        },
-        {
-          "minimum": "27.0",
-          "maximum": "27.0"
         }
       ],
       "featured": true,
       "isPrivate": false,
-      "description": "✨ TÍNH NĂNG NỔI BẬT / FEATURES\n\n• Giao diện bàn phím gọi điện mang phong cách Bình minh và chiều tà.\n• Thiết kế tối giản, phím bấm rõ ràng và dễ nhìn.\n• Tương thích tốt với chế độ sáng/tối (Light/Dark mode).\n\n⚠️ LƯU Ý QUAN TRỌNG / IMPORTANT NOTES\n\n• Hãy mở bàn phím điện thoại lên trước và nhấn 1 vài phím\n• Sau đó, vào 3105 mở Setting ở góc bên phải trên cùng\n• Nhấn vào mục \"Lấy dữ liệu Dialer\" -> hiện Đã lấy\n• Quay lại mục đã cài, nhấn vào Dialer đã tải về chọn \"Áp dụng Dialer\"\n• Muốn quay về mặc định thì nhấn \"Khôi phục Dialer gốc\"\n───────────────\n• First, open your phone's dialpad and press a few keys.\n• Then, open the 3105 app and tap Settings in the top-right corner.\n• Tap on \"Fetch Dialer Data\" -> it will display \"Fetched\" (or \"Data Fetched\").\n• Go back to the installed items section, select the downloaded Dialer, and tap \"Apply Dialer\".\n• To return to the default look, simply tap \"Restore Original Dialer\".\n\n💬 HỖ TRỢ / SUPPORT\n\nNếu gặp bất kỳ vấn đề nào về hiển thị, hãy liên hệ @owenindahouse.\nContact me @owenindahouse if you encounter any display issues.\n❤️ Cảm ơn bạn đã sử dụng. Đừng quên đón chờ những bản cập nhật tiếp theo!\nThank you for using this theme. Stay tuned for future updates!\n",
+      "description": "✨ TÍNH NĂNG NỔI BẬT / FEATURES\n\n• Giao diện bàn phím gọi điện mang phong cách Bình minh và chiều tà.\n• Thiết kế tối giản, phím bấm rõ ràng và dễ nhìn.\n• Tương thích tốt với chế độ sáng/tối (Light/Dark mode).\n\n⚠️ LƯU Ý QUAN TRỌNG / IMPORTANT NOTES\n\n• Hãy mở bàn phím điện thoại lên trước và nhấn 1 vài phím\n• Sau đó, vào 3105 mở Setting ở góc bên phải trên cùng\n• Nhấn vào mục \"Lấy dữ liệu Dialer\" -> hiện Đã lấy\n• Quay lại mục đã cài, nhấn vào Dialer đã tải về chọn \"Áp dụng Dialer\"\n• Muốn quay về mặc định thì nhấn \"Khôi phục Dialer gốc\"\n───────────────\n• First, open your phone's dialpad and press a few keys.\n• Then, open the 3105 app and tap Settings in the top-right corner.\n• Tap on \"Fetch Dialer Data\" -> it will display \"Fetched\" (or \"Data Fetched\").\n• Go back to the installed items section, select the downloaded Dialer, and tap \"Apply Dialer\".\n• To return to the default look, simply tap \"Restore Original Dialer\".\n\n💬 HỖ TRỢ / SUPPORT\n\nNếu gặp bất kỳ vấn đề nào về hiển thị, hãy liên hệ @owenindahouse.\nContact me @owenindahouse if you encounter any display issues.\nhttps://t.me/owenindahouse_repo Group Repo Owen\n❤️ Cảm ơn bạn đã sử dụng. Đừng quên đón chờ những bản cập nhật tiếp theo!\nThank you for using this theme. Stay tuned for future updates!\n",
       "changelog": "🎉 v1.0.0 — Phát hành lần đầu."
     },
     {
@@ -333,19 +263,11 @@
         {
           "minimum": "17.0",
           "maximum": "18.7.1"
-        },
-        {
-          "minimum": "26.0",
-          "maximum": "26.6.1"
-        },
-        {
-          "minimum": "27.0",
-          "maximum": "27.0"
         }
       ],
       "featured": true,
       "isPrivate": false,
-      "description": "✨ TÍNH NĂNG NỔI BẬT / FEATURES\n\n• Giao diện bàn phím gọi điện mang phong cách PinkPink.\n• Thiết kế nổi bật, phím bấm rõ ràng và dễ nhìn.\n• Tương thích tốt với chế độ sáng/tối (Light/Dark mode).\n\n⚠️ LƯU Ý QUAN TRỌNG / IMPORTANT NOTES\n\n• Hãy mở bàn phím điện thoại lên trước và nhấn 1 vài phím\n• Sau đó, vào 3105 mở Setting ở góc bên phải trên cùng\n• Nhấn vào mục \"Lấy dữ liệu Dialer\" -> hiện Đã lấy\n• Quay lại mục đã cài, nhấn vào Dialer đã tải về chọn \"Áp dụng Dialer\"\n• Muốn quay về mặc định thì nhấn \"Khôi phục Dialer gốc\"\n───────────────\n• First, open your phone's dialpad and press a few keys.\n• Then, open the 3105 app and tap Settings in the top-right corner.\n• Tap on \"Fetch Dialer Data\" -> it will display \"Fetched\" (or \"Data Fetched\").\n• Go back to the installed items section, select the downloaded Dialer, and tap \"Apply Dialer\".\n• To return to the default look, simply tap \"Restore Original Dialer\".\n\n💬 HỖ TRỢ / SUPPORT\n\nNếu gặp bất kỳ vấn đề nào về hiển thị, hãy liên hệ @owenindahouse.\nContact me @owenindahouse if you encounter any display issues.\n❤️ Cảm ơn bạn đã sử dụng. Đừng quên đón chờ những bản cập nhật tiếp theo!\nThank you for using this theme. Stay tuned for future updates!\n",
+      "description": "✨ TÍNH NĂNG NỔI BẬT / FEATURES\n\n• Giao diện bàn phím gọi điện mang phong cách PinkPink.\n• Thiết kế nổi bật, phím bấm rõ ràng và dễ nhìn.\n• Tương thích tốt với chế độ sáng/tối (Light/Dark mode).\n\n⚠️ LƯU Ý QUAN TRỌNG / IMPORTANT NOTES\n\n• Hãy mở bàn phím điện thoại lên trước và nhấn 1 vài phím\n• Sau đó, vào 3105 mở Setting ở góc bên phải trên cùng\n• Nhấn vào mục \"Lấy dữ liệu Dialer\" -> hiện Đã lấy\n• Quay lại mục đã cài, nhấn vào Dialer đã tải về chọn \"Áp dụng Dialer\"\n• Muốn quay về mặc định thì nhấn \"Khôi phục Dialer gốc\"\n───────────────\n• First, open your phone's dialpad and press a few keys.\n• Then, open the 3105 app and tap Settings in the top-right corner.\n• Tap on \"Fetch Dialer Data\" -> it will display \"Fetched\" (or \"Data Fetched\").\n• Go back to the installed items section, select the downloaded Dialer, and tap \"Apply Dialer\".\n• To return to the default look, simply tap \"Restore Original Dialer\".\n\n💬 HỖ TRỢ / SUPPORT\n\nNếu gặp bất kỳ vấn đề nào về hiển thị, hãy liên hệ @owenindahouse.\nContact me @owenindahouse if you encounter any display issues.\nhttps://t.me/owenindahouse_repo Group Repo Owen\n❤️ Cảm ơn bạn đã sử dụng. Đừng quên đón chờ những bản cập nhật tiếp theo!\nThank you for using this theme. Stay tuned for future updates!\n",
       "changelog": "🎉 v1.0.0 — Phát hành lần đầu."
     },
     {
@@ -375,78 +297,12 @@
         {
           "minimum": "17.0",
           "maximum": "18.7.1"
-        },
-        {
-          "minimum": "26.0",
-          "maximum": "26.6.1"
-        },
-        {
-          "minimum": "27.0",
-          "maximum": "27.0"
         }
       ],
       "featured": true,
       "isPrivate": false,
-      "description": "ĐÃ UPDATED LẠI FILE, MỌI NGƯỜI CÓ THỂ CÀI ĐẶT HOẶC UPDATE ĐỂ TẢI XUỐNG FILE MỚI\nHAS BEEN UPDATED NEW FILE, PLS INSTALL OR PRESS UPDATE BUTTON TO DOWNLOAD NEW FILE\n\n🔥1 Patch chơi được cả 3 server VNG - GLOBAL - KR\n🔥1 Patch For 3 server VNG - GLOBAL - KR\n\n     🔥Chỉ việc áp dụng patch là xong, không cần tải 3 patch khác nhau.\n     🔥 Bypass Online \n     🎯 Hỗ trợ ngắm tùy chỉnh/ Aim Bot\n     👁️ iPad View\n     🚗 Tùy chỉnh tốc độ xe/ increase Speed Car\n     ⚡ Nhiều tính năng nâng cao khác/ More another Feature\n     \n     \n     ╭──────────────────╮\n      ⚠️ LƯU Ý QUAN TRỌNG\n     ╰──────────────────╯\n     \n     • Hãy xóa gói mod cũ,clear data trước khi áp dụng.\n     • Nên sao lưu dữ liệu trước khi cài đặt.\n     \n     ╭──────────────────╮\n      💬 HỖ TRỢ\n     ╰──────────────────╯\n     \n     @owenindahouse\n     \n❤️ Cảm ơn bạn đã ủng hộ!\n",
+      "description": "ĐÃ UPDATED LẠI FILE, MỌI NGƯỜI CÓ THỂ CÀI ĐẶT HOẶC UPDATE ĐỂ TẢI XUỐNG FILE MỚI\nHAS BEEN UPDATED NEW FILE, PLS INSTALL OR PRESS UPDATE BUTTON TO DOWNLOAD NEW FILE\n\n🔥1 Patch chơi được cả 3 server VNG - GLOBAL - KR\n🔥1 Patch For 3 server VNG - GLOBAL - KR\n\n     🔥Chỉ việc áp dụng patch là xong, không cần tải 3 patch khác nhau.\n     🔥 Bypass Online \n     🎯 Hỗ trợ ngắm tùy chỉnh/ Aim Bot\n     👁️ iPad View\n     🚗 Tùy chỉnh tốc độ xe/ increase Speed Car\n     ⚡ Nhiều tính năng nâng cao khác/ More another Feature\n     \n     \n     ╭──────────────────╮\n      ⚠️ LƯU Ý QUAN TRỌNG\n     ╰──────────────────╯\n     \n     • Hãy xóa gói mod cũ,clear data trước khi áp dụng.\n     • Nên sao lưu dữ liệu trước khi cài đặt.\n     \n     ╭──────────────────╮\n      💬 HỖ TRỢ\n     ╰──────────────────╯\n     \n     @owenindahouse\nhttps://t.me/owenindahouse_repo Group Repo Owen\nadmin mod: @Thanhdat1690\n     \n❤️ Cảm ơn bạn đã ủng hộ!\n",
       "changelog": "🎉 v4.6.0 — Phiên bản 4.6 mới nhất đã được cập nhật"
-    }
-  ],
-  "blog": [
-    {
-      "id": 1,
-      "title": "Chào mừng đến với Owen Custom Repository",
-      "date": "2026-01-15",
-      "icon": "📦",
-      "summary": "Giới thiệu repo custom — đây là bài viết mẫu để kiểm thử pagination blog (6 bài/trang)."
-    },
-    {
-      "id": 2,
-      "title": "Hướng dẫn cài đặt package từ repo",
-      "date": "2026-02-02",
-      "icon": "📲",
-      "summary": "Các bước thêm repo vào Sileo/TrollStore và cài package an toàn."
-    },
-    {
-      "id": 3,
-      "title": "v4.6.0 — Cập nhật tính năng tháng 3",
-      "date": "2026-03-10",
-      "icon": "🚀",
-      "summary": "Phiên bản 4.6.0 ra mắt với aim-bot cải tiến, tăng tốc độ xe và nhiều bug-fix."
-    },
-    {
-      "id": 4,
-      "title": "Mẹo tối ưu pin khi dùng tweak",
-      "date": "2026-04-22",
-      "icon": "🔋",
-      "summary": "Hướng dẫn tắt các tweak nền để kéo dài thời lượng pin cho thiết bị jailbreak."
-    },
-    {
-      "id": 5,
-      "title": "Hỗ trợ iOS 27 — preview",
-      "date": "2026-06-05",
-      "icon": "🍎",
-      "summary": "Các package trong repo đã được tối ưu cho iOS 27 — bản preview sớm."
-    },
-    {
-      "id": 6,
-      "title": "Lưu ý khi nâng cấp lên iOS mới",
-      "date": "2026-07-18",
-      "icon": "⚠️",
-      "summary": "Trước khi nâng cấp: clear data, gỡ tweak không tương thích và sao lưu qua iCloud."
-    },
-    {
-      "id": 7,
-      "title": "Top 5 tweak hay nhất 2026",
-      "date": "2026-08-30",
-      "icon": "⭐",
-      "summary": "Tổng hợp 5 tweak được cài nhiều nhất trong repo — đều miễn phí."
-    },
-    {
-      "id": 8,
-      "title": "Roadmap cuối năm 2026",
-      "date": "2026-09-12",
-      "icon": "🗺️",
-      "summary": "Kế hoạch phát triển repo đến cuối năm: thêm giao diện blog, dark-mode tự động."
     }
   ]
 }
