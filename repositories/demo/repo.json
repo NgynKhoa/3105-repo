@@ -11,6 +11,20 @@
     "assets/preview/preview-third.png",
     "assets/preview/preview-fourth.png"
   ],
+  "_shared_os_rules": [
+    {
+      "minimum": "17.0",
+      "maximum": "18.7.1"
+    },
+    {
+      "minimum": "26.0",
+      "maximum": "26.6.1"
+    },
+    {
+      "minimum": "27.0",
+      "maximum": "27.0"
+    }
+  ],
   "packages": [
     {
       "identifier": "owen-trial",
@@ -70,6 +84,14 @@
         {
           "minimum": "17.0",
           "maximum": "18.7.1"
+        },
+        {
+          "minimum": "26.0",
+          "maximum": "26.6.1"
+        },
+        {
+          "minimum": "27.0",
+          "maximum": "27.0"
         }
       ],
       "featured": true,
@@ -168,6 +190,14 @@
         {
           "minimum": "17.0",
           "maximum": "18.7.1"
+        },
+        {
+          "minimum": "26.0",
+          "maximum": "26.6.1"
+        },
+        {
+          "minimum": "27.0",
+          "maximum": "27.0"
         }
       ],
       "featured": true,
@@ -200,6 +230,14 @@
         {
           "minimum": "17.0",
           "maximum": "18.7.1"
+        },
+        {
+          "minimum": "26.0",
+          "maximum": "26.6.1"
+        },
+        {
+          "minimum": "27.0",
+          "maximum": "27.0"
         }
       ],
       "featured": true,
@@ -232,6 +270,14 @@
         {
           "minimum": "17.0",
           "maximum": "18.7.1"
+        },
+        {
+          "minimum": "26.0",
+          "maximum": "26.6.1"
+        },
+        {
+          "minimum": "27.0",
+          "maximum": "27.0"
         }
       ],
       "featured": true,
@@ -263,6 +309,14 @@
         {
           "minimum": "17.0",
           "maximum": "18.7.1"
+        },
+        {
+          "minimum": "26.0",
+          "maximum": "26.6.1"
+        },
+        {
+          "minimum": "27.0",
+          "maximum": "27.0"
         }
       ],
       "featured": true,
@@ -303,6 +357,48 @@
       "isPrivate": false,
       "description": "ĐÃ UPDATED LẠI FILE, MỌI NGƯỜI CÓ THỂ CÀI ĐẶT HOẶC UPDATE ĐỂ TẢI XUỐNG FILE MỚI\nHAS BEEN UPDATED NEW FILE, PLS INSTALL OR PRESS UPDATE BUTTON TO DOWNLOAD NEW FILE\n\n🔥1 Patch chơi được cả 3 server VNG - GLOBAL - KR\n🔥1 Patch For 3 server VNG - GLOBAL - KR\n\n     🔥Chỉ việc áp dụng patch là xong, không cần tải 3 patch khác nhau.\n     🔥 Bypass Online \n     🎯 Hỗ trợ ngắm tùy chỉnh/ Aim Bot\n     👁️ iPad View\n     🚗 Tùy chỉnh tốc độ xe/ increase Speed Car\n     ⚡ Nhiều tính năng nâng cao khác/ More another Feature\n     \n     \n     ╭──────────────────╮\n      ⚠️ LƯU Ý QUAN TRỌNG\n     ╰──────────────────╯\n     \n     • Hãy xóa gói mod cũ,clear data trước khi áp dụng.\n     • Nên sao lưu dữ liệu trước khi cài đặt.\n     \n     ╭──────────────────╮\n      💬 HỖ TRỢ\n     ╰──────────────────╯\n     \n     @owenindahouse\nhttps://t.me/owenindahouse_repo Group Repo Owen\nadmin mod: @Thanhdat1690\n     \n❤️ Cảm ơn bạn đã ủng hộ!\n",
       "changelog": "🎉 v4.6.0 — Phiên bản 4.6 mới nhất đã được cập nhật"
+    },
+    {
+      "identifier": "owen-000",
+      "name": "TEST",
+      "author": "@owenindahouse",
+      "version": "1.0.0",
+      "summary": "✨ Pubg • Bản dùng thử • Trải nghiệm tính năng nâng cao",
+      "password": "2752",
+      "category": "Customization",
+      "tags": [
+        "CUSTOM"
+      ],
+      "publishedAt": "2026-09-16T09:04:37.000Z",
+      "icon": "assets/icon/zakaryaxOwen_logo.png",
+      "banner": "assets/banner/banner_new.png",
+      "screenshots": [
+        "assets/preview/preview-first.png",
+        "assets/preview/preview-second.png",
+        "assets/preview/preview-third.png",
+        "assets/preview/preview-fourth.png"
+      ],
+      "download": "packages/PATCH_COOP_ZAKARYA_-_OWEN_2.3105",
+      "sha256": "E7B705EF7AC4CEE4324C5B0D9E702A86124920ACE92B490EA830F4721B84416F",
+      "size": 86610,
+      "supportedOS": [
+        {
+          "minimum": "17.0",
+          "maximum": "18.7.1"
+        },
+        {
+          "minimum": "26.0",
+          "maximum": "26.6.1"
+        },
+        {
+          "minimum": "27.0",
+          "maximum": "27.0"
+        }
+      ],
+      "featured": true,
+      "isPrivate": false,
+      "description": "téttt",
+      "changelog": "🎉 v1.0.0 — Phát hành lần đầu"
     }
   ]
 }
