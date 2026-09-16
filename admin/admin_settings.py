@@ -140,3 +140,55 @@ def register_admin_settings_routes(app):
         except Exception as e:
             app.logger.exception("save_admin_settings failed")
             return jsonify({"ok": False, "error": str(e)}), 500
+
+    @app.post("/api/admin-settings-merge")
+    @login_required
+    def merge_admin_settings():
+        """Body: {slug, patch, mode?} → merge `patch` vào file hiện tại rồi push.
+
+        Khác với /api/admin-settings (ghi đè toàn bộ file): endpoint này
+        1) fetch file hiện tại từ GitHub,
+        2) shallow-merge `patch` (các key trùng sẽ bị ghi đè bởi patch),
+        3) ghi full file trở lại.
+
+        Fix cho bug cũ: mỗi lần UI thay đổi 1 setting, code frontend cũ gọi
+        POST /api/admin-settings với payload CHỈ chứa 1 key → file trên
+        GitHub mất hết các field khác. Endpoint này giữ nguyên các field
+        không liên quan.
+        """
+        data = request.get_json(silent=True) or {}
+        slug = (data.get("slug") or "").strip()
+        patch = data.get("patch")
+        mode = (data.get("mode") or "pr").strip()
+
+        if not slug or not isinstance(patch, dict):
+            return jsonify({"ok": False, "error": "Thiếu slug hoặc patch"}), 400
+        if mode not in ("pr", "direct"):
+            return jsonify({"ok": False, "error": "mode không hợp lệ"}), 400
+
+        owned = auth_get_owned_repos()
+        target = next((r for r in owned if r.get("slug") == slug), None)
+        if not target:
+            return jsonify({"ok": False, "error": "Bạn không phải owner"}), 403
+
+        token = get_current_token()
+        if not token:
+            return jsonify({"ok": False, "error": "Session không có token"}), 401
+
+        try:
+            current = fetch_admin_settings(target["full_name"], token)
+            merged = dict(current or {})
+            merged.update(patch)
+            content = json.dumps(merged, indent=2, ensure_ascii=False)
+            result = gh_write_file(
+                token=token,
+                full_name=target["full_name"],
+                path=ADMIN_SETTINGS_PATH,
+                content=content,
+                commit_message=f"chore(admin-settings): merge via 3105 Builder",
+                mode=mode,
+            )
+            return jsonify({"ok": True, "settings": merged, **result})
+        except Exception as e:
+            app.logger.exception("merge_admin_settings failed")
+            return jsonify({"ok": False, "error": str(e)}), 500

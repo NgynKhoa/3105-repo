@@ -2495,6 +2495,22 @@
         </div>
       </div>
 
+      <!--
+        "💾 Lưu ngay" button (chỉ admin). Settings mặc định auto-save (debounce
+        1.5s) qua postAdminSettingToGitHub — nhưng admin có thể muốn bấm tay
+        để chắc chắn toàn bộ theme hiện tại được sync lên GitHub (fix bug cũ:
+        auto-save chỉ push 1 field, ghi đè mất các field khác).
+      -->
+      <div class="settings-group" id="adminSaveGroup" data-owner-only="1" style="display:none;">
+        <button id="btnSaveAdminNow" class="settings-nav-link" style="background:linear-gradient(135deg,rgba(57,255,20,0.15),rgba(0,200,255,0.15));border:1px solid var(--neon);text-align:center;width:100%;cursor:pointer;font-weight:600;">
+          💾 Lưu theme ngay lên GitHub
+        </button>
+        <div style="font-size:11px;color:var(--muted);margin-top:4px;text-align:center;">
+          Lưu toàn bộ theme/shadow/bg/dark/transparency/mưa. Push thẳng lên <code>main</code>.
+        </div>
+        <div id="adminSaveStatus" style="font-size:11px;margin-top:4px;text-align:center;min-height:14px;"></div>
+      </div>
+
       <div class="settings-group">
         <span class="settings-label">Hiệu ứng Mưa</span>
         <div class="settings-row">
@@ -3704,6 +3720,11 @@
       if (adminThemeGroup) {
         adminThemeGroup.style.display = (window.Settings.role === 'admin') ? 'block' : 'none';
       }
+      // Admin save-now button: chỉ admin
+      const adminSaveGroup = document.getElementById('adminSaveGroup');
+      if (adminSaveGroup) {
+        adminSaveGroup.style.display = (window.Settings.role === 'admin') ? 'block' : 'none';
+      }
       // Sync download mode picker với admin-settings.json
       const dmPicker = document.getElementById('downloadModePicker');
       if (dmPicker && window.Settings.role === 'admin') {
@@ -3725,6 +3746,44 @@
       }
       // Also re-render packages để áp dụng mode mới
       if (typeof renderPackages === 'function') renderPackages();
+    });
+  }
+
+  // Wire "💾 Lưu theme ngay" button → flush pending + push full theme
+  const btnSaveAdminNow = document.getElementById('btnSaveAdminNow');
+  if (btnSaveAdminNow) {
+    btnSaveAdminNow.addEventListener('click', async () => {
+      const status = document.getElementById('adminSaveStatus');
+      const slug = window.PUBLIC_REPO_SLUG || (typeof window.__frontRepoName !== 'undefined' ? window.__frontRepoName : '') || '';
+      if (!slug) {
+        if (status) { status.style.color = '#ff6b6b'; status.textContent = '⚠️ Không xác định được repo slug.'; }
+        return;
+      }
+      if (status) { status.style.color = 'var(--muted)'; status.textContent = '⏳ Đang lưu…'; }
+      btnSaveAdminNow.disabled = true;
+      btnSaveAdminNow.style.opacity = '0.6';
+      try {
+        // Flush bất kỳ pending auto-save debounce nào
+        if (__adminSyncTimer) {
+          clearTimeout(__adminSyncTimer);
+          __adminSyncTimer = null;
+        }
+        const result = await saveAdminSettingsNow(slug);
+        if (result.ok) {
+          if (status) {
+            status.style.color = '#39ff14';
+            status.textContent = '✅ Đã lưu lên GitHub. Pages sẽ rebuild sau vài giây.';
+          }
+        } else {
+          if (status) {
+            status.style.color = '#ff6b6b';
+            status.textContent = '❌ ' + (result.error || 'Lưu thất bại');
+          }
+        }
+      } finally {
+        btnSaveAdminNow.disabled = false;
+        btnSaveAdminNow.style.opacity = '1';
+      }
     });
   }
 
@@ -6010,7 +6069,9 @@
     }
   }
 
-  // Debounce admin settings sync — gộp nhiều set liên tiếp thành 1 POST
+  // Debounce admin settings sync — gộp nhiều set liên tiếp thành 1 POST.
+  // Dùng merge endpoint (PATCH-style) thay vì overwrite để KHÔNG mất field khác
+  // khi chỉ thay đổi 1 setting.
   let __adminSyncTimer = null;
   let __adminSyncPending = {};
   function postAdminSettingToGitHub(slug, key, value) {
@@ -6020,20 +6081,59 @@
       const payload = Object.assign({}, __adminSyncPending);
       __adminSyncPending = {};
       try {
-        const r = await fetch('/api/admin-settings', {
+        const r = await fetch('/api/admin-settings-merge', {
           method: 'POST',
           credentials: 'same-origin',
           headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify({slug, settings: payload, mode: 'pr'}),
+          body: JSON.stringify({slug, patch: payload, mode: 'pr'}),
         });
         const data = await r.json().catch(() => null);
         if (!data || !data.ok) {
-          console.warn('admin-settings sync failed', data);
+          console.warn('admin-settings merge failed', data);
+        } else if (data.settings) {
+          // Cập nhật cache local để UI biết
+          window.__adminDefaults = Object.assign({}, window.__adminDefaults || {}, data.settings);
         }
       } catch (e) {
-        console.warn('admin-settings sync error', e);
+        console.warn('admin-settings merge error', e);
       }
     }, 1500);  // 1.5s debounce
+  }
+
+  // Lưu toàn bộ theme settings hiện tại lên GitHub ngay lập tức (không debounce).
+  // Gọi khi admin bấm nút "💾 Lưu ngay" trong Settings menu.
+  async function saveAdminSettingsNow(slug) {
+    if (!slug) return { ok: false, error: 'Thiếu slug' };
+    try {
+      const patch = {
+        rain_enabled: !!document.getElementById('toggleRain')?.checked,
+        heavy_rain: !!document.getElementById('toggleHeavyRain')?.checked,
+        dark_mode: !!document.getElementById('toggleDarkMode')?.checked,
+        transparency: String(document.getElementById('rangeTransparency')?.value || 92),
+        theme: window.__adminDefaults?.theme || localStorage.getItem('admin_theme') || 'default',
+        shadow_theme: window.__adminDefaults?.shadow_theme || localStorage.getItem('admin_shadowTheme') || 'default',
+      };
+      // Lấy rain volume nếu có
+      const vol = document.getElementById('rainVolumeRange')?.value;
+      if (vol !== undefined && vol !== null) patch.rain_volume = String(vol);
+
+      const r = await fetch('/api/admin-settings-merge', {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ slug, patch, mode: 'direct' }),  // direct = push thẳng, không cần merge PR
+      });
+      const data = await r.json().catch(() => null);
+      if (!data || !data.ok) {
+        return { ok: false, error: data?.error || 'Lưu thất bại' };
+      }
+      if (data.settings) {
+        window.__adminDefaults = Object.assign({}, window.__adminDefaults || {}, data.settings);
+      }
+      return { ok: true, settings: data.settings };
+    } catch (e) {
+      return { ok: false, error: String(e) };
+    }
   }
 
   async function loadAdminSettingsFromGitHub(slug) {
