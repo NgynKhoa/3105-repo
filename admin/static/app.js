@@ -983,8 +983,9 @@ function buildFormHtml(pkg) {
       <label class="block md:col-span-2">
         <span class="text-xs text-slate-500 flex items-center gap-2">
           <input type="checkbox" id="f_use_default_os" ${pkg.__use_default_os ? 'checked' : ''} />
-          Dùng iOS rule mặc định (17.0 → 27.0)
+          Dùng iOS rule mặc định
         </span>
+        <div id="f_use_default_os_preview" class="mt-2 p-3 bg-slate-50 rounded-md font-mono text-[11px] whitespace-pre-wrap text-slate-700 border border-slate-200"></div>
       </label>
       <div id="f_ios_custom_wrap" class="md:col-span-2 grid grid-cols-2 gap-2" style="${pkg.__use_default_os ? 'display:none' : ''}">
         <label class="block">
@@ -1446,8 +1447,7 @@ function bindFormEvents() {
     }
   });
 
-  // iOS: tick "mặc định" -> ẩn 2 ô min/max; bỏ tick -> hiện
-  // Set cả inline display:none AND thêm attribute để CSS rule [style*="display:none"] chắc chắn match
+  // iOS: tick "mặc định" -> ẩn 2 ô min/max; bỏ tick -> hiện + update preview
   const setIosWrap = (hide) => {
     const wrap = $('#f_ios_custom_wrap');
     if (!wrap) return;
@@ -1455,9 +1455,43 @@ function bindFormEvents() {
     if (hide) wrap.setAttribute('data-hidden', '1');
     else wrap.removeAttribute('data-hidden');
   };
+  // Render preview: hiện danh sách rule sẽ được ghi ra repo.json
+  const renderOsPreview = () => {
+    const el = $('#f_use_default_os_preview');
+    const isDefault = $('#f_use_default_os')?.checked;
+    const minVal = $('#f_ios_min')?.value || '';
+    const maxVal = $('#f_ios_max')?.value || '';
+    if (!el) return;
+    if (isDefault) {
+      // Hiện full DEFAULT_OS_RULES
+      const lines = (window.DEFAULT_OS_RULES || []).map(r =>
+        '  - minimum: ' + r.minimum + ', maximum: ' + r.maximum +
+        (r.builds ? ', builds: ' + JSON.stringify(r.builds) : '')
+      );
+      el.textContent = lines.length ? 'supportedOS:\n' + lines.join('\n') : '(chưa có rule mặc định)';
+    } else {
+      // Preview từ 2 input min/max
+      if (minVal && maxVal) {
+        const rules = buildSupportedOSRules(minVal, maxVal);
+        const lines = rules.map(r =>
+          '  - minimum: ' + r.minimum + ', maximum: ' + r.maximum +
+          (r.builds ? ', builds: ' + JSON.stringify(r.builds) : '')
+        );
+        el.textContent = 'supportedOS:\n' + lines.join('\n');
+      } else {
+        el.textContent = 'Nhập minimum & maximum bên dưới để xem trước.';
+      }
+    }
+  };
+  // Gắn sự kiện: tick change + input change
   $('#f_use_default_os')?.addEventListener('change', e => {
     setIosWrap(e.target.checked);
+    renderOsPreview();
   });
+  $('#f_ios_min')?.addEventListener('input', renderOsPreview);
+  $('#f_ios_max')?.addEventListener('input', renderOsPreview);
+  // Lần đầu mở modal
+  renderOsPreview();
 
   // Search input: gõ → auto bật grid + filter; xoá hết → ẩn grid lại
   const autoShow = (gridId, toggleId) => {
@@ -1851,6 +1885,38 @@ function bindFormEvents() {
   $('#btnCloseModal').onclick = closeModal;
 }
 
+/**
+ * Xây mảng supportedOS từ min/max string.
+ * Chia theo major version: nếu min=17, max=27 → tạo rule cho mỗi major.
+ * Các major có builds trong DEFAULT_OS_RULES → giữ nguyên builds đó.
+ */
+function buildSupportedOSRules(minStr, maxStr) {
+  const rules = [];
+  const defaults = window.DEFAULT_OS_RULES || [];
+
+  const parseMajor = (v) => parseInt(String(v).split('.')[0], 10);
+  const minMajor = parseMajor(minStr);
+  const maxMajor = parseMajor(maxStr);
+
+  for (let major = minMajor; major <= maxMajor; major++) {
+    // Tìm rule mặc định cho major này
+    const defRule = defaults.find(r => parseMajor(r.minimum) === major);
+    const defMin = defRule ? defRule.minimum : `${major}.0`;
+    const defMax = defRule ? defRule.maximum : `${major}.0`;
+    const defBuilds = defRule && defRule.builds ? defRule.builds : undefined;
+
+    // Nếu là major đầu tiên → dùng minStr làm minimum thực
+    const effectiveMin = (major === minMajor) ? minStr : defMin;
+    // Nếu là major cuối → dùng maxStr làm maximum thực
+    const effectiveMax = (major === maxMajor) ? maxStr : defMax;
+
+    const rule = { minimum: effectiveMin, maximum: effectiveMax };
+    if (defBuilds) rule.builds = defBuilds;
+    rules.push(rule);
+  }
+  return rules;
+}
+
 function readFormToPackage() {
   return {
     identifier: $('#f_identifier').value.trim(),
@@ -1926,7 +1992,8 @@ function savePackageFromForm() {
       minStr = minStr || String(def.minimum);
       maxStr = maxStr || String(def.maximum);
     }
-    pkgClean.supportedOS = [{ minimum: minStr, maximum: maxStr }];
+    // Xây full supportedOS array: parse thành major version để tạo nhiều rule
+    pkgClean.supportedOS = buildSupportedOSRules(minStr, maxStr);
   } else {
     delete pkgClean.supportedOS;
   }
