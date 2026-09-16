@@ -147,6 +147,8 @@ def render_index_html(repo_slug: str, repo_data: dict[str, Any], owner: bool = F
         f"window.PUBLIC_REPO_DATA = {repo_json};\n"
         f"window.PUBLIC_REPO_OWNER = {json.dumps(bool(owner))};\n"
         f"window.PUBLIC_REPO_OWNER_GITHUB = {json.dumps(owner_github or '')};\n"
+        f"window.PUBLIC_REPO_NAME = {json.dumps(repo_slug or '')};\n"
+        f"window.PUBLIC_REPO_DEFAULT_BRANCH = {json.dumps('main')};\n"
         f"window.PUBLIC_MODE = true;  // dùng data tĩnh thay vì fetch /api/*\n"
         f"window.PUBLIC_NAV_LINKS = {json.dumps(nav_links or [], ensure_ascii=False)};\n"
         # Playlist từ admin-settings.json (cho người dùng ẩn danh xem được trên GH Pages)

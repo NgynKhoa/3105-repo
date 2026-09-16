@@ -598,6 +598,8 @@ def index():
         # để fetch raw-asset / admin-settings từ GitHub.
         f"window.PUBLIC_REPO_OWNER_GITHUB = {_os.environ.get('GITHUB_DEFAULT_OWNER', 'NgynKhoa')!r};\n"
         f"window.PUBLIC_REPO_NAME = {_os.environ.get('GITHUB_REPO_NAME', '3105-repo')!r};\n"
+        f"window.PUBLIC_REPO_DEFAULT_BRANCH = {_os.environ.get('GITHUB_DEFAULT_BRANCH', 'main')!r};\n"
+        f"window.PUBLIC_MODE = false;  // local Flask — auth/backend enabled\n"
     )
     return render_template(
         "index.html",

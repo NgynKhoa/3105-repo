@@ -5029,7 +5029,7 @@
       // Tìm download URL theo download_mode:
       //   - "raw"     → rawPathMap (file .3105 trong repo)
       //   - "releases"→ releaseMap (GitHub Releases)
-      //   - "auto"    → raw trước, fallback releases
+      //   - "auto"    → raw trước, fallback releases, cuối cùng compute raw URL
       let dl = null;
       let dlMeta = null;
       if (downloadMode === 'raw') {
@@ -5044,6 +5044,23 @@
         if (!dl) {
           dlMeta = releaseMap[idEsc];
           dl = dlMeta ? dlMeta.download_url : null;
+        }
+        // Strategy 4: compute raw GitHub URL trực tiếp từ pkg.download path.
+        // Không cần Flask API — ghép URL thẳng từ thông tin có sẵn.
+        if (!dl && pkg.download) {
+          const _ghOwner = window.PUBLIC_REPO_OWNER_GITHUB
+            || window.__currentRepoOwner
+            || window.PUBLIC_REPO_SLUG
+            || '';
+          const _ghRepo = window.PUBLIC_REPO_NAME || window.PUBLIC_REPO_SLUG || '';
+          const _branch = window.PUBLIC_REPO_DEFAULT_BRANCH || 'main';
+          if (_ghOwner && _ghRepo) {
+            dl = `https://raw.githubusercontent.com/${_ghOwner}/${_ghRepo}/${_branch}/${pkg.download}`;
+            dlMeta = {
+              asset_name: (pkg.download || '').split('/').pop() || '',
+              size_bytes: pkg.size || 0,
+            };
+          }
         }
       }
       const downloadBtn = dl ? `
