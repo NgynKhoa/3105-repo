@@ -1,16 +1,3 @@
 {
-    "rain_enabled":  true,
-    "playlist":  [
-                     {
-                         "artist":  "Owen",
-                         "title":  "Synthwave Drift",
-                         "src":  "https://example.invalid/missing.mp3"
-                     }
-                 ],
-    "heavy_rain":  false,
-    "theme":  "pink",
-    "dark_mode":  true,
-    "shadow_theme":  "pink",
-    "transparency":  88,
-    "bg_image":  ""
+  "heavy_rain": false
 }
