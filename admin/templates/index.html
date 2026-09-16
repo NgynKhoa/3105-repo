@@ -2642,6 +2642,11 @@
         <button id="btnReload" class="btn neon-edit" title="Reload"></button>
         <button id="btnAdd" class="btn neon-edit"></button>
         <button id="btnSave" class="btn neon-edit"></button>
+        <!-- Sync lên GitHub Pages -->
+        <button id="btnSyncPages" class="btn" title="Sync local lên GitHub Pages" style="background:linear-gradient(135deg,rgba(57,255,20,0.18),rgba(0,200,255,0.18));border:1px solid var(--neon);font-weight:600;padding:6px 12px;">
+          <span id="syncBadge" style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#888;margin-right:6px;vertical-align:middle;"></span>
+          <span id="syncLabel">🚀 Sync</span>
+        </button>
       </div>
     </header>
 
@@ -2887,6 +2892,24 @@
   <!-- App JS -->
   <script src="/admin/static/multi_player.js?v=1"></script>
   <script src="/admin/static/app.js?v=46"></script>
+  <script src="/admin/static/sync.js?v=1"></script>
+
+  <!-- Sync Diff Modal -->
+  <div id="syncModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:99999;align-items:center;justify-content:center;">
+    <div style="background:#0e1726;border:1px solid var(--neon);border-radius:12px;padding:20px;max-width:720px;width:92%;max-height:80vh;overflow:auto;color:#e8eef9;font-family:monospace;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+        <h3 style="margin:0;color:var(--neon);">🔄 Sync Preview — Diff giữa Local ↔ GitHub</h3>
+        <button id="syncModalClose" style="background:transparent;color:#fff;border:1px solid #555;border-radius:6px;padding:4px 10px;cursor:pointer;">✕</button>
+      </div>
+      <div id="syncModalBody" style="font-size:13px;">
+        <div style="color:var(--muted);">Đang tính diff...</div>
+      </div>
+      <div style="margin-top:16px;display:flex;gap:8px;justify-content:flex-end;">
+        <button id="syncModalCancel" style="background:#333;color:#fff;border:none;border-radius:6px;padding:8px 16px;cursor:pointer;">Huỷ</button>
+        <button id="syncModalConfirm" style="background:linear-gradient(135deg,#39ff14,#00c8ff);color:#000;border:none;border-radius:6px;padding:8px 16px;cursor:pointer;font-weight:600;">🚀 Push lên GitHub</button>
+      </div>
+    </div>
+  </div>
 
   <script>
     /* ========================================
@@ -3752,8 +3775,7 @@
   // Wire "💾 Lưu theme ngay" button → flush pending + push full theme
   const btnSaveAdminNow = document.getElementById('btnSaveAdminNow');
   if (btnSaveAdminNow) {
-    btnSaveAdminNow.addEventListener('click', async () => {
-      const status = document.getElementById('adminSaveStatus');
+    btnSaveAdminNow.addEventListener('click', async () => {      const status = document.getElementById('adminSaveStatus');
       const slug = window.PUBLIC_REPO_SLUG || (typeof window.__frontRepoName !== 'undefined' ? window.__frontRepoName : '') || '';
       if (!slug) {
         if (status) { status.style.color = '#ff6b6b'; status.textContent = '⚠️ Không xác định được repo slug.'; }
