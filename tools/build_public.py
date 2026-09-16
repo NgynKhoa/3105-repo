@@ -29,6 +29,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import re
 import shutil
 import sys
@@ -142,12 +143,17 @@ def render_index_html(repo_slug: str, repo_data: dict[str, Any], owner: bool = F
         if _extracted:
             public_theme = _extracted
 
+    # PUBLIC_REPO_OWNER_GITHUB: GitHub username của owner (vd "NgynKhoa")
+    # PUBLIC_REPO_NAME: tên GH repo chứa packages (vd "3105-repo")
+    # Mặc định lấy từ --owner-github hoặc env GITHUB_DEFAULT_OWNER / GITHUB_REPO_NAME.
+    gh_owner = owner_github or os.environ.get("GITHUB_DEFAULT_OWNER", "NgynKhoa")
+    gh_repo_name = os.environ.get("GITHUB_REPO_NAME", "3105-repo")
     bootstrap = (
         f"window.PUBLIC_REPO_SLUG = {json.dumps(repo_slug)};\n"
         f"window.PUBLIC_REPO_DATA = {repo_json};\n"
         f"window.PUBLIC_REPO_OWNER = {json.dumps(bool(owner))};\n"
-        f"window.PUBLIC_REPO_OWNER_GITHUB = {json.dumps(owner_github or '')};\n"
-        f"window.PUBLIC_REPO_NAME = {json.dumps(repo_slug or '')};\n"
+        f"window.PUBLIC_REPO_OWNER_GITHUB = {json.dumps(gh_owner)};\n"
+        f"window.PUBLIC_REPO_NAME = {json.dumps(gh_repo_name)};\n"
         f"window.PUBLIC_REPO_DEFAULT_BRANCH = {json.dumps('main')};\n"
         f"window.PUBLIC_MODE = true;  // dùng data tĩnh thay vì fetch /api/*\n"
         f"window.PUBLIC_NAV_LINKS = {json.dumps(nav_links or [], ensure_ascii=False)};\n"
@@ -182,6 +188,11 @@ def render_index_html(repo_slug: str, repo_data: dict[str, Any], owner: bool = F
 
 def build(repo_slug: str = "demo", clean: bool = True, owner: bool = False,
          owner_github: str = "") -> int:
+    # Resolve GitHub owner/repo mặc định để bake vào PUBLIC_REPO_OWNER_GITHUB
+    # + PUBLIC_REPO_NAME — tránh Strategy 4 fallback sai khi admin chạy build
+    # mà KHÔNG truyền --owner-github (CI auto-build từ workflow cũng vậy).
+    gh_owner = owner_github or os.environ.get("GITHUB_DEFAULT_OWNER", "NgynKhoa")
+    gh_repo_name = os.environ.get("GITHUB_REPO_NAME", "3105-repo")
     if clean and PUBLIC.exists():
         # Xoá mọi thứ trừ README + .nojekyll + 404.html
         for f in PUBLIC.iterdir():
@@ -381,7 +392,8 @@ def build(repo_slug: str = "demo", clean: bool = True, owner: bool = False,
                 f"window.PUBLIC_REPO_SLUG = {json.dumps(repo_slug)};\n"
                 f"window.PUBLIC_REPO_DATA = {json.dumps(repo_data, ensure_ascii=False)};\n"
                 f"window.PUBLIC_REPO_OWNER = {json.dumps(bool(owner))};\n"
-                f"window.PUBLIC_REPO_OWNER_GITHUB = {json.dumps(owner_github)};\n"
+                f"window.PUBLIC_REPO_OWNER_GITHUB = {json.dumps(gh_owner)};\n"
+                f"window.PUBLIC_REPO_NAME = {json.dumps(gh_repo_name)};\n"
                 f"window.PUBLIC_MODE = true;\n"
             )
             blog_html = blog_html.replace(
