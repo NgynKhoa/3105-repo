@@ -52,17 +52,17 @@ def load_admin_settings(repo_slug: str) -> dict:
     """Load .3105/admin-settings.json từ repo (dùng cho build public).
 
     Returns dict rỗng nếu không tìm thấy (admin chưa từng lưu settings).
+    File thực sự nằm ở repo ROOT (.3105/admin-settings.json) theo
+    `admin_settings.ADMIN_SETTINGS_PATH` — KHÔNG phải trong repositories/<slug>/.
     """
-    p = REPOS / repo_slug / ".3105" / "admin-settings.json"
+    p = ROOT / ".3105" / "admin-settings.json"
     if not p.is_file():
-        alt = ROOT / "3105-repo" / "repositories" / repo_slug / ".3105" / "admin-settings.json"
-        if alt.is_file():
-            p = alt
-        else:
-            return {}
+        return {}
     try:
-        return json.loads(p.read_text(encoding="utf-8"))
-    except (json.JSONDecodeError, OSError):
+        with p.open(encoding="utf-8") as f:
+            data = json.load(f)
+        return data if isinstance(data, dict) else {}
+    except (OSError, ValueError):
         return {}
 
 
