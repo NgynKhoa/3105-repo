@@ -414,6 +414,36 @@ def build(repo_slug: str = "demo", clean: bool = True, owner: bool = False,
             blog_copied += 1
         log(f"✓ Mirror blog assets ({blog_copied} files copied từ assets/blog/)")
 
+    # 5c) Mirror root-level AUDIO files (assets/rain.mp3, assets/rain_heavy.mp3, ...)
+    # vào public/assets/ để rain player trên GH Pages phát được.
+    #
+    # Lý do: Front Repo JS cố định load từ `/assets/rain.mp3` (xem
+    # admin/templates/index.html initLight/initHeavy), và admin có thể đã
+    # upload URL khác qua Dashboard → nhưng default vẫn cần file tồn tại ở
+    # public/assets/. Nếu localStorage của user chưa có URL custom thì
+    # <audio src="/assets/rain.mp3"> sẽ 404 trên Pages → không có tiếng mưa.
+    #
+    # SYNC_INCLUDE_PATHS của admin/sync.py cũng liệt kê "assets/" rồi
+    # nhưng trong build_public.py trước đây CHỈ mirror assets/<repo>/, không
+    # mirror file audio ở root. Fix: copy các file trực tiếp dưới assets/ (không
+    # vào folder con) sang public/assets/ để giữ URL `/assets/<filename>` hoạt động.
+    src_root_assets = ROOT / "assets"
+    if src_root_assets.exists():
+        audio_exts = {".mp3", ".ogg", ".wav", ".m4a", ".aac", ".flac"}
+        audio_copied = 0
+        for f in src_root_assets.iterdir():
+            # Chỉ copy FILE trực tiếp dưới assets/ (không đệ quy) — tránh
+            # đè assets/blog/ đã được mirror ở 5b).
+            if not f.is_file() or f.name.startswith("."):
+                continue
+            if f.suffix.lower() not in audio_exts:
+                continue
+            d = PUBLIC / "assets" / f.name
+            d.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(f, d)
+            audio_copied += 1
+        log(f"✓ Mirror root audio assets ({audio_copied} file copied từ assets/*.{{mp3,ogg,wav,m4a,aac,flac}})")
+
     # 6) Render blog.html (trang bài viết chi tiết) cho public mode.
     # User click blog item trên public site → sang ./blog.html?id=<id>
     # vì Flask /blog-post/<id> không có trên GH Pages.

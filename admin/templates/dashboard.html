@@ -1975,6 +1975,14 @@
       applyDarkMode(isDark);
       // Lưu preference — chỉ ghi khi user chủ động toggle.
       localStorage.setItem('dash_darkMode', isDark ? 'true' : 'false');
+      // Đẩy lên GitHub để Front Repo (anonymous) hiển thị đúng dark mode
+      const trans = document.getElementById('rangeTransparency')
+        ? document.getElementById('rangeTransparency').value
+        : 92;
+      syncAdminSettingsPatch({
+        dark_mode: isDark,
+        transparency: parseInt(trans, 10),
+      });
     });
 
     function applyDarkMode(isDark) {
@@ -2019,6 +2027,11 @@
       document.documentElement.style.setProperty('--panel', `rgba(${panelBase}, ${v.toFixed(2)})`);
       localStorage.setItem('repo_transparency', e.target.value);
       localStorage.setItem('dash_transparency', e.target.value);
+      // Đẩy lên GitHub kèm dark_mode để build_public.py bake đúng PUBLIC_ADMIN_THEME
+      syncAdminSettingsPatch({
+        transparency: parseInt(e.target.value, 10),
+        dark_mode: isDark,
+      });
     });
 
     // ====================== TABS ======================
@@ -3278,14 +3291,96 @@
       showNotif('Đã xem preview font!');
     }
 
+    // ====================== SYNC to admin-settings.json (GitHub repo) ======================
+    // Helper chung: gọi POST /api/admin-settings-merge để merge 1 patch
+    // (dict các key:value) vào file .3105/admin-settings.json trên repo.
+    //
+    // Body shape mà admin_settings.py save_admin_settings() yêu cầu:
+    //   { slug: "...", mode: "direct"|"pr", settings: {...full object...} }
+    // (endpoint merge thực sự là POST /api/admin-settings-merge với patch).
+    //
+    // Cache repo slug — Dashboard dùng 1 slug duy nhất ("demo").
+    let _syncSettingsRepo = 'demo';
+    let _syncSettingsBusy = false;
+    let _syncSettingsPending = null;  // accumulator nếu user đổi liên tục
+
+    /**
+     * Push 1 patch các key:value lên GitHub qua /api/admin-settings-merge.
+     * Tự retry + dedupe nếu có patch đang chờ.
+     */
+    async function syncAdminSettingsPatch(patch) {
+      if (!patch || typeof patch !== 'object') return;
+      // Gộp patch vào pending nếu có request đang chạy
+      if (_syncSettingsBusy) {
+        _syncSettingsPending = { ...(_syncSettingsPending || {}), ...patch };
+        return;
+      }
+      _syncSettingsBusy = true;
+      try {
+        const resp = await fetch('/api/admin-settings-merge', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'same-origin',
+          body: JSON.stringify({
+            slug: _syncSettingsRepo,
+            patch,
+            mode: 'direct',  // Pages rebuild ngay khi push
+          }),
+        });
+        if (!resp.ok) {
+          console.warn('[syncAdminSettingsPatch]', resp.status, await resp.text());
+        } else {
+          const data = await resp.json();
+          if (data && data.ok) {
+            console.log('[syncAdminSettingsPatch] OK', Object.keys(patch).join(', '));
+          }
+        }
+      } catch (e) {
+        console.warn('[syncAdminSettingsPatch] failed:', e);
+      } finally {
+        _syncSettingsBusy = false;
+        // Có patch đợi từ trước → flush luôn (gộp tất cả thay đổi liên tiếp)
+        if (_syncSettingsPending) {
+          const next = _syncSettingsPending;
+          _syncSettingsPending = null;
+          await syncAdminSettingsPatch(next);
+        }
+      }
+    }
+
     function saveAndApplyTheme() {
       const active = document.querySelector('.theme-btn.active');
       if (active) {
         const themeName = active.dataset.theme;
         applyTheme(themeName);
+        // Đẩy theme lên repo (.3105/admin-settings.json) để Front Repo
+        // anonymous user cũng thấy được theme admin đã chọn.
+        syncAdminSettingsPatch({ theme: themeName });
         showNotif('Đã áp dụng theme ' + themeName + '!');
       }
     }
+
+    // Đẩy shadow theme (màu viền logo) lên GitHub
+    function _notifyShadowChange(name) {
+      syncAdminSettingsPatch({ shadow_theme: name });
+    }
+    // Wrap window.applyShadowTheme để auto-sync
+    (function hookShadowTheme() {
+      const orig = window.applyShadowTheme;
+      if (typeof orig === 'function') {
+        window.applyShadowTheme = function(name) {
+          const ret = orig.apply(this, arguments);
+          try { _notifyShadowChange(name); } catch (e) {}
+          return ret;
+        };
+      }
+      // Wire nút shadow-theme nếu có
+      document.querySelectorAll('[data-shadow]').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          _notifyShadowChange(btn.dataset.shadow);
+        });
+      });
+    })();
 
     function saveRainSettings() {
       localStorage.setItem('repo_rainOpacity', document.getElementById('rainOpacity').value);
