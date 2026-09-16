@@ -1,3 +1,9 @@
 {
-  "heavy_rain": false
+  "theme": "pink",
+  "shadow_theme": "pink",
+  "dark_mode": true,
+  "transparency": 88,
+  "rain_enabled": true,
+  "heavy_rain": false,
+  "bg_image": ""
 }
