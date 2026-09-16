@@ -1892,8 +1892,8 @@ function savePackageFromForm() {
   const errors = [];
   if (!pkg.identifier) errors.push('Thiếu identifier.');
   else if (!/^[a-z0-9][a-z0-9._-]{1,63}$/.test(pkg.identifier)) errors.push('Identifier không hợp lệ (chỉ chứa a-z, 0-9, ., _, -; 2-64 ký tự).');
-  if (!pkg.name) errors.push('Thiếu tên.');
-  if (!pkg.download) errors.push('Thiếu file .3105 (URL tải về).');
+  if (!pkg.name) errors.push('Thiếu tên (hiển thị trên App Store).');
+  // Download là optional — user có thể upload file .3105 sau trong edit
   if (errors.length > 0) { errors.forEach(e => toast(e, 'error')); return; }
   // SHA-256 is optional — if not provided or invalid, use placeholder for manual computation later
   if (pkg.sha256 && !/^[0-9A-F]{64}$/.test(pkg.sha256)) {

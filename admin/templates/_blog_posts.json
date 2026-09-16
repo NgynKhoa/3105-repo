@@ -1,0 +1,45 @@
+[
+  {
+    "id": 1,
+    "icon": "🎯",
+    "title": "Hướng Dẫn cài đặt file Patch 3105",
+    "date": "Vua cap nhat",
+    "excerpt": "ahihi",
+    "content": "<p></p><h2>Các bước cài đặt file 3105</h2><h3>Bước 1: </h3><p>Mở ứng dụng 3105 và vào mục \"Đã cài\"</p><h3>Bước 2: </h3><p>Nhấn vào dấu \"+\" bên góc phải ứng dụng 3105 và chọn \"nhập 3105\"</p><h3>Bước 3: </h3><p>Chọn file patch 3105 đã tải về và bấm \"Mở\"</p><h3>Bước 4: </h3><p>Chọn vào file Patch vừa nhập, nhấn \"áp dụng Patch\"</p><p><strong>Lưu ý:</strong> Hãy khôi phục gốc và xóa patch cũ trước khi áp dụng patch mới.</p><p></p>",
+    "image": "",
+    "images": []
+  },
+  {
+    "id": 2,
+    "icon": "🌟",
+    "title": "Hướng Dẫn cài đặt Dialer bàn phím",
+    "date": "Vua cap nhat",
+    "excerpt": "Excerpt B",
+    "content": "<p></p><h2>Các bước cài đặt bàn phím trên 3105</h2><h3>Bước 1: </h3><p>Ở Trang chủ của ứng dụng 3105, nhấn vào nút cài đặt (hình bánh răng) góc phải.</p><h3>Bước 2: </h3><p>Một Popup sẽ hiện ra và hãy kéo xuống đến Dialer, sau đó nhấn vào \"Lấy dữ liệu Dialer\"</p><h3>Bước 3: </h3><p>Nếu thành công sẽ hiện dấu tick xanh với dòng chữ \"Đã lấy\", sau đó nhấn \"Xong\"</p><h3>Bước 4: </h3><p>Nếu không thành công hãy ra mở bàn phím cuộc gọi trên iPhone và nhấn một vài phím, sau đó quay lại bước 2.</p><h3>Bước 5: </h3><p>Vào phần Nguồn và chọn bản Dialer mà mình thích ở các Repo, sau đó nhấn \"Cài đặt\".</p><h3>Bước 6: </h3><p>Vào phần Đã cài, nhấn vào patch Dialer mới được tải xuống, áp dụng Patch và kiểm tra kết quả.</p><p><strong>Lưu ý:</strong> Với các file 3105pass riêng lẻ hãy cài đặt theo cách thủ công (xem Blog Hướng dẫn cài đặt file 3105).</p><p></p>",
+    "image": "",
+    "images": [],
+    "hidden": false
+  },
+  {
+    "id": 3,
+    "icon": "📝",
+    "title": "Hướng Dẫn mở Mục \"Tệp\" trên 3105",
+    "date": "Vua cap nhat",
+    "excerpt": "",
+    "content": "<p></p><h2>Các bước mở mục Tệp trên 3105</h2><h3>Bước 1: </h3><p>Tại trang chủ của ứng dụng 3105, chọn vào bánh răng góc phải trên cùng của ứng dụng.</p><h3>Bước 2: </h3><p>Nhấn vào \"Cài đặt\", sau đó bật tính năng \"Tùy chọn nhà phát triển\", bấm \"Xong\".</p><p> Từ giờ các bạn đã có thể truy cập vào sandbox các ứng dụng thông qua \"Tệp\"</p><p></p>",
+    "image": "",
+    "images": [],
+    "hidden": false
+  },
+  {
+    "id": 4,
+    "icon": "📝",
+    "title": "Vài điều lưu ý, cơ bản về app 3105",
+    "date": "Vua cap nhat",
+    "excerpt": "",
+    "content": "<p></p><h2>Các điều cần lưu ý khi sử dụng ứng dụng 3105</h2><ul><li>Không tự tiện cài các file 3105 không rõ nguồn gốc hoặc uy tín, tránh gây ảnh hưởng đến tài khoản hoặc ứng dụng được áp dụng sửa đổi.</li><li>3105 hiện tại vẫn chưa hoàn thiện và sẽ còn một vài lỗi nhỏ, tác giả Yangjii sẽ fix vào các bản cập nhật sắp tới.</li><li>3105 sẽ không dừng lại ở đây mà sẽ tiếp tục phát triển các tính năng khác trong tương lai, mở rộng phạm vi sandbox hoặc file hệ thống có thể áp dụng.</li></ul><p></p>",
+    "image": "",
+    "images": [],
+    "hidden": false
+  }
+]

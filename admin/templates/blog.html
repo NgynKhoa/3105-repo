@@ -131,6 +131,16 @@
       flex-shrink: 0;
       text-decoration: none;
     }
+    /* Arrow SVG icon — sits centered inside flex containers. */
+    .back-btn .back-arrow,
+    .post-back-link .back-arrow {
+      display: inline-block;
+      flex-shrink: 0;
+      color: currentColor;
+    }
+    /* Tiny nudges for visual baseline alignment with the text next to it. */
+    .back-btn .back-arrow { margin-top: -1px; }
+    .post-back-link .back-arrow { transform: translateY(1px); }
     .back-btn:hover {
       border-color: var(--neon);
       box-shadow: 0 0 10px rgba(var(--neon-rgb),0.3);
@@ -256,7 +266,7 @@
     }
     .post-back-link {
       display: inline-flex;
-      align-items: center;
+      align-items: baseline;
       gap: 6px;
       font-size: 13px;
       font-family: 'Be Vietnam Pro', 'Fira Code', 'Courier New', monospace;
@@ -264,6 +274,16 @@
       text-decoration: none;
       margin-bottom: 14px;
       transition: all 0.2s;
+    }
+    /* Arrow character ← has descender in fallback fonts that pushes it down —
+       pull it up a few pixels so it sits on the same baseline as the text. */
+    .post-back-link .back-arrow {
+      /* SVG: already styled above. Override the older span version that
+         some places might still use. */
+      display: inline-block;
+      width: 1em;
+      line-height: 1;
+      transform: translateY(0);
     }
     .post-back-link:hover {
       text-shadow: 0 0 8px rgba(var(--neon-rgb),0.5);
@@ -622,6 +642,165 @@
       background: var(--neon);
       box-shadow: 0 0 8px rgba(var(--neon-rgb),0.5);
     }
+
+    /* ============================ NOW PLAYING (blog page mini player) ============================ */
+    #mpPlayer {
+      position: fixed;
+      bottom: 14px;
+      right: 14px;
+      z-index: 9500;
+      display: none;
+      flex-direction: column;
+      gap: 6px;
+      padding: 8px 10px;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.4), 0 0 10px rgba(var(--neon-rgb), 0.25);
+      font-family: 'VT323', monospace;
+      color: var(--text);
+      min-width: 320px;
+      max-width: 380px;
+    }
+    #mpPlayer:not(.hide) { display: flex; }
+    /* 2 rows */
+    #mpPlayer .mp-row { display: flex; align-items: center; gap: 8px; }
+    #mpPlayer .mp-row-top { gap: 10px; }
+    #mpPlayer .mp-row-bot { gap: 6px; }
+    /* Disc (vuông cover) — lớn để nổi bật */
+    #mpPlayer .mp-disc {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      background: rgba(var(--neon-rgb), 0.15);
+      background-size: cover; background-position: center;
+      flex-shrink: 0;
+      border: 1px solid rgba(var(--neon-rgb), 0.45);
+      position: relative;
+      overflow: hidden;
+    }
+    #mpPlayer .mp-disc::after {
+      content: '';
+      position: absolute; inset: 30%;
+      border-radius: 50%;
+      background: var(--neon);
+      box-shadow: 0 0 4px var(--neon);
+      opacity: 0.7;
+      transition: opacity 0.2s;
+    }
+    #mpPlayer .mp-disc.has-image::after { opacity: 0; }
+    #mpPlayer .mp-disc.has-image { border-color: rgba(var(--neon-rgb), 0.7); }
+    #mpPlayer.playing .mp-disc { animation: mp-spin 6s linear infinite; }
+    @keyframes mp-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+    /* Info (name + artist) — row 1, còn lại flex */
+    #mpPlayer .mp-info { display: flex; flex-direction: column; min-width: 0; line-height: 1.1; flex: 1; }
+    #mpPlayer .mp-name {
+      font-size: 14px; color: var(--neon);
+      text-shadow: 0 0 6px rgba(var(--neon-rgb), 0.4);
+      overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+    #mpPlayer .mp-meta {
+      font-size: 11px; color: var(--muted);
+      overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+    /* Progress bar — row 2, có flex:1 để dãn ra */
+    #mpPlayer .mp-bar {
+      flex: 1;
+      height: 3px;
+      background: rgba(var(--neon-rgb), 0.15);
+      border-radius: 2px; overflow: hidden;
+      flex-shrink: 1;
+      min-width: 40px;
+    }
+    #mpPlayer .mp-bar-fill {
+      height: 100%; width: 0;
+      background: var(--neon);
+      transition: width 0.2s linear;
+    }
+    #mpPlayer .mp-time {
+      font-size: 11px; color: var(--muted);
+      white-space: nowrap;
+      flex-shrink: 0;
+      font-variant-numeric: tabular-nums;
+    }
+    #mpPlayer .mp-btn {
+      width: 24px; height: 24px;
+      background: var(--panel-alt);
+      border: 1px solid var(--border);
+      color: var(--neon);
+      border-radius: 5px;
+      cursor: pointer;
+      display: inline-flex; align-items: center; justify-content: center;
+      font-size: 10px; line-height: 1;
+      font-family: inherit;
+      transition: all 0.15s;
+      flex-shrink: 0;
+      padding: 0;
+    }
+    /* Play button (chính) — to hơn */
+    #mpPlayer .mp-btn:not(.mp-btn-mini) {
+      width: 28px; height: 28px;
+      border-radius: 6px;
+    }
+    #mpPlayer .mp-btn:hover { border-color: var(--neon); box-shadow: 0 0 6px rgba(var(--neon-rgb), 0.4); }
+    #mpPlayer .mp-btn[aria-pressed="true"] {
+      background: rgba(var(--neon-rgb), 0.15);
+      border-color: var(--neon);
+      box-shadow: 0 0 8px rgba(var(--neon-rgb), 0.5);
+    }
+    #mpPlayer .mp-btn svg { width: 10px; height: 10px; fill: currentColor; display: block; }
+    #mpPlayer .mp-btn:not(.mp-btn-mini) svg { width: 11px; height: 11px; }
+    #mpVolumePanel {
+      display: none;
+      position: absolute;
+      bottom: 100%;
+      right: 0;
+      margin-bottom: 6px;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.4);
+      padding: 6px 10px;
+      min-width: 140px;
+      z-index: 9600;
+      flex-direction: row;
+      align-items: center;
+      gap: 6px;
+    }
+    #mpVolumePanel input[type="range"] {
+      flex: 1;
+      width: 100px;
+      height: 4px;
+      -webkit-appearance: none;
+      appearance: none;
+      background: rgba(var(--neon-rgb), 0.2);
+      border-radius: 2px;
+      outline: none;
+    }
+    #mpVolumePanel input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 12px; height: 12px;
+      border-radius: 50%;
+      background: var(--neon);
+      cursor: pointer;
+      box-shadow: 0 0 6px rgba(var(--neon-rgb), 0.6);
+    }
+    #mpVolumeRange::-moz-range-thumb {
+      width: 12px; height: 12px;
+      border-radius: 50%;
+      background: var(--neon);
+      border: none;
+      cursor: pointer;
+    }
+    #mpVolumeVal {
+      font-family: 'VT323', monospace;
+      font-size: 13px;
+      color: var(--neon);
+      min-width: 24px;
+      text-align: right;
+    }
+    /* Show #mpPlayer when blog_audio.js has initialized */
+    body.audio-ready #mpPlayer { display: flex !important; }
+
     #overlay { display: none; position: fixed; inset: 0; z-index: 9998; background: transparent; }
     #overlay.active { display: block; }
   </style>
@@ -689,7 +868,7 @@
 
   <div class="page-wrapper">
     <header class="page-header">
-      <a href="/" class="back-btn" title="Quay lai">&#8592;</a>
+      <a href="/" class="back-btn" title="Quay lai"><svg class="back-arrow" viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M11 3 L4 8 L11 13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
       <span class="page-icon">&#128221;</span>
       <h1 class="page-title">BLOG</h1>
     </header>
@@ -880,13 +1059,20 @@
     const toggleRainEl = document.getElementById('toggleRain');
     toggleRainEl.addEventListener('change', e => {
       rainEnabled = e.target.checked;
+      // Ghi localStorage TRƯỚC rồi mới bridge sang blog_audio.js
+      // (blog_audio.js sẽ đọc lại từ localStorage → sync state chính xác)
       localStorage.setItem('rainEnabled', String(rainEnabled));
+      window.__blogRainOn = rainEnabled;
+      try { window.__blogSyncRain && window.__blogSyncRain(); } catch (err) {}
     });
     const toggleHeavyRainEl = document.getElementById('toggleHeavyRain');
     toggleHeavyRainEl.addEventListener('change', e => {
       heavyRain = e.target.checked;
-      initRain();
+      console.log('[blog.html] toggleHeavyRain change →', heavyRain);
       localStorage.setItem('heavyRain', String(heavyRain));
+      initRain();
+      window.__blogHeavyOn = heavyRain;
+      try { window.__blogSyncRain && window.__blogSyncRain(); } catch (err) {}
     });
 
     // Dark mode toggle - FIX
@@ -996,14 +1182,27 @@
         if (window.PUBLIC_MODE && window.PUBLIC_REPO_DATA) {
           allPosts = window.PUBLIC_REPO_DATA.blog || [];
         } else {
-          // Try localStorage first (from dashboard edits), then API
-          const savedPosts = localStorage.getItem('repo_blogPosts');
-          if (savedPosts) {
-            allPosts = JSON.parse(savedPosts);
-          } else {
+          // Thử server trước (source of truth), nếu lỗi / rỗng → localStorage
+          try {
             const res = await fetch('/api/blog/posts');
             const data = await res.json();
-            allPosts = data.posts;
+            if (data && data.posts && data.posts.length > 0) {
+              allPosts = data.posts;
+            } else {
+              const savedPosts = localStorage.getItem('repo_blogPosts');
+              if (savedPosts) {
+                allPosts = JSON.parse(savedPosts);
+              } else {
+                allPosts = data.posts || [];
+              }
+            }
+          } catch(e) {
+            const savedPosts = localStorage.getItem('repo_blogPosts');
+            if (savedPosts) {
+              allPosts = JSON.parse(savedPosts);
+            } else {
+              throw e;
+            }
           }
         }
         renderBlog();
@@ -1011,6 +1210,24 @@
         document.getElementById('blogContent').innerHTML = '<p style="color:var(--neon-pink);padding:20px;">Loi tai bai viet</p>';
       }
     }
+
+    // Lắng nghe broadcast từ Dashboard khi Blog CRUD thay đổi
+    try {
+      if (window.BroadcastChannel) {
+        const bc = new BroadcastChannel('repo_blog');
+        bc.addEventListener('message', function(ev) {
+          if (ev.data && ev.data.type === 'updated') {
+            loadPosts();
+          }
+        });
+      }
+    } catch(e) {}
+    // storage event từ tab khác cũng trigger reload
+    window.addEventListener('storage', function(e) {
+      if (e.key === 'repo_blog_updated' || e.key === 'repo_blogPosts') {
+        loadPosts();
+      }
+    });
 
     function getUrlPostId() {
       // Accept 3 dạng URL:
@@ -1081,7 +1298,7 @@
           <div style="background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:40px;text-align:center;">
             <div style="font-size:48px;margin-bottom:16px;">&#128533;</div>
             <p style="color:var(--neon-pink);font-size:16px;margin-bottom:12px;">Bai viet khong ton tai</p>
-            <a href="/blog" class="back-btn" style="display:inline-flex;text-decoration:none;">&#8592; Quay lai danh sach</a>
+            <a href="/blog" class="back-btn" style="display:inline-flex;text-decoration:none;"><svg class="back-arrow" viewBox="0 0 16 16" width="13" height="13" aria-hidden="true"><path d="M11 3 L4 8 L11 13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg> Quay lai danh sach</a>
           </div>`;
         return;
       }
@@ -1099,7 +1316,7 @@
       document.getElementById('blogContent').innerHTML = `
         <div class="post-detail">
           <div class="post-header">
-            <a href="/blog" class="post-back-link">&#8592; Quay lai danh sach bai viet</a>
+            <a href="/blog" class="post-back-link"><svg class="back-arrow" viewBox="0 0 16 16" width="13" height="13" aria-hidden="true"><path d="M11 3 L4 8 L11 13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg> Quay lai danh sach bai viet</a>
             ${heroImg}
             <div class="post-icon-big">${post.icon}</div>
             <h1 class="post-title">${post.title}</h1>
@@ -1123,5 +1340,56 @@
 
     loadPosts();
   </script>
+
+  <!-- Rain audio containers (multi-source: MP3 / YouTube / Spotify) -->
+  <div id="blog-rain-yt-host" style="position:absolute;left:-9999px;top:-9999px;width:1px;height:1px;overflow:hidden;"></div>
+  <div id="blog-rain-heavy-yt-host" style="position:absolute;left:-9999px;top:-9999px;width:1px;height:1px;overflow:hidden;"></div>
+  <audio id="blogRainAudio"       loop preload="auto" style="display:none;"></audio>
+  <audio id="blogRainHeavyAudio"  loop preload="auto" style="display:none;"></audio>
+
+  <!-- Now Playing mini player (góc dưới phải, đồng bộ với Front repo) -->
+  <!-- Layout 2 hàng:
+       Row 1: Disc + Name/Artist (info text)
+       Row 2: Progress bar + Time + Buttons -->
+  <div id="mpPlayer" class="mp-player">
+    <div class="mp-row mp-row-top">
+      <div class="mp-disc" id="mpBigCover"></div>
+      <div class="mp-info">
+        <div class="mp-name" id="mpTitle">&mdash;</div>
+        <div class="mp-meta" id="mpArtist"></div>
+      </div>
+    </div>
+    <div class="mp-row mp-row-bot">
+      <div class="mp-bar"><div class="mp-bar-fill" id="mpBarFill"></div></div>
+      <div class="mp-time"><span id="mpCur">0:00</span> <span id="mpDur">0:00</span></div>
+      <!-- Same SVG icons as Front repo (.mp-btn-mini) -->
+      <button id="mpPrev" class="mp-btn mp-btn-mini" title="Bài trước" aria-label="Bài trước">
+        <svg viewBox="0 0 8 8" xmlns="http://www.w3.org/2000/svg"><path d="M5 0.5 L1 4 L5 7.5 Z M6 0.5 H7 V7.5 H6 Z"/></svg>
+      </button>
+      <button id="mpPlay" class="mp-btn" title="Phát" aria-label="Phát / Dừng">
+        <svg viewBox="0 0 8 8" xmlns="http://www.w3.org/2000/svg"><path d="M2 1 L7 4 L2 7 Z"/></svg>
+      </button>
+      <button id="mpNext" class="mp-btn mp-btn-mini" title="Bài sau" aria-label="Bài sau">
+        <svg viewBox="0 0 8 8" xmlns="http://www.w3.org/2000/svg"><path d="M3 0.5 L7 4 L3 7.5 Z M1 0.5 H2 V7.5 H1 Z"/></svg>
+      </button>
+      <button id="mpLoop" class="mp-btn mp-btn-mini" title="Lặp lại (BẬT)" aria-label="Lặp lại" aria-pressed="true">
+        <svg viewBox="0 0 8 8" xmlns="http://www.w3.org/2000/svg"><path d="M1.5 4 A2.5 2.5 0 0 1 4 1.5 H6.5 V0.5 L8 2 L6.5 3.5 V2.5 H4 A1.5 1.5 0 0 0 2.5 4 H1.5 Z M6.5 4 A2.5 2.5 0 0 1 4 6.5 H1.5 V7.5 L0 6 L1.5 4.5 V5.5 H4 A1.5 1.5 0 0 0 5.5 4 H6.5 Z"/></svg>
+      </button>
+      <button id="mpVolumeBtn" class="mp-btn mp-btn-mini" title="Âm lượng" aria-label="Âm lượng" aria-pressed="false">
+        <svg viewBox="0 0 8 8" xmlns="http://www.w3.org/2000/svg"><path d="M1 3 H2.5 L4.5 1 V7 L2.5 5 H1 Z M5.5 2.5 Q6.5 4 5.5 5.5 M6 1.5 Q8 4 6 6.5" fill="none" stroke="currentColor" stroke-width="0.6"/></svg>
+      </button>
+    </div>
+    <div id="mpVolumePanel">
+      <input type="range" id="mpVolumeRange" min="0" max="100" value="80">
+      <span id="mpVolumeVal">80</span>
+    </div>
+  </div>
+  <div id="mp-yt-host" style="position:absolute;left:-9999px;top:-9999px;width:1px;height:1px;overflow:hidden;"></div>
+  <div id="mp-spotify-host" style="position:absolute;left:-9999px;top:-9999px;width:1px;height:1px;overflow:hidden;"></div>
+  <audio id="mpAudio" preload="auto" style="display:none;"></audio>
+
+  <!-- Audio glue: rain audio + music player (uses TrackPlayer from multi_player.js) -->
+  <script src="/admin/static/multi_player.js?v=1"></script>
+  <script src="/admin/static/blog_audio.js?v=1"></script>
 </body>
 </html>

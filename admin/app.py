@@ -901,17 +901,134 @@ BLOG_POSTS = [
 
 @app.route("/api/blog/posts")
 def api_blog_posts():
-    """API trả về danh sách blog posts."""
-    return jsonify({"posts": BLOG_POSTS})
+    """API trả về danh sách blog posts CÔNG KHAI (đã lọc bỏ hidden).
+
+    Posts có trường `hidden=true` sẽ KHÔNG hiện trong danh sách,
+    nhưng vẫn truy cập được qua link trực tiếp `/blog/<id>` hoặc
+    `/api/blog/post/<id>`.
+    """
+    include_hidden = (
+        request.args.get("include_hidden") in ("1", "true", "yes")
+        and is_authenticated()
+    )
+    posts = load_blog_posts()
+    if not include_hidden:
+        posts = [p for p in posts if not p.get("hidden")]
+    return jsonify({"posts": posts})
 
 
 @app.route("/api/blog/post/<int:post_id>")
 def api_blog_post(post_id: int):
-    """API trả về một bài viết cụ thể."""
-    post = next((p for p in BLOG_POSTS if p["id"] == post_id), None)
+    """API trả về một bài viết cụ thể.
+
+    Bài viết hidden vẫn trả về 200 nếu truy cập trực tiếp qua id
+    (để link riêng vẫn dùng được).
+    """
+    posts = load_blog_posts()
+    post = next((p for p in posts if p["id"] == post_id), None)
     if post:
         return jsonify(post)
     abort(404, description="Post not found")
+
+
+@app.route("/api/blog/post/<int:post_id>/hide", methods=["POST"])
+@login_required
+def api_blog_post_hide(post_id: int):
+    """Toggle hidden flag cho một post (chỉ owner / đã đăng nhập)."""
+    posts = load_blog_posts()
+    post = next((p for p in posts if p["id"] == post_id), None)
+    if not post:
+        return jsonify({"ok": False, "error": "Post not found"}), 404
+    body = request.get_data(as_text=True) or "{}"
+    try:
+        data = json.loads(body) if body.strip() else {}
+    except Exception:
+        data = {}
+    hidden = bool(data.get("hidden", not post.get("hidden")))
+    post["hidden"] = hidden
+    save_blog_posts(posts)
+    return jsonify({
+        "ok": True,
+        "id": post_id,
+        "hidden": hidden,
+        "message": "Đã ẩn bài viết" if hidden else "Đã hiện bài viết",
+    })
+
+
+# ===================== BLOG PERSISTENCE =====================
+def _blog_posts_path() -> str:
+    """Path tới file JSON lưu blog posts (đặt cạnh templates)."""
+    return os.path.join(os.path.dirname(__file__), "templates", "_blog_posts.json")
+
+
+def load_blog_posts() -> list:
+    """Load blog posts từ JSON file. Nếu file không tồn tại → trả về default
+    BLOG_POSTS (seed) và TỰ ĐỘNG ghi ra file lần đầu để lần sau không mất.
+    """
+    path = _blog_posts_path()
+    if os.path.exists(path):
+        try:
+            with open(path, "r", encoding="utf-8") as f:
+                data = json.load(f)
+                if isinstance(data, list) and data:
+                    return data
+        except Exception:
+            pass
+    # Fallback: ghi seed ra file rồi return
+    try:
+        with open(path, "w", encoding="utf-8") as f:
+            json.dump(BLOG_POSTS, f, ensure_ascii=False, indent=2)
+    except Exception:
+        pass
+    return BLOG_POSTS
+
+
+def save_blog_posts(posts: list) -> None:
+    """Ghi danh sách blog posts ra file JSON."""
+    path = _blog_posts_path()
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(posts, f, ensure_ascii=False, indent=2)
+
+
+@app.route("/api/blog/save", methods=["POST"])
+def api_blog_save():
+    """Nhận danh sách blog posts từ Dashboard và lưu vào file JSON.
+    Body: { posts: [...] }
+    Response: { ok, count, message }
+    """
+    try:
+        raw = request.get_data(as_text=True) or ""
+        if not raw:
+            return jsonify({"ok": False, "error": "Empty body"}), 400
+        try:
+            data = json.loads(raw)
+        except Exception as je:
+            return jsonify({"ok": False, "error": f"Invalid JSON: {je}"}), 400
+        posts = data.get("posts") if isinstance(data, dict) else data
+        if not isinstance(posts, list):
+            return jsonify({"ok": False, "error": "posts must be a list"}), 400
+        # Validate nhẹ từng post
+        cleaned = []
+        for p in posts:
+            if not isinstance(p, dict):
+                continue
+            if not p.get("title"):
+                continue
+            cleaned.append({
+                "id": int(p.get("id") or 0),
+                "icon": p.get("icon", "📝"),
+                "title": str(p.get("title", "")),
+                "date": str(p.get("date", "Vừa cập nhật")),
+                "excerpt": str(p.get("excerpt", "")),
+                "content": str(p.get("content", "")),
+                "image": str(p.get("image", "")),
+                "images": [str(u) for u in (p.get("images") or []) if u],
+                "hidden": bool(p.get("hidden", False)),
+            })
+        save_blog_posts(cleaned)
+        return jsonify({"ok": True, "count": len(cleaned), "message": f"Đã lưu {len(cleaned)} bài viết"})
+    except Exception as e:
+        return jsonify({"ok": False, "error": str(e)}), 500
 
 
 @app.route("/api/blog/image-upload", methods=["POST"])

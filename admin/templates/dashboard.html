@@ -442,6 +442,24 @@
     .blog-title { font-size: 12px; font-weight: 600; color: var(--text-bright); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .blog-date { font-size: 12px; color: var(--muted); margin-top: 2px; }
     .blog-actions { display: flex; gap: 5px; flex-shrink: 0; }
+    .blog-hidden-badge {
+      display: inline-block;
+      margin-left: 8px;
+      padding: 1px 6px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      color: #ff8a4c;
+      background: rgba(255, 138, 76, 0.12);
+      border: 1px solid rgba(255, 138, 76, 0.4);
+      border-radius: 4px;
+      vertical-align: middle;
+    }
+    .blog-item[data-id] .blog-title {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
 
     /* ====================== FONT PREVIEW ====================== */
     .font-preview {
@@ -2017,13 +2035,44 @@
     let blogPosts = [];
     async function loadBlogPosts() {
       try {
-        const res = await fetch('/api/blog/posts');
+        // Always reload từ server — server là source of truth.
+        // Dashboard (đã đăng nhập) request kèm include_hidden=1 để thấy cả bài ẩn.
+        // Server vẫn trả 401 nếu không phải owner, nên an toàn.
+        const res = await fetch('/api/blog/posts?include_hidden=1', { credentials: 'same-origin' });
         const data = await res.json();
-        blogPosts = data.posts;
+        const serverPosts = (data && data.posts) || [];
+        if (serverPosts.length > 0) {
+          blogPosts = serverPosts;
+        } else {
+          // Server rỗng → dùng localStorage backup
+          const savedPosts = localStorage.getItem('repo_blogPosts');
+          if (savedPosts) {
+            try { blogPosts = JSON.parse(savedPosts); } catch(e) { blogPosts = []; }
+          }
+        }
         renderBlogList();
-      } catch (e) { console.error(e); }
+      } catch (e) {
+        // Network fail → localStorage
+        try {
+          const savedPosts = localStorage.getItem('repo_blogPosts');
+          if (savedPosts) blogPosts = JSON.parse(savedPosts);
+        } catch(_) {}
+        renderBlogList();
+      }
     }
     loadBlogPosts();
+
+    // Lắng nghe broadcast từ các tab khác (Dashboard khác / blog page khác)
+    try {
+      if (window.BroadcastChannel) {
+        const bc = new BroadcastChannel('repo_blog');
+        bc.addEventListener('message', function(ev) {
+          if (ev.data && ev.data.type === 'updated') {
+            loadBlogPosts();
+          }
+        });
+      }
+    } catch(e) {}
 
     function renderBlogList() {
       const el = document.getElementById('blogList');
@@ -2032,18 +2081,87 @@
         return;
       }
       el.innerHTML = blogPosts.map(p => `
-        <div class="blog-item">
+        <div class="blog-item" data-id="${p.id}">
           <div class="blog-icon">${p.icon}</div>
           <div class="blog-info">
-            <div class="blog-title">${p.title}</div>
+            <div class="blog-title">
+              ${p.title}
+              ${p.hidden ? '<span class="blog-hidden-badge" title="Bài viết đang ẩn — chỉ truy cập qua link">🔒 ẨN</span>' : ''}
+            </div>
             <div class="blog-date">${p.date}</div>
           </div>
           <div class="blog-actions">
             <button class="box-btn-sm" onclick="editPost(${p.id})" title="Sửa">&#9998;</button>
+            <button class="box-btn-sm ${p.hidden ? 'danger' : ''}" onclick="togglePostHidden(${p.id})" title="${p.hidden ? 'Hiện bài viết' : 'Ẩn bài viết (chỉ truy cập qua link)'}">
+              ${p.hidden ? '🚫' : '👁'}
+            </button>
             <button class="box-btn-sm danger" onclick="deletePost(${p.id})" title="Xóa">&#128465;</button>
           </div>
         </div>
       `).join('');
+    }
+
+    async function togglePostHidden(id) {
+      const p = blogPosts.find(b => b.id === id);
+      if (!p) return;
+      const newHidden = !p.hidden;
+      // Cập nhật local NGAY để UI phản hồi tức thì (optimistic update)
+      p.hidden = newHidden;
+      renderBlogList();
+      // Đồng bộ localStorage
+      try { localStorage.setItem('repo_blogPosts', JSON.stringify(blogPosts)); } catch(_) {}
+
+      try {
+        // Thử PATCH qua endpoint riêng (cần login OAuth)
+        let res = await fetch(`/api/blog/post/${id}/hide`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'same-origin',
+          body: JSON.stringify({ hidden: newHidden }),
+        });
+        let data = {};
+        try { data = await res.json(); } catch (_) {}
+        if (!res.ok || !data.ok) {
+          // Fallback: dùng api_blog/save để persist (không cần login)
+          res = await fetch('/api/blog/save', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'same-origin',
+            body: JSON.stringify({ posts: blogPosts }),
+          });
+          data = await res.json().catch(() => ({}));
+          if (!res.ok || !data.ok) {
+            // Vẫn lỗi → revert
+            p.hidden = !newHidden;
+            renderBlogList();
+            try { localStorage.setItem('repo_blogPosts', JSON.stringify(blogPosts)); } catch(_) {}
+            alert('Không thể lưu: ' + (data.error || data.message || 'lỗi mạng'));
+            return;
+          }
+        }
+        // OK → broadcast cho tab khác
+        try {
+          if (window.BroadcastChannel) {
+            new BroadcastChannel('repo_blog').postMessage({ type: 'updated', posts: blogPosts });
+          }
+          localStorage.setItem('repo_blog_updated', String(Date.now()));
+        } catch (_) {}
+        // Toast feedback
+        try {
+          const toast = document.createElement('div');
+          toast.textContent = newHidden ? '🔒 Đã ẩn bài viết' : '👁 Đã hiện bài viết';
+          toast.style.cssText = 'position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--bg-overlay, #1a1f2b);color:var(--neon,#39ff14);border:1px solid var(--neon,#39ff14);padding:8px 16px;border-radius:6px;font-family:VT323,monospace;font-size:16px;z-index:99999;box-shadow:0 0 12px rgba(57,255,20,.4);opacity:1;transition:opacity .4s';
+          document.body.appendChild(toast);
+          setTimeout(() => { toast.style.opacity = '0'; }, 1400);
+          setTimeout(() => toast.remove(), 1900);
+        } catch (_) {}
+      } catch (e) {
+        // Network lỗi → revert + báo
+        p.hidden = !newHidden;
+        renderBlogList();
+        try { localStorage.setItem('repo_blogPosts', JSON.stringify(blogPosts)); } catch(_) {}
+        alert('Lỗi mạng: ' + e);
+      }
     }
 
     function editPost(id) {
@@ -2133,9 +2251,29 @@
       }
       renderBlogList();
       clearPostForm();
-      // Save to localStorage for repo page
+      // Backup to localStorage (for offline / preview)
       localStorage.setItem('repo_blogPosts', JSON.stringify(blogPosts));
-      showNotif('Đã lưu bài viết!');
+      // Persist to server — this is the source of truth
+      fetch('/api/blog/save', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ posts: blogPosts }),
+      }).then(r => r.json()).then(d => {
+        if (d && d.ok) {
+          showNotif(`Đã lưu bài viết (${d.count} bài trong DB)!`);
+          // Broadcast cho các tab khác (Front / blog page) reload
+          try {
+            if (window.BroadcastChannel) {
+              new BroadcastChannel('repo_blog').postMessage({ type: 'updated', posts: blogPosts });
+            }
+            localStorage.setItem('repo_blog_updated', String(Date.now()));
+          } catch(e) {}
+        } else {
+          showNotif('Lỗi lưu: ' + (d && d.error || 'unknown'), 'danger');
+        }
+      }).catch(e => {
+        showNotif('Lỗi kết nối server: ' + e.message, 'danger');
+      });
     }
 
     function deletePost(id) {
@@ -2143,7 +2281,25 @@
       blogPosts = blogPosts.filter(p => p.id !== id);
       renderBlogList();
       localStorage.setItem('repo_blogPosts', JSON.stringify(blogPosts));
-      showNotif('Đã xóa bài viết!', 'danger');
+      fetch('/api/blog/save', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ posts: blogPosts }),
+      }).then(r => r.json()).then(d => {
+        if (d && d.ok) {
+          showNotif('Đã xóa bài viết!', 'danger');
+          try {
+            if (window.BroadcastChannel) {
+              new BroadcastChannel('repo_blog').postMessage({ type: 'updated', posts: blogPosts });
+            }
+            localStorage.setItem('repo_blog_updated', String(Date.now()));
+          } catch(e) {}
+        } else {
+          showNotif('Lỗi lưu: ' + (d && d.error || 'unknown'), 'danger');
+        }
+      }).catch(e => {
+        showNotif('Lỗi kết nối server: ' + e.message, 'danger');
+      });
     }
 
     function clearPostForm() {

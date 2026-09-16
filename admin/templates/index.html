@@ -112,12 +112,18 @@
       z-index: 1;
       pointer-events: none;
       opacity: 0.55;
+      will-change: transform;
+      transform: translateZ(0);
+      backface-visibility: hidden;
     }
     #trail-canvas {
       position: fixed;
       inset: 0;
       z-index: 9998;
       pointer-events: none;
+      will-change: transform;
+      transform: translateZ(0);
+      backface-visibility: hidden;
     }
 
     /* ============================ SCROLLBAR (theme-aware) ============================ */
@@ -1659,25 +1665,42 @@
     .star-status {
       display: flex;
       align-items: center;
-      gap: 6px;
+      justify-content: center;
+      gap: 8px;
       font-family: 'VT323', monospace;
-      font-size: 12px;
-      color: var(--muted);
-      opacity: 0.75;
-      padding: 8px 10px;
+      font-size: 22px;
+      font-weight: 700;
+      line-height: 1;
+      white-space: nowrap; /* đảm bảo "I'm ONLINE" luôn 1 hàng ngang */
+      /* --status-text đặt từ applyDarkMode(): trắng (dark) / đen (light) */
+      color: var(--status-text, #e8fff0);
+      opacity: 0.95;
+      padding: 10px 12px;
       margin-top: auto;
     }
+    .star-status #status-text { letter-spacing: 0.5px; }
+    .star-status .status-online { font-weight: 700; }
+    /* Status dot: green-neon cố định, KHÔNG đổi theo theme */
     #status-dot {
-      width: 6px;
-      height: 6px;
-      background: var(--neon);
+      width: 10px;
+      height: 10px;
+      background: #39ff14;
       border-radius: 50%;
-      box-shadow: 0 0 6px var(--neon);
+      box-shadow: 0 0 6px #39ff14, 0 0 12px rgba(57,255,20,0.5);
       animation: statusPulse 2s ease-in-out infinite;
+      flex-shrink: 0;
+    }
+    /* ONLINE: green-neon cố định, KHÔNG đổi theo theme */
+    .status-online {
+      color: #39ff14;
+      font-weight: 700;
+      text-shadow: 0 0 6px #39ff14, 0 0 14px rgba(57,255,20,0.45);
+      letter-spacing: 1px;
+      margin-left: 2px;
     }
     @keyframes statusPulse {
-      0%, 100% { opacity: 1; box-shadow: 0 0 6px var(--neon); }
-      50% { opacity: 0.5; box-shadow: 0 0 3px var(--neon); }
+      0%, 100% { opacity: 1; box-shadow: 0 0 6px #39ff14; }
+      50% { opacity: 0.55; box-shadow: 0 0 3px #39ff14; }
     }
     @media (max-width: 900px) {
       .main-grid { flex-direction: column; }
@@ -2712,7 +2735,7 @@
           <div class="star-divider">—</div>
           <div class="star-status">
             <span id="status-dot"></span>
-            <span id="status-text">online</span>
+            <span id="status-text">I&#39;m <span class="status-online">ONLINE</span></span>
           </div>
         </div>
 
@@ -2814,9 +2837,8 @@
 
       <!-- ============================ HINT ============================ -->
       <section class="hint-box mt-4" data-box="hint-box">
-        <div class="hint-title">// Hướng dẫn sử dụng</div>
-        Đây là <b>kho lưu trữ tùy chỉnh (repository)</b> dành cho iOS — thêm URL này vào <b>Sileo</b>, <b>TrollStore</b> hoặc <b>Cyder</b> để cài đặt các gói bên dưới.<br/>
-        Trang tự động cập nhật khi có phiên bản mới: <b>App 3105</b> sẽ refresh trong vài giây, không cần thao tác thủ công.<br/>
+        <div class="hint-title">// Cảm ơn bạn đã ghé thăm</div>
+        Cảm ơn bạn đã dành thời gian ghé qua! Hy vọng bạn tìm được những gói mình cần — nếu thích, hãy ủng hộ để mình tiếp tục phát triển nhé. 💜<br/>
         <span class="tip">Mẹo: dùng ô tìm kiếm trong app để lọc gói theo tên / danh mục. Cuộn <b>♫ Now Playing</b> để phát nhạc nền khi duyệt.</span>
       </section>
 
@@ -2868,6 +2890,21 @@
       window.addEventListener('resize', resize);
       resize();
 
+      // === CACHED THEME COLOR ===
+      // getComputedStyle() là forced reflow — gọi 280 lần/frame sẽ đóng băng
+      // main thread khi user cuộn trang. Refresh chỉ khi CSS variable đổi.
+      var cachedRgb = '57, 255, 20';
+      var cachedRgb2 = '57, 255, 20';
+      function refreshRgb() {
+        cachedRgb = getComputedStyle(document.documentElement).getPropertyValue('--neon-rgb').trim() || '57, 255, 20';
+        cachedRgb2 = cachedRgb; // alias cho splash loop
+      }
+      refreshRgb();
+      // MutationObserver để bắt theme switch (light/dark) hoặc user đổi accent.
+      new MutationObserver(refreshRgb).observe(document.documentElement, {
+        attributes: true, attributeFilter: ['style', 'class']
+      });
+
       function Drop(init, heavy) {
         this.heavy = heavy;
         this.reset(init);
@@ -2901,8 +2938,7 @@
         ctx.beginPath();
         ctx.moveTo(this.x, this.y);
         ctx.lineTo(this.x + dx, this.y + dy);
-        var rgb = getComputedStyle(document.documentElement).getPropertyValue('--neon-rgb').trim() || '57, 255, 20';
-        ctx.strokeStyle = 'rgba(' + rgb + ',' + this.opacity + ')';
+        ctx.strokeStyle = 'rgba(' + cachedRgb + ',' + this.opacity + ')';
         ctx.lineWidth = this.thickness;
         ctx.stroke();
       };
@@ -2942,8 +2978,7 @@
             if (s.life <= 0) { splashes.splice(j, 1); continue; }
             ctx.beginPath();
             ctx.arc(s.x, s.y, Math.max(0.1, s.size), 0, Math.PI * 2);
-            var rgb2 = getComputedStyle(document.documentElement).getPropertyValue('--neon-rgb').trim() || '57, 255, 20';
-            ctx.fillStyle = 'rgba(' + rgb2 + ',' + (s.life * 0.4) + ')';
+            ctx.fillStyle = 'rgba(' + cachedRgb2 + ',' + (s.life * 0.4) + ')';
             ctx.fill();
           }
         }
@@ -3057,16 +3092,24 @@
       var lastTime = performance.now();
       var smoothedFps = 60;
       var lastTextUpdate = 0;
+      // Reset lastTime khi page trở lại visible (sau khi user scroll liên tục,
+      // click tab khác, etc.) — tránh EMA bị "đứng" do frame gap quá lớn.
+      document.addEventListener('visibilitychange', function() {
+        if (!document.hidden) lastTime = performance.now();
+      });
+      window.addEventListener('pageshow', function() {
+        lastTime = performance.now();
+      });
 
       function loop(now) {
         var dt = now - lastTime;
         lastTime = now;
-        if (dt > 0) {
+        // Nếu dt > 1s (page freeze / scroll stall / tab inactive), bỏ qua — không
+        // chia cho dt lớn (sẽ làm EMA sụt còn 0.001, FPS hiển thị "đứng").
+        if (dt > 0 && dt < 1000) {
           var instant = 1000 / dt;
-          // EMA: gộp giá trị mới với giá trị cũ
           smoothedFps = smoothedFps + alpha * (instant - smoothedFps);
         }
-        // Cập nhật text mỗi ~100ms (nhanh, không flicker)
         if (now - lastTextUpdate >= 100) {
           var fps = Math.round(smoothedFps);
           var color = fps >= 55 ? '#39ff14' : fps >= 30 ? '#ffdd00' : '#ff4040';
@@ -3127,10 +3170,14 @@
   }
   let tracks = loadPlaylist();
 
-  let idx = 0;
-  let playing = false;       // user-intent: button đã được bấm hay chưa
+  // Restore player state from localStorage so navigating to /blog continues playback.
+  let idx = parseInt(localStorage.getItem('mp_currentIdx') || '0', 10);
+  if (isNaN(idx) || idx < 0 || idx >= tracks.length) idx = 0;
+  let playing = localStorage.getItem('mp_playing') === 'true';
   let mediaReady = false;    // trackPlayer thực sự phát được (callback onPlay đã fire)
-  let loop = true;
+  let loop = localStorage.getItem('mp_loop') !== 'false';
+  // If state says "playing", keep the flag — boot code below will call play()
+  // so music resumes on Front repo too (instead of being reset on every reload).
   let hasMedia = false;      // playlist có ít nhất 1 src dùng được
 
   // ===== Volume =====
@@ -3387,14 +3434,19 @@
   }
   function toggle() { if (playing) pause(); else play(); }
 
-  if (btnPlay) btnPlay.addEventListener('click', toggle);
+  if (btnPlay) btnPlay.addEventListener('click', () => {
+    toggle();
+    try { localStorage.setItem('mp_playing', String(playing)); } catch (e) {}
+  });
   if (btnPrev) btnPrev.addEventListener('click', () => {
     idx = (idx - 1 + tracks.length) % tracks.length;
+    try { localStorage.setItem('mp_currentIdx', String(idx)); } catch (e) {}
     render();
     if (playing) play();
   });
   if (btnNext) btnNext.addEventListener('click', () => {
     idx = (idx + 1) % tracks.length;
+    try { localStorage.setItem('mp_currentIdx', String(idx)); } catch (e) {}
     render();
     // Auto-play bài mới nếu user đang phát nhạc
     if (playing) play();
@@ -3406,6 +3458,7 @@
     loop = !loop;
     btnLoop.setAttribute('aria-pressed', String(loop));
     btnLoop.title = loop ? 'Lặp lại (BẬT)' : 'Lặp lại (TẮT)';
+    try { localStorage.setItem('mp_loop', String(loop)); } catch (e) {}
     if (trackPlayer) trackPlayer.setLoop(loop);
     else if (audio) audio.loop = loop;
   });
@@ -3451,8 +3504,11 @@
   } catch(e) {}
 
   render();
-  // KHÔNG auto-play lúc load trang — để browser autoplay policy không block.
-  // Icon mặc định là PLAY, user bấm mới chạy.
+  // Auto-play nếu user trước đó đang phát nhạc (tiếp tục từ trang /blog hoặc
+  // refresh Front). Browser có thể block lần đầu — user click/scroll sẽ resume.
+  if (playing && tracks.length > 0) {
+    try { play(); } catch (e) {}
+  }
 })();
 (function() {
   // ----- Moon phase calculation -----
@@ -3929,8 +3985,152 @@
       },
     });
 
+    // Init rain players xong → immediately load + play the right track.
+    // Fix bug: onReady() chỉ fire khi TrackPlayer constructor gọi onReady({ type:'mp3' }),
+    // nhưng audio.src còn rỗng → play() silent-fail. Gọi load() đúng URL ngay đây.
+    // QUAN TRỌNG: phải chờ audio 'canplay'/'loadeddata' event trước khi play(),
+    // nếu không play() sẽ silent-fail và audio bị paused mãi.
+    // Cũng phải handle autoplay policy: nếu play() bị block, thử lại lần
+    // đầu user tương tác (click/scroll/keydown).
+
+    function _tryRainPlay(kind) {
+      var p = kind === 'heavy' ? window.__rainHeavyPlayer : window.__rainLightPlayer;
+      var audio = document.getElementById(kind === 'heavy' ? 'rainHeavyAudio' : 'rainAudio');
+      if (!p || !audio) return;
+      // Gọi audio.play() trực tiếp để bắt được autoplay reject promise.
+      // (TrackPlayer.play() return undefined khi currentType chưa set, miss autoplay error)
+      try {
+        var pr = audio.play();
+        if (pr && pr.catch) {
+          pr.catch(function() {
+            audio.dataset.pendingPlay = '1';
+          });
+        }
+      } catch(e) {}
+      // Đánh dấu pending luôn (kể cả khi play() undefined) — gesture sẽ retry.
+      if (audio.paused) {
+        audio.dataset.pendingPlay = '1';
+      }
+      if (!window.__rainGestureBound) {
+        window.__rainGestureBound = true;
+        function resumeOnGesture() {
+          // Resume tất cả audio đang pending (nếu có). KHÔNG self-remove listener
+          // — cần thiết để resume lần sau nếu autoplay lại block (URL thay đổi,
+          // tab inactive, ...). Chỉ skip khi tất cả audio đang phát rồi.
+          var needResume = false;
+          ['__rainLightPlayer', '__rainHeavyPlayer'].forEach(function(name) {
+            var pp = window[name];
+            var aa = pp && pp.audio;
+            if (pp && aa && aa.dataset && aa.dataset.pendingPlay === '1') {
+              needResume = true;
+              delete aa.dataset.pendingPlay;
+              var pr = pp.play();
+              if (pr && pr.catch) {
+                pr.catch(function() {
+                  if (aa) aa.dataset.pendingPlay = '1';
+                });
+              }
+            }
+          });
+          // Nếu không cần resume nữa → không cần nghe thêm.
+          if (!needResume) {
+            ['click', 'keydown', 'scroll', 'touchstart'].forEach(function(ev) {
+              document.removeEventListener(ev, resumeOnGesture);
+            });
+            window.__rainGestureBound = false;
+          }
+        }
+        ['click', 'keydown', 'scroll', 'touchstart'].forEach(function(ev) {
+          document.addEventListener(ev, resumeOnGesture);
+        });
+      }
+    }
+
+    (function initHeavy() {
+      var heavySrc = localStorage.getItem('repo_rainAudioHeavy') || '/assets/rain_heavy.mp3';
+      var infoH = MP && MP.parseTrackUrl ? MP.parseTrackUrl(heavySrc) : { type: 'mp3' };
+      var played = false;
+      function tryPlay() {
+        if (played || !window.__rainHeavyPlayer || !window.heavyRain) return;
+        played = true;
+        window.__rainHeavyPlayer.setLoop(true);
+        window.__rainHeavyPlayer.setVolume(window._rainEffectiveVolume('heavy'));
+        _tryRainPlay('heavy');
+        window.__rainCurrentHeavySrc = heavySrc;
+        window.__rainCurrentHeavyPlaying = true;
+      }
+      var audio = document.getElementById('rainHeavyAudio');
+      if (audio) {
+        audio.addEventListener('canplay', tryPlay, { once: true });
+        audio.addEventListener('loadeddata', tryPlay, { once: true });
+        if (audio.readyState >= 3) { tryPlay(); }
+      }
+      window.__rainHeavyPlayer.load({ src: heavySrc, type: infoH.type, title: 'Rain Heavy', artist: '', cover: '' }).then(function() {
+        window.__rainCurrentHeavySrc = heavySrc;
+      }).catch(function(e) {
+        console.warn('[rain-heavy] init load failed:', e && e.message);
+      });
+    }());
+
+    // Light player also needs immediate load so _syncRainAudio can skip re-load on same URL
+    (function initLight() {
+      var lightSrc = localStorage.getItem('repo_rainAudioLight') || '/assets/rain.mp3';
+      var infoL = MP && MP.parseTrackUrl ? MP.parseTrackUrl(lightSrc) : { type: 'mp3' };
+      var played = false;
+      function tryPlay() {
+        if (played || !window.__rainLightPlayer || window.rainEnabled === false) return;
+        played = true;
+        window.__rainLightPlayer.setLoop(true);
+        window.__rainLightPlayer.setVolume(window._rainEffectiveVolume('light'));
+        _tryRainPlay('light');
+        window.__rainCurrentLightSrc = lightSrc;
+        window.__rainCurrentLightPlaying = true;
+      }
+      var audio = document.getElementById('rainAudio');
+      if (audio) {
+        audio.addEventListener('canplay', tryPlay, { once: true });
+        audio.addEventListener('loadeddata', tryPlay, { once: true });
+        if (audio.readyState >= 3) { tryPlay(); }
+      }
+      window.__rainLightPlayer.load({ src: lightSrc, type: infoL.type, title: 'Rain Light', artist: '', cover: '' }).then(function() {
+        window.__rainCurrentLightSrc = lightSrc;
+      }).catch(function(e) {
+        console.warn('[rain-light] init load failed:', e && e.message);
+      });
+    }());
+
     window.__rainReady = true;
   };
+
+  // ====== UX: lần đầu vào Front → click bất kỳ đâu sẽ bật mưa ======
+  // Điều kiện: localStorage CHƯA từng có key `rainEnabled` (user chưa từng set).
+  // Sau khi user đã explicit bật/tắt thì KHÔNG override — tôn trọng lựa chọn.
+  // Detect first-time bằng cách check `rainEnabled` null ngay khi script chạy,
+  // không phải sau gesture (vì gesture đến sau).
+  (function setupRainOnFirstClick() {
+    if (window.__rainOnFirstClickBound) return;
+    var FIRST_TIME = (localStorage.getItem('rainEnabled') === null);
+    if (!FIRST_TIME) return;
+    window.__rainOnFirstClickBound = true;
+
+    function ensureRainOn() {
+      // Bật mưa lần đầu
+      window.rainEnabled = true;
+      localStorage.setItem('rainEnabled', 'true');
+      if (window.Settings && Settings.set) Settings.set('rainEnabled', true);
+      var tog = document.getElementById('toggleRain');
+      if (tog) tog.checked = true;
+      try { window._syncRainAudio && window._syncRainAudio(); } catch(e) {}
+      // Bỏ listener — đây là 1-shot UX hook
+      ['click', 'keydown', 'scroll', 'touchstart'].forEach(function(ev) {
+        document.removeEventListener(ev, ensureRainOn, true);
+      });
+      window.__rainOnFirstClickBound = false;
+    }
+    ['click', 'keydown', 'scroll', 'touchstart'].forEach(function(ev) {
+      document.addEventListener(ev, ensureRainOn, true);
+    });
+  })();
 
   window._rainEffectiveVolume = function(kind) {
     var rainVol = parseInt(localStorage.getItem('rain_volume') || '70', 10);
@@ -3939,11 +4139,11 @@
   };
 
   window._syncRainAudio = _doSync;
-  // Track để skip khi cùng URL + toggle
-  var __rainCurrentLightSrc = null;
-  var __rainCurrentHeavySrc = null;
-  var __rainCurrentLightPlaying = false;
-  var __rainCurrentHeavyPlaying = false;
+  // Track để skip khi cùng URL + toggle — dùng window.* để các IIFE khác thấy được
+  window.__rainCurrentLightSrc = null;
+  window.__rainCurrentHeavySrc = null;
+  window.__rainCurrentLightPlaying = false;
+  window.__rainCurrentHeavyPlaying = false;
 
   function _doSync() {
     var rainOn = window.rainEnabled !== false;
@@ -3976,11 +4176,19 @@
         }).catch(function(e) {
           console.warn('[rain-light] load failed:', e && e.message);
           var a = document.getElementById('rainAudio');
-          if (a) { a.src = lightSrc; a.load(); a.volume = window._rainEffectiveVolume('light'); a.loop = true; a.play().catch(function(){}); }
+          if (a) {
+            a.src = lightSrc;
+            a.load();
+            a.volume = window._rainEffectiveVolume('light');
+            a.loop = true;
+            var pr = a.play();
+            if (pr && pr.catch) pr.catch(function(){});
+          }
         });
       } else if (!__rainCurrentLightPlaying) {
         // Cùng URL, chỉ re-play nếu chưa phát
-        window.__rainLightPlayer.play().catch(function(){});
+        var prL = window.__rainLightPlayer.play();
+        if (prL && prL.catch) prL.catch(function(){});
         __rainCurrentLightPlaying = true;
       }
     } else {
@@ -4003,10 +4211,18 @@
           }).catch(function(e) {
             console.warn('[rain-heavy] load failed:', e && e.message);
             var a = document.getElementById('rainHeavyAudio');
-            if (a) { a.src = heavySrc; a.load(); a.volume = window._rainEffectiveVolume('heavy'); a.loop = true; a.play().catch(function(){}); }
+            if (a) {
+              a.src = heavySrc;
+              a.load();
+              a.volume = window._rainEffectiveVolume('heavy');
+              a.loop = true;
+              var pr = a.play();
+              if (pr && pr.catch) pr.catch(function(){});
+            }
           });
         } else if (!__rainCurrentHeavyPlaying) {
-          window.__rainHeavyPlayer.play().catch(function(){});
+          var prH2 = window.__rainHeavyPlayer.play();
+          if (prH2 && prH2.catch) prH2.catch(function(){});
           __rainCurrentHeavyPlaying = true;
         }
       } else {
@@ -4131,6 +4347,8 @@
       document.documentElement.style.setProperty('--option-color', '#e8fff0');
       document.documentElement.style.setProperty('--input-shadow', 'inset 0 0 0 1px rgba(0,0,0,0.3)');
       document.documentElement.style.setProperty('--slider-bg', 'rgba(255,255,255,0.1)');
+      // star-status: trắng cho dark mode
+      document.documentElement.style.setProperty('--status-text', '#e8fff0');
     } else {
       var bg = '#f0f0f5';
       document.documentElement.style.setProperty('--bg-color', bg);
@@ -4145,6 +4363,8 @@
       document.documentElement.style.setProperty('--option-color', '#1a1a1a');
       document.documentElement.style.setProperty('--input-shadow', 'inset 0 0 0 1px rgba(0,0,0,0.1)');
       document.documentElement.style.setProperty('--slider-bg', 'rgba(0,0,0,0.1)');
+      // star-status: đen cho light mode
+      document.documentElement.style.setProperty('--status-text', '#0a0a1a');
     }
     // Re-derive panel colors for the new mode using current slider value
     if (window._applyTransparency) {
@@ -5141,9 +5361,31 @@
       pageState.blog = 1; // reset page khi blog reload
       console.log('[blog] loadBlog: total=' + cache.blogPosts.length + ' ids=' + cache.blogPosts.map(p => p.id).join(','));
     } catch (err) {
+      // Fallback: localStorage (do Dashboard ghi)
+      try {
+        const saved = localStorage.getItem('repo_blogPosts');
+        if (saved) cache.blogPosts = JSON.parse(saved);
+      } catch(e) {}
       console.warn('dynamicFit: load blog failed', err);
     }
   }
+
+  // Lắng nghe broadcast khi Dashboard save bài mới
+  try {
+    if (window.BroadcastChannel) {
+      const bc = new BroadcastChannel('repo_blog');
+      bc.addEventListener('message', function(ev) {
+        if (ev.data && ev.data.type === 'updated') {
+          loadBlog().then(renderBlog);
+        }
+      });
+    }
+  } catch(e) {}
+  window.addEventListener('storage', function(e) {
+    if (e.key === 'repo_blog_updated' || e.key === 'repo_blogPosts') {
+      loadBlog().then(renderBlog);
+    }
+  });
 
   function renderBlog() {
     const list = document.getElementById('blogList');

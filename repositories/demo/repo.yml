@@ -15,6 +15,14 @@ _shared_screens: &screens
   - assets/preview/preview-third.png
   - assets/preview/preview-fourth.png
 
+_shared_os_rules: &os_rules
+  - minimum: "17.0"
+    maximum: "18.7.1"
+  - minimum: "26.0"
+    maximum: "26.6.1"
+  - minimum: "27.0"
+    maximum: "27.0"
+
 # ==========================================
 # DANH SÁCH PACKAGES
 # ==========================================
@@ -89,9 +97,7 @@ packages:
     download: packages/HDR_120FPS.3105
     sha256: C6A6D2A32925B1BC8F844A3736DE7E3056EE06935E49836F1C89132A25851372
     size: 8200
-    supportedOS:
-      - minimum: "17.0"
-        maximum: "18.7.1"
+    supportedOS: *os_rules
     featured: true
     isPrivate: false
     description: |
@@ -243,9 +249,7 @@ packages:
     download: packages/Classical_dialer.3105pass
     sha256: 3557A840CF720126142E7EE07AEC5AA10754AEE6F59DE7ABF66807195D1C85C3
     size: 829136
-    supportedOS:
-      - minimum: "17.0"
-        maximum: "18.7.1"
+    supportedOS: *os_rules
     featured: true
     isPrivate: false
     description: |
@@ -296,9 +300,7 @@ packages:
     download: packages/Basic_CircleB&W.3105pass
     sha256: BA91799564D04544CFF874C897273037AA4717456A93B7A70798CBEFEE97AAF8
     size: 406950
-    supportedOS:
-      - minimum: "17.0"
-        maximum: "18.7.1"
+    supportedOS: *os_rules
     featured: true
     isPrivate: false
     description: |
@@ -345,9 +347,7 @@ packages:
     download: packages/Dual_Horizon.3105pass
     sha256: 48807D528F2CF645C6B726A911C242FE4E826295C9076E1660D9C5D4788229EB
     size: 928132
-    supportedOS:
-      - minimum: "17.0"
-        maximum: "18.7.1"
+    supportedOS: *os_rules
     featured: true
     isPrivate: false
     description: |
@@ -397,9 +397,7 @@ packages:
     download: packages/Flower&Butterfly_Pink.3105pass
     sha256: 57EDB20E5572705C4A822F26DF41AC44EF95FAA52757DE0A6CDD836BA3BD67D1
     size: 1052199
-    supportedOS:
-      - minimum: "17.0"
-        maximum: "18.7.1"
+    supportedOS: *os_rules
     featured: true
     isPrivate: false
     description: |
@@ -485,3 +483,25 @@ packages:
            
       ❤️ Cảm ơn bạn đã ủng hộ!
     changelog: 🎉 v4.6.0 — Phiên bản 4.6 mới nhất đã được cập nhật
+
+  # ----- owen-000 -----
+  - identifier: owen-000
+    name: TEST
+    author: "@owenindahouse"
+    version: 1.0.0
+    summary: ✨ Pubg • Bản dùng thử • Trải nghiệm tính năng nâng cao
+    password: "2752"
+    category: Customization
+    tags: [CUSTOM]
+    publishedAt: "2026-09-16T09:04:37.000Z"
+    icon: assets/icon/zakaryaxOwen_logo.png
+    banner: assets/banner/banner_new.png
+    screenshots: *screens
+    download: packages/PATCH_COOP_ZAKARYA_-_OWEN_2.3105
+    sha256: E7B705EF7AC4CEE4324C5B0D9E702A86124920ACE92B490EA830F4721B84416F
+    size: 86610
+    supportedOS: *os_rules
+    featured: true
+    isPrivate: false
+    description: téttt
+    changelog: 🎉 v1.0.0 — Phát hành lần đầu
