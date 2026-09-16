@@ -3966,6 +3966,8 @@
     // TÁCH BIỆT: Front repo chỉ ghi repo_theme (+ theme alias cũ).
     // KHÔNG đụng dash_theme (Dashboard) / blog_theme (Blog).
     localStorage.setItem('repo_theme', name);
+    // Đẩy lên GitHub để PUBLIC_ADMIN_THEME bake cho user anonymous (GH Pages).
+    if (window.syncAdminSettingsPatch) syncAdminSettingsPatch({ theme: name });
   };
 
   // Tab switching for settings
@@ -3993,6 +3995,8 @@
     if (window.Settings) Settings.set('shadowTheme', name);
     // Re-apply logo shadow styles immediately so logo updates without reload
     if (typeof window.reapplyLogoShadow === 'function') window.reapplyLogoShadow();
+    // Đẩy shadow_theme lên GitHub để bake PUBLIC_ADMIN_THEME
+    if (window.syncAdminSettingsPatch) syncAdminSettingsPatch({ shadow_theme: name });
   };
 
   document.querySelectorAll('.theme-btn').forEach(function(btn) {
@@ -4410,6 +4414,10 @@
       var transValueLabel = document.getElementById('transValue');
       if (transValueLabel) transValueLabel.textContent = transVal;
       applyDarkMode(isDark, transVal);
+      // Đẩy dark_mode + transparency lên GitHub để bake PUBLIC_ADMIN_THEME
+      if (window.syncAdminSettingsPatch) {
+        syncAdminSettingsPatch({ dark_mode: isDark, transparency: parseInt(transVal, 10) });
+      }
     });
   }
 
@@ -4507,6 +4515,11 @@
       localStorage.setItem('transparency', String(val));
       localStorage.setItem('repo_transparency', String(val));
       if (window.Settings) Settings.set('transparency', String(val));
+      // Đẩy transparency + dark_mode hiện tại lên GitHub để bake PUBLIC_ADMIN_THEME
+      if (window.syncAdminSettingsPatch) {
+        var isDarkNow = localStorage.getItem('darkMode') !== 'false';
+        syncAdminSettingsPatch({ transparency: val, dark_mode: isDarkNow });
+      }
     });
   }
   // Expose for applyDarkMode() to pick up alpha + current slider value
@@ -5681,6 +5694,55 @@
       if (e.key === 'admin_nav_links') renderNavLinks();
     });
   }
+
+  // ====================== SYNC to admin-settings.json (GitHub repo) ======================
+  // Helper: merge 1 patch các key:value vào file .3105/admin-settings.json trên repo
+  // qua endpoint /api/admin-settings-merge. Được gọi mỗi khi user đổi theme/shadow/
+  // dark_mode/transparency ở Front Repo Settings — để build_public.py bake vào
+  // PUBLIC_ADMIN_THEME cho user anonymous (GH Pages).
+  //
+  // An toàn: chỉ chạy khi đã login (cookie session hợp lệ) — endpoint yêu cầu
+  // @login_required. Nếu anonymous user gọi → server trả 401 → im lặng log warning,
+  // KHÔNG crash UI.
+  let _syncPatchBusy = false;
+  let _syncPatchPending = null;
+  window.syncAdminSettingsPatch = async function(patch) {
+    if (!patch || typeof patch !== 'object') return;
+    if (_syncPatchBusy) {
+      _syncPatchPending = { ...(_syncPatchPending || {}), ...patch };
+      return;
+    }
+    _syncPatchBusy = true;
+    try {
+      const resp = await fetch('/api/admin-settings-merge', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'same-origin',
+        body: JSON.stringify({
+          slug: (window.PUBLIC_REPO_SLUG || 'demo'),
+          patch,
+          mode: 'direct',
+        }),
+      });
+      if (!resp.ok) {
+        console.warn('[syncAdminSettingsPatch]', resp.status);
+        return;
+      }
+      const data = await resp.json();
+      if (data && data.ok) {
+        console.log('[syncAdminSettingsPatch] OK', Object.keys(patch).join(', '));
+      }
+    } catch (e) {
+      console.warn('[syncAdminSettingsPatch] failed:', e);
+    } finally {
+      _syncPatchBusy = false;
+      if (_syncPatchPending) {
+        const next = _syncPatchPending;
+        _syncPatchPending = null;
+        try { await window.syncAdminSettingsPatch(next); } catch (_) {}
+      }
+    }
+  };
 
   // === Boot ===
   async function boot() {
