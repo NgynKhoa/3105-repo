@@ -398,6 +398,22 @@ def build(repo_slug: str = "demo", clean: bool = True, owner: bool = False,
             copied += 1
     log(f"✓ Mirror referenced assets ({copied} files copied từ {src_assets.name}/)")
 
+    # 5b) Mirror root-level assets/blog/ → public/assets/blog/
+    # Admin upload blog cover/gallery vào assets/blog/ ở root (không phải
+    # repositories/demo/assets/blog). Pages cần file này để render blog cover.
+    src_blog_assets = ROOT / "assets" / "blog"
+    if src_blog_assets.exists():
+        blog_copied = 0
+        for f in src_blog_assets.rglob("*"):
+            if not f.is_file() or f.name.startswith("."):
+                continue
+            rel = f.relative_to(src_blog_assets)
+            d = PUBLIC / "assets" / "blog" / rel
+            d.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(f, d)
+            blog_copied += 1
+        log(f"✓ Mirror blog assets ({blog_copied} files copied từ assets/blog/)")
+
     # 6) Render blog.html (trang bài viết chi tiết) cho public mode.
     # User click blog item trên public site → sang ./blog.html?id=<id>
     # vì Flask /blog-post/<id> không có trên GH Pages.

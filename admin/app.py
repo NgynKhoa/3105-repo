@@ -76,6 +76,16 @@ except ImportError:
 if not _env_loaded:
     print("[env] No .env loaded; relying on process env vars")
 
+# Fix relative imports khi chạy file trực tiếp: `python admin/app.py`
+# (khi đó __package__="" → from .config import Config sẽ lỗi).
+# Nếu __package__ rỗng, set thành "admin" và đảm bảo parent của admin/ có trong sys.path
+if __package__ in (None, ""):
+    __package__ = "admin"
+    import sys, os as _os
+    _parent = _os.path.dirname(_os.path.dirname(_os.path.abspath(__file__)))
+    if _parent not in sys.path:
+        sys.path.insert(0, _parent)
+
 # Import config + auth blueprint
 from .config import Config
 from .auth import auth_bp, login_required, owner_required, is_authenticated
@@ -88,6 +98,7 @@ from .github_release import (
 )
 from .github_raw import register_raw_routes
 from .fetch_repo_json import register_fetch_repo_json
+from .sync import register_sync_routes
 
 
 # ---------------------------------------------------------------------------
@@ -138,6 +149,14 @@ CATEGORY_OPTIONS = [
 IDENTIFIER_RE = re.compile(r"^[a-z0-9][a-z0-9._-]{1,63}$")
 
 app = Flask(__name__, template_folder="templates", static_folder="static")
+# Bắt buộc: luôn re-read templates từ đĩa mỗi request (không cache in-memory),
+# kể cả khi debug=False. Fix bug "restart server vẫn serve index.html cũ".
+app.config["TEMPLATES_AUTO_RELOAD"] = True
+app.jinja_env.auto_reload = True
+# TẮT HẲN template cache để chắc chắn không bao giờ serve bản cũ (local dev).
+app.jinja_env.cache = {}
+# Cache static files tối đa 0s (browser hard-refresh để thấy app.js mới)
+app.config["SEND_FILE_MAX_AGE_DEFAULT"] = 0
 # Giới hạn upload: 95MB mỗi file
 # Lưu ý: GitHub hard-blocks push nếu file >= 100MB, nên để dưới 100MB
 app.config["MAX_CONTENT_LENGTH"] = 95 * 1024 * 1024
@@ -159,6 +178,7 @@ app.register_blueprint(auth_bp)
 register_admin_settings_routes(app)
 register_raw_routes(app)
 register_fetch_repo_json(app)
+register_sync_routes(app, ROOT, Config)
 
 # In cảnh báo cấu hình (nếu có) ngay lúc boot
 for _issue in Config.validate_for_runtime():
@@ -590,6 +610,12 @@ def add_no_cache_headers(response):
 @app.route("/")
 def index():
     import os as _os
+    # Bắt buộc Jinja re-read index.html từ đĩa mỗi request (không cache in-memory).
+    # Fix bug "adminSaveGroup not found in HTML response" do Flask cache template.
+    try:
+        app.jinja_env.cache.pop(_os.path.join(app.template_folder, "index.html"), None)
+    except Exception:
+        pass
     bootstrap_js = (
         f"window.CATEGORIES = {json.dumps(CATEGORY_OPTIONS)};\n"
         f"window.DEFAULT_OS_RULES = {json.dumps(DEFAULT_OS_RULES)};\n"
