@@ -7,8 +7,10 @@ on:
     paths:
       - 'repositories/**'
       - 'admin/templates/index.html'
+      - 'admin/templates/_blog_posts.json'
       - 'admin/static/**'
       - 'tools/build_public.py'
+      - '.3105/admin-settings.json'
       - '.github/workflows/build-public.yml'
   workflow_dispatch:
 

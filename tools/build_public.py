@@ -66,6 +66,22 @@ def load_admin_settings(repo_slug: str) -> dict:
         return {}
 
 
+def load_blog_posts() -> list:
+    """Load blog posts từ admin/templates/_blog_posts.json.
+
+    File này admin (Flask UI) quản lý qua /admin dashboard — không có trên
+    repo.yml → cần đọc riêng và bake vào PUBLIC_REPO_DATA.blog.
+    """
+    p = ADMIN / "templates" / "_blog_posts.json"
+    if not p.is_file():
+        return []
+    try:
+        data = json.loads(p.read_text(encoding="utf-8"))
+        return data if isinstance(data, list) else []
+    except (OSError, ValueError):
+        return []
+
+
 # Cache version cho public build — bump khi Front Repo thay đổi để bust browser cache.
 # KHÔNG cần sync với admin cache_version; 2 hệ thống hoàn toàn độc lập.
 _CACHE_VERSION = 8
@@ -228,6 +244,13 @@ def build(repo_slug: str = "demo", clean: bool = True, owner: bool = False,
         if isinstance(pl, list) and pl:
             public_playlist = pl
             log(f"✓ Load {len(public_playlist)} tracks từ admin-settings.json")
+
+    # 1d) Load blog posts (admin/templates/_blog_posts.json — admin Flask quản lý)
+    # Bake vào repo_data.blog để PUBLIC_REPO_DATA.blog + public/repo.json có data.
+    blog_posts = load_blog_posts()
+    if blog_posts:
+        repo_data["blog"] = blog_posts
+        log(f"✓ Load {len(blog_posts)} blog posts từ _blog_posts.json")
 
     # 2) Render index.html
     html = render_index_html(repo_slug, repo_data, owner=owner, owner_github=owner_github,
