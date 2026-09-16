@@ -5054,8 +5054,16 @@
             || '';
           const _ghRepo = window.PUBLIC_REPO_NAME || window.PUBLIC_REPO_SLUG || '';
           const _branch = window.PUBLIC_REPO_DEFAULT_BRANCH || 'main';
-          if (_ghOwner && _ghRepo) {
-            dl = `https://raw.githubusercontent.com/${_ghOwner}/${_ghRepo}/${_branch}/${pkg.download}`;
+          // Repo gốc đặt file .3105 trong `repositories/<slug>/packages/`
+          // (vd `repositories/demo/packages/foo.3105`), trong khi repo.json
+          // lưu download path tương đối với repo slug (`packages/foo.3105`).
+          // Cần prefix thư mục slug để URL raw GitHub đúng.
+          const _slug = window.PUBLIC_REPO_SLUG || '';
+          const _relPath = pkg.download.startsWith('packages/')
+            ? `repositories/${_slug}/${pkg.download}`
+            : pkg.download;
+          if (_ghOwner && _ghRepo && _slug) {
+            dl = `https://raw.githubusercontent.com/${_ghOwner}/${_ghRepo}/${_branch}/${_relPath}`;
             dlMeta = {
               asset_name: (pkg.download || '').split('/').pop() || '',
               size_bytes: pkg.size || 0,
