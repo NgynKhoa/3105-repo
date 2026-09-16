@@ -334,12 +334,16 @@ def build(repo_slug: str = "demo", clean: bool = True, owner: bool = False,
         log(f"✓ Mirror admin/static → public/static ({n} files)")
 
     # 4) Snapshot repo.json
+    # Đảm bảo các key optional (blog, ...) luôn tồn tại để tránh KeyError
+    # ở downstream như GitHub Actions kiểm tra d['data']['blog'].
+    snapshot_data = dict(repo_data)
+    snapshot_data.setdefault('blog', [])
     (PUBLIC / "repo.json").write_text(
-        json.dumps({"slug": repo_slug, "data": repo_data}, ensure_ascii=False, indent=2),
+        json.dumps({"slug": repo_slug, "data": snapshot_data}, ensure_ascii=False, indent=2),
         encoding="utf-8",
     )
-    log(f"✓ Snapshot repo.json ({len(repo_data.get('packages', []))} packages, "
-        f"{len(repo_data.get('blog', []))} blog posts)")
+    log(f"✓ Snapshot repo.json ({len(snapshot_data.get('packages', []))} packages, "
+        f"{len(snapshot_data.get('blog', []))} blog posts)")
 
     # 5) Mirror assets — copy toàn bộ folder assets/ của repo (kể cả file không
     # được reference trong repo.yml, vì YAML có thể sai path nhưng file vẫn dùng
