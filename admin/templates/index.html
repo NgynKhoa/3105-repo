@@ -6561,6 +6561,20 @@ document.querySelectorAll('#blogList .blog-item').forEach(item => {
   // Expose để loadRepo có thể gọi lại sau khi render package list.
   window.__reapplyLayout = function() { applyBoxesLayout(); };
 
+  // Public mode: dùng layout bake-in từ PUBLIC_REPO_DATA.previewLayout
+  if (window.PUBLIC_MODE && window.PUBLIC_REPO_DATA) {
+    const _baked = window.PUBLIC_REPO_DATA.previewLayout
+      || (window.PUBLIC_ADMIN_THEME && window.PUBLIC_ADMIN_THEME.repo_previewLayout);
+    if (_baked && _baked.boxes && _baked.boxes.length) {
+      layoutData = _baked;
+      applyBoxesLayout();
+      window.addEventListener('load', function() {
+        setTimeout(applyBoxesLayout, 300);
+        setTimeout(applyBoxesLayout, 1200);
+      });
+      return; // skip API call
+    }
+  }
   fetch('/api/get-applied-layout')
     .then(function(r) { return r.json(); })
     .then(function(data) {
