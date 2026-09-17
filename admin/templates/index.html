@@ -5837,16 +5837,35 @@
           } catch (_) {}
         }
         // 2) Apply theme/shadow/dark/trans/bg (code cũ)
+        // Support CẢ snake_case (admin-settings.json cũ) + camelCase (baked public-defaults).
+        // Pages chỉ bake camelCase, nên cần fallback camelCase để áp dụng đúng.
         if (t.theme && window.applyTheme) window.applyTheme(t.theme);
-        if (t.shadow_theme && window.applyShadowTheme) window.applyShadowTheme(t.shadow_theme);
-        if (t.dark_mode !== undefined && t.dark_mode !== null) {
-          const isDark = String(t.dark_mode) === 'true';
+        const _shadow = t.shadow_theme ?? t.shadowTheme;
+        if (_shadow && window.applyShadowTheme) window.applyShadowTheme(_shadow);
+        const _darkRaw = t.dark_mode !== undefined ? t.dark_mode : t.darkMode;
+        if (_darkRaw !== undefined && _darkRaw !== null) {
+          const isDark = String(_darkRaw) === 'true';
           const slider = document.getElementById('rangeTransparency');
           const tv = t.transparency != null ? parseInt(t.transparency, 10)
                        : (slider ? parseInt(slider.value, 10) : 92);
           if (window.applyDarkMode) window.applyDarkMode(isDark, tv);
         }
-        if (t.bg_image && window._applyBackground) window._applyBackground(t.bg_image);
+        const _bg = t.bg_image ?? t.bgImage;
+        if (_bg && window._applyBackground) window._applyBackground(_bg);
+        // Apply rain config (camelCase từ public-defaults)
+        if (t.rainEnabled !== undefined && window.rainEnabled !== undefined) {
+          // rainEnabled được expose global bởi rain module; toggle nếu khác
+          if (window.toggleRain) {
+            const want = String(t.rainEnabled) === 'true';
+            const current = String(window.rainEnabled) === 'true';
+            if (want !== current) window.toggleRain();
+          }
+        }
+        if (t.heavyRain !== undefined && window.toggleHeavyRain) {
+          const want = String(t.heavyRain) === 'true';
+          const current = String(window.heavyRain) === 'true';
+          if (want !== current) window.toggleHeavyRain();
+        }
         // 3) Apply logo (re-render chữ logo + style) nếu đã có helper
         if (t.repo_logoText !== undefined || t.repo_logoFont !== undefined ||
             t.repo_logoDepth !== undefined || t.repo_logoAccentColor !== undefined) {
