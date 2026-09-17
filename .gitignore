@@ -11,6 +11,24 @@ admin.err
 public/test_*.log
 public/test_*.err
 tools/__pycache__/
+
+# Server log files (created during dev/test, should never commit)
+server_stderr.log
+server_stdout.log
+server.log
+server.err.log
+flask.log
+flask.err
+flask.err.log
+flask.out.log
+
+# Test/debug Python scripts (created during debugging)
+_analyze.py
+_dump_settings.py
+scrape*.py
+screenshot*.py
+test_*.png
+
 # public/ build output — KHÔNG commit, GitHub Actions sẽ build mỗi push.
 # Nếu muốn commit (vd cho lần deploy đầu không cần GH Actions), comment out.
 public/index.html

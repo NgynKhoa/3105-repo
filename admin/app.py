@@ -616,10 +616,24 @@ def index():
         app.jinja_env.cache.pop(_os.path.join(app.template_folder, "index.html"), None)
     except Exception:
         pass
+    # Load baked-in public admin theme defaults (so incognito / fresh browser gets the same config as normal)
+    # __file__ = admin/app.py → parent = admin/ → grandparent = repo root
+    import sys
+    _baked_defaults = {}
+    _baked_path = pathlib.Path(__file__).resolve().parent.parent / ".3105" / "public-defaults.json"
+    if _baked_path.exists():
+        try:
+            with open(_baked_path, encoding="utf-8") as _f:
+                _baked_defaults = json.load(_f)
+        except Exception as _e:
+            print(f"[DEBUG] Failed to load public-defaults: {_e}", file=sys.stderr)
+    print(f"[DEBUG] index() called. _baked_defaults has {len(_baked_defaults)} keys, path={_baked_path}, exists={_baked_path.exists()}", file=sys.stderr, flush=True)
+
     bootstrap_js = (
         f"window.CATEGORIES = {json.dumps(CATEGORY_OPTIONS)};\n"
         f"window.DEFAULT_OS_RULES = {json.dumps(DEFAULT_OS_RULES)};\n"
         f"window.DEFAULT_SCREENSHOTS = {json.dumps(DEFAULT_SCREENSHOTS)};\n"
+        f"window.PUBLIC_ADMIN_THEME = {json.dumps(_baked_defaults, ensure_ascii=False)};\n"
         # Inject owner + repo cho local dev — anonymous user cần biết
         # để fetch raw-asset / admin-settings từ GitHub.
         f"window.PUBLIC_REPO_OWNER_GITHUB = {_os.environ.get('GITHUB_DEFAULT_OWNER', 'NgynKhoa')!r};\n"
