@@ -192,3 +192,102 @@ def register_admin_settings_routes(app):
         except Exception as e:
             app.logger.exception("merge_admin_settings failed")
             return jsonify({"ok": False, "error": str(e)}), 500
+
+    @app.post("/api/admin-settings-restore")
+    @login_required
+    def restore_admin_settings():
+        """Nhận full localStorage dump từ browser → merge vào admin-settings.json → push.
+
+        Body: {slug, localStorage: {key: value, ...}}
+        Dùng khi user đã chỉnh Front Repo / Dashboard nhiều thứ trên máy mình
+        nhưng chưa sync lên GitHub. Browser console paste:
+          fetch('/api/admin-settings-restore',{method:'POST',
+            headers:{'Content-Type':'application/json','Accept':'application/json'},
+            credentials:'same-origin',
+            body:JSON.stringify({slug:'demo',
+              localStorage:Object.fromEntries(
+                Object.keys(localStorage).map(k=>[k,localStorage.getItem(k)])
+              )
+            })
+          }).then(r=>r.json()).then(d=>d.ok?alert('OK: '+Object.keys(d.settings).length+' keys'):alert('FAIL: '+JSON.stringify(d.error)))
+        """
+        data = request.get_json(silent=True) or {}
+        slug = (data.get("slug") or "").strip()
+        ls_data = data.get("localStorage")
+
+        if not slug or not isinstance(ls_data, dict):
+            return jsonify({"ok": False, "error": "Thiếu slug hoặc localStorage"}), 400
+
+        owned = auth_get_owned_repos()
+        target = next((r for r in owned if r.get("slug") == slug), None)
+        if not target:
+            return jsonify({"ok": False, "error": "Bạn không phải owner"}), 403
+
+        token = get_current_token()
+        if not token:
+            return jsonify({"ok": False, "error": "Session không có token"}), 401
+
+        try:
+            current = fetch_admin_settings(target["full_name"], token)
+        except Exception:
+            current = {}
+
+        # Merge: giữ nguyên key cũ, thêm/cập nhật key mới từ localStorage
+        merged = dict(current)
+        for k, v in ls_data.items():
+            # Chỉ merge các key có trong whitelist (tránh spam file)
+            # Key format: repo_*, theme, shadowTheme, darkMode, transparency, bgImage,
+            # admin_*, mp_*, rain*, dash_*, currentRepo, downloadMode, hideAdminBg
+            if not isinstance(k, str):
+                continue
+            safe_key = k.strip()
+            # Bỏ qua các key noise (không phải settings)
+            noise_keys = {"currentRepo", "currentRepo_v2", "auth_token", "oauth_token",
+                          "user_session", "XSRF_TOKEN", "sidebar_collapsed"}
+            if safe_key in noise_keys:
+                continue
+            # Chỉ giữ key có prefix hợp lệ
+            valid_prefixes = (
+                "repo_", "admin_", "mp_", "dash_",
+                "theme", "shadowTheme", "darkMode", "transparency", "bgImage",
+                "rainEnabled", "heavyRain", "rain_volume",
+                "downloadMode", "hideAdminBg", "currentRepo",
+                "admin_playlist", "admin_nav_links",
+            )
+            if any(safe_key.startswith(p) for p in valid_prefixes):
+                merged[safe_key] = v
+            elif safe_key in ("theme", "shadowTheme", "darkMode", "transparency",
+                              "rainEnabled", "heavyRain", "rain_volume",
+                              "downloadMode", "hideAdminBg"):
+                merged[safe_key] = v
+
+        import json as _json, base64 as _base64, requests as _requests
+        from .config import Config
+        url = f"{Config.GITHUB_API_BASE}/repos/{target['full_name']}/contents/{ADMIN_SETTINGS_PATH}"
+        resp = _requests.get(url, headers={
+            "Accept": "application/vnd.github+json",
+            "User-Agent": "3105-repo-builder/1.0",
+            "Authorization": f"Bearer {token}",
+        }, timeout=15)
+        sha = None
+        if resp.status_code == 200:
+            sha = resp.json().get("sha")
+        content_str = _json.dumps(merged, indent=2, ensure_ascii=False)
+        commit_body = {
+            "message": f"chore(admin-settings): restore {len(merged)} keys from localStorage",
+            "branch": target.get("default_branch", "main"),
+            "content": _base64.b64encode(content_str.encode("utf-8")).decode("ascii"),
+        }
+        if sha:
+            commit_body["sha"] = sha
+        push_resp = _requests.put(url, headers={
+            "Accept": "application/vnd.github+json",
+            "User-Agent": "3105-repo-builder/1.0",
+            "Authorization": f"Bearer {token}",
+            "Content-Type": "application/json",
+        }, json=commit_body, timeout=30)
+        if push_resp.status_code in (200, 201):
+            return jsonify({"ok": True, "settings": merged,
+                            "pushed": len(merged), "commit": push_resp.json().get("commit", {}).get("sha", "")[:8]})
+        else:
+            return jsonify({"ok": False, "error": push_resp.text[:200]}), 502
