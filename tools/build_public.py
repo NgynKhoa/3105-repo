@@ -154,43 +154,51 @@ def render_index_html(repo_slug: str, repo_data: dict[str, Any], owner: bool = F
     # để user bình thường (không phải admin) cũng thấy theme admin đã chọn.
     public_theme = None
     if isinstance(admin_settings, dict):
-        # FULL bake: 60 key (audit 2026-09-17). Mọi key admin ghi localStorage
-        # đều phải nằm đây để user anonymous thấy đúng.
-        # Build key từ repo key bằng cách strip prefix "repo_" / "dash_" /
-        # "admin_" vì file gốc trên GitHub đã lưu dạng "repo_logoText".
-        # Tuy nhiên, để chắc chắn, ta bake cả 3 namespace song song.
-        _theme_keys = (
-            # Theme & dark mode
+        # FULL bake: 60 key (audit 2026-09-17).
+        # GitHub file dùng 2 dạng key:
+        #   - Cũ (Python snake_case từ Flask save): theme, shadow_theme, dark_mode,
+        #     transparency, rain_enabled, heavy_rain, bg_image
+        #   - Mới (raw localStorage JS camelCase): theme, shadowTheme, darkMode,
+        #     transparency, rainEnabled, heavyRain, bgImage, repo_*, admin_*, mp_*, dash_*
+        # Map 2 chiều để bake đầy đủ mọi key tồn tại.
+        _github_to_js = {
+            "shadow_theme": "shadowTheme", "dark_mode": "darkMode",
+            "rain_enabled": "rainEnabled", "heavy_rain": "heavyRain",
+            "bg_image": "bgImage", "download_mode": "downloadMode",
+            "nav_links": "admin_nav_links",
+        }
+        _js_keys = (
             "theme", "admin_theme", "shadowTheme", "admin_shadowTheme",
             "darkMode", "dash_darkMode", "dash_theme",
             "transparency", "dash_transparency", "transparency_dark",
             "transparency_light", "bgImage", "hideAdminBg",
-            # Logo
             "repo_logoText", "repo_logoFont", "repo_logoFontSize",
             "repo_logoFontWeight", "repo_logoDepth", "repo_logoStroke",
             "repo_logoHoloIntensity", "repo_logoGlowRadius", "repo_logoGlowAlpha",
             "repo_logoBlink", "repo_logoBlinkLetters",
             "repo_logoAccentLetters", "repo_logoAccentColor",
-            # Box sizes / order / hidden
             "repo_pkgHeight", "repo_filesHeight", "repo_blogHeight",
             "repo_boxOrder", "repo_hiddenBoxes", "repo_removedBoxes",
-            # Fonts
             "repo_primaryFont", "repo_monoFont", "repo_titleFont",
             "repo_baseFontSize", "repo_titleFontSize",
-            # Rain
             "repo_rainEnabled", "rainEnabled", "repo_heavyRain", "heavyRain",
             "repo_rainOpacity", "repo_rainSpeed", "rain_volume",
             "repo_rainAudioLight", "repo_rainAudioHeavy", "admin_rainAudio",
-            # Playlist & audio (Music Player state + audio track)
             "admin_playlist", "admin_nav_links",
             "mp_currentIdx", "mp_loop", "mp_volume",
-            # Blog
             "repo_blogPosts", "repo_blog_updated",
-            # Misc
             "repo_previewLayout", "repo_theme", "repo_shadowTheme",
             "currentRepo",
         )
-        _extracted = {k: admin_settings.get(k) for k in _theme_keys if k in admin_settings}
+        _extracted = {}
+        # Pass 1: bake trực tiếp các JS-key có sẵn trong file
+        for k in _js_keys:
+            if k in admin_settings:
+                _extracted[k] = admin_settings[k]
+        # Pass 2: bake GitHub-key (snake_case) dưới tên JS (để code đọc đúng)
+        for gh_key, js_key in _github_to_js.items():
+            if gh_key in admin_settings:
+                _extracted[js_key] = admin_settings[gh_key]
         if _extracted:
             public_theme = _extracted
 
