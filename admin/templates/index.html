@@ -5744,17 +5744,91 @@
     }
   };
 
+  // ====================== AUTO-SYNC ALL repo_* localStorage → GitHub ======================
+  // Sau khi helper syncAdminSettingsPatch ở trên đã có, ta monkey-patch
+  // localStorage.setItem để MỌI lần Front Repo user chỉnh setting (logo, blog
+  // height, box order, fonts, rain, playlist, ...) đều tự push lên GitHub sau
+  // 800ms debounce. Build workflow Pages sẽ bake vào PUBLIC_REPO_DATA / data.js
+  // → user anonymous trên GH Pages cũng thấy đúng.
+  const _SYNC_KEYS_INDEX = [
+    'theme', 'shadowTheme', 'darkMode', 'transparency', 'transparency_dark',
+    'transparency_light', 'bgImage',
+    'repo_logoText', 'repo_logoFont', 'repo_logoFontSize', 'repo_logoFontWeight',
+    'repo_logoDepth', 'repo_logoStroke', 'repo_logoHoloIntensity',
+    'repo_logoGlowRadius', 'repo_logoGlowAlpha', 'repo_logoBlink',
+    'repo_logoBlinkLetters', 'repo_logoAccentLetters', 'repo_logoAccentColor',
+    'repo_pkgHeight', 'repo_filesHeight', 'repo_blogHeight',
+    'repo_boxOrder', 'repo_hiddenBoxes', 'repo_removedBoxes',
+    'repo_primaryFont', 'repo_monoFont', 'repo_titleFont',
+    'repo_baseFontSize', 'repo_titleFontSize',
+    'repo_rainEnabled', 'repo_heavyRain', 'repo_rainOpacity', 'repo_rainSpeed',
+    'repo_rainAudioLight', 'repo_rainAudioHeavy', 'rain_volume',
+    'admin_playlist', 'admin_nav_links', 'admin_rainAudio',
+    'repo_previewLayout', 'repo_blogPosts',
+  ];
+  const _syncKeySet = new Set(_SYNC_KEYS_INDEX);
+  let _syncCommitBusy = false;
+  let _syncCommitPending = false;
+  let _syncCommitTimer = null;
+  async function commitAllLocalSettings() {
+    if (_syncCommitBusy) { _syncCommitPending = true; return; }
+    _syncCommitBusy = true;
+    try {
+      const patch = {};
+      for (const k of _SYNC_KEYS_INDEX) {
+        try {
+          const v = localStorage.getItem(k);
+          if (v !== null && v !== undefined) patch[k] = v;
+        } catch (_) {}
+      }
+      // Skip nếu rỗng (không có gì để push)
+      if (Object.keys(patch).length === 0) return;
+      if (window.syncAdminSettingsPatch) {
+        await window.syncAdminSettingsPatch(patch);
+        console.log('[commitAllLocalSettings] pushed', Object.keys(patch).length, 'keys');
+      }
+    } finally {
+      _syncCommitBusy = false;
+      if (_syncCommitPending) { _syncCommitPending = false; commitAllLocalSettings(); }
+    }
+  }
+  function _scheduleCommit() {
+    if (_syncCommitTimer) clearTimeout(_syncCommitTimer);
+    _syncCommitTimer = setTimeout(commitAllLocalSettings, 800);
+  }
+  // Hook: chỉ chặn các key trong _SYNC_KEYS_INDEX để tránh spam
+  try {
+    const _origSet = Storage.prototype.setItem;
+    Storage.prototype.setItem = function(k, v) {
+      _origSet.call(this, k, v);
+      if (this === window.localStorage && typeof k === 'string' && _syncKeySet.has(k)) {
+        _scheduleCommit();
+      }
+    };
+  } catch (e) { console.warn('[hookLocalStorage] failed:', e); }
+
   // === Boot ===
   async function boot() {
     // Blog load trước (không phụ thuộc repo)
     await loadBlog();
 
-    // Apply admin theme đã bake vào public build (cho user anonymous xem GH Pages).
-    // Đây là entry point duy nhất cho user không login — họ sẽ thấy
-    // theme/shadow/bg/darkMode/transparency admin đã set.
+    // Apply admin settings đã bake vào public build (cho user anonymous xem GH Pages).
+    // Bao gồm TẤT CẢ setting admin đã lưu: theme/shadow/dark/trans + logo + blog
+    // height + box order + fonts + rain + playlist + nav links. Mỗi key được:
+    //   1) ghi vào localStorage (nếu chưa có) → code đọc localStorage hoạt động
+    //   2) gọi handler tương ứng để áp dụng ngay lập tức (nếu đã init)
     if (window.PUBLIC_ADMIN_THEME && Object.keys(window.PUBLIC_ADMIN_THEME).length) {
       const t = window.PUBLIC_ADMIN_THEME;
       try {
+        // 1) Ghi tất cả key vào localStorage (CHỈ khi chưa có → tôn trọng user đã chỉnh riêng)
+        for (const k of Object.keys(t)) {
+          try {
+            const v = t[k];
+            if (v === null || v === undefined || v === '') continue;
+            if (localStorage.getItem(k) === null) localStorage.setItem(k, String(v));
+          } catch (_) {}
+        }
+        // 2) Apply theme/shadow/dark/trans/bg (code cũ)
         if (t.theme && window.applyTheme) window.applyTheme(t.theme);
         if (t.shadow_theme && window.applyShadowTheme) window.applyShadowTheme(t.shadow_theme);
         if (t.dark_mode !== undefined && t.dark_mode !== null) {
@@ -5765,6 +5839,43 @@
           if (window.applyDarkMode) window.applyDarkMode(isDark, tv);
         }
         if (t.bg_image && window._applyBackground) window._applyBackground(t.bg_image);
+        // 3) Apply logo (re-render chữ logo + style) nếu đã có helper
+        if (t.repo_logoText !== undefined || t.repo_logoFont !== undefined ||
+            t.repo_logoDepth !== undefined || t.repo_logoAccentColor !== undefined) {
+          if (typeof window.reapplyLogoShadow === 'function') window.reapplyLogoShadow();
+          if (typeof window.applyLogoSettings === 'function') window.applyLogoSettings();
+        }
+        // 4) Apply box sizes (blog/pkg/files height) — ép height trực tiếp
+        if (t.repo_blogHeight !== undefined) {
+          const bs = document.getElementById('blog-section');
+          if (bs) bs.style.height = String(t.repo_blogHeight) + 'px';
+        }
+        if (t.repo_pkgHeight !== undefined) {
+          const pbs = document.getElementById('packagesBox');
+          if (pbs) pbs.style.height = String(t.repo_pkgHeight) + 'px';
+        }
+        if (t.repo_filesHeight !== undefined) {
+          // files box thường là #filesBox hoặc .box[data-box="files"]; thử cả 2
+          const fb = document.getElementById('filesBox')
+            || document.querySelector('[data-box="files"]');
+          if (fb) fb.style.height = String(t.repo_filesHeight) + 'px';
+        }
+        // 5) Apply fonts: set --primary-font, --mono-font, --title-font CSS vars
+        if (t.repo_primaryFont !== undefined) {
+          document.documentElement.style.setProperty('--primary-font', String(t.repo_primaryFont));
+        }
+        if (t.repo_monoFont !== undefined) {
+          document.documentElement.style.setProperty('--mono-font', String(t.repo_monoFont));
+        }
+        if (t.repo_titleFont !== undefined) {
+          document.documentElement.style.setProperty('--title-font', String(t.repo_titleFont));
+        }
+        if (t.repo_baseFontSize !== undefined) {
+          document.documentElement.style.fontSize = String(t.repo_baseFontSize) + 'px';
+        }
+        if (t.repo_titleFontSize !== undefined) {
+          document.documentElement.style.setProperty('--title-font-size', String(t.repo_titleFontSize) + 'px');
+        }
       } catch(e) { console.warn('[public-theme] apply failed', e); }
     }
 

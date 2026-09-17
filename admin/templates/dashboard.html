@@ -3348,6 +3348,104 @@
       }
     }
 
+    // Danh sách TẤT CẢ key repo_* mà Dashboard lưu localStorage.
+    // commitAllSettingsToGitHub() sẽ thu thập tất cả và push 1 lần lên GitHub.
+    // Sync đầy đủ giúp Front Repo Settings (logo, blog size, fonts, rain, ...)
+    // có hiệu lực cho USER ANONYMOUS trên GitHub Pages (không có localStorage).
+    const _SYNC_KEYS = [
+      // Theme & dark mode
+      'theme', 'shadowTheme', 'darkMode', 'transparency',
+      'transparency_dark', 'transparency_light', 'bgImage',
+      // Logo (admin Front Repo Settings)
+      'repo_logoText', 'repo_logoFont', 'repo_logoFontSize', 'repo_logoFontWeight',
+      'repo_logoDepth', 'repo_logoStroke', 'repo_logoHoloIntensity',
+      'repo_logoGlowRadius', 'repo_logoGlowAlpha', 'repo_logoBlink',
+      'repo_logoBlinkLetters', 'repo_logoAccentLetters', 'repo_logoAccentColor',
+      // Box sizes / order / hidden
+      'repo_pkgHeight', 'repo_filesHeight', 'repo_blogHeight',
+      'repo_boxOrder', 'repo_hiddenBoxes', 'repo_removedBoxes',
+      // Fonts
+      'repo_primaryFont', 'repo_monoFont', 'repo_titleFont',
+      'repo_baseFontSize', 'repo_titleFontSize',
+      // Rain
+      'repo_rainEnabled', 'repo_heavyRain', 'repo_rainOpacity', 'repo_rainSpeed',
+      'repo_rainAudioLight', 'repo_rainAudioHeavy', 'rain_volume',
+      // Playlist & audio
+      'admin_playlist', 'admin_nav_links', 'admin_rainAudio',
+      // Misc
+      'repo_previewLayout', 'repo_blogPosts',
+    ];
+
+    function _collectLocalSettings() {
+      const out = {};
+      for (const k of _SYNC_KEYS) {
+        try {
+          const v = localStorage.getItem(k);
+          if (v !== null && v !== undefined) out[k] = v;
+        } catch (_) {}
+      }
+      return out;
+    }
+
+    let _commitBusy = false;
+    let _commitPending = false;
+    async function commitAllSettingsToGitHub() {
+      if (_commitBusy) { _commitPending = true; return; }
+      _commitBusy = true;
+      const settings = _collectLocalSettings();
+      try {
+        // Gửi qua /api/admin-settings-merge dạng patch để merge thay vì overwrite.
+        // Endpoint merge sẽ tự fetch file hiện tại + apply patch.
+        const resp = await fetch('/api/admin-settings-merge', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'same-origin',
+          body: JSON.stringify({
+            slug: _syncSettingsRepo,
+            patch: settings,
+            mode: 'direct',
+          }),
+        });
+        if (resp.ok) {
+          const data = await resp.json();
+          if (data && data.ok) {
+            console.log('[commitAllSettingsToGitHub] OK, ' + Object.keys(settings).length + ' keys pushed');
+          }
+        } else {
+          console.warn('[commitAllSettingsToGitHub]', resp.status);
+        }
+      } catch (e) {
+        console.warn('[commitAllSettingsToGitHub] failed:', e);
+      } finally {
+        _commitBusy = false;
+        if (_commitPending) { _commitPending = false; commitAllSettingsToGitHub(); }
+      }
+    }
+
+    // Debounce cho mỗi lần setItem để tránh spam request
+    let _commitDebounceTimer = null;
+    function scheduleCommitSettings() {
+      if (_commitDebounceTimer) clearTimeout(_commitDebounceTimer);
+      _commitDebounceTimer = setTimeout(commitAllSettingsToGitHub, 600);
+    }
+
+    // Monkey-patch localStorage.setItem CHỈ trong Dashboard tab này
+    // → mỗi lần user đổi setting, tự động push lên GitHub sau 600ms debounce.
+    // Dùng Proxy để chỉ chặn string key, không ảnh hưởng đến object value.
+    (function hookLocalStorage() {
+      try {
+        const origSet = Storage.prototype.setItem;
+        Storage.prototype.setItem = function(k, v) {
+          origSet.call(this, k, v);
+          if (this === window.localStorage && typeof k === 'string' && _SYNC_KEYS.indexOf(k) >= 0) {
+            scheduleCommitSettings();
+          }
+        };
+      } catch (e) {
+        console.warn('[hookLocalStorage] failed:', e);
+      }
+    })();
+
     function saveAndApplyTheme() {
       const active = document.querySelector('.theme-btn.active');
       if (active) {

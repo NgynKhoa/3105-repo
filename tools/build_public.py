@@ -154,7 +154,26 @@ def render_index_html(repo_slug: str, repo_data: dict[str, Any], owner: bool = F
     # để user bình thường (không phải admin) cũng thấy theme admin đã chọn.
     public_theme = None
     if isinstance(admin_settings, dict):
-        _theme_keys = ("theme", "shadow_theme", "bg_image", "dark_mode", "transparency")
+        _theme_keys = (
+            # Theme & dark mode (cũ)
+            "theme", "shadow_theme", "bg_image", "dark_mode", "transparency",
+            # Logo (Front Repo Settings)
+            "repo_logoText", "repo_logoFont", "repo_logoFontSize", "repo_logoFontWeight",
+            "repo_logoDepth", "repo_logoStroke", "repo_logoHoloIntensity",
+            "repo_logoGlowRadius", "repo_logoGlowAlpha", "repo_logoBlink",
+            "repo_logoBlinkLetters", "repo_logoAccentLetters", "repo_logoAccentColor",
+            # Box sizes
+            "repo_pkgHeight", "repo_filesHeight", "repo_blogHeight",
+            "repo_boxOrder", "repo_hiddenBoxes", "repo_removedBoxes",
+            # Fonts
+            "repo_primaryFont", "repo_monoFont", "repo_titleFont",
+            "repo_baseFontSize", "repo_titleFontSize",
+            # Rain
+            "repo_rainEnabled", "repo_heavyRain", "repo_rainOpacity", "repo_rainSpeed",
+            "repo_rainAudioLight", "repo_rainAudioHeavy", "rain_volume",
+            # Misc
+            "admin_rainAudio", "admin_nav_links",
+        )
         _extracted = {k: admin_settings.get(k) for k in _theme_keys if k in admin_settings}
         if _extracted:
             public_theme = _extracted
