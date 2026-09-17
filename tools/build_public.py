@@ -150,17 +150,27 @@ def render_index_html(repo_slug: str, repo_data: dict[str, Any], owner: bool = F
                             lambda m: m.group(0).replace('\n', '\\n').replace('\r', '\\r'),
                             repo_json)
 
-    # Theme-related settings từ admin-settings.json → bake vào public
+    # Theme-related settings từ .3105/public-defaults.json → bake vào public
     # để user bình thường (không phải admin) cũng thấy theme admin đã chọn.
+    #
+    # public-defaults.json được tạo bởi bake_defaults.py: filter + camelCase +
+    # no duplicates. File này là SOURCE OF TRUTH cho build.
     public_theme = None
-    if isinstance(admin_settings, dict):
-        # FULL bake: 60 key (audit 2026-09-17).
-        # GitHub file dùng 2 dạng key:
-        #   - Cũ (Python snake_case từ Flask save): theme, shadow_theme, dark_mode,
-        #     transparency, rain_enabled, heavy_rain, bg_image
-        #   - Mới (raw localStorage JS camelCase): theme, shadowTheme, darkMode,
-        #     transparency, rainEnabled, heavyRain, bgImage, repo_*, admin_*, mp_*, dash_*
-        # Map 2 chiều để bake đầy đủ mọi key tồn tại.
+    public_defaults_path = ROOT / ".3105" / "public-defaults.json"
+    if public_defaults_path.is_file():
+        try:
+            with public_defaults_path.open(encoding="utf-8") as _f:
+                _baked = json.load(_f)
+            if isinstance(_baked, dict):
+                # Loại bỏ marker internal
+                _baked.pop("__bakedDefaults", None)
+                public_theme = _baked
+                log(f"✓ Load {len(public_theme)} public defaults từ public-defaults.json")
+        except (OSError, ValueError) as _e:
+            log(f"⚠ public-defaults.json lỗi: {_e}")
+    if public_theme is None and isinstance(admin_settings, dict):
+        # Fallback: chưa chạy bake_defaults.py → tự trích từ admin-settings
+        # (giữ logic cũ để không break nếu ai đó build mà quên bake).
         _github_to_js = {
             "shadow_theme": "shadowTheme", "dark_mode": "darkMode",
             "rain_enabled": "rainEnabled", "heavy_rain": "heavyRain",
@@ -191,11 +201,9 @@ def render_index_html(repo_slug: str, repo_data: dict[str, Any], owner: bool = F
             "currentRepo",
         )
         _extracted = {}
-        # Pass 1: bake trực tiếp các JS-key có sẵn trong file
         for k in _js_keys:
             if k in admin_settings:
                 _extracted[k] = admin_settings[k]
-        # Pass 2: bake GitHub-key (snake_case) dưới tên JS (để code đọc đúng)
         for gh_key, js_key in _github_to_js.items():
             if gh_key in admin_settings:
                 _extracted[js_key] = admin_settings[gh_key]
