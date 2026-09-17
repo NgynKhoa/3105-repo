@@ -5,5 +5,11 @@
   "transparency": 88,
   "rain_enabled": true,
   "heavy_rain": false,
-  "bg_image": ""
+  "bg_image": "",
+  "repo_blogHeight": 480,
+  "repo_logoText": "OWEN REPO",
+  "repo_logoFontWeight": 700,
+  "repo_primaryFont": "'Be Vietnam Pro', sans-serif",
+  "repo_rainOpacity": 60,
+  "repo_rainSpeed": 4
 }
