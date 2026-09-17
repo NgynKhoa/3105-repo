@@ -211,7 +211,15 @@ def render_index_html(repo_slug: str, repo_data: dict[str, Any], owner: bool = F
         # Playlist từ admin-settings.json (cho người dùng ẩn danh xem được trên GH Pages)
         f"window.PUBLIC_PLAYLIST = {json.dumps(public_playlist or [], ensure_ascii=False)};\n"
         # Theme/shadow/bg/dark/transparency từ admin-settings.json → user thấy
-        f"window.PUBLIC_ADMIN_THEME = {json.dumps(public_theme or {}, ensure_ascii=False)};\n"
+        f"window.PUBLIC_ADMIN_THEME = {json.dumps(public_theme or {{}}, ensure_ascii=False)};\n"
+        # CRITICAL: ghi TẤT CẢ public_theme key vào localStorage NGAY
+        # để TrackPlayer / Music Player / Rain audio đọc localStorage (module-level)
+        # mà không cần biết PUBLIC_ADMIN_THEME tồn tại. Anonymous user có
+        # localStorage rỗng → script này seed đầy đủ từ bake data.
+        f"try {{ var _pat={json.dumps(public_theme or {{}}, ensure_ascii=False)};"
+        f"Object.keys(_pat).forEach(function(k){{"
+        f"if(localStorage.getItem(k)===null)localStorage.setItem(k,String(_pat[k]));}});"
+        f"}} catch(e){{}}\n",
     )
     # Replace cụm {{ bootstrap_js | safe }} (Flask template) bằng script tag.
     # QUAN TRỌNG: phải dùng lambda callback thay vì string replacement — vì
