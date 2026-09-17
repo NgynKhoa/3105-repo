@@ -3352,11 +3352,17 @@
     // commitAllSettingsToGitHub() sẽ thu thập tất cả và push 1 lần lên GitHub.
     // Sync đầy đủ giúp Front Repo Settings (logo, blog size, fonts, rain, ...)
     // có hiệu lực cho USER ANONYMOUS trên GitHub Pages (không có localStorage).
+    // FULL SYNC: 60 key thực sự có trong localStorage (audit 2026-09-17).
+    // Mọi key được Dashboard hoặc Front Repo setItem đều phải nằm trong đây
+    // — nếu thiếu 1 key thì user anonymous trên GH Pages sẽ thiếu setting đó.
     const _SYNC_KEYS = [
-      // Theme & dark mode
-      'theme', 'shadowTheme', 'darkMode', 'transparency',
-      'transparency_dark', 'transparency_light', 'bgImage',
-      // Logo (admin Front Repo Settings)
+      // Theme & dark mode (cross-namespace: admin + dash + repo)
+      'theme', 'shadowTheme', 'admin_theme', 'admin_shadowTheme',
+      'darkMode', 'dash_darkMode',
+      'transparency', 'dash_transparency', 'repo_transparency',
+      'transparency_dark', 'transparency_light',
+      'bgImage', 'hideAdminBg',
+      // Logo (Front Repo Settings) — đầy đủ 13 fields
       'repo_logoText', 'repo_logoFont', 'repo_logoFontSize', 'repo_logoFontWeight',
       'repo_logoDepth', 'repo_logoStroke', 'repo_logoHoloIntensity',
       'repo_logoGlowRadius', 'repo_logoGlowAlpha', 'repo_logoBlink',
@@ -3367,13 +3373,19 @@
       // Fonts
       'repo_primaryFont', 'repo_monoFont', 'repo_titleFont',
       'repo_baseFontSize', 'repo_titleFontSize',
-      // Rain
-      'repo_rainEnabled', 'repo_heavyRain', 'repo_rainOpacity', 'repo_rainSpeed',
-      'repo_rainAudioLight', 'repo_rainAudioHeavy', 'rain_volume',
-      // Playlist & audio
-      'admin_playlist', 'admin_nav_links', 'admin_rainAudio',
+      // Rain — đầy đủ (admin namespace + repo namespace + legacy)
+      'repo_rainEnabled', 'rainEnabled', 'repo_heavyRain', 'heavyRain',
+      'repo_rainOpacity', 'repo_rainSpeed', 'rain_volume',
+      'repo_rainAudioLight', 'repo_rainAudioHeavy', 'admin_rainAudio',
+      // Playlist & audio (Music Player + Rain audio)
+      'admin_playlist', 'admin_nav_links',
+      'mp_currentIdx', 'mp_loop', 'mp_playing', 'mp_volume',
+      // Blog
+      'repo_blogPosts', 'repo_blog_updated',
       // Misc
-      'repo_previewLayout', 'repo_blogPosts',
+      'repo_previewLayout', 'repo_theme', 'repo_shadowTheme',
+      // currentRepo — để user anonymous vào đúng repo admin đang chỉnh
+      'currentRepo', 'dash_theme',
     ];
 
     function _collectLocalSettings() {

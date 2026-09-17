@@ -5750,9 +5750,13 @@
   // height, box order, fonts, rain, playlist, ...) đều tự push lên GitHub sau
   // 800ms debounce. Build workflow Pages sẽ bake vào PUBLIC_REPO_DATA / data.js
   // → user anonymous trên GH Pages cũng thấy đúng.
+  // FULL SYNC: 60 key thực sự có trong localStorage (audit 2026-09-17).
   const _SYNC_KEYS_INDEX = [
-    'theme', 'shadowTheme', 'darkMode', 'transparency', 'transparency_dark',
-    'transparency_light', 'bgImage',
+    'theme', 'shadowTheme', 'admin_theme', 'admin_shadowTheme',
+    'darkMode', 'dash_darkMode', 'dash_theme',
+    'transparency', 'dash_transparency', 'repo_transparency',
+    'transparency_dark', 'transparency_light',
+    'bgImage', 'hideAdminBg',
     'repo_logoText', 'repo_logoFont', 'repo_logoFontSize', 'repo_logoFontWeight',
     'repo_logoDepth', 'repo_logoStroke', 'repo_logoHoloIntensity',
     'repo_logoGlowRadius', 'repo_logoGlowAlpha', 'repo_logoBlink',
@@ -5761,10 +5765,14 @@
     'repo_boxOrder', 'repo_hiddenBoxes', 'repo_removedBoxes',
     'repo_primaryFont', 'repo_monoFont', 'repo_titleFont',
     'repo_baseFontSize', 'repo_titleFontSize',
-    'repo_rainEnabled', 'repo_heavyRain', 'repo_rainOpacity', 'repo_rainSpeed',
-    'repo_rainAudioLight', 'repo_rainAudioHeavy', 'rain_volume',
-    'admin_playlist', 'admin_nav_links', 'admin_rainAudio',
-    'repo_previewLayout', 'repo_blogPosts',
+    'repo_rainEnabled', 'rainEnabled', 'repo_heavyRain', 'heavyRain',
+    'repo_rainOpacity', 'repo_rainSpeed', 'rain_volume',
+    'repo_rainAudioLight', 'repo_rainAudioHeavy', 'admin_rainAudio',
+    'admin_playlist', 'admin_nav_links',
+    'mp_currentIdx', 'mp_loop', 'mp_playing', 'mp_volume',
+    'repo_blogPosts', 'repo_blog_updated',
+    'repo_previewLayout', 'repo_theme', 'repo_shadowTheme',
+    'currentRepo',
   ];
   const _syncKeySet = new Set(_SYNC_KEYS_INDEX);
   let _syncCommitBusy = false;
