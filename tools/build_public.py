@@ -207,7 +207,31 @@ def render_index_html(repo_slug: str, repo_data: dict[str, Any], owner: bool = F
     # Mặc định lấy từ --owner-github hoặc env GITHUB_DEFAULT_OWNER / GITHUB_REPO_NAME.
     gh_owner = owner_github or os.environ.get("GITHUB_DEFAULT_OWNER", "NgynKhoa")
     gh_repo_name = os.environ.get("GITHUB_REPO_NAME", "3105-repo")
+
+    # Constants dùng bởi app.js (ADMIN UI helpers — category dropdown, OS rules,
+    # screenshots). Cũng cần cho Front Repo để Admin Dashboard render đúng.
+    # Giá trị phải KHỚP với app.py DEFAULT_* để build = local.
+    _CATEGORIES = [
+        "Customization", "Enhancement", "Wallpaper", "Dialer",
+        "Display", "Utility", "Game",
+    ]
+    _OS_RULES = [
+        {"minimum": "17.0", "maximum": "18.7.1"},
+        {"minimum": "26.0", "maximum": "26.6.1"},
+        {"minimum": "27.0", "maximum": "27.0",
+         "builds": ["24A5355q", "24A5370h", "24A5380h", "24A5390f"]},
+    ]
+    _SCREENSHOTS = [
+        "assets/preview/preview-first.png",
+        "assets/preview/preview-second.png",
+        "assets/preview/preview-third.png",
+        "assets/preview/preview-fourth.png",
+    ]
+
     bootstrap = (
+        f"window.CATEGORIES = {json.dumps(_CATEGORIES)};\n"
+        f"window.DEFAULT_OS_RULES = {json.dumps(_OS_RULES)};\n"
+        f"window.DEFAULT_SCREENSHOTS = {json.dumps(_SCREENSHOTS)};\n"
         f"window.PUBLIC_REPO_SLUG = {json.dumps(repo_slug)};\n"
         f"window.PUBLIC_REPO_DATA = {repo_json};\n"
         f"window.PUBLIC_REPO_OWNER = {json.dumps(bool(owner))};\n"
