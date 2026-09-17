@@ -84,7 +84,7 @@ def load_blog_posts() -> list:
 
 # Cache version cho public build — bump khi Front Repo thay đổi để bust browser cache.
 # KHÔNG cần sync với admin cache_version; 2 hệ thống hoàn toàn độc lập.
-_CACHE_VERSION = 8
+_CACHE_VERSION = 9
 
 
 # ---------------------------------------------------------------------------
