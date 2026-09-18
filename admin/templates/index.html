@@ -6697,7 +6697,12 @@ document.querySelectorAll('#blogList .blog-item').forEach(item => {
   let layoutData = null;
 
   function applyBoxesLayout() {
-    if (!layoutData || !layoutData.boxes || !layoutData.boxes.length) return;
+    if (!layoutData || !layoutData.boxes) return;
+    // boxes có thể là array (API server trả về) hoặc object (admin-settings bake-in).
+    // Object không có .length, nên check cả 2.
+    var boxesCount = (Array.isArray(layoutData.boxes) ? layoutData.boxes.length
+                     : Object.keys(layoutData.boxes).length);
+    if (!boxesCount) return;
     var shell = document.getElementById('shell');
     if (!shell) return;
     if (getComputedStyle(shell).position === 'static') {
@@ -6717,7 +6722,10 @@ document.querySelectorAll('#blogList .blog-item').forEach(item => {
 
     // Tính max canvas để đặt min-height
     var maxX = 0, maxY = 0;
-    layoutData.boxes.forEach(function(b) {
+    var boxesArray = Array.isArray(layoutData.boxes)
+      ? layoutData.boxes
+      : Object.entries(layoutData.boxes).map(function([k, v]) { return Object.assign({key: k}, v); });
+    boxesArray.forEach(function(b) {
       maxX = Math.max(maxX, b.x + b.w);
       maxY = Math.max(maxY, b.y + b.h);
     });
@@ -6728,7 +6736,7 @@ document.querySelectorAll('#blogList .blog-item').forEach(item => {
     shell.style.minHeight = (maxY + 60) + 'px';
 
     // Áp layout cho từng box — giữ nguyên flow bên trong, chỉ đổi khung chứa.
-    layoutData.boxes.forEach(function(b) {
+    boxesArray.forEach(function(b) {
       if (!b.key) return;
       var el = document.querySelector('[data-box="' + b.key + '"]');
       if (!el) return;
@@ -6750,9 +6758,17 @@ document.querySelectorAll('#blogList .blog-item').forEach(item => {
 
   // Public mode: dùng layout bake-in từ PUBLIC_REPO_DATA.previewLayout
   if (window.PUBLIC_MODE && window.PUBLIC_REPO_DATA) {
-    const _baked = window.PUBLIC_REPO_DATA.previewLayout
+    let _baked = window.PUBLIC_REPO_DATA.previewLayout
       || (window.PUBLIC_ADMIN_THEME && window.PUBLIC_ADMIN_THEME.repo_previewLayout);
-    if (_baked && _baked.boxes && _baked.boxes.length) {
+    // CRITICAL FIX: repo_previewLayout được bake dưới dạng STRING (JSON-in-JSON).
+    // Trước đây code không parse → _baked.boxes = undefined → layout không apply.
+    if (typeof _baked === 'string') {
+      try { _baked = JSON.parse(_baked); } catch (e) { console.warn('[layout] parse fail:', e); }
+    }
+    // boxes có thể là array hoặc object (bake-in từ admin-settings lưu dạng object).
+    const _hasBoxes = _baked && _baked.boxes &&
+      (Array.isArray(_baked.boxes) ? _baked.boxes.length : Object.keys(_baked.boxes).length);
+    if (_baked && _hasBoxes) {
       layoutData = _baked;
       applyBoxesLayout();
       window.addEventListener('load', function() {
@@ -6765,7 +6781,9 @@ document.querySelectorAll('#blogList .blog-item').forEach(item => {
   fetch('/api/get-applied-layout')
     .then(function(r) { return r.json(); })
     .then(function(data) {
-      if (!data || !data.boxes || !data.boxes.length) return;
+      if (!data || !data.boxes) return;
+      var _hasBoxes2 = Array.isArray(data.boxes) ? data.boxes.length : Object.keys(data.boxes).length;
+      if (!_hasBoxes2) return;
       layoutData = data;
       // Lần đầu: áp ngay (với content chưa load)
       applyBoxesLayout();
