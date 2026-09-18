@@ -11,6 +11,7 @@ on:
       - 'admin/static/**'
       - 'tools/build_public.py'
       - '.3105/admin-settings.json'
+      - '.3105/public-defaults.json'
       - '.3105/sync_state.json'
       - 'assets/**'
       - '.github/workflows/build-public.yml'
