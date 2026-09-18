@@ -5978,6 +5978,62 @@
   if (typeof renderPackages === 'function') window.__dynamicFit.renderPackages = renderPackages;
   if (typeof renderBlog === 'function') window.__dynamicFit.renderBlog = renderBlog;
 
+  // ===================================================================
+  // === APPLY BOX SIZES — Đọc repo_box_<key>_height/width & áp lên DOM ===
+  // ===================================================================
+  // Đọc từ 3 nguồn (ưu tiên):
+  //   1. localStorage['repo_box_<key>_<h|w>']        — user tự chỉnh local
+  //   2. localStorage['admin_repo_box_<key>_<h|w>']  — admin namespace
+  //   3. window.PUBLIC_ADMIN_THEME[<same key>]       — bake từ .3105/admin-settings.json
+  // Áp lên tất cả element khớp `[data-box="<key>"]`. Chạy ngay khi DOM ready
+  // (bên dưới `boot()`), và SAU khi load xong public defaults để size từ
+  // GH Pages có hiệu lực ngay cả khi user mới vào (localStorage rỗng).
+  function applyBoxSizes() {
+    const BOX_KEYS = [
+      'masthead', 'hello-banner', 'meta', 'packages',
+      'blog-section', 'stars', 'music-player', 'moon-widget', 'hint-box',
+    ];
+    const PAT = window.PUBLIC_ADMIN_THEME || {};
+
+    function readVal(key) {
+      try {
+        const v1 = localStorage.getItem(key);
+        if (v1 !== null && v1 !== '' && !isNaN(parseFloat(v1))) return parseFloat(v1);
+        const v2 = localStorage.getItem('admin_' + key);
+        if (v2 !== null && v2 !== '' && !isNaN(parseFloat(v2))) return parseFloat(v2);
+        const v3 = PAT[key];
+        if (v3 !== undefined && v3 !== null && v3 !== '' && !isNaN(parseFloat(v3))) return parseFloat(v3);
+      } catch (e) {}
+      return null;
+    }
+
+    BOX_KEYS.forEach(boxKey => {
+      const h = readVal('repo_box_' + boxKey + '_height');
+      const w = readVal('repo_box_' + boxKey + '_width');
+      if (h === null && w === null) return;
+      const sel = '[data-box="' + boxKey + '"]';
+      document.querySelectorAll(sel).forEach(el => {
+        if (h !== null && h > 0) {
+          el.style.height = h + 'px';
+          el.style.minHeight = h + 'px';
+        }
+        if (w !== null && w > 0) {
+          el.style.width = w + 'px';
+          el.style.minWidth = w + 'px';
+        }
+      });
+    });
+  }
+  window.applyBoxSizes = applyBoxSizes;
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', applyBoxSizes);
+  } else {
+    applyBoxSizes();
+  }
+  // Expose ra window cho Front Repo (GH Pages) dùng nếu inline script chưa có.
+  // (Inline script này đã chạy khi DOMContentLoaded — không cần polling.)
+
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', boot);
   } else {
@@ -6424,6 +6480,8 @@
         // Re-render nếu music player đã init xong
         if (typeof window.__mpRefresh === 'function') window.__mpRefresh();
       }
+      // === Áp dụng box sizes từ admin settings (cho public/GH Pages) ===
+      if (typeof window.applyBoxSizes === 'function') window.applyBoxSizes();
       // Re-render settings panel (nếu đang mở)
       if (window.refreshSettingsPanel) window.refreshSettingsPanel();
       return data.settings;
