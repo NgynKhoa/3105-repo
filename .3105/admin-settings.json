@@ -29,7 +29,7 @@
   "repo_titleFont": "'Press Start 2P'",
   "repo_baseFontSize": "14",
   "repo_titleFontSize": "12",
-  "rainEnabled": "true",
+  "rainEnabled": "false",
   "repo_heavyRain": "true",
   "heavyRain": "false",
   "repo_rainOpacity": "70",
