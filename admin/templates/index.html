@@ -5718,40 +5718,63 @@
   // KHÔNG crash UI.
   let _syncPatchBusy = false;
   let _syncPatchPending = null;
+  let _syncPatchPendingResolvers = [];
   window.syncAdminSettingsPatch = async function(patch) {
     if (!patch || typeof patch !== 'object') return;
+    // Nếu đang có 1 request chạy → đợi nó xong rồi gộp patch của mình vào.
     if (_syncPatchBusy) {
-      _syncPatchPending = { ...(_syncPatchPending || {}), ...patch };
-      return;
+      return new Promise((resolve) => {
+        _syncPatchPendingResolvers.push(resolve);
+        _syncPatchPending = { ...(_syncPatchPending || {}), ...patch };
+      });
     }
     _syncPatchBusy = true;
     try {
-      const resp = await fetch('/api/admin-settings-merge', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'same-origin',
-        body: JSON.stringify({
-          slug: (window.PUBLIC_REPO_SLUG || 'demo'),
-          patch,
-          mode: 'direct',
-        }),
-      });
-      if (!resp.ok) {
-        console.warn('[syncAdminSettingsPatch]', resp.status);
-        return;
-      }
-      const data = await resp.json();
-      if (data && data.ok) {
-        console.log('[syncAdminSettingsPatch] OK', Object.keys(patch).join(', '));
+      // Lặp cho đến khi queue rỗng (gộp nhiều patch liên tiếp thành 1 write).
+      // Điều này tránh race condition khi user chỉnh nhiều setting liên tục.
+      while (true) {
+        const resp = await fetch('/api/admin-settings-merge', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'same-origin',
+          body: JSON.stringify({
+            slug: (window.PUBLIC_REPO_SLUG || 'demo'),
+            patch,
+            mode: 'direct',
+          }),
+        });
+        if (!resp.ok) {
+          // 409/500 → retry sau 250ms (server đã có SHA-conflict retry, nhưng
+          // double-check phòng trường hợp lỗi khác).
+          console.warn('[syncAdminSettingsPatch]', resp.status, '- retrying in 250ms');
+          await new Promise(r => setTimeout(r, 250));
+          continue;
+        }
+        const data = await resp.json();
+        if (data && data.ok) {
+          console.log('[syncAdminSettingsPatch] OK', Object.keys(patch).join(', '));
+        }
+        break;
       }
     } catch (e) {
       console.warn('[syncAdminSettingsPatch] failed:', e);
     } finally {
-      _syncPatchBusy = false;
+      // Xử lý pending: nếu có patch đang chờ → merge với patch vừa gửi thành 1 write.
       if (_syncPatchPending) {
-        const next = _syncPatchPending;
+        const next = { ...patch, ..._syncPatchPending };
         _syncPatchPending = null;
-        try { await window.syncAdminSettingsPatch(next); } catch (_) {}
+        const resolvers = _syncPatchPendingResolvers;
+        _syncPatchPendingResolvers = [];
+        try {
+          await window.syncAdminSettingsPatch(next);
+        } finally {
+          resolvers.forEach(r => r());
+        }
+      } else {
+        _syncPatchBusy = false;
+        const resolvers = _syncPatchPendingResolvers;
+        _syncPatchPendingResolvers = [];
+        resolvers.forEach(r => r());
       }
     }
   };
@@ -6364,11 +6387,9 @@
   // khi chỉ thay đổi 1 setting.
   let __adminSyncTimer = null;
   let __adminSyncPending = {};
-  function postAdminSettingToGitHub(slug, key, value) {
-    console.log('[autoSave] postAdminSettingToGitHub slug=', slug, 'key=', key, 'value=', value);
-    __adminSyncPending[key] = value;
-    if (__adminSyncTimer) clearTimeout(__adminSyncTimer);
-    __adminSyncTimer = setTimeout(async () => {
+  let __adminSyncRunning = false;
+  async function _flushAdminSync(slug) {
+    while (Object.keys(__adminSyncPending).length) {
       const payload = Object.assign({}, __adminSyncPending);
       __adminSyncPending = {};
       console.log('[autoSave] Flushing payload:', payload, 'to slug:', slug);
@@ -6386,12 +6407,34 @@
         console.log('[autoSave] Response:', data);
         if (!data || !data.ok) {
           console.warn('admin-settings merge failed', data);
+          // Nếu 500/409 → đợi rồi merge lại (đưa payload vào pending lại)
+          await new Promise(r => setTimeout(r, 300));
+          Object.assign(__adminSyncPending, payload);
+          continue;
         } else if (data.settings) {
           // Cập nhật cache local để UI biết
           window.__adminDefaults = Object.assign({}, window.__adminDefaults || {}, data.settings);
         }
       } catch (e) {
         console.warn('admin-settings merge error', e);
+        await new Promise(r => setTimeout(r, 300));
+        Object.assign(__adminSyncPending, payload);
+        continue;
+      }
+    }
+  }
+  function postAdminSettingToGitHub(slug, key, value) {
+    console.log('[autoSave] postAdminSettingToGitHub slug=', slug, 'key=', key, 'value=', value);
+    __adminSyncPending[key] = value;
+    if (__adminSyncTimer) clearTimeout(__adminSyncTimer);
+    __adminSyncTimer = setTimeout(async () => {
+      __adminSyncTimer = null;
+      if (__adminSyncRunning) return;  // Đang flush → pending đã được xử lý
+      __adminSyncRunning = true;
+      try {
+        await _flushAdminSync(slug);
+      } finally {
+        __adminSyncRunning = false;
       }
     }, 1500);  // 1.5s debounce
   }

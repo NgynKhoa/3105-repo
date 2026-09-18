@@ -176,19 +176,33 @@ def register_admin_settings_routes(app):
             return jsonify({"ok": False, "error": "Session không có token"}), 401
 
         try:
-            current = fetch_admin_settings(target["full_name"], token)
-            merged = dict(current or {})
-            merged.update(patch)
-            content = json.dumps(merged, indent=2, ensure_ascii=False)
-            result = gh_write_file(
-                token=token,
-                full_name=target["full_name"],
-                path=ADMIN_SETTINGS_PATH,
-                content=content,
-                commit_message=f"chore(admin-settings): merge via 3105 Builder",
-                mode=mode,
-            )
-            return jsonify({"ok": True, "settings": merged, **result})
+            # Retry logic: nếu GitHub trả 409/422 (SHA conflict do race),
+            # refetch rồi merge lại. Tối đa 3 lần.
+            for attempt in range(3):
+                current = fetch_admin_settings(target["full_name"], token)
+                merged = dict(current or {})
+                merged.update(patch)
+                content = json.dumps(merged, indent=2, ensure_ascii=False)
+                try:
+                    result = gh_write_file(
+                        token=token,
+                        full_name=target["full_name"],
+                        path=ADMIN_SETTINGS_PATH,
+                        content=content,
+                        commit_message=f"chore(admin-settings): merge via 3105 Builder",
+                        mode=mode,
+                    )
+                    return jsonify({"ok": True, "settings": merged, **result})
+                except RuntimeError as e:
+                    err_msg = str(e)
+                    # 409 conflict (SHA mismatch) hoặc 422 → refetch + retry
+                    if "409" in err_msg or "422" in err_msg or "conflict" in err_msg.lower():
+                        app.logger.warning(
+                            "merge_admin_settings SHA conflict, retry %d/3", attempt + 1
+                        )
+                        continue
+                    raise  # lỗi khác → bubble up
+            return jsonify({"ok": False, "error": "Conflict sau 3 lần retry"}), 409
         except Exception as e:
             app.logger.exception("merge_admin_settings failed")
             return jsonify({"ok": False, "error": str(e)}), 500
