@@ -259,7 +259,7 @@ def render_index_html(repo_slug: str, repo_data: dict[str, Any], owner: bool = F
         f"try {{ var _pat={json.dumps(public_theme or {{}}, ensure_ascii=False)};"
         f"Object.keys(_pat).forEach(function(k){{"
         f"if(localStorage.getItem(k)===null)localStorage.setItem(k,String(_pat[k]));}});"
-        f"}} catch(e){{}}\n",
+        f"}} catch(e){{}}\n"
     )
     # Replace cụm {{ bootstrap_js | safe }} (Flask template) bằng script tag.
     # QUAN TRỌNG: phải dùng lambda callback thay vì string replacement — vì
