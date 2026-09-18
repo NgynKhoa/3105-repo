@@ -4610,7 +4610,16 @@
   // Apply theme/shadow đã lưu (nếu có). Nếu không có localStorage value
   // (lần đầu vào), dùng default từ :root và KHÔNG ghi đè.
   try {
-    var savedTheme = localStorage.getItem('theme') || localStorage.getItem('repo_theme');
+    console.log('[BOOT] theme key=', JSON.stringify(localStorage.getItem('theme')),
+                'repo_theme=', JSON.stringify(localStorage.getItem('repo_theme')),
+                'admin_theme=', JSON.stringify(localStorage.getItem('admin_theme')),
+                'user_theme=', JSON.stringify(localStorage.getItem('user_theme')));
+    // ƯU TIÊN admin_theme > user_theme > theme (back-compat)
+    var savedTheme = localStorage.getItem('admin_theme')
+                   || localStorage.getItem('user_theme')
+                   || localStorage.getItem('theme')
+                   || localStorage.getItem('repo_theme');
+    console.log('[BOOT] using savedTheme=', savedTheme);
     if (savedTheme && window.applyTheme) {
       window.applyTheme(savedTheme);
     }
@@ -5863,6 +5872,31 @@
     if (window.PUBLIC_ADMIN_THEME && Object.keys(window.PUBLIC_ADMIN_THEME).length) {
       const t = window.PUBLIC_ADMIN_THEME;
       try {
+        // === FIX BUG RELOAD-RESET-THEME ===
+        // PUBLIC_ADMIN_THEME là theme đã được BAKE vào HTML lúc build time
+        // (build_public.py chạy lúc build). Khi admin đổi theme trên admin UI,
+        // theme mới được lưu vào .3105/admin-settings.json trên GitHub nhưng
+        // HTML KHÔNG tự rebuild → PUBLIC_ADMIN_THEME vẫn chứa theme CŨ.
+        //
+        // Nếu apply không kiểm tra → ghi đè theme admin vừa chỉnh về theme cũ.
+        //
+        // RULE MỚI:
+        //   - Nếu admin/user đã có giá trị trong localStorage (kể cả namespaced
+        //     admin_theme/user_theme) → KHÔNG apply từ PUBLIC_ADMIN_THEME
+        //     (giá trị localStorage là nguồn truth mới nhất).
+        //   - Nếu localStorage rỗng (lần đầu vào trang) → seed từ
+        //     PUBLIC_ADMIN_THEME như cũ.
+        const hasAdminOrUserVal = (localKey) => {
+          try {
+            const admin = localStorage.getItem('admin_' + localKey);
+            const user = localStorage.getItem('user_' + localKey);
+            const global = localStorage.getItem(localKey);
+            return (admin !== null && admin !== '')
+                || (user !== null && user !== '')
+                || (global !== null && global !== '');
+          } catch (_) { return false; }
+        };
+
         // 1) Ghi tất cả key vào localStorage (CHỈ khi chưa có → tôn trọng user đã chỉnh riêng)
         for (const k of Object.keys(t)) {
           try {
@@ -5871,22 +5905,33 @@
             if (localStorage.getItem(k) === null) localStorage.setItem(k, String(v));
           } catch (_) {}
         }
-        // 2) Apply theme/shadow/dark/trans/bg (code cũ)
+        // 2) Apply theme/shadow/dark/trans/bg — CHỈ khi localStorage chưa có
         // Support CẢ snake_case (admin-settings.json cũ) + camelCase (baked public-defaults).
         // Pages chỉ bake camelCase, nên cần fallback camelCase để áp dụng đúng.
-        if (t.theme && window.applyTheme) window.applyTheme(t.theme);
+        if (t.theme && window.applyTheme && !hasAdminOrUserVal('theme')) {
+          console.log('[PUBLIC_ADMIN_THEME] applying baked theme:', t.theme);
+          window.applyTheme(t.theme);
+        } else if (t.theme) {
+          console.log('[PUBLIC_ADMIN_THEME] SKIP theme=', t.theme, '(localStorage has admin/user value)');
+        }
         const _shadow = t.shadow_theme ?? t.shadowTheme;
-        if (_shadow && window.applyShadowTheme) window.applyShadowTheme(_shadow);
+        if (_shadow && window.applyShadowTheme && !hasAdminOrUserVal('shadowTheme')) {
+          window.applyShadowTheme(_shadow);
+        }
         const _darkRaw = t.dark_mode !== undefined ? t.dark_mode : t.darkMode;
         if (_darkRaw !== undefined && _darkRaw !== null) {
           const isDark = String(_darkRaw) === 'true';
           const slider = document.getElementById('rangeTransparency');
           const tv = t.transparency != null ? parseInt(t.transparency, 10)
                        : (slider ? parseInt(slider.value, 10) : 92);
-          if (window.applyDarkMode) window.applyDarkMode(isDark, tv);
+          if (window.applyDarkMode && !hasAdminOrUserVal('darkMode')) {
+            window.applyDarkMode(isDark, tv);
+          }
         }
         const _bg = t.bg_image ?? t.bgImage;
-        if (_bg && window._applyBackground) window._applyBackground(_bg);
+        if (_bg && window._applyBackground && !hasAdminOrUserVal('bgImage')) {
+          window._applyBackground(_bg);
+        }
         // Apply rain config (camelCase từ public-defaults)
         if (t.rainEnabled !== undefined && window.rainEnabled !== undefined) {
           // rainEnabled được expose global bởi rain module; toggle nếu khác
