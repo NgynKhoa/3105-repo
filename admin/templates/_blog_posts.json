@@ -7,7 +7,8 @@
     "excerpt": "ahihi",
     "content": "<p></p><h2>Các bước cài đặt file 3105</h2><h3>Bước 1: </h3><p>Mở ứng dụng 3105 và vào mục \"Đã cài\"</p><h3>Bước 2: </h3><p>Nhấn vào dấu \"+\" bên góc phải ứng dụng 3105 và chọn \"nhập 3105\"</p><h3>Bước 3: </h3><p>Chọn file patch 3105 đã tải về và bấm \"Mở\"</p><h3>Bước 4: </h3><p>Chọn vào file Patch vừa nhập, nhấn \"áp dụng Patch\"</p><p><strong>Lưu ý:</strong> Hãy khôi phục gốc và xóa patch cũ trước khi áp dụng patch mới.</p><p></p>",
     "image": "",
-    "images": []
+    "images": [],
+    "hidden": false
   },
   {
     "id": 2,
@@ -40,6 +41,19 @@
     "content": "<p></p><h2>Các điều cần lưu ý khi sử dụng ứng dụng 3105</h2><ul><li>Không tự tiện cài các file 3105 không rõ nguồn gốc hoặc uy tín, tránh gây ảnh hưởng đến tài khoản hoặc ứng dụng được áp dụng sửa đổi.</li><li>3105 hiện tại vẫn chưa hoàn thiện và sẽ còn một vài lỗi nhỏ, tác giả Yangjii sẽ fix vào các bản cập nhật sắp tới.</li><li>3105 sẽ không dừng lại ở đây mà sẽ tiếp tục phát triển các tính năng khác trong tương lai, mở rộng phạm vi sandbox hoặc file hệ thống có thể áp dụng.</li></ul><p></p>",
     "image": "",
     "images": [],
+    "hidden": false
+  },
+  {
+    "id": 5,
+    "icon": "TEST",
+    "title": "TEST",
+    "date": "Vua cap nhat",
+    "excerpt": "TEST",
+    "content": "<p>test</p>",
+    "image": "",
+    "images": [
+      "TESTT"
+    ],
     "hidden": false
   }
 ]
