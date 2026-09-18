@@ -2449,6 +2449,56 @@
     </div>
     <div class="settings-body">
       <!--
+        USER THEME PICKER — cho user thường (anonymous, không login).
+        Chỉ có Theme + Shadow (KHÔNG có tab BG).
+        Lưu vào localStorage với namespace "user_*" để KHÔNG ghi đè admin_*.
+        Áp dụng ngay + persist qua reload (mỗi user có theme riêng).
+      -->
+      <div class="settings-group" id="userThemeGroup" data-public-only="1" style="display:none;">
+        <span class="settings-label">🎨 Màu của bạn</span>
+        <!-- 2 nút tab: Theme / Shadow (KHÔNG có BG) -->
+        <div class="style-tabs" id="userStyleTabs" style="display:flex;gap:6px;margin:6px 0;">
+          <button class="user-style-tab active" data-tab="theme" style="flex:1;padding:8px;background:transparent;border:1px solid var(--border);border-radius:4px;cursor:pointer;color:var(--text);">🎨 Theme</button>
+          <button class="user-style-tab" data-tab="shadow" style="flex:1;padding:8px;background:transparent;border:1px solid var(--border);border-radius:4px;cursor:pointer;color:var(--text);">✨ Shadow</button>
+        </div>
+        <!-- Palette dùng chung cho theme + shadow -->
+        <div id="userPaletteHint" style="font-size:11px;color:var(--muted);margin-bottom:6px;text-align:center;">
+          Chọn 1 màu — đang dùng cho <b id="userPaletteFor">Theme</b>
+        </div>
+        <div id="userPaletteGrid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;">
+          <!-- Render by JS -->
+        </div>
+        <button id="userResetTheme" style="margin-top:8px;width:100%;padding:6px;background:transparent;border:1px solid var(--border);border-radius:4px;cursor:pointer;color:var(--muted);font-size:11px;">
+          ↺ Reset về màu mặc định
+        </button>
+      </div>
+
+      <!--
+        USER THEME PICKER — cho user thường (anonymous, không login).
+        Chỉ có Theme + Shadow (KHÔNG có tab BG).
+        Lưu vào localStorage với namespace "user_*" để KHÔNG ghi đè admin_*.
+        Áp dụng ngay + persist qua reload (mỗi user có theme riêng).
+      -->
+      <div class="settings-group" id="userThemeGroup" data-public-only="1" style="display:none;">
+        <span class="settings-label">🎨 Màu của bạn</span>
+        <!-- 2 nút tab: Theme / Shadow (KHÔNG có BG) -->
+        <div class="style-tabs" id="userStyleTabs" style="display:flex;gap:6px;margin:6px 0;">
+          <button class="user-style-tab active" data-tab="theme" style="flex:1;padding:8px;background:transparent;border:1px solid var(--border);border-radius:4px;cursor:pointer;color:var(--text);">🎨 Theme</button>
+          <button class="user-style-tab" data-tab="shadow" style="flex:1;padding:8px;background:transparent;border:1px solid var(--border);border-radius:4px;cursor:pointer;color:var(--text);">✨ Shadow</button>
+        </div>
+        <!-- Palette dùng chung cho theme + shadow -->
+        <div id="userPaletteHint" style="font-size:11px;color:var(--muted);margin-bottom:6px;text-align:center;">
+          Chọn 1 màu — đang dùng cho <b id="userPaletteFor">Theme</b>
+        </div>
+        <div id="userPaletteGrid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;">
+          <!-- Render by JS -->
+        </div>
+        <button id="userResetTheme" style="margin-top:8px;width:100%;padding:6px;background:transparent;border:1px solid var(--border);border-radius:4px;cursor:pointer;color:var(--muted);font-size:11px;">
+          ↺ Reset về màu mặc định
+        </button>
+      </div>
+
+      <!--
         Theme picker (Màu Theme, Màu Shadow, Hình nền) CHỈ hiện cho admin.
         User thường KHÔNG thể tùy chỉnh — họ dùng admin defaults hoặc tự chỉnh
         các setting cơ bản (mưa, dark mode, trong suốt) phía dưới.
@@ -3954,6 +4004,120 @@
 
   renderStylePalette();
   switchStyleTab('theme');
+
+  // === USER PALETTE (cho user thường trên GH Pages / public) ===
+  // Theme + Shadow (không có BG). Lưu vào localStorage 'user_theme' +
+  // 'user_shadowTheme'. Áp dụng ngay + persist qua reload.
+  let _userStyleTab = 'theme';
+  function renderUserPalette() {
+    const grid = document.getElementById('userPaletteGrid');
+    if (!grid) return;
+    grid.innerHTML = Object.entries(themes).map(([k, t]) => `
+      <button class="theme-btn" data-color="${k}" title="${k}"
+              style="height:32px;border-radius:4px;border:2px solid transparent;background:${t.neon};cursor:pointer;outline:none;"></button>
+    `).join('');
+    grid.querySelectorAll('.theme-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const colorKey = btn.dataset.color;
+        if (_userStyleTab === 'theme') {
+          if (typeof window.applyUserTheme === 'function') window.applyUserTheme(colorKey);
+        } else if (_userStyleTab === 'shadow') {
+          if (typeof window.applyUserShadow === 'function') window.applyUserShadow(colorKey);
+        }
+        _updateUserPaletteActive();
+      });
+    });
+    _updateUserPaletteActive();
+  }
+  function _updateUserPaletteActive() {
+    const grid = document.getElementById('userPaletteGrid');
+    if (!grid) return;
+    const activeColor = (_userStyleTab === 'shadow')
+      ? (localStorage.getItem('user_shadowTheme') || '')
+      : (localStorage.getItem('user_theme') || '');
+    grid.querySelectorAll('.theme-btn').forEach(b => {
+      const isActive = (b.dataset.color === activeColor);
+      b.style.borderColor = isActive ? 'var(--neon)' : 'transparent';
+      b.style.boxShadow = isActive ? '0 0 8px var(--neon)' : 'none';
+    });
+    const hint = document.getElementById('userPaletteFor');
+    if (hint) hint.textContent = _userStyleTab === 'shadow' ? 'Shadow Logo' : 'Theme';
+  }
+  function switchUserStyleTab(tab) {
+    if (tab !== 'theme' && tab !== 'shadow') return; // block BG tab
+    _userStyleTab = tab;
+    document.querySelectorAll('.user-style-tab').forEach(b => {
+      b.classList.toggle('active', b.dataset.tab === tab);
+    });
+    _updateUserPaletteActive();
+  }
+  document.querySelectorAll('.user-style-tab').forEach(btn => {
+    btn.addEventListener('click', () => switchUserStyleTab(btn.dataset.tab));
+  });
+
+  // Áp dụng user theme. KHÔNG sync lên GitHub (chỉ admin mới sync).
+  // Lưu localStorage + đổi CSS variables ngay.
+  window.applyUserTheme = function(name) {
+    const t = themes[name];
+    if (!t) return;
+    const r = document.documentElement;
+    r.style.setProperty('--neon', t.neon);
+    r.style.setProperty('--neon-rgb', t.neonRgb);
+    r.style.setProperty('--neon-pink', t.neonPink);
+    r.style.setProperty('--neon-pink-rgb', t.neonPinkRgb);
+    r.style.setProperty('--neon-cyan', t.neonCyan);
+    r.style.setProperty('--neon-cyan-rgb', t.neonCyanRgb);
+    r.style.setProperty('--neon-yellow', t.neonYellow);
+    r.style.setProperty('--neon-lavender', t.neonLavender);
+    r.style.setProperty('--bg', t.bg);
+    r.style.setProperty('--border', 'rgba(' + t.neonRgb + ', 0.15)');
+    r.style.setProperty('--border-glow', 'rgba(' + t.neonRgb + ', 0.38)');
+    localStorage.setItem('user_theme', name);
+    console.log('[user-theme] applied:', name);
+  };
+  window.applyUserShadow = function(name) {
+    const t = themes[name];
+    if (!t) return;
+    const r = document.documentElement;
+    // Shadow dùng trực tiếp theme color làm shadow cho logo + borders phụ
+    r.style.setProperty('--shadow-theme', t.neon);
+    r.style.setProperty('--shadow-theme-rgb', t.neonRgb);
+    localStorage.setItem('user_shadowTheme', name);
+    // Re-apply logo shadow nếu có
+    if (typeof window.reapplyLogoShadow === 'function') window.reapplyLogoShadow();
+    console.log('[user-shadow] applied:', name);
+  };
+  // Reset về theme/shadow mặc định (admin defaults hoặc PUBLIC_ADMIN_THEME)
+  document.getElementById('userResetTheme')?.addEventListener('click', () => {
+    localStorage.removeItem('user_theme');
+    localStorage.removeItem('user_shadowTheme');
+    // Reload để apply default từ PUBLIC_ADMIN_THEME / applyBoxSizes
+    location.reload();
+  });
+
+  renderUserPalette();
+  // Áp user_theme đã lưu (nếu có) — ghi đè admin default cho user này.
+  // CHẠY NHIỀU LẦN để đảm bảo không bị applyTheme (admin defaults) override.
+  function _applyUserThemeFromStorage() {
+    const ut = localStorage.getItem('user_theme');
+    if (ut && window.applyUserTheme) window.applyUserTheme(ut);
+    const us = localStorage.getItem('user_shadowTheme');
+    if (us && window.applyUserShadow) window.applyUserShadow(us);
+  }
+  // Áp ngay
+  _applyUserThemeFromStorage();
+  // Áp lại sau khi DOMContentLoaded + load + 1s (các script khác có thể đã
+  // apply theme của admin lên CSS — cần ghi đè lại với user_theme).
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', _applyUserThemeFromStorage);
+  } else {
+    _applyUserThemeFromStorage();
+  }
+  window.addEventListener('load', function() {
+    _applyUserThemeFromStorage();
+    setTimeout(_applyUserThemeFromStorage, 500);
+    setTimeout(_applyUserThemeFromStorage, 1500);
+  });
 
   window.applyTheme = function(name) {
     const t = themes[name];
@@ -6281,6 +6445,10 @@
     // 1) Ẩn/hiện các element có data-owner-only
     document.querySelectorAll('[data-owner-only="1"]').forEach(el => {
       el.style.display = isOwner ? '' : 'none';
+    });
+    // 1b) Ẩn/hiện các element có data-public-only (CHỈ user thường, ẩn với admin)
+    document.querySelectorAll('[data-public-only="1"]').forEach(el => {
+      el.style.display = isOwner ? 'none' : '';
     });
     // 2) Khoá meta section cho user thường
     const meta = document.getElementById('metaSection');
