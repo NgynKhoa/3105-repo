@@ -3775,13 +3775,20 @@
   // Wire "💾 Lưu theme ngay" button → flush pending + push full theme
   const btnSaveAdminNow = document.getElementById('btnSaveAdminNow');
   if (btnSaveAdminNow) {
-    btnSaveAdminNow.addEventListener('click', async () => {      const status = document.getElementById('adminSaveStatus');
+    btnSaveAdminNow.addEventListener('click', async () => {
+      const status = document.getElementById('adminSaveStatus');
       const slug = window.PUBLIC_REPO_SLUG || (typeof window.__frontRepoName !== 'undefined' ? window.__frontRepoName : '') || '';
+      const localTheme = localStorage.getItem('admin_theme');
       if (!slug) {
         if (status) { status.style.color = '#ff6b6b'; status.textContent = '⚠️ Không xác định được repo slug.'; }
+        console.error('[saveTheme] slug is empty! PUBLIC_REPO_SLUG=', window.PUBLIC_REPO_SLUG, '__frontRepoName=', window.__frontRepoName);
         return;
       }
-      if (status) { status.style.color = 'var(--muted)'; status.textContent = '⏳ Đang lưu…'; }
+      if (status) {
+        status.style.color = 'var(--muted)';
+        status.textContent = `⏳ Đang lưu (slug="${slug}", theme="${localTheme || '??'}")...`;
+      }
+      console.log('[saveTheme] Saving with slug=', slug, 'localTheme=', localTheme, 'admin_theme=', localStorage.getItem('admin_theme'));
       btnSaveAdminNow.disabled = true;
       btnSaveAdminNow.style.opacity = '0.6';
       try {
@@ -3791,17 +3798,22 @@
           __adminSyncTimer = null;
         }
         const result = await saveAdminSettingsNow(slug);
+        console.log('[saveTheme] Result:', result);
         if (result.ok) {
           if (status) {
             status.style.color = '#39ff14';
-            status.textContent = '✅ Đã lưu lên GitHub. Pages sẽ rebuild sau vài giây.';
+            status.textContent = `✅ Đã lưu theme="${localTheme || '??'}" lên GitHub! Sau đó chạy deploy để cập nhật Pages.`;
           }
         } else {
           if (status) {
             status.style.color = '#ff6b6b';
-            status.textContent = '❌ ' + (result.error || 'Lưu thất bại');
+            status.textContent = '❌ Lưu thất bại: ' + (result.error || 'unknown error — xem Console (F12) để chi tiết');
           }
+          console.error('[saveTheme] Lỗi:', result);
         }
+      } catch (e) {
+        if (status) { status.style.color = '#ff6b6b'; status.textContent = '❌ Lỗi: ' + e; }
+        console.error('[saveTheme] Exception:', e);
       } finally {
         btnSaveAdminNow.disabled = false;
         btnSaveAdminNow.style.opacity = '1';
@@ -6353,19 +6365,25 @@
   let __adminSyncTimer = null;
   let __adminSyncPending = {};
   function postAdminSettingToGitHub(slug, key, value) {
+    console.log('[autoSave] postAdminSettingToGitHub slug=', slug, 'key=', key, 'value=', value);
     __adminSyncPending[key] = value;
     if (__adminSyncTimer) clearTimeout(__adminSyncTimer);
     __adminSyncTimer = setTimeout(async () => {
       const payload = Object.assign({}, __adminSyncPending);
       __adminSyncPending = {};
+      console.log('[autoSave] Flushing payload:', payload, 'to slug:', slug);
       try {
         const r = await fetch('/api/admin-settings-merge', {
           method: 'POST',
           credentials: 'same-origin',
           headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify({slug, patch: payload, mode: 'pr'}),
+          // mode='direct' → push thẳng vào main (KHÔNG tạo PR).
+          // Lý do: nếu dùng 'pr', mỗi lần chỉnh setting tạo 1 PR mới,
+          // PR không merge → file trên main không đổi → reload = reset màu cũ.
+          body: JSON.stringify({slug, patch: payload, mode: 'direct'}),
         });
         const data = await r.json().catch(() => null);
+        console.log('[autoSave] Response:', data);
         if (!data || !data.ok) {
           console.warn('admin-settings merge failed', data);
         } else if (data.settings) {
@@ -6383,13 +6401,17 @@
   async function saveAdminSettingsNow(slug) {
     if (!slug) return { ok: false, error: 'Thiếu slug' };
     try {
+      // === FIX: ưu tiên localStorage['admin_theme'] (giá trị mới nhất admin vừa chọn),
+      // KHÔNG ưu tiên __adminDefaults.theme (giá trị CŨ load từ GitHub lúc init).
+      const localTheme = localStorage.getItem('admin_theme');
+      const localShadow = localStorage.getItem('admin_shadowTheme');
       const patch = {
         rain_enabled: !!document.getElementById('toggleRain')?.checked,
         heavy_rain: !!document.getElementById('toggleHeavyRain')?.checked,
         dark_mode: !!document.getElementById('toggleDarkMode')?.checked,
         transparency: String(document.getElementById('rangeTransparency')?.value || 92),
-        theme: window.__adminDefaults?.theme || localStorage.getItem('admin_theme') || 'default',
-        shadow_theme: window.__adminDefaults?.shadow_theme || localStorage.getItem('admin_shadowTheme') || 'default',
+        theme: localTheme || window.__adminDefaults?.theme || 'default',
+        shadow_theme: localShadow || window.__adminDefaults?.shadow_theme || 'default',
       };
       // Lấy rain volume nếu có
       const vol = document.getElementById('rainVolumeRange')?.value;
