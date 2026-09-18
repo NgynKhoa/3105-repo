@@ -1,9 +1,9 @@
 {
-  "theme": "cyan",
-  "shadow_theme": "white",
+  "theme": "yellow",
+  "shadow_theme": "orange",
   "shadowTheme": "orange",
   "admin_theme": "yellow",
-  "admin_shadowTheme": "orange",
+  "admin_shadowTheme": "white",
   "darkMode": "true",
   "dash_darkMode": "true",
   "dash_theme": "lavender",
