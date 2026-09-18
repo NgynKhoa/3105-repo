@@ -17,6 +17,11 @@ Mặc định admin upload qua web → dùng PR mode cho an toàn (admin merge s
 from __future__ import annotations
 
 import json
+import logging
+import os
+import pathlib
+import subprocess
+import sys
 import time
 from typing import Any
 
@@ -27,6 +32,9 @@ from .auth import login_required, get_current_token, get_owned_repos as auth_get
 from .config import Config
 from .github_write import write_file as gh_write_file
 
+_log = logging.getLogger(__name__)
+
+
 ADMIN_SETTINGS_PATH = ".3105/admin-settings.json"
 ADMIN_SETTINGS_DEFAULT: dict[str, Any] = {
     "rain_enabled": True,
@@ -36,6 +44,46 @@ ADMIN_SETTINGS_DEFAULT: dict[str, Any] = {
     "transparency": 92,
     "shadow_theme": "default",
 }
+
+
+def _bake_public_defaults() -> tuple[bool, str]:
+    """Chạy `bake_defaults.py` để re-bake `.3105/public-defaults.json` từ
+    `.3105/admin-settings.json` vừa được update.
+
+    File public-defaults.json là SOURCE OF TRUTH cho `build_public.py` khi
+    GitHub Actions deploy lên GH Pages. Nếu không re-bake sau khi admin
+    đổi theme → PUBLIC_ADMIN_THEME trong HTML serve trên GH Pages sẽ chứa
+    theme CŨ, user anonymous sẽ thấy theme không khớp với admin.
+
+    Returns: (success: bool, message: str)
+    """
+    try:
+        # __file__ = admin/admin_settings.py → parent = admin/ → parent.parent = repo root
+        repo_root = pathlib.Path(__file__).resolve().parent.parent
+        bake_script = repo_root / "bake_defaults.py"
+
+        if not bake_script.exists():
+            return False, f"bake_defaults.py not found at {bake_script}"
+
+        # Chạy script với cwd = repo root
+        result = subprocess.run(
+            [sys.executable, str(bake_script)],
+            cwd=str(repo_root),
+            capture_output=True,
+            text=True,
+            timeout=30,
+        )
+
+        if result.returncode == 0:
+            _log.info("[bake] OK: %s", result.stdout.strip()[:200])
+            return True, result.stdout.strip()[:300]
+        else:
+            _log.warning("[bake] FAILED: rc=%d stderr=%s",
+                         result.returncode, result.stderr.strip()[:200])
+            return False, f"rc={result.returncode} stderr={result.stderr.strip()[:200]}"
+    except Exception as e:
+        _log.exception("[bake] exception")
+        return False, f"exception: {e}"
 
 
 def _admin_settings_url(full_name: str, path: str) -> str:
@@ -178,6 +226,7 @@ def register_admin_settings_routes(app):
         try:
             # Retry logic: nếu GitHub trả 409/422 (SHA conflict do race),
             # refetch rồi merge lại. Tối đa 3 lần.
+            last_bake_msg = ""
             for attempt in range(3):
                 current = fetch_admin_settings(target["full_name"], token)
                 merged = dict(current or {})
@@ -192,7 +241,25 @@ def register_admin_settings_routes(app):
                         commit_message=f"chore(admin-settings): merge via 3105 Builder",
                         mode=mode,
                     )
-                    return jsonify({"ok": True, "settings": merged, **result})
+                    # === CRITICAL FIX: re-bake public-defaults.json ===
+                    # Sau khi merge xong, file `.3105/admin-settings.json` đã đổi
+                    # trên GitHub. Nhưng file `.3105/public-defaults.json` (local,
+                    # dùng cho `build_public.py` → PUBLIC_ADMIN_THEME trong HTML
+                    # serve trên GH Pages) vẫn chứa data CŨ.
+                    #
+                    # Nếu không re-bake → workflow build lần sau sẽ dùng theme cũ
+                    # → user trên GH Pages thấy theme KHÔNG khớp admin.
+                    bake_ok, bake_msg = _bake_public_defaults()
+                    last_bake_msg = bake_msg
+                    _log.info("[merge_admin_settings] bake_ok=%s msg=%s",
+                              bake_ok, bake_msg[:200])
+                    return jsonify({
+                        "ok": True,
+                        "settings": merged,
+                        "baked": bake_ok,
+                        "bake_msg": bake_msg,
+                        **result,
+                    })
                 except RuntimeError as e:
                     err_msg = str(e)
                     # 409 conflict (SHA mismatch) hoặc 422 → refetch + retry
