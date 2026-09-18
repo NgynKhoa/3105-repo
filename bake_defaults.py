@@ -78,6 +78,16 @@ _CAMEL_KEYS = {
     "theme", "admin_theme", "transparency", "transparency_dark", "transparency_light",
     "shadowTheme", "darkMode", "rainEnabled", "heavyRain", "bgImage",
     "currentRepo", "repo_lang",
+    # === Box size settings (Per-box width/height, flat keys) ===
+    "repo_box_masthead_height", "repo_box_masthead_width",
+    "repo_box_hello-banner_height", "repo_box_hello-banner_width",
+    "repo_box_meta_height", "repo_box_meta_width",
+    "repo_box_packages_height", "repo_box_packages_width",
+    "repo_box_blog-section_height", "repo_box_blog-section_width",
+    "repo_box_stars_height", "repo_box_stars_width",
+    "repo_box_music-player_height", "repo_box_music-player_width",
+    "repo_box_moon-widget_height", "repo_box_moon-widget_width",
+    "repo_box_hint-box_height", "repo_box_hint-box_width",
 }
 
 # Admin-only / private keys không bao giờ bake ra Pages.

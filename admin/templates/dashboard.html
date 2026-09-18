@@ -1252,6 +1252,7 @@
         <button class="dash-tab" data-tab="links">🔗 Links</button>
         <button class="dash-tab" data-tab="fonts">&#128291; Fonts</button>
         <button class="dash-tab" data-tab="style">&#127912; Style</button>
+        <button class="dash-tab" data-tab="sizes">📐 Sizes</button>
         <a class="dash-tab" href="/fe-checklist" target="_blank" style="text-decoration:none;">🗂 FE-Checklist</a>
       </div>
     </header>
@@ -1508,6 +1509,29 @@
           <button class="form-btn" onclick="closeAddBoxModal()">Huỷ</button>
           <button class="form-btn success" onclick="confirmAddBox()">＋ Tạo khung</button>
         </div>
+      </div>
+    </div>
+
+    <!-- ===================== SIZES PANEL ===================== -->
+    <div class="dash-panel" id="panel-sizes">
+      <div class="section-card">
+        <div class="section-title">📐 Kích thước khung (Box Sizes)</div>
+        <div class="info-note">
+          Chỉnh chiều <b>dài</b> (height) + <b>rộng</b> (width) cho <b>TỪNG khung</b> trong trang Front Repo.
+          Sau khi lưu, chạy <code>build_public.py</code> + <code>git push</code> để áp dụng lên GitHub Pages.
+        </div>
+
+        <div id="boxSizeGrid" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px;">
+          <!-- Render bằng JS renderBoxSizePanel() -->
+        </div>
+
+        <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap;">
+          <button class="form-btn success" onclick="saveAllBoxSizes()">💾 Lưu tất cả kích thước lên GitHub</button>
+          <button class="form-btn" onclick="resetBoxSizes()">🔄 Reset về mặc định CSS</button>
+          <button class="form-btn" onclick="applyBoxSizesPreview()">👁️ Xem Preview ngay</button>
+        </div>
+
+        <div id="boxSizeStatus" style="font-size:12px;color:var(--muted);margin-top:8px;min-height:18px;"></div>
       </div>
     </div>
 
@@ -2041,8 +2065,143 @@
         document.querySelectorAll('.dash-panel').forEach(p => p.classList.remove('active'));
         tab.classList.add('active');
         document.getElementById('panel-' + tab.dataset.tab).classList.add('active');
+        // Re-render Sizes panel khi mở (lấy latest từ localStorage)
+        if (tab.dataset.tab === 'sizes' && typeof renderBoxSizePanel === 'function') {
+          renderBoxSizePanel();
+        }
       });
     });
+
+    // ====================== BOX SIZE EDITOR (Tab "📐 Sizes") ======================
+    // Quản lý chiều dài + rộng cho 9 box trong trang Front Repo.
+    // Thay đổi → ghi localStorage ngay + sync GitHub khi bấm "💾 Lưu".
+    const BOX_SIZE_LABELS = {
+      'masthead':      '📰 Tiêu đề (Masthead)',
+      'hello-banner':  '👋 Hello Banner',
+      'meta':          'ℹ️ Thông tin chung (Meta)',
+      'packages':      '📦 Danh sách Packages',
+      'blog-section':  '📝 Blog',
+      'stars':         '✩ Links / Stars',
+      'music-player':  '♫ Music Player',
+      'moon-widget':   '☾ Moon Widget',
+      'hint-box':      '💡 Hướng dẫn (Hint Box)',
+    };
+    const BOX_SIZE_KEYS = Object.keys(BOX_SIZE_LABELS);
+
+    function getBoxSize(boxKey, dim) {
+      try {
+        const k = 'repo_box_' + boxKey + '_' + dim;
+        const v1 = localStorage.getItem(k);
+        if (v1 !== null && v1 !== '' && !isNaN(parseFloat(v1))) return parseFloat(v1);
+        const v2 = localStorage.getItem('admin_' + k);
+        if (v2 !== null && v2 !== '' && !isNaN(parseFloat(v2))) return parseFloat(v2);
+        const pat = window.PUBLIC_ADMIN_THEME || {};
+        const v3 = pat[k];
+        if (v3 !== undefined && v3 !== null && v3 !== '' && !isNaN(parseFloat(v3))) return parseFloat(v3);
+      } catch (e) {}
+      return '';
+    }
+
+    function setBoxSize(boxKey, dim, value, applyNow) {
+      const k = 'repo_box_' + boxKey + '_' + dim;
+      try {
+        if (value === '' || value === null || isNaN(parseFloat(value))) {
+          localStorage.removeItem(k);
+        } else {
+          localStorage.setItem(k, String(parseFloat(value)));
+        }
+      } catch (e) {}
+      if (applyNow && typeof applyBoxSizes === 'function') applyBoxSizes();
+    }
+
+    function renderBoxSizePanel() {
+      const grid = document.getElementById('boxSizeGrid');
+      if (!grid) return;
+      grid.innerHTML = BOX_SIZE_KEYS.map(k => {
+        const h = getBoxSize(k, 'height');
+        const w = getBoxSize(k, 'width');
+        return `
+          <div style="grid-column:1/-1;padding:8px 10px;background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:4px;">
+            <div style="font-weight:600;font-size:13px;margin-bottom:6px;color:var(--text-bright);">${BOX_SIZE_LABELS[k]}</div>
+            <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
+              <label style="font-size:11px;color:var(--muted);width:50px;">Cao</label>
+              <input type="number" min="0" step="10" data-box="${k}" data-dim="height"
+                     value="${h}" placeholder="auto (CSS default)"
+                     style="flex:1;min-width:80px;background:var(--panel-alt);color:var(--text-bright);border:1px solid var(--border);border-radius:3px;padding:4px 6px;font-size:12px;">
+              <span style="font-size:11px;color:var(--muted);">px</span>
+              <label style="font-size:11px;color:var(--muted);width:50px;margin-left:6px;">Rộng</label>
+              <input type="number" min="0" step="10" data-box="${k}" data-dim="width"
+                     value="${w}" placeholder="auto (CSS default)"
+                     style="flex:1;min-width:80px;background:var(--panel-alt);color:var(--text-bright);border:1px solid var(--border);border-radius:3px;padding:4px 6px;font-size:12px;">
+              <span style="font-size:11px;color:var(--muted);">px</span>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // Save ALL box sizes lên GitHub qua admin-settings-merge endpoint.
+    async function saveAllBoxSizes() {
+      const status = document.getElementById('boxSizeStatus');
+      const grid = document.getElementById('boxSizeGrid');
+      if (!grid) return;
+      const inputs = grid.querySelectorAll('input[type="number"]');
+      const patch = {};
+      inputs.forEach(inp => {
+        const boxKey = inp.dataset.box;
+        const dim = inp.dataset.dim;
+        const k = 'repo_box_' + boxKey + '_' + dim;
+        if (inp.value === '' || isNaN(parseFloat(inp.value))) {
+          patch[k] = '';   // Empty string → server-side merge sẽ giữ nguyên (server chỉ update key có value)
+        } else {
+          patch[k] = String(parseFloat(inp.value));
+        }
+      });
+      const slug = (window.PUBLIC_REPO_SLUG || window.__frontRepoName || 'demo').toString();
+      status.textContent = '⏳ Đang đẩy lên GitHub...';
+      status.style.color = 'var(--muted)';
+      try {
+        const r = await fetch('/api/admin-settings-merge', {
+          method: 'POST',
+          credentials: 'same-origin',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({ slug, patch, mode: 'direct' }),
+        });
+        const data = await r.json().catch(() => null);
+        if (!data || !data.ok) {
+          status.textContent = '❌ Lưu thất bại: ' + (data?.error || 'unknown');
+          status.style.color = 'var(--neon-pink)';
+          return;
+        }
+        status.textContent = '✅ Đã lưu ' + Object.keys(patch).length + ' giá trị lên .3105/admin-settings.json. Bước tiếp: chạy build_public.py + git push để lên GitHub Pages.';
+        status.style.color = 'var(--neon)';
+      } catch (e) {
+        status.textContent = '❌ Lỗi: ' + e;
+        status.style.color = 'var(--neon-pink)';
+      }
+    }
+
+    function resetBoxSizes() {
+      if (!confirm('Reset tất cả kích thước khung về mặc định CSS?')) return;
+      BOX_SIZE_KEYS.forEach(k => {
+        ['height', 'width'].forEach(d => setBoxSize(k, d, '', false));
+      });
+      renderBoxSizePanel();
+      document.getElementById('boxSizeStatus').textContent = '🔄 Đã clear override local. Bấm "💾 Lưu" để sync GitHub.';
+      document.getElementById('boxSizeStatus').style.color = 'var(--muted)';
+    }
+
+    function applyBoxSizesPreview() {
+      // Lưu inputs hiện tại vào localStorage, rồi apply lên Front Repo preview
+      // (chỉ local — không sync GitHub cho tới khi bấm Save).
+      const grid = document.getElementById('boxSizeGrid');
+      if (!grid) return;
+      grid.querySelectorAll('input[type="number"]').forEach(inp => {
+        setBoxSize(inp.dataset.box, inp.dataset.dim, inp.value, false);
+      });
+      // Mở Front Repo trong tab mới kèm timestamp để force reload
+      window.open('/', '_blank', 'noopener');
+    }
 
     // ====================== BLOG MANAGEMENT ======================
     let blogPosts = [];
@@ -2503,6 +2662,7 @@
     document.addEventListener('DOMContentLoaded', () => {
       if (document.getElementById('linksList')) loadNavLinks();
       if (document.getElementById('tracksList')) loadPlaylist();
+      if (typeof renderBoxSizePanel === 'function') renderBoxSizePanel();
       // Wire dash-back: nếu có history thì back() để giữ nguyên trạng thái Front
       // (tránh reload gây mất các thay đổi admin vừa chỉnh trên Front trước khi save).
       // Nếu không có history (mở dashboard trực tiếp) → fallback về "/".
