@@ -486,20 +486,20 @@ packages:
 
   # ----- owen-000 -----
   - identifier: owen-000
-    name: TEST
+    name: PUBG 4.6 UPDATE 20/9 OWEN V1
     author: "@owenindahouse"
-    version: 1.0.0
-    summary: ✨ Pubg • Bản dùng thử • Trải nghiệm tính năng nâng cao
-    password: "2752"
+    version: 4.6.0
+    summary: ✨ Pubg • Bản mới nhất • Update 20/9
+    password: "Owen"
     category: Customization
     tags: [CUSTOM]
-    publishedAt: "2026-09-16T09:04:37.000Z"
-    icon: assets/icon/zakaryaxOwen_logo.png
+    publishedAt: "2026-09-20T09:01:37.000Z"
+    icon: assets/icon/owen_basic.png
     banner: assets/banner/banner_new.png
     screenshots: *screens
-    download: packages/PATCH_COOP_ZAKARYA_-_OWEN_2.3105
-    sha256: E7B705EF7AC4CEE4324C5B0D9E702A86124920ACE92B490EA830F4721B84416F
-    size: 86610
+    download: packages/PATCH_OWEN_BASIC_V1.3105
+    sha256: 34D53B7E829E20CE085A17256D7D774C4321017362AFAF8DA0AB5BAE9FFF278F
+    size: 4610200
     supportedOS: *os_rules
     featured: true
     isPrivate: false

@@ -1,0 +1,110 @@
+{
+  "admin": {
+    "url": "http://127.0.0.1:5050/",
+    "label": "admin",
+    "boxes": {
+      "[id^=\"blog-section\"][0]": {
+        "bbox": {
+          "x": 168,
+          "y": 794,
+          "width": 730,
+          "height": 392
+        },
+        "inline_height": "392px"
+      },
+      "#blogList[0]": {
+        "bbox": {
+          "x": 171,
+          "y": 833,
+          "width": 726,
+          "height": 352
+        },
+        "inline_height": ""
+      }
+    },
+    "viewport": [
+      1280,
+      900
+    ],
+    "blog_storage_keys": [
+      "repo_blog_updated",
+      "repo_blogPosts"
+    ],
+    "blog_section_style": {
+      "inline": "392px",
+      "attr": "padding: 0px; overflow: hidden; position: absolute; left: 168px; top: 794px; width: 730px; height: 392px; box-sizing: border-box; margin: 0px;"
+    }
+  },
+  "public_static": {
+    "url": "http://127.0.0.1:8765/",
+    "label": "public_static",
+    "boxes": {
+      "[id^=\"blog-section\"][0]": {
+        "bbox": {
+          "x": 168,
+          "y": 794,
+          "width": 730,
+          "height": 392
+        },
+        "inline_height": "392px"
+      },
+      "#blogList[0]": {
+        "bbox": {
+          "x": 171,
+          "y": 833,
+          "width": 726,
+          "height": 352
+        },
+        "inline_height": ""
+      }
+    },
+    "viewport": [
+      1280,
+      900
+    ],
+    "blog_storage_keys": [
+      "repo_blog_updated",
+      "repo_blogPosts"
+    ],
+    "blog_section_style": {
+      "inline": "392px",
+      "attr": "padding: 0px; overflow: hidden; position: absolute; left: 168px; top: 794px; width: 730px; height: 392px; box-sizing: border-box; margin: 0px;"
+    }
+  },
+  "gh_live": {
+    "url": "https://ngynkhoa.github.io/3105-repo/",
+    "label": "gh_live",
+    "boxes": {
+      "[id^=\"blog-section\"][0]": {
+        "bbox": {
+          "x": 168,
+          "y": 797.65625,
+          "width": 730,
+          "height": 320
+        },
+        "inline_height": ""
+      },
+      "#blogList[0]": {
+        "bbox": {
+          "x": 171,
+          "y": 836.65625,
+          "width": 726,
+          "height": 229
+        },
+        "inline_height": ""
+      }
+    },
+    "viewport": [
+      1280,
+      900
+    ],
+    "blog_storage_keys": [
+      "repo_blog_updated",
+      "repo_blogPosts"
+    ],
+    "blog_section_style": {
+      "inline": "",
+      "attr": "padding:0; overflow:hidden;"
+    }
+  }
+}

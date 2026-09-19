@@ -1,0 +1,10 @@
+[env] Loaded .env manually (no python-dotenv) from C:\Users\NK\Desktop\MOD\3105-repo\.env
+[config] OAuth GitHub: ENABLED
+============================================================
+[3105 Repo Builder] dang chay tai: http://127.0.0.1:5050
+Thu muc repo goc: C:\Users\NK\Desktop\MOD\3105-repo
+Auto-open trinh duyet: bat
+Nhan Ctrl+C de dung.
+============================================================
+ * Serving Flask app 'admin.app'
+ * Debug mode: off
