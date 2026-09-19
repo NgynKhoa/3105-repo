@@ -360,10 +360,10 @@
     },
     {
       "identifier": "owen-000",
-      "name": "PUBG 4.6 UPDATE 20/9 OWEN V1",
+      "name": "PUBG 4.6 UPDATE 20/9 OWEN V1 (5 Server)",
       "author": "@owenindahouse",
       "version": "4.6.0",
-      "summary": "✨ Pubg • Bản mới nhất • Update 20/9",
+      "summary": "✨ Pubg • Bản mới nhất • 1 Patch for 5 Server",
       "password": "Owen",
       "category": "Customization",
       "tags": [
@@ -397,8 +397,8 @@
       ],
       "featured": true,
       "isPrivate": false,
-      "description": "téttt",
-      "changelog": "🎉 v1.0.0 — Phát hành lần đầu"
+      "description": "1PATCH CHO 5 SERVER (VNG,KR,GL,TW,BGMI) 1 PATCH FOR 5 SERVER (VNG,KR,GL,TW,BGMI) CUSTOM SKIN and AIMBOT,ESP,etc..",
+      "changelog": "🎉 v4.6.0 — Bản V1"
     }
   ]
 }
