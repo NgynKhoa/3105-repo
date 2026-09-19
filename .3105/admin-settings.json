@@ -37,7 +37,7 @@
   "rain_volume": "24",
   "repo_rainAudioLight": "https://www.youtube.com/watch?v=SnUBb-FAlCY",
   "repo_rainAudioHeavy": "https://www.youtube.com/watch?v=F7lCsfojDkk",
-  "admin_playlist": "[{\"title\":\"Một Điều Mà Anh Rất Ngại Nói Ra\",\"artist\":\"HAISAM\",\"src\":\"https://www.youtube.com/watch?v=dpxfxxhZ-uQ\",\"cover\":\"http://127.0.0.1:5050/assets/blog/c11422122a00.png\",\"id\":6},{\"title\":\"Người Im Lặng Gặp Người Hay Nói\",\"artist\":\"HIEUTHUHAI\",\"src\":\"https://www.youtube.com/watch?v=8sVtL0o-v7U\",\"cover\":\"http://127.0.0.1:5050/assets/blog/46b78fc38979.png\",\"id\":5},{\"title\":\"[Playlist] How Am I Doing?☁️\",\"artist\":\"Hmmm\",\"src\":\"https://www.youtube.com/watch?v=d1MZ6SFuv98\",\"cover\":\"http://127.0.0.1:5050/assets/blog/9689e425a743.png\",\"id\":7}]",
+  "admin_playlist": "[{\"title\":\"Một Điều Mà Anh Rất Ngại Nói Ra\",\"artist\":\"HAISAM\",\"src\":\"https://www.youtube.com/watch?v=dpxfxxhZ-uQ\",\"cover\":\"http://127.0.0.1:5050/assets/blog/c11422122a00.png\",\"id\":6},{\"title\":\"Người Im Lặng Gặp Người Hay Nói\",\"artist\":\"HIEUTHUHAI\",\"src\":\"https://www.youtube.com/watch?v=8sVtL0o-v7U\",\"cover\":\"http://127.0.0.1:5050/assets/blog/46b78fc38979.png\",\"id\":5},{\"title\":\"[Playlist] How Am I Doing?☁️\",\"artist\":\"Hmmm\",\"src\":\"https://www.youtube.com/watch?v=d1MZ6SFuv98\",\"cover\":\"http://127.0.0.1:5050/assets/blog/56b6c0d2c478.png\",\"id\":7}]",
   "admin_nav_links": "[{\"id\":1,\"name\":\"Home\",\"url\":\"/\",\"target\":\"_self\"},{\"id\":3,\"name\":\"GitHub\",\"url\":\"https://github.com\",\"target\":\"_blank\"},{\"id\":4,\"name\":\"E-mail\",\"url\":\"mailto:nk@example.com\",\"target\":\"_self\"}]",
   "mp_currentIdx": "0",
   "mp_loop": "true",
