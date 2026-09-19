@@ -2823,9 +2823,14 @@
         const r = await fetch('/api/blog/image-upload', { method: 'POST', body: fd, credentials: 'same-origin' });
         const data = await r.json();
         if (data.error) { showNotif('Upload lỗi: ' + data.error, 'danger'); return; }
-        const url = data.url || data.path || '';
-        document.getElementById('trackCoverInput').value = url;
-        showNotif('Đã upload cover!');
+        // CRITICAL: dùng PATH (relative) thay vì URL (localhost).
+        // - data.path: 'assets/blog/<uuid>.png' → relative
+        // - data.url:  'http://127.0.0.1:5050/assets/blog/<uuid>.png' → chỉ work trên local
+        // GitHub Pages không có localhost → cần relative path để applyCover
+        // rewrite thành 'https://ngynkhoa.github.io/3105-repo/assets/blog/...'.
+        const coverPath = data.path || data.url || '';
+        document.getElementById('trackCoverInput').value = coverPath;
+        showNotif('Đã upload cover! (sẽ auto-push lên GitHub Pages khi Save)');
       } catch (e) {
         showNotif('Upload thất bại: ' + e.message, 'danger');
       } finally {

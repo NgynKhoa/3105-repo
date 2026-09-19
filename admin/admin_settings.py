@@ -30,7 +30,11 @@ from flask import jsonify, request
 
 from .auth import login_required, get_current_token, get_owned_repos as auth_get_owned_repos
 from .config import Config
-from .github_write import write_file as gh_write_file
+from .github_write import write_file as gh_write_file, write_binary_file as gh_write_binary_file
+
+# ROOT = repo root (parent của thư mục admin/)
+# Tính từ __file__ để tránh circular import (admin_settings ↔ app).
+_ROOT = pathlib.Path(__file__).resolve().parent.parent
 
 _log = logging.getLogger(__name__)
 
@@ -231,6 +235,65 @@ def register_admin_settings_routes(app):
                 current = fetch_admin_settings(target["full_name"], token)
                 merged = dict(current or {})
                 merged.update(patch)
+
+                # === CRITICAL FIX: auto-push cover/audio assets mới lên GitHub ===
+                # Khi admin thay cover nhạc / ảnh blog, file ảnh upload qua
+                # /api/blog/image-upload → lưu LOCAL assets/blog/<uuid>.png.
+                # Nếu chỉ push admin-settings.json → GH Pages build sẽ 404
+                # vì file ảnh chưa được push.
+                # Giải pháp: detect các cover path relative (assets/blog/...)
+                # trong merged.playlist → push từng file binary lên GitHub.
+                pushed_assets = []
+                assets_push_errors = []
+                if isinstance(merged.get("playlist"), list):
+                    seen_paths = set()
+                    for track in merged["playlist"]:
+                        if not isinstance(track, dict):
+                            continue
+                        cover_path = track.get("cover", "")
+                        # Chỉ xử lý relative path dạng assets/blog/<file>
+                        if not cover_path or not cover_path.startswith("assets/"):
+                            continue
+                        if cover_path in seen_paths:
+                            continue
+                        seen_paths.add(cover_path)
+                        local_path = _ROOT / cover_path
+                        if not local_path.is_file():
+                            continue
+                        try:
+                            content_bytes = local_path.read_bytes()
+                            # Binary asset → push "direct" để GH Pages thấy ngay.
+                            # Vẫn retry 409/422 nếu cần.
+                            file_sha = None
+                            for _attempt in range(3):
+                                try:
+                                    asset_result = gh_write_binary_file(
+                                        token=token,
+                                        full_name=target["full_name"],
+                                        path=cover_path,
+                                        content=content_bytes,
+                                        commit_message=f"chore(asset): push {cover_path}",
+                                        mode="direct",
+                                    )
+                                    file_sha = asset_result.get("commit_sha")
+                                    pushed_assets.append({
+                                        "path": cover_path,
+                                        "size": len(content_bytes),
+                                        "commit_sha": file_sha,
+                                    })
+                                    break
+                                except RuntimeError as e2:
+                                    if "409" in str(e2) or "422" in str(e2):
+                                        continue
+                                    raise
+                        except Exception as e2:
+                            assets_push_errors.append({
+                                "path": cover_path,
+                                "error": str(e2),
+                            })
+                            _log.warning("[merge_admin_settings] push asset fail: %s err=%s",
+                                         cover_path, e2)
+
                 content = json.dumps(merged, indent=2, ensure_ascii=False)
                 try:
                     result = gh_write_file(
@@ -258,6 +321,8 @@ def register_admin_settings_routes(app):
                         "settings": merged,
                         "baked": bake_ok,
                         "bake_msg": bake_msg,
+                        "pushed_assets": pushed_assets,
+                        "assets_push_errors": assets_push_errors,
                         **result,
                     })
                 except RuntimeError as e:

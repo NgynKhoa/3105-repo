@@ -198,6 +198,95 @@ def write_file(
     }
 
 
+def write_binary_file(
+    token: str,
+    full_name: str,
+    path: str,
+    content: bytes,
+    commit_message: str,
+    *,
+    mode: str = "direct",  # Binary files thường đi direct để GH Pages thấy ngay
+) -> dict[str, Any]:
+    """Ghi file binary (ảnh, audio, ...) vào GitHub repo.
+
+    Args:
+      token: GitHub access token.
+      full_name: "owner/repo".
+      path: file path trong repo (vd "assets/blog/abc.png").
+      content: raw bytes.
+      commit_message: commit message.
+      mode: "pr" hoặc "direct". Mặc định "direct" vì binary files thường là
+        asset (ảnh cover, gallery) cần có mặt ngay trên GH Pages để workflow
+        build pick up.
+
+    Returns: dict giống write_file.
+    """
+    if mode not in ("pr", "direct"):
+        raise ValueError(f"mode phải là 'pr' hoặc 'direct', nhận được {mode!r}")
+
+    # 1. Lấy metadata
+    meta = _get_repo_metadata(token, full_name)
+    default_branch = meta.get("default_branch", "main")
+    owner = meta.get("owner", {}).get("login", "")
+
+    # 2. Target branch
+    if mode == "direct":
+        target_branch = default_branch
+        pr_url, pr_number = None, None
+    else:
+        target_branch = _create_branch(token, full_name, default_branch)
+        pr_url, pr_number = None, None
+
+    # 3. SHA file cũ
+    existing_sha = _get_file_sha(token, full_name, path, target_branch)
+
+    # 4. Commit
+    encoded = base64.b64encode(content).decode("ascii")
+    put_url = f"{Config.GITHUB_API_BASE}/repos/{full_name}/contents/{path}"
+    put_body = {
+        "message": commit_message,
+        "content": encoded,
+        "branch": target_branch,
+    }
+    if existing_sha:
+        put_body["sha"] = existing_sha
+
+    put_resp = requests.put(
+        put_url, headers=_gh_headers(token), json=put_body, timeout=60,
+    )
+    if put_resp.status_code not in (200, 201):
+        raise RuntimeError(
+            f"PUT binary failed: {put_resp.status_code} {put_resp.text[:300]}"
+        )
+    put_data = put_resp.json()
+    commit_sha = put_data.get("commit", {}).get("sha", "")
+    commit_url = put_data.get("commit", {}).get("html_url", "")
+
+    # 5. Nếu PR mode
+    if mode == "pr":
+        pr_url, pr_number = _create_pr(
+            token, full_name, target_branch, default_branch,
+            title=commit_message,
+            body=(
+                "🤖 Binary asset tự động push qua 3105-repo Builder.\n\n"
+                f"- Branch: `{target_branch}`\n"
+                f"- File: `{path}` ({len(content)} bytes)\n"
+            ),
+        )
+
+    return {
+        "ok": True,
+        "mode": mode,
+        "branch": target_branch,
+        "commit_sha": commit_sha,
+        "commit_url": commit_url,
+        "pr_url": pr_url,
+        "pr_number": pr_number,
+        "owner": owner,
+        "repo": full_name.split("/", 1)[-1] if "/" in full_name else full_name,
+    }
+
+
 # -----------------------------------------------------------------------------
 # Helpers
 # -----------------------------------------------------------------------------
