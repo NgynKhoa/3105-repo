@@ -3366,6 +3366,22 @@
   function applyCover(track) {
     if (!cover) return;
     let url = (track && track.cover) || '';
+    // CRITICAL FIX: cover URLs từ admin playlist thường dùng localhost
+    // (http://127.0.0.1:5050/assets/blog/xxx.png). Trên GH Pages (PUBLIC_MODE)
+    // URL này sẽ 404 vì không có Flask server. Rewrite thành relative path
+    // để GH Pages serve được file trong public/assets/.
+    if (url && window.PUBLIC_MODE) {
+      try {
+        // Tìm phần "/assets/..." trong URL absolute → thành "./assets/..."
+        const m = url.match(/\/assets\/[^?#]+/);
+        if (m) url = '.' + m[0];
+        // Nếu đã là relative (./assets/...) → giữ nguyên
+        else if (!url.startsWith('http://') && !url.startsWith('https://') && !url.startsWith('./')) {
+          // relative thuần (assets/...) → thêm ./
+          if (url.startsWith('assets/')) url = './' + url;
+        }
+      } catch (e) { console.warn('[cover] URL rewrite failed:', e); }
+    }
     if (!url && track && track.src && window.MultiPlayer) {
       const info = window.MultiPlayer.parseTrackUrl(track.src);
       if (info.type === 'youtube' && info.providerId) {
@@ -4078,14 +4094,21 @@
   window.applyUserShadow = function(name) {
     const t = themes[name];
     if (!t) return;
-    const r = document.documentElement;
-    // Shadow dùng trực tiếp theme color làm shadow cho logo + borders phụ
-    r.style.setProperty('--shadow-theme', t.neon);
-    r.style.setProperty('--shadow-theme-rgb', t.neonRgb);
+    var shadowHex = t.neon || '#39ff14';
+    var shadowRgb = t.neonRgb || '57, 255, 20';
+    var r = document.documentElement;
+    // Dùng ĐÚNG CSS vars như applyShadowTheme (admin) để logo shadow update
+    r.style.setProperty('--logo-shadow-color', shadowHex);
+    r.style.setProperty('--logo-shadow-rgb', shadowRgb);
+    r.style.setProperty('--logo-holo-color', shadowHex);
+    r.style.setProperty('--logo-holo-rgb', shadowRgb);
+    // Backward-compat với code cũ (nếu có)
+    r.style.setProperty('--shadow-theme', shadowHex);
+    r.style.setProperty('--shadow-theme-rgb', shadowRgb);
     localStorage.setItem('user_shadowTheme', name);
-    // Re-apply logo shadow nếu có
+    // Re-apply logo shadow nếu có (giống applyShadowTheme)
     if (typeof window.reapplyLogoShadow === 'function') window.reapplyLogoShadow();
-    console.log('[user-shadow] applied:', name);
+    console.log('[user-shadow] applied:', name, '→ --logo-shadow-color=', shadowHex);
   };
   // Reset về theme/shadow mặc định (admin defaults hoặc PUBLIC_ADMIN_THEME)
   document.getElementById('userResetTheme')?.addEventListener('click', () => {
