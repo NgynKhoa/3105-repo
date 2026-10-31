@@ -205,6 +205,7 @@ def write_binary_file(
     content: bytes,
     commit_message: str,
     *,
+    branch: str | None = None,
     mode: str = "direct",  # Binary files thường đi direct để GH Pages thấy ngay
 ) -> dict[str, Any]:
     """Ghi file binary (ảnh, audio, ...) vào GitHub repo.
@@ -226,7 +227,7 @@ def write_binary_file(
 
     # 1. Lấy metadata
     meta = _get_repo_metadata(token, full_name)
-    default_branch = meta.get("default_branch", "main")
+    default_branch = branch or meta.get("default_branch", "main")
     owner = meta.get("owner", {}).get("login", "")
 
     # 2. Target branch

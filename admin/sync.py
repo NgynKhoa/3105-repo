@@ -29,6 +29,10 @@ SYNC_STATE_FILE_NAME = ".3105/sync_state.json"
 # Các file/folder đồng bộ từ local → GitHub Pages.
 # LƯU Ý: chỉ sync những thứ GitHub Pages build-public.py đọc.
 SYNC_INCLUDE_PATHS = [
+    "repositories/demo/packages",
+    "repositories/demo/assets",
+    "admin/static",
+    ".3105/public-defaults.json",
     "repositories/demo/repo.yml",      # Source-of-truth: layout, theme, packages
     ".3105/admin-settings.json",        # Theme + rain + dark mode
     "admin/templates/index.html",       # HTML shell (nếu admin đã sửa)
@@ -68,7 +72,11 @@ def _git_blob_sha(content: bytes) -> str:
     """
     import hashlib as _h
     # Normalize line endings: thay CRLF -> LF để khớp với content trên GitHub
-    normalized = content.replace(b"\r\n", b"\n")
+    try:
+        content.decode("utf-8")
+        normalized = content.replace(b"\r\n", b"\n")
+    except UnicodeDecodeError:
+        normalized = content
     header = f"blob {len(normalized)}\0".encode("ascii")
     return _h.sha1(header + normalized).hexdigest()[:16]
 
@@ -98,6 +106,12 @@ def collect_local_files(root: pathlib.Path) -> list[dict[str, Any]]:
 
     Returns list[dict] với keys: path, size, sha (Git blob SHA-1 16-char prefix).
     """
+    settings = root / ".3105/admin-settings.json"
+    if settings.is_file():
+        from bake_defaults import extract_public_settings
+        defaults = extract_public_settings(json.loads(settings.read_text(encoding="utf-8")))
+        (root / ".3105/public-defaults.json").write_text(
+            json.dumps(defaults, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     files: list[dict[str, Any]] = []
     for include_path in SYNC_INCLUDE_PATHS:
         full = root / include_path
@@ -441,87 +455,42 @@ def register_sync_routes(app, ROOT: pathlib.Path, Config) -> None:
             })
 
         # Lazy import để tránh circular
-        from .github_write import write_file as gh_write_file
-        import base64 as _b64
-        import requests as _req
-
-        def _push_one(rel_path: str, content: str) -> dict | None:
-            """Push 1 file. Try via gh_write_file (text), fallback raw API (binary)."""
-            try:
-                return gh_write_file(
-                    token=token,
-                    full_name=full_name,
-                    path=rel_path,
-                    content=content,
-                    commit_message=message,
-                    mode=mode,
-                )
-            except UnicodeEncodeError:
-                # Binary file — content is already base64. Bypass via raw API.
-                meta_url = f"{Config.GITHUB_API_BASE}/repos/{full_name}"
-                meta = _req.get(meta_url, headers={
-                    "Authorization": f"Bearer {token}",
-                    "Accept": "application/vnd.github+json",
-                }, timeout=20).json()
-                default_branch = meta.get("default_branch", "main")
-                target_branch = default_branch if mode == "direct" else default_branch
-
-                sha_url = f"{Config.GITHUB_API_BASE}/repos/{full_name}/contents/{rel_path}?ref={target_branch}"
-                sha_resp = _req.get(sha_url, headers={
-                    "Authorization": f"Bearer {token}",
-                    "Accept": "application/vnd.github+json",
-                }, timeout=20)
-                existing_sha = sha_resp.json().get("sha") if sha_resp.status_code == 200 else None
-
-                put_body = {
-                    "message": message,
-                    "content": content,
-                    "branch": target_branch,
-                }
-                if existing_sha:
-                    put_body["sha"] = existing_sha
-                put_url = f"{Config.GITHUB_API_BASE}/repos/{full_name}/contents/{rel_path}"
-                put_resp = _req.put(put_url, headers={
-                    "Authorization": f"Bearer {token}",
-                    "Accept": "application/vnd.github+json",
-                }, json=put_body, timeout=60)
-                if put_resp.status_code not in (200, 201):
-                    raise RuntimeError(f"binary PUT failed: {put_resp.status_code} {put_resp.text[:200]}")
-                data = put_resp.json()
-                return {
-                    "commit_sha": data.get("commit", {}).get("sha"),
-                    "pr_url": None,
-                }
-
+        from .github_write import write_binary_file, _gh_headers, _get_repo_metadata, _create_branch, _create_pr
+        headers = _gh_headers(token)
         pushed_results = []
         errors = []
-        for f in to_push:
-            file_path = ROOT / f["path"]
-            is_binary = f["path"].lower().endswith((
-                ".png", ".jpg", ".jpeg", ".gif", ".webp",
-                ".ico", ".pdf", ".zip", ".3105", ".mp3", ".mp4",
-                ".woff", ".woff2", ".ttf", ".otf",
-            ))
-            try:
-                if is_binary:
-                    content = _b64.b64encode(file_path.read_bytes()).decode("ascii")
-                else:
-                    content = file_path.read_text(encoding="utf-8")
-            except Exception as exc:
-                errors.append({"path": f["path"], "error": f"read failed: {exc}"})
-                continue
-            try:
-                result = _push_one(f["path"], content)
-                if result:
-                    pushed_results.append({
-                        "path": f["path"],
-                        "commit_sha": result.get("commit_sha"),
-                        "pr_url": result.get("pr_url"),
-                    })
-            except Exception as exc:
-                errors.append({"path": f["path"], "error": str(exc)})
+        deleted_count = 0
+        try:
+            meta = _get_repo_metadata(token, full_name)
+            branch = meta.get("default_branch", "main")
+            target_branch = branch if mode == "direct" else _create_branch(token, full_name, branch)
+            for f in to_push:
+                try:
+                    result = write_binary_file(token=token, full_name=full_name,
+                        path=f["path"], content=(ROOT / f["path"]).read_bytes(),
+                        commit_message=message, mode="direct", branch=target_branch)
+                    pushed_results.append({"path": f["path"], "commit_sha": result.get("commit_sha"), "pr_url": None})
+                except Exception as exc:
+                    errors.append({"path": f["path"], "error": str(exc)})
+            for f in diff["deleted"]:
+                try:
+                    url = f"{Config.GITHUB_API_BASE}/repos/{full_name}/contents/{f['path']}"
+                    current = requests.get(url, headers=headers, params={"ref": target_branch}, timeout=20)
+                    current.raise_for_status()
+                    response = requests.delete(url, headers=headers, json={"message": message,
+                        "sha": current.json()["sha"], "branch": target_branch}, timeout=30)
+                    response.raise_for_status()
+                    deleted_count += 1
+                except Exception as exc:
+                    errors.append({"path": f["path"], "error": str(exc)})
+            if mode == "pr" and (pushed_results or deleted_count):
+                pr_url, _ = _create_pr(token, full_name, target_branch, branch,
+                    title=message, body="Sync local repository files and deletions.")
+                for result in pushed_results:
+                    result["pr_url"] = pr_url
+        except Exception as exc:
+            errors.append({"path": "", "error": str(exc)})
 
-        # Lưu history
         append_history(ROOT, {
             "pushed_at": _now_iso(),
             "files_pushed": len(pushed_results),
@@ -537,6 +506,7 @@ def register_sync_routes(app, ROOT: pathlib.Path, Config) -> None:
         return jsonify({
             "ok": len(errors) == 0,
             "pushed": len(pushed_results),
+            "deleted": deleted_count,
             "errors": errors,
             "results": pushed_results,
             "workflow_note": "Sau khi push, workflow build-public.yml sẽ tự động rebuild GitHub Pages trong ~30-60s.",

@@ -1186,6 +1186,8 @@
     @keyframes anim-shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-2px); } 75% { transform: translateX(2px); } }
     @keyframes anim-bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
   </style>
+  <link rel="stylesheet" href="/admin/static/blog_editor.css?v=1">
+  <link rel="stylesheet" href="/admin/static/boxes_editor.css?v=1">
 </head>
 <body>
   <canvas id="rain-canvas"></canvas>
@@ -2059,7 +2061,7 @@
     });
 
     // ====================== TABS ======================
-    document.querySelectorAll('.dash-tab').forEach(tab => {
+    document.querySelectorAll('.dash-tab[data-tab]').forEach(tab => {
       tab.addEventListener('click', () => {
         document.querySelectorAll('.dash-tab').forEach(t => t.classList.remove('active'));
         document.querySelectorAll('.dash-panel').forEach(p => p.classList.remove('active'));
@@ -2254,13 +2256,13 @@
       }
       el.innerHTML = blogPosts.map(p => `
         <div class="blog-item" data-id="${p.id}">
-          <div class="blog-icon">${p.icon}</div>
+          <div class="blog-icon">${escapeHtml(p.icon || "📝")}</div>
           <div class="blog-info">
             <div class="blog-title">
-              ${p.title}
+              ${escapeHtml(p.title)}
               ${p.hidden ? '<span class="blog-hidden-badge" title="Bài viết đang ẩn — chỉ truy cập qua link">🔒 ẨN</span>' : ''}
             </div>
-            <div class="blog-date">${p.date}</div>
+            <div class="blog-date">${escapeHtml(p.date || "")}</div>
           </div>
           <div class="blog-actions">
             <button class="box-btn-sm" onclick="editPost(${p.id})" title="Sửa">&#9998;</button>
@@ -2340,7 +2342,7 @@
       const p = blogPosts.find(b => b.id === id);
       if (!p) return;
       document.getElementById('editPostId').value = id;
-      document.getElementById('postIcon').value = p.icon;
+      document.getElementById('postIcon').value = p.icon || '\uD83D\uDCDD';
       document.getElementById('postTitle').value = p.title;
       document.getElementById('postExcerpt').value = p.excerpt || '';
       document.getElementById('postContent').value = p.content || '';
@@ -2416,9 +2418,9 @@
       if (id) {
         post.id = parseInt(id);
         const idx = blogPosts.findIndex(p => p.id === post.id);
-        if (idx >= 0) blogPosts[idx] = post;
+        if (idx >= 0) blogPosts[idx] = { ...blogPosts[idx], ...post };
       } else {
-        post.id = blogPosts.length + 1;
+        post.id = Math.max(0, ...blogPosts.map(p => Number(p.id) || 0)) + 1;
         blogPosts.push(post);
       }
       renderBlogList();
@@ -2564,23 +2566,25 @@
       document.getElementById('linkTargetInput').value = link.target || '_self';
     }
 
+    async function saveDashboardPatch(slug, patch) {
+      const response = await fetch('/api/admin-settings-merge', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'same-origin',
+        body: JSON.stringify({ slug, patch, mode: 'direct' }),
+      });
+      const data = await response.json();
+      if (!response.ok || !data.ok) {
+        throw new Error(data.error || ('HTTP ' + response.status));
+      }
+      return data;
+    }
+
     async function persistNavLinks() {
       try {
         // Lưu vào admin-settings repository (file .3105/admin-settings.json)
         const slug = navLinksCurrentRepo || 'demo';
-        const r = await fetch(`/api/admin-settings?slug=${encodeURIComponent(slug)}`);
-        let cur = {};
-        if (r.ok) {
-          const data = await r.json();
-          cur = data.settings || {};
-        }
-        cur.nav_links = navLinks;
-        await fetch(`/api/admin-settings?slug=${encodeURIComponent(slug)}`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ settings: cur }),
-          credentials: 'same-origin',
-        });
+        await saveDashboardPatch(slug, { nav_links: navLinks });
         // Đồng thời lưu localStorage để Front Repo đọc lại ngay (nếu reload)
         localStorage.setItem('admin_nav_links', JSON.stringify(navLinks));
         showNotif('Đã lưu danh sách Links!');
@@ -2841,19 +2845,7 @@
     async function persistPlaylist() {
       try {
         const slug = playlistCurrentRepo || 'demo';
-        const r = await fetch(`/api/admin-settings?slug=${encodeURIComponent(slug)}`);
-        let cur = {};
-        if (r.ok) {
-          const data = await r.json();
-          cur = data.settings || {};
-        }
-        cur.playlist = playlist;
-        await fetch(`/api/admin-settings?slug=${encodeURIComponent(slug)}`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ settings: cur }),
-          credentials: 'same-origin',
-        });
+        await saveDashboardPatch(slug, { playlist });
         localStorage.setItem('admin_playlist', JSON.stringify(playlist));
         // Đồng bộ cho Front Repo nếu đang mở cùng tab
         if (window.__adminPlaylist) window.__adminPlaylist = playlist;
@@ -2992,19 +2984,7 @@
       const heavy = (document.getElementById('rainHeavyUrlInput').value || '').trim();
       try {
         const slug = playlistCurrentRepo || 'demo';
-        const r = await fetch(`/api/admin-settings?slug=${encodeURIComponent(slug)}`);
-        let cur = {};
-        if (r.ok) {
-          const data = await r.json();
-          cur = data.settings || {};
-        }
-        cur.rainAudio = { light: light, heavy: heavy };
-        await fetch(`/api/admin-settings?slug=${encodeURIComponent(slug)}`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ settings: cur }),
-          credentials: 'same-origin',
-        });
+        await saveDashboardPatch(slug, { rainAudio: { light, heavy } });
         localStorage.setItem('repo_rainAudioLight', light);
         localStorage.setItem('repo_rainAudioHeavy', heavy);
         // Sync Front đang mở qua BroadcastChannel (gửi tới tab khác + cùng tab)
@@ -5504,5 +5484,8 @@
       loadPreviewLayout();
     }
   </script>
+  <script src="/admin/static/blog_editor.js?v=1"></script>
+  <script src="/admin/static/boxes_editor.js?v=1"></script>
+  <script src="/admin/static/boxes_live.js?v=1"></script>
 </body>
 </html>

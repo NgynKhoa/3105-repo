@@ -502,33 +502,6 @@ def save_yaml(
     # ---- ANCHORS cho shared screenshots / supportedOS ----
     # Định nghĩa anchor ở root YAML dưới key hidden (prefix `_`) để app 3105 không đọc.
     packages = data.get("packages") or []
-    shared_screens = None
-    shared_os = None
-    if packages_meta and len(packages_meta) == len(packages):
-        any_screens = any(bool(m.get("use_anchor_screens")) for m in packages_meta)
-        any_os = any(bool(m.get("use_anchor_os")) for m in packages_meta)
-        if any_screens:
-            shared_screens = DEFAULT_SCREENSHOTS
-        if any_os:
-            shared_os = DEFAULT_OS_RULES
-
-    if shared_screens is not None:
-        lines.append(f"_shared_screens: &{ANCHOR_SCREENS}")
-        for s in shared_screens:
-            lines.append(f"  - {s}")
-        lines.append("")
-    if shared_os is not None:
-        lines.append(f"_shared_os_rules: &{ANCHOR_OS_RULES}")
-        for rule in shared_os:
-            lines.append(f"  - minimum: \"{rule['minimum']}\"")
-            lines.append(f"    maximum: \"{rule['maximum']}\"")
-        lines.append("")
-
-    # ---- DANH SÁCH PACKAGES ----
-    lines.append("# ==========================================")
-    lines.append("# DANH SÁCH PACKAGES")
-    lines.append("# ==========================================")
-    lines.append("")
     lines.append("packages:")
     for idx, pkg in enumerate(packages):
         # Luôn ghi đầy đủ screenshots + supportedOS cho mỗi package
@@ -537,8 +510,8 @@ def save_yaml(
         lines.extend(
             _render_package_yaml(
                 pkg,
-                use_anchor_os=bool(meta.get("use_anchor_os")),
-                use_anchor_screens=bool(meta.get("use_anchor_screens")),
+                use_anchor_os=False,
+                use_anchor_screens=False,
             )
         )
         lines.append("")
@@ -1965,7 +1938,9 @@ def api_push(repo: str):
         })
 
     # 3. git status (báo cáo trạng thái, KHÔNG return ngay - cho phép empty commit để lưu message)
-    code, out = _run("git", "status")
+    code, out = _run("git", "status", "--porcelain")
+    if code != 0:
+        return jsonify({"ok": False, "step": "status", "detail": out[:500]}), 500
     status_out = (out or "").strip()
     has_changes = bool(status_out)
 
