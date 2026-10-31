@@ -5,166 +5,7 @@
   "description": "🎮 Kho lưu trữ các bản tùy chỉnh & tiện ích iOS của Owen. 🔥 Cập nhật thường xuyên ❤️ @owenindahouse",
   "icon": "assets/icon/repo-icon.png",
   "accentColor": "#FF3B30",
-  "_shared_screens": [
-    "assets/preview/preview-first.png",
-    "assets/preview/preview-second.png",
-    "assets/preview/preview-third.png",
-    "assets/preview/preview-fourth.png"
-  ],
-  "_shared_os_rules": [
-    {
-      "minimum": "17.0",
-      "maximum": "18.7.1"
-    },
-    {
-      "minimum": "26.0",
-      "maximum": "26.6.1"
-    },
-    {
-      "minimum": "27.0",
-      "maximum": "27.0"
-    }
-  ],
   "packages": [
-    {
-      "identifier": "owen-trial",
-      "name": "PUBG Ver 4.6 Bản VNG Fixed",
-      "author": "@owenindahouse",
-      "version": "1.0.0",
-      "summary": "✨ Pubg • Bản dùng thử • Trải nghiệm tính năng nâng cao",
-      "password": "2752",
-      "category": "Customization",
-      "tags": [
-        "CUSTOM"
-      ],
-      "publishedAt": "2026-09-12T19:33:16.000Z",
-      "icon": "assets/icon/test.png",
-      "banner": "assets/banner/banner_new.png",
-      "screenshots": [
-        "assets/preview/preview-first.png",
-        "assets/preview/preview-second.png",
-        "assets/preview/preview-third.png",
-        "assets/preview/preview-fourth.png"
-      ],
-      "download": "packages/PATCH_FREE_V2_VNG.3105",
-      "sha256": "AE94A6651B6121A1CB824A602E1246AE3EDEF4D4D6A90AFEBDCC1700E70E7F7B",
-      "size": 3598855,
-      "supportedOS": [
-        {
-          "minimum": "17.0",
-          "maximum": "18.7.1"
-        }
-      ],
-      "featured": true,
-      "isPrivate": false,
-      "description": "🔥 PUBG CUSTOM FREE\n\n✨ TÍNH NĂNG\n\n• Bộ Skin tùy chỉnh\n• Hỗ trợ ngắm & tùy chỉnh súng\n• Dễ Dàng Cài Đặt\n• Thường Xuyên Cập Nhật\n\n⚠️ LƯU Ý QUAN TRỌNG\n\n• Hãy xóa gói tùy chỉnh cũ trước khi áp dụng.\n• Nên sao lưu dữ liệu trước khi cài đặt.\n\n💬 HỖ TRỢ\n\nNếu gặp bất kỳ vấn đề nào, hãy liên hệ @owenindahouse.\nhttps://t.me/owenindahouse_repo để nhận thông báo mới nhất khi update lên app\nHoặc liên hệ admin Mod @Thanhdat1690.\n\n❤️ Chúc bạn chơi game vui vẻ và hãy đón chờ những bản cập nhật tiếp theo!\n",
-      "changelog": "🎉 v1.0.0 — Phát hành lần đầu\n\n✨ Bản thử nghiệm công khai đầu tiên\n\n🛠️ Vui lòng báo lỗi cho @owenindahouse nếu gặp sự cố\n\n⚠️ Đây là phiên bản thử nghiệm ban đầu và có thể vẫn còn một số lỗi.\n"
-    },
-    {
-      "identifier": "owen-002",
-      "name": "CUSTOM HDR & 120FPS",
-      "author": "@owenindahouse",
-      "version": "1.0.0",
-      "summary": "✨chỉ dành cho người dùng VIỆT NAM - Only for VNG",
-      "password": "2752",
-      "category": "Enhancement",
-      "tags": [
-        "DISPLAY"
-      ],
-      "icon": "assets/icon/hdr_120-ngong.png",
-      "banner": "assets/banner/banner.png",
-      "screenshots": [
-        "assets/hdr_120/after.png",
-        "assets/hdr_120/before.png"
-      ],
-      "download": "packages/HDR_120FPS.3105",
-      "sha256": "C6A6D2A32925B1BC8F844A3736DE7E3056EE06935E49836F1C89132A25851372",
-      "size": 8200,
-      "supportedOS": [
-        {
-          "minimum": "17.0",
-          "maximum": "18.7.1"
-        },
-        {
-          "minimum": "26.0",
-          "maximum": "26.6.1"
-        },
-        {
-          "minimum": "27.0",
-          "maximum": "27.0"
-        }
-      ],
-      "featured": true,
-      "isPrivate": false,
-      "description": "⚡ TÙY CHỈNH HIỂN THỊ\n\n⚠️ LƯU Ý QUAN TRỌNG\n\n• Sau khi áp dụng gói vào game không được thay đổi phần ĐỒ HỌA.\n• Muốn về gốc chỉ cần thay đổi ĐỒ HỌA.\n\n💬 HỖ TRỢ\n\nNếu gặp bất kỳ vấn đề nào, hãy liên hệ @owenindahouse.\nhttps://t.me/owenindahouse_repo để nhận thông báo mới nhất khi update lên app\nHoặc liên hệ admin Mod @Thanhdat1690.\n\n❤️ Chúc bạn chơi game vui vẻ và đón chờ những bản cập nhật tiếp theo!\n",
-      "changelog": "🛠️ Vui lòng báo lỗi cho @owenindahouse nếu gặp sự cố. "
-    },
-    {
-      "identifier": "owen-003",
-      "name": "PUBG Ver 4.6 CUSTOM FOR GLOBAL Fixed",
-      "author": "@owenindahouse",
-      "version": "1.0.0",
-      "summary": "✨ ADVANCED CUSTOM FOR GLOBAL",
-      "password": "2752",
-      "category": "Customization",
-      "tags": [
-        "CUSTOM"
-      ],
-      "icon": "assets/icon/global-pubg_global.png",
-      "banner": "assets/banner/banner_new.png",
-      "screenshots": [
-        "assets/preview/preview-first.png",
-        "assets/preview/preview-second.png",
-        "assets/preview/preview-third.png",
-        "assets/preview/preview-fourth.png"
-      ],
-      "download": "packages/PATCH_FREE_V2_GLOBAL.3105",
-      "sha256": "059EAA2851EA9C73F7DFC5CFA8273831E4AB42618B64E2AEE5F552111C05DED9",
-      "size": 3598853,
-      "supportedOS": [
-        {
-          "minimum": "17.0",
-          "maximum": "18.7.1"
-        }
-      ],
-      "featured": false,
-      "isPrivate": false,
-      "description": "💎 ADVANCED CUSTOM BUILD\n\n╭──────────────────╮\n ✨ FEATURES\n╰──────────────────╯\n\n🔥 Online Compatibility\n🎯 Aim Assistance\n👁️ iPad View\n🚗 Vehicle Enhancement\n⚡ Additional Features\n\n╭──────────────────╮\n ⚠️ IMPORTANT\n╰──────────────────╯\n\n• Remove any previous customization package before applying.\n• Backup your game data before installation.\n\n╭──────────────────╮\n 💬 SUPPORT\n╰──────────────────╯\n\n@owenindahouse\nhttps://t.me/owenindahouse_repo để nhận thông báo mới nhất khi update lên app\nadmin Mod @Thanhdat1690.\n",
-      "changelog": "╭──────────────────╮\n 🚀 FUTURE UPDATE\n╰──────────────────╯\n\n✨ Many new features will be added.\n🔄 Continuous updates and optimizations in future releases.\n\n❤️ Thank you for your support!\n"
-    },
-    {
-      "identifier": "owen-004",
-      "name": "💫 PUBG Ver 4.6 CUSTOM FOR KR Fixed",
-      "author": "@owenindahouse",
-      "version": "1.0.0",
-      "summary": "✨ ADVANCED CUSTOM 4 KR",
-      "password": "2752",
-      "category": "Customization",
-      "tags": [
-        "CUSTOM"
-      ],
-      "icon": "assets/icon/kr-pubg_kr.png",
-      "banner": "assets/banner/banner_new.png",
-      "screenshots": [
-        "assets/preview/preview-first.png",
-        "assets/preview/preview-second.png",
-        "assets/preview/preview-third.png",
-        "assets/preview/preview-fourth.png"
-      ],
-      "download": "packages/PATCH_FREE_V2_KR.3105",
-      "sha256": "9EB3B5718382D11973D0FDD1C0E859E9FDAA06B75AD92730A90229A90286BA97",
-      "size": 3598854,
-      "supportedOS": [
-        {
-          "minimum": "17.0",
-          "maximum": "18.7.1"
-        }
-      ],
-      "featured": false,
-      "isPrivate": false,
-      "description": "💎 ADVANCED CUSTOM BUILD\n\n╭──────────────────╮\n ✨ FEATURES\n╰──────────────────╯\n\n🔥 Online Compatibility\n🎯 Aim Assistance\n👁️ iPad View\n🚗 Vehicle Enhancement\n⚡ Additional Features\n\n╭──────────────────╮\n ⚠️ IMPORTANT\n╰──────────────────╯\n\n• Remove any previous customization package before applying.\n• Backup your game data before installation.\n\n╭──────────────────╮\n 💬 SUPPORT\n╰──────────────────╯\n\n@owenindahouse\nhttps://t.me/owenindahouse_repo Group Repo Owen\n@Thanhdat1690.\n",
-      "changelog": "╭──────────────────╮\n 🚀 FUTURE UPDATE\n╰──────────────────╯\n\n✨ Many new features will be added.\n🔄 Continuous updates and optimizations in future releases.\n\n❤️ Thank you for your support!\n"
-    },
     {
       "identifier": "owen-005",
       "name": "Classical Dialer",
@@ -325,51 +166,17 @@
       "changelog": "🎉 v1.0.0 — Phát hành lần đầu."
     },
     {
-      "identifier": "owen-001",
-      "name": "PUBG ALL IN ONE Ver4.6  (VNG,KR,GL)",
-      "author": "@owenindahouse",
-      "version": "4.6.0",
-      "summary": "1 Patch dùng được cho 3 server/ 1 Patch for 3 Server",
-      "password": "0604",
-      "category": "Customization",
-      "tags": [
-        "CUSTOM"
-      ],
-      "publishedAt": "2026-09-12T19:42:16.000Z",
-      "icon": "assets/icon/New_ver46/new_4_6.png",
-      "banner": "assets/banner/banner_new.png",
-      "screenshots": [
-        "assets/preview/preview-first.png",
-        "assets/preview/preview-second.png",
-        "assets/preview/preview-third.png",
-        "assets/preview/preview-fourth.png"
-      ],
-      "download": "packages/PATCH_V2_FREE_3_SERVER.3105",
-      "sha256": "8CA9141683C9BBE4CDF372736B6A5A26E34FEFDD20B482BA201693E6011F76AB",
-      "size": 3599691,
-      "supportedOS": [
-        {
-          "minimum": "17.0",
-          "maximum": "18.7.1"
-        }
-      ],
-      "featured": true,
-      "isPrivate": false,
-      "description": "ĐÃ UPDATED LẠI FILE, MỌI NGƯỜI CÓ THỂ CÀI ĐẶT HOẶC UPDATE ĐỂ TẢI XUỐNG FILE MỚI\nHAS BEEN UPDATED NEW FILE, PLS INSTALL OR PRESS UPDATE BUTTON TO DOWNLOAD NEW FILE\n\n🔥1 Patch chơi được cả 3 server VNG - GLOBAL - KR\n🔥1 Patch For 3 server VNG - GLOBAL - KR\n\n     🔥Chỉ việc áp dụng patch là xong, không cần tải 3 patch khác nhau.\n     🔥 Bypass Online \n     🎯 Hỗ trợ ngắm tùy chỉnh/ Aim Bot\n     👁️ iPad View\n     🚗 Tùy chỉnh tốc độ xe/ increase Speed Car\n     ⚡ Nhiều tính năng nâng cao khác/ More another Feature\n     \n     \n     ╭──────────────────╮\n      ⚠️ LƯU Ý QUAN TRỌNG\n     ╰──────────────────╯\n     \n     • Hãy xóa gói mod cũ,clear data trước khi áp dụng.\n     • Nên sao lưu dữ liệu trước khi cài đặt.\n     \n     ╭──────────────────╮\n      💬 HỖ TRỢ\n     ╰──────────────────╯\n     \n     @owenindahouse\nhttps://t.me/owenindahouse_repo Group Repo Owen\nadmin mod: @Thanhdat1690\n     \n❤️ Cảm ơn bạn đã ủng hộ!\n",
-      "changelog": "🎉 v4.6.0 — Phiên bản 4.6 mới nhất đã được cập nhật"
-    },
-    {
       "identifier": "owen-000",
       "name": "PUBG 4.6 UPDATE 20/9 OWEN V1 (5 Server)",
       "author": "@owenindahouse",
       "version": "4.6.0",
-      "summary": "✨ Mình gỡ xuống fix lại bypass,có gì vào gr để dùng  file mới nhé",
+      "summary": "✨ Hiện tại vẫn chưa gộp được thành file Patch, mọi người nhắn mình để vào group nhé",
       "password": "Owen",
       "category": "Customization",
       "tags": [
         "CUSTOM"
       ],
-      "publishedAt": "2026-09-20T09:01:37.000Z",
+      "publishedAt": "2026-10-31T05:29:23.000Z",
       "icon": "assets/icon/owen_basic.png",
       "banner": "assets/banner/banner_new.png",
       "screenshots": [
@@ -379,7 +186,7 @@
         "assets/preview/preview-fourth.png"
       ],
       "download": "packages/PATCH_OWEN_BASIC_V1.3105",
-      "sha256": "34D53B7E829E20CE085A17256D7D77321017333362AFAF8DA0AB5BAE9FFF278F",
+      "sha256": "34D53B7E829E20CE085A17256D7D77321017333562AFAF8DA0AB5BAE9FFF278F",
       "size": 4610200,
       "supportedOS": [
         {
@@ -387,18 +194,14 @@
           "maximum": "18.7.1"
         },
         {
-          "minimum": "26.0",
-          "maximum": "26.6.1"
-        },
-        {
-          "minimum": "27.0",
-          "maximum": "27.0"
+          "minimum": "18.0",
+          "maximum": "18.7.1"
         }
       ],
       "featured": true,
       "isPrivate": false,
-      "description": "Mình gỡ xuống fix lại bypass,có gì vào gr để dùng file mới nhé\n\n╭──────────────────╮\n 💬 HỖ TRỢ\n╰──────────────────╯\n\n@owenindahouse\nhttps://t.me/owenindahouse_repo Group Repo Owen\n\n❤️ Cảm ơn bạn đã ủng hộ!\n",
-      "changelog": "🎉 v4.6.0 — Phiên bản 4.6 mới nhất đã được cập nhật"
+      "description": "Hello, vì hiện tại cần đến 1 vài file bổ trợ bên ngoài nên tạm thời chưa gộp thành 1 patch file 3105 cho mọi người được, mọi người có thể nhắn tin trực tiếp cho mình @owenindahouse để mình đưa các bạn vào nhóm có file dùng được nhé ^^",
+      "changelog": "Hello, vì hiện tại cần đến 1 vài file bổ trợ bên ngoài nên tạm thời chưa gộp thành 1 patch file 3105 cho mọi người được, mọi người có thể nhắn tin trực tiếp cho mình @owenindahouse để mình đưa các bạn vào nhóm có file dùng được nhé ^^"
     }
   ]
 }
